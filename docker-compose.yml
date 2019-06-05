@@ -1,0 +1,22 @@
+version: '3.2'
+
+services:
+  apache73:
+    container_name: apache73
+    build: 
+      context: .
+      dockerfile: ./web/Dockerfile 
+    volumes:
+      - 'D:/var/www:/var/www/html'
+    networks:    
+      development:
+        ipv4_address: 172.20.0.73
+    ports:
+    - 80:80
+    - 443:443
+    extra_hosts:
+      - "analitica.local:127.0.0.1"
+
+networks:
+  development:
+    external: true
