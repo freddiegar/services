@@ -5,7 +5,7 @@ services:
     container_name: apache73
     build: 
       context: .
-      dockerfile: ./web/Dockerfile 
+      dockerfile: ./php73/Dockerfile 
     volumes:
       - 'D:/var/www:/var/www/html'
     networks:    
@@ -16,6 +16,24 @@ services:
     - 443:443
     extra_hosts:
       - "analitica.local:127.0.0.1"
+
+services:
+  apache56:
+    container_name: apache56
+    build: 
+      context: .
+      dockerfile: ./php56/Dockerfile 
+    volumes:
+      - 'D:/var/www:/var/www/html'
+    networks:    
+      development:
+        ipv4_address: 172.20.0.56
+    ports:
+    - 80:80
+    - 443:443
+    extra_hosts:
+      - "analitica.local:127.0.0.1"
+
 
 networks:
   development:
