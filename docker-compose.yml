@@ -17,7 +17,6 @@ services:
     extra_hosts:
       - "analitica.local:127.0.0.1"
 
-services:
   apache56:
     container_name: apache56
     build: 
