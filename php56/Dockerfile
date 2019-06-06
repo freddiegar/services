@@ -2,7 +2,7 @@ FROM php:5.6-apache
 
 COPY ./vhosts/* /etc/apache2/sites-available/
 COPY ./ssl/* /var/www/ssl/
-COPY ./php56/php.ini /usr/local/etc/php/php.ini-development/php.ini
+COPY ./php56/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html
 

@@ -2,6 +2,7 @@ FROM php:7.3-apache
 
 COPY ./vhosts/* /etc/apache2/sites-available/
 COPY ./ssl/* /var/www/ssl/
+COPY ./php73/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html
 
