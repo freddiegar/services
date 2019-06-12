@@ -12,6 +12,7 @@ RUN cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/analitica.lo
 RUN apt-get update \
     && apt-get install -y \
     vim \
+    iputils-ping \
     libxml2-dev \
     libxslt1-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
