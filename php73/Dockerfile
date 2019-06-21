@@ -1,6 +1,7 @@
 FROM php:7.3-apache
 
 COPY ./vhosts/* /etc/apache2/sites-available/
+COPY ./alias.conf /etc/apache2/alias.conf
 COPY ./ssl/* /var/www/ssl/
 COPY ./php73/php.ini /usr/local/etc/php/php.ini
 
@@ -17,12 +18,13 @@ RUN apt-get update \
     libxslt1-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
     && docker-php-ext-install mysqli soap xsl \
-	&& a2enmod rewrite \
+    && a2enmod rewrite \
     && a2enmod ssl \
     && a2dissite 000-default \
-	&& a2ensite analitica.local \
+    && a2ensite localhost \
+    && a2ensite analitica.local \
     && a2ensite analitica.local-ssl \
-	&& service apache2 restart
+    && service apache2 restart
 
 ENTRYPOINT [ "/usr/sbin/apachectl" ]
 CMD ["-D", "FOREGROUND"]
