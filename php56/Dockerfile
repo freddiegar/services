@@ -17,7 +17,7 @@ RUN apt-get update \
     libxml2-dev \
     libxslt1-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-install mysql mysqli soap xsl \
+    && docker-php-ext-install mysql soap xsl \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2dissite 000-default \
