@@ -1,3 +1,13 @@
+# <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)(\.gz)?$">
+#     Header set Expires "Thu, 21 Dec 2020 23:59:59 GMT"
+# </FilesMatch>
+# 
+# <IfModule mod_expires.c>
+#     ExpiresActive on
+#     ExpiresByType text/css                  "access plus 1 day"
+#     ExpiresByType application/javascript    "access plus 1 day"
+# </IfModule>
+
 Alias /Alias "/var/www/html/path/"
 <Directory "/var/www/html/path">
     Options -Indexes +FollowSymLinks

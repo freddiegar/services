@@ -16,10 +16,13 @@ RUN apt-get update \
     iputils-ping \
     libxml2-dev \
     libxslt1-dev \
+    zlib1g-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-install mysqli soap xsl shmop \
+    && docker-php-ext-install mysqli soap xsl shmop zip \
     && a2enmod rewrite \
     && a2enmod ssl \
+    && a2enmod expires \
+    && a2enmod headers \
     && a2dissite 000-default \
     && a2ensite localhost \
     && a2ensite analitica.local \
