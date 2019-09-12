@@ -17,6 +17,7 @@ RUN apt-get update \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
+    libzip-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
     && docker-php-ext-install mysqli soap xsl shmop zip \
     && a2enmod rewrite \

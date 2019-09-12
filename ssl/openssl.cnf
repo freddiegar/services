@@ -226,9 +226,13 @@ authorityKeyIdentifier=keyid,issuer
 # Extensions to add to a certificate request
 
 basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-# Freddie 20170525
-subjectAltName = DNS:analitica.local
+# Freddie 20190905
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = analitica.local
+DNS.2 = localhost
 
 [ v3_ca ]
 
