@@ -67,3 +67,39 @@ curl -I https://analitica.local
 ```
 
 It must be return: 302 | 200 HTTP Code
+
+## PenTesting
+
+See [Kali](https://www.kali.org/news/official-kali-linux-docker-images/) installation from Docker :D
+
+and
+
+See [SQLMap](https://www.ma-no.org/en/security/sqlmap-installation-and-usage-in-ubuntu-and-kali-linux) :P
+
+
+```bash
+python sqlmap.py -h
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --banner
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --users
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --users --passwords
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --dbs
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms -D db --tables
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms -D db -T table --columns
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms -D db -T table -C column1,column2 --dump
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --level 5
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --risk 3
+python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --technique
+
+python sqlmap.py -u "MY_APP_URL?PARAM1=1&PARAM2=2" -o --batch --dbms=mysql --forms --keep-alive --threads=3 -v 3 --method=POST
+```
+
+Get command `sqlmap` in javascript (for MySQL and POST method):
+
+```javascript
+var data = '';
+document.querySelectorAll('input').forEach(function (input, index) {
+  data = data + (index === 0 ? '' : '&') + input.name + '=' + input.value;
+});
+console.log('python sqlmap.py -o --batch --dbms=mysql --forms --keep-alive --threads=3 --method=POST --url="' + window.location.href + '" --cookie="' + document.cookie + '" --data="' + data + '" > SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log');
+console.log('cat SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "(.*) is vulnerable"');
+```
