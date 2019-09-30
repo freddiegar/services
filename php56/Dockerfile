@@ -17,8 +17,10 @@ RUN apt-get update \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
+    libldap2-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-install mysql soap xsl shmop zip \
+    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+    && docker-php-ext-install mysql soap xsl shmop zip ldap \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
