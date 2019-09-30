@@ -38,6 +38,8 @@ services:
     build: 
       context: .
       dockerfile: ./pentesting/Dockerfile 
+    volumes:
+      - 'D:/var/www:/var/www/html'
     networks:
       # Default to development
       development:

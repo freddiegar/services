@@ -97,9 +97,42 @@ Get command `sqlmap` in javascript (for MySQL and POST method):
 
 ```javascript
 var data = '';
-document.querySelectorAll('input').forEach(function (input, index) {
-  data = data + (index === 0 ? '' : '&') + input.name + '=' + input.value;
+document.querySelectorAll('input, select').forEach(function (input, index) {
+  inputName = input.name
+  inputType = input.type
+  switch (inputType) {
+    case 'select-one':
+    case 'select-multiple':
+      inputValue = input.value;
+      if (inputValue === '' && input.options.length > 0) {
+        inputValue = input[input.options.length - 1].value;
+      }
+      break;
+    case 'checkbox':
+      inputValue = input.value !== '' ? '1' : '0';
+      break;
+    case 'radio':
+      inputValue = document.querySelectorAll('input[name=' + inputName + ']:checked').value
+        ? document.querySelectorAll('input[name=' + inputName + ']:checked').value
+        : document.querySelectorAll('input[name=' + inputName + ']')[0].value
+      break;
+    case 'number':
+      inputValue = input.value;
+      if (inputValue === '') {
+        inputValue = Math.floor((Math.random() * 9) + 1);
+      }
+      break;
+    default:
+      inputValue = input.value;
+      if (inputValue === '') {
+        inputValue = 'XD';
+      }
+      break;
+  }
+  if (inputValue === '' || inputValue === undefined) {
+    console.log(inputName + ' \t : Asignar valor manualmente.');
+  }
+  data = data + (index === 0 ? '' : '&') + inputName + '=' + encodeURI(inputValue);
 });
-console.log('python sqlmap.py -o --batch --dbms=mysql --forms --keep-alive --threads=3 --method=POST --url="' + window.location.href + '" --cookie="' + document.cookie + '" --data="' + data + '" > SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log');
-console.log('cat SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "(.*) is vulnerable"');
+console.log('python sqlmap.py -o --dbms=mysql --keep-alive --threads=3 --method=POST --eta --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --url="' + window.location.href + '" --data="' + data + '" --level 1 --risk 3 --flush-session --batch > /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "(.*) is vulnerable"');
 ```
