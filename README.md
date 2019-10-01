@@ -136,3 +136,56 @@ document.querySelectorAll('input, select').forEach(function (input, index) {
 });
 console.log('python sqlmap.py -o --dbms=mysql --keep-alive --threads=3 --method=POST --eta --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --url="' + window.location.href + '" --data="' + data + '" --level 1 --risk 3 --flush-session --batch > /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "(.*) is vulnerable"');
 ```
+
+## Bootstrap Custom
+
+Clone repo Bootstrap (and npm install for dependencies, of course, you require nodejs installed)
+
+```bash
+git clone git@github.com:twbs/bootstrap.git
+git checkout v4.3.1 #or another stable version#
+```
+
+In bootstrap folder create folder called `sass` and into folder two files: _customVariables.scss and _customRules.scss
+
+```bash
+cd bootstrap
+mkdir sass
+cd sass
+touch _customVariables.scss 
+touch _customRules.scss
+```
+
+*_customVariables.scss*: Change variables to override of variables.scss file
+*_customRules.scss*: Add extra rules to apply
+
+```css
+// _customVariables.scss 
+$font-family-sans-serif:        Arial, sans-serif !default;
+```
+
+```css
+// _customRules.scss 
+.btn {
+    text-transform:             uppercase;
+}
+```
+Add extra configuration in `scss/bootstrap.scss` file as import
+
+```css
+// bootstrap.scss
+// Custom variables (beginning)
+@import "../sass/customVariables";
+
+// Bootstrap setup files
+
+// Custom rules (end)
+@import "../sass/customRules";
+
+```
+
+Ready, then compile new css files in root folder:
+
+```bash
+npm run css
+```
