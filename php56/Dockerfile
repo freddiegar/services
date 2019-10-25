@@ -17,7 +17,9 @@ RUN apt-get update \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
+    libzip-dev \
     libldap2-dev \
+    pdftk \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-install mysql soap xsl shmop zip ldap \
