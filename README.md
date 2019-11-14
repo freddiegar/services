@@ -35,7 +35,7 @@ docker-compose up -d
 
 ### SSL Certificate in Windows
 
-See: (https://curl.haxx.se/docs/sslcerts.html)[https://curl.haxx.se/docs/sslcerts.html]
+See: [https://curl.haxx.se/docs/sslcerts.html](https://curl.haxx.se/docs/sslcerts.html)
 
 0. Add in: C:C:\Windows\System32\drivers\etc\hosts
 
@@ -49,7 +49,7 @@ See: (https://curl.haxx.se/docs/sslcerts.html)[https://curl.haxx.se/docs/sslcert
 2. Run in cmd (or sh with Git) command:
 
 ```bash
-openssl s_client -showcerts -servername server -connect analitica.local:443 > analitica.local.pem
+openssl s_client -showcerts -servername analitica.local -connect analitica.local:443 > analitica.local.pem
 ```
 
 3. Concat `analitica.local.pem` chain certificates in `curl-ca-bundle.crt` file.
@@ -70,12 +70,28 @@ It must be return: 302 | 200 HTTP Code
 
 ## PenTesting
 
-See [Kali](https://www.kali.org/news/official-kali-linux-docker-images/) installation from Docker :D
+See [Kali](https://www.kali.org/news/official-kali-linux-docker-images/) installation from Docker
 
-and
+### XSSer
 
-See [SQLMap](https://www.ma-no.org/en/security/sqlmap-installation-and-usage-in-ubuntu-and-kali-linux) :P
+See [XSSer](https://github.com/epsylon/xsser)
 
+```bash
+# Dumy
+python xsser -all MY_APP_URL
+# Basic
+python xsser -u MY_APP_URL
+# Automatic
+python xsser -u --auto MY_APP_URL
+# Example GET
+python xsser -u 'MY_APP_URL' -g '?PARAM1=XSS'
+# Example POST
+python xsser -u 'MY_APP_URL' -p '?PARAM1=XSS'
+```
+
+### SQLMap
+
+See [SQLMap](https://www.ma-no.org/en/security/sqlmap-installation-and-usage-in-ubuntu-and-kali-linux)
 
 ```bash
 python sqlmap.py -h
@@ -92,8 +108,13 @@ python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --technique
 
 python sqlmap.py -u "MY_APP_URL?PARAM1=1&PARAM2=2" -o --batch --dbms=mysql --forms --keep-alive --threads=3 -v 3 --method=POST
 ```
+Updated command
 
-Get command `sqlmap` in javascript (for MySQL and POST method):
+```bash
+python sqlmap.py --update
+```
+
+Get command `sqlmap` in javascript, tap F12 Key in Browser and paste (for MySQL and POST method):
 
 ```javascript
 var data = '';
