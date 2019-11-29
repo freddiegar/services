@@ -17,6 +17,7 @@ RUN apt-get update \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
+    zip \
     libzip-dev \
     libldap2-dev \
     pdftk \

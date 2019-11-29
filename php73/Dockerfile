@@ -17,6 +17,7 @@ RUN apt-get update \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
+    zip \
     libzip-dev \
     pdftk \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
