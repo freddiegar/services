@@ -3,12 +3,12 @@ version: '3.2'
 services:
   apache73:
     container_name: apache73
-    build: 
+    build:
       context: .
-      dockerfile: ./php73/Dockerfile 
+      dockerfile: ./php73/Dockerfile
     volumes:
       - 'D:/var/www:/var/www/html'
-    networks:    
+    networks:
       development:
         ipv4_address: 172.20.0.73
     ports:
@@ -19,12 +19,12 @@ services:
 
   apache56:
     container_name: apache56
-    build: 
+    build:
       context: .
-      dockerfile: ./php56/Dockerfile 
+      dockerfile: ./php56/Dockerfile
     volumes:
       - 'D:/var/www:/var/www/html'
-    networks:    
+    networks:
       development:
         ipv4_address: 172.20.0.56
     ports:
@@ -35,13 +35,12 @@ services:
 
   pentesting:
     container_name: pentesting
-    build: 
+    build:
       context: .
-      dockerfile: ./pentesting/Dockerfile 
+      dockerfile: ./pentesting/Dockerfile
     volumes:
       - 'D:/var/www:/var/www/html'
     networks:
-      # Default to development
       development:
         ipv4_address: 172.20.0.99
     extra_hosts:
