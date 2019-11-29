@@ -23,6 +23,7 @@ docker network create --driver=bridge --subnet=172.20.0.0/16 --gateway=172.20.0.
 # Connect another network in each container and use name over ip
 docker network connect <network-name> db
 docker network connect <network-name> cache
+# Example: docker network connect development db
 ```
 
 ### Deploy
@@ -74,19 +75,60 @@ See [Kali](https://www.kali.org/news/official-kali-linux-docker-images/) install
 
 ### XSSer
 
-See [XSSer](https://github.com/epsylon/xsser)
+See [XSSer](https://github.com/epsylon/xsser) and  [options](http://lordepsylon.users.sourceforge.net/)
 
 ```bash
 # Dumy
-python xsser -all MY_APP_URL
+python3 xsser -all MY_APP_URL
 # Basic
-python xsser -u MY_APP_URL
+python3 xsser -u MY_APP_URL
 # Automatic
-python xsser -u --auto MY_APP_URL
+python3 xsser -u --auto MY_APP_URL
 # Example GET
-python xsser -u 'MY_APP_URL' -g '?PARAM1=XSS'
+python3 xsser -u 'MY_APP_URL' -g '?PARAM1=XSS'
 # Example POST
-python xsser -u 'MY_APP_URL' -p '?PARAM1=XSS'
+python3 xsser -u 'MY_APP_URL' -p '?PARAM1=XSS'
+```
+
+Updated command
+
+```bash
+python3 xsser --update
+```
+
+Get `xsser` command in javascript, tap F12 Key in Browser and paste (for POST method):
+
+```javascript
+var data = '';
+document.querySelectorAll('input, select').forEach(function (input, index) {
+  inputName = input.name
+  inputType = input.type
+  switch (inputType) {
+    case 'select-one':
+    case 'select-multiple':
+      inputValue = input.value;
+      if (inputValue === '' && input.options.length > 0) {
+        inputValue = input[input.options.length - 1].value;
+      }
+      break;
+    case 'checkbox':
+      inputValue = input.value !== '' ? 1 : 0;
+      break;
+    case 'radio':
+      inputValue = document.querySelectorAll('input[name=' + inputName + ']:checked').value
+        ? document.querySelectorAll('input[name=' + inputName + ']:checked').value
+        : document.querySelectorAll('input[name=' + inputName + ']')[0].value
+      break;
+    case 'number':
+      inputValue = 999;
+      break;
+    default:
+        inputValue = 'text';
+      break;
+  }
+  data = data + (index === 0 ? '' : '&') + inputName + '=' + (!isNaN(parseFloat(inputValue)) && isFinite(inputValue) ? 'XIS' : 'XSS');
+});
+console.log('python3 xsser --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --retries=1 --url="' + window.location.href + '" -p "' + data + '" --Xsa > /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "\\[ FOUND \\]"');
 ```
 
 ### SQLMap
@@ -94,27 +136,28 @@ python xsser -u 'MY_APP_URL' -p '?PARAM1=XSS'
 See [SQLMap](https://www.ma-no.org/en/security/sqlmap-installation-and-usage-in-ubuntu-and-kali-linux)
 
 ```bash
-python sqlmap.py -h
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --banner
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --users
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --users --passwords
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --dbs
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms -D db --tables
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms -D db -T table --columns
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms -D db -T table -C column1,column2 --dump
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --level 5
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --risk 3
-python sqlmap.py -u MY_APP_URL --batch --dbms=mysql --technique
+python3 sqlmap.py -h
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --banner
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --users
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --users --passwords
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms --dbs
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms -D db --tables
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms -D db -T table --columns
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --forms -D db -T table -C column1,column2 --dump
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --level 5
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --risk 3
+python3 sqlmap.py -u MY_APP_URL --batch --dbms=mysql --technique
 
-python sqlmap.py -u "MY_APP_URL?PARAM1=1&PARAM2=2" -o --batch --dbms=mysql --forms --keep-alive --threads=3 -v 3 --method=POST
+python3 sqlmap.py -u "MY_APP_URL?PARAM1=1&PARAM2=2" -o --batch --dbms=mysql --forms --keep-alive --threads=3 -v 3 --method=POST
 ```
+
 Updated command
 
 ```bash
-python sqlmap.py --update
+python3 sqlmap.py --update
 ```
 
-Get command `sqlmap` in javascript, tap F12 Key in Browser and paste (for MySQL and POST method):
+Get `sqlmap` command in javascript, tap F12 Key in Browser and paste (for MySQL and POST method):
 
 ```javascript
 var data = '';
@@ -155,7 +198,7 @@ document.querySelectorAll('input, select').forEach(function (input, index) {
   }
   data = data + (index === 0 ? '' : '&') + inputName + '=' + encodeURI(inputValue);
 });
-console.log('python sqlmap.py -o --dbms=mysql --keep-alive --threads=3 --method=POST --eta --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --url="' + window.location.href + '" --data="' + data + '" --level 1 --risk 3 --flush-session --batch > /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "(.*) is vulnerable"');
+console.log('python3 sqlmap.py -o --dbms=mysql --keep-alive --threads=3 --method=POST --eta --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --url="' + window.location.href + '" --data="' + data + '" --level 1 --risk 3 --flush-session --batch > /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "(.*) is vulnerable"');
 ```
 
 ## Bootstrap Custom
