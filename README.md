@@ -6,6 +6,72 @@ Docker Setup
 - docker
 - docker-compose
 
+## XDebug in docker
+
+[See](https://medium.com/@jasonterando/debugging-with-visual-studio-code-xdebug-and-docker-on-windows-b63a10b0dec)
+
+```bash
+# Install extension from PECL
+pecl install -f xdebug \
+&& echo "xdebug.idekey=PHPSTORM
+xdebug.remote_mode=req
+xdebug.remote_host=host.docker.internal
+xdebug.remote_port=9000
+xdebug.remote_enable=1
+xdebug.remote_autostart=1
+xdebug.profiler_enable=0
+xdebug.profiler_enable_trigger=0
+xdebug.coverage_enable=0
+#xdebug.remote_log=/var/www/html/xdebug/xdebug.log
+zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
+
+# cat /usr/local/etc/php/conf.d/xdebug.ini
+# Restart apache to load changes
+service apache2 reload
+```
+
+> PHP 5.6: pecl install -f xdebug-2.5.5
+> PHP 7+: pecl install -f xdebug
+
+### VSCode 
+
+launch.json example
+
+```json
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Listen for XDebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9000,
+            "log": true,
+            "externalConsole": true,
+            "pathMappings": {
+                "/var/www/html/analitica/Automan/": "${workspaceFolder}/"
+            },
+            "xdebugSettings": {
+                "max_data": 65535,
+                "show_hidden": 1,
+                "max_children": 100,
+                "max_depth": 5
+            }
+        },
+        {
+            "name": "Launch currently open script",
+            "type": "php",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${fileDirname}",
+            "port": 9000
+        }
+    ]
+}
+```
 ## Verify
 
 Verify development network
@@ -128,7 +194,7 @@ document.querySelectorAll('input, select').forEach(function (input, index) {
   }
   data = data + (index === 0 ? '' : '&') + inputName + '=' + (!isNaN(parseFloat(inputValue)) && isFinite(inputValue) ? 'XIS' : 'XSS');
 });
-console.log('python3 xsser --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --retries=1 --url="' + window.location.href + '" -p "' + data + '" --Xsa > /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "\\[ FOUND \\]"');
+console.log('python3 xsser --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --retries=1 --reverse-check --url="' + window.location.href.substring(0, (window.location.href.indexOf('?') != -1 ? window.location.href.indexOf('?') : window.location.href.length)) + '" -p "' + data + '" --Xsa > /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "XSS FOUND!"');
 ```
 
 ### SQLMap
