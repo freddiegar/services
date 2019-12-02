@@ -46,6 +46,19 @@ services:
     extra_hosts:
       - "analitica.local:172.20.0.56"
 
+  zap:
+    container_name: zap
+    build:
+      context: .
+      dockerfile: ./zap/Dockerfile
+    volumes:
+      - 'D:/var/www:/var/www/html'
+    networks:
+      development:
+        ipv4_address: 172.20.0.98
+    extra_hosts:
+      - "analitica.local:172.20.0.56"
+
 networks:
   development:
     external: true
