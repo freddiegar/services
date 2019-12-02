@@ -35,7 +35,7 @@ service apache2 reload
 
 ### VSCode 
 
-launch.json example
+launch.json example for local and remote debugging multiple root
 
 ```json
 {
@@ -52,7 +52,8 @@ launch.json example
             "log": true,
             "externalConsole": true,
             "pathMappings": {
-                "/var/www/html/analitica/Automan/": "${workspaceFolder}/"
+                "${workspaceFolder:flex-generator}/": "${workspaceFolder:flex-generator}/",
+                "/var/www/html/analitica/flex-generator": "${workspaceFolder:flex-generator}/",
             },
             "xdebugSettings": {
                 "max_data": 65535,
