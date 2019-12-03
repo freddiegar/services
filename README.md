@@ -22,7 +22,7 @@ xdebug.remote_autostart=1
 xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=0
 xdebug.coverage_enable=0
-#xdebug.remote_log=/var/www/html/xdebug/xdebug.log
+;xdebug.remote_log=/var/www/html/xdebug/xdebug.log
 zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
 
 # cat /usr/local/etc/php/conf.d/xdebug.ini
@@ -266,6 +266,36 @@ document.querySelectorAll('input, select').forEach(function (input, index) {
   data = data + (index === 0 ? '' : '&') + inputName + '=' + encodeURI(inputValue);
 });
 console.log('python3 sqlmap.py -o --dbms=mysql --keep-alive --threads=3 --method=POST --eta --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --url="' + window.location.href + '" --data="' + data + '" --level 1 --risk 3 --flush-session --batch > /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/sqlmap/SQLMap' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "(.*) is vulnerable"');
+```
+
+### ZAP
+
+See [ZAP](https://github.com/Grunny/zap-cli)
+
+Scan baseline
+
+```bash
+TARGET=https://analitica.local/Project/
+zap-baseline.py -t $TARGET -d
+```
+
+Run ZAP as deamon (in detach mode):
+
+```bash
+cd /zap
+zap.sh -daemon -host 0.0.0.0 -port 2375 -config api.key=ZAPLocal -config scanner.attackOnStart=true -config view.mode=attack -config connection.dnsTtlSuccessfulQueries=-1 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -addonupdate &
+```
+
+Scan url XSS (xss) or SQLInjection (sqli)
+
+```bash
+TARGET=https://analitica.local/Project/
+zap-cli -p 2375 --api-key ZAPLocal open-url $TARGET
+zap-cli -p 2375 --api-key ZAPLocal spider $TARGET
+zap-cli -p 2375 --api-key ZAPLocal quick-scan --scanners xss -r $TARGET
+zap-cli -p 2375 --api-key ZAPLocal alerts
+# or
+# zap-cli --verbose -p 2375  --api-key ZAPLocal quick-scan -s xss --spider -r $TARGET
 ```
 
 ## Bootstrap Custom
