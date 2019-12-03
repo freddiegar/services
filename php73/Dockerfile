@@ -2,6 +2,7 @@ FROM php:7.3-apache
 
 COPY ./vhosts/* /etc/apache2/sites-available/
 COPY ./alias.conf /etc/apache2/alias.conf
+COPY ./security.conf /etc/apache2/conf-available/security.conf
 COPY ./ssl/* /var/www/ssl/
 COPY ./php73/php.ini /usr/local/etc/php/php.ini
 
