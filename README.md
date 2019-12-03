@@ -195,7 +195,63 @@ document.querySelectorAll('input, select').forEach(function (input, index) {
   }
   data = data + (index === 0 ? '' : '&') + inputName + '=' + (!isNaN(parseFloat(inputValue)) && isFinite(inputValue) ? 'XIS' : 'XSS');
 });
-console.log('python3 xsser --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --retries=1 --reverse-check --url="' + window.location.href.substring(0, (window.location.href.indexOf('?') != -1 ? window.location.href.indexOf('?') : window.location.href.length)) + '" -p "' + data + '" --Xsa > /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "XSS FOUND!"');
+console.log('python3 xsser --statistics --user-agent="' + navigator.userAgent + '" --cookie="' + document.cookie + '" --retries=1 --reverse-check --url="' + window.location.href.substring(0, (window.location.href.indexOf('?') != -1 ? window.location.href.indexOf('?') : window.location.href.length)) + '" -p "' + data + '" --Xsa > /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/xsser/XSSer' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "XSS FOUND!"');
+```
+
+### XSStrike
+
+See [XSStrike](https://github.com/s0md3v/XSStrike)
+
+```bash
+# Basic
+python3 xsstrike.py -u MY_APP_URL
+# Automatic
+python3 xsstrike.py -u --auto MY_APP_URL
+# Example GET
+python3 xsstrike.py -u 'MY_APP_URL?PARAM1=XSS'
+# Example POST
+python3 xsstrike.py -u 'MY_APP_URL' --data '?PARAM1=XSS'
+```
+
+Updated command
+
+```bash
+python3 xsstrike.py --update
+```
+
+Get `xsser` command in javascript, tap F12 Key in Browser and paste (for POST method):
+
+```javascript
+var data = '';
+document.querySelectorAll('input, select').forEach(function (input, index) {
+  inputName = input.name
+  inputType = input.type
+  switch (inputType) {
+    case 'select-one':
+    case 'select-multiple':
+      inputValue = input.value;
+      if (inputValue === '' && input.options.length > 0) {
+        inputValue = input[input.options.length - 1].value;
+      }
+      break;
+    case 'checkbox':
+      inputValue = input.value !== '' ? 1 : 0;
+      break;
+    case 'radio':
+      inputValue = document.querySelectorAll('input[name=' + inputName + ']:checked').value
+        ? document.querySelectorAll('input[name=' + inputName + ']:checked').value
+        : document.querySelectorAll('input[name=' + inputName + ']')[0].value
+      break;
+    case 'number':
+      inputValue = 999;
+      break;
+    default:
+        inputValue = 'text';
+      break;
+  }
+  data = data + (index === 0 ? '' : '&') + inputName + '=query';
+});
+console.log('python3 xsstrike.py --url="' + window.location.href.substring(0, (window.location.href.indexOf('?') != -1 ? window.location.href.indexOf('?') : window.location.href.length)) + '" --data "' + data + '" > /var/www/html/xsstrike/XSStrike' +  window.location.pathname.replace(/\//g, '_') + '.log && cat /var/www/html/xsstrike/XSStrike' +  window.location.pathname.replace(/\//g, '_') + '.log | egrep "Payload: "');
 ```
 
 ### SQLMap
@@ -293,7 +349,6 @@ TARGET=https://analitica.local/Project/
 zap-cli -p 2375 --api-key ZAPLocal open-url $TARGET
 zap-cli -p 2375 --api-key ZAPLocal spider $TARGET
 zap-cli -p 2375 --api-key ZAPLocal quick-scan --scanners xss -r $TARGET
-zap-cli -p 2375 --api-key ZAPLocal alerts
 # or
 # zap-cli --verbose -p 2375  --api-key ZAPLocal quick-scan -s xss --spider -r $TARGET
 ```
