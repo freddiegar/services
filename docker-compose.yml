@@ -56,6 +56,8 @@ services:
     networks:
       development:
         ipv4_address: 172.20.0.98
+    ports:
+    - 2375:2375
     extra_hosts:
       - "analitica.local:172.20.0.56"
 
