@@ -1,8 +1,8 @@
 FROM php:5.6-apache
 
 COPY ./vhosts/* /etc/apache2/sites-available/
+COPY ./vhosts/security.conf /etc/apache2/conf-available/security.conf
 COPY ./alias.conf /etc/apache2/alias.conf
-COPY ./security.conf /etc/apache2/conf-available/security.conf
 COPY ./ssl/* /var/www/ssl/
 COPY ./php56/php.ini /usr/local/etc/php/php.ini
 

@@ -219,7 +219,7 @@ Updated command
 python3 xsstrike.py --update
 ```
 
-Get `xsser` command in javascript, tap F12 Key in Browser and paste (for POST method):
+Get `xsstrike` command in javascript, tap F12 Key in Browser and paste (for POST method):
 
 ```javascript
 var data = '';
