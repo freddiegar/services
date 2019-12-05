@@ -1,6 +1,18 @@
 version: '3.2'
 
 services:
+  proxy:
+    container_name: proxy
+    build:
+      context: .
+      dockerfile: ./proxy/Dockerfile
+    networks:
+      development:
+        ipv4_address: 172.20.0.100
+    ports:
+    - 80:80
+    - 443:443
+
   apache73:
     container_name: apache73
     build:
@@ -11,9 +23,9 @@ services:
     networks:
       development:
         ipv4_address: 172.20.0.73
-    ports:
-    - 80:80
-    - 443:443
+    expose:
+    - 80
+    - 443
     extra_hosts:
       - "analitica.local:127.0.0.1"
 
@@ -27,9 +39,9 @@ services:
     networks:
       development:
         ipv4_address: 172.20.0.56
-    ports:
-    - 80:80
-    - 443:443
+    expose:
+    - 80
+    - 443
     extra_hosts:
       - "analitica.local:127.0.0.1"
 
@@ -44,7 +56,7 @@ services:
       development:
         ipv4_address: 172.20.0.99
     extra_hosts:
-      - "analitica.local:172.20.0.56"
+      - "analitica.local:172.20.0.100"
 
   zap:
     container_name: zap
@@ -59,7 +71,7 @@ services:
     ports:
     - 2375:2375
     extra_hosts:
-      - "analitica.local:172.20.0.56"
+      - "analitica.local:172.20.0.100"
 
 networks:
   development:
