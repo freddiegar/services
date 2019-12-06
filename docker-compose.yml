@@ -12,6 +12,7 @@ services:
     ports:
     - 80:80
     - 443:443
+    - 32700:32700
 
   apache73:
     container_name: apache73
