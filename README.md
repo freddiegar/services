@@ -9,6 +9,7 @@ Docker Setup
 ## XDebug in docker
 
 [See](https://medium.com/@jasonterando/debugging-with-visual-studio-code-xdebug-and-docker-on-windows-b63a10b0dec)
+or [Remote](https://xdebug.org/docs/remote)
 
 ```bash
 # Install extension from PECL
@@ -18,7 +19,7 @@ xdebug.remote_mode=req
 xdebug.remote_host=host.docker.internal
 xdebug.remote_port=9000
 xdebug.remote_enable=1
-xdebug.remote_autostart=1
+xdebug.remote_autostart=0
 xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=0
 xdebug.coverage_enable=0
@@ -28,6 +29,13 @@ zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/lo
 # cat /usr/local/etc/php/conf.d/xdebug.ini
 # Restart apache to load changes
 service apache2 reload
+
+# Use to start
+# http://localhost?XDEBUG_SESSION_START=PHPSTORM
+# Use to stop
+# http://localhost?XDEBUG_SESSION_STOP=PHPSTORM
+# or
+# https://addons.mozilla.org/en-GB/firefox/addon/xdebug-helper-for-firefox/
 ```
 
 > PHP 5.6: pecl install -f xdebug-2.5.5
@@ -60,7 +68,9 @@ launch.json example for local and remote debugging multiple root
                 "show_hidden": 1,
                 "max_children": 100,
                 "max_depth": 5
-            }
+            },
+            "ignore": ["**/vendor/**/*.php"],
+            "log": true
         },
         {
             "name": "Launch currently open script",
