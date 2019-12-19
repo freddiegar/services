@@ -23,6 +23,7 @@ RUN apt-get update \
     libpng-dev \
     libjpeg-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
+    && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ --with-png-dir=/usr/lib/x86_64-linux-gnu/ \
     && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip gd \
     && a2enmod rewrite \
     && a2enmod ssl \
