@@ -20,8 +20,10 @@ RUN apt-get update \
     zlib1g-dev \
     zip \
     libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-install mysqli soap xsl shmop zip \
+    && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip gd \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
@@ -30,7 +32,8 @@ RUN apt-get update \
     && a2ensite localhost \
     && a2ensite analitica.local \
     && a2ensite analitica.local-ssl \
-    && service apache2 restart
+    && service apache2 restart \
+    && apt-get autoremove -y
 
 ENTRYPOINT [ "/usr/sbin/apachectl" ]
 CMD ["-D", "FOREGROUND"]

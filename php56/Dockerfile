@@ -22,9 +22,11 @@ RUN apt-get update \
     libzip-dev \
     libldap2-dev \
     pdftk \
+    libpng-dev \
+    libjpeg-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install mysql soap xsl shmop zip ldap \
+    && docker-php-ext-install -j$(nproc) mysql soap xsl shmop zip ldap gd \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
@@ -33,7 +35,8 @@ RUN apt-get update \
     && a2ensite localhost \
     && a2ensite analitica.local \
     && a2ensite analitica.local-ssl \
-    && service apache2 restart
+    && service apache2 restart \
+    && apt-get autoremove -y
 
 ENTRYPOINT [ "/usr/sbin/apachectl" ]
 CMD ["-D", "FOREGROUND"]
