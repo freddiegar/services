@@ -363,6 +363,19 @@ zap-cli -p 2375 --api-key ZAPLocal quick-scan --scanners xss -r $TARGET
 # zap-cli --verbose -p 2375  --api-key ZAPLocal quick-scan -s xss --spider -r $TARGET
 ```
 
+### OpenDoor
+
+See [OpenDoor](https://github.com/stanislav-web/OpenDoor)
+
+```bash
+python3 opendoor.py --host MY_APP_URL
+```
+Updated command
+
+```bash
+python3 opendoor.py --update
+```
+
 ## Bootstrap Custom
 
 Clone repo Bootstrap (and npm install for dependencies, of course, you require nodejs installed)
