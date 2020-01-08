@@ -152,7 +152,7 @@ organizationalUnitName_default = Development
 
 commonName   = Common Name (e.g. server FQDN or YOUR name)
 commonName_max   = 64
-commonName_default  = *.analitica.local
+commonName_default  = *.development.local
 
 emailAddress   = Email Address
 emailAddress_max  = 64
@@ -231,7 +231,7 @@ keyUsage = nonRepudiation, digitalSignature, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = analitica.local
+DNS.1 = development.local
 DNS.2 = localhost
 
 [ v3_ca ]
