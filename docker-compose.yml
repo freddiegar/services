@@ -28,7 +28,7 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "analitica.local:127.0.0.1"
+      - "development.local:127.0.0.1"
 
   apache56:
     container_name: apache56
@@ -44,7 +44,7 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "analitica.local:127.0.0.1"
+      - "development.local:127.0.0.1"
 
   pentesting:
     container_name: pentesting
@@ -57,7 +57,7 @@ services:
       development:
         ipv4_address: 172.20.0.99
     extra_hosts:
-      - "analitica.local:172.20.0.100"
+      - "development.local:172.20.0.100"
 
   zap:
     container_name: zap
@@ -72,7 +72,7 @@ services:
     ports:
     - 2375:2375
     extra_hosts:
-      - "analitica.local:172.20.0.100"
+      - "development.local:172.20.0.100"
 
 networks:
   development:

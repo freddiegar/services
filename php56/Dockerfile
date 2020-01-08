@@ -8,7 +8,7 @@ COPY ./php56/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html
 
-RUN cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/analitica.local.ca-cert.crt \
+RUN cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt \
     && update-ca-certificates
 
 RUN apt-get update \
@@ -34,8 +34,8 @@ RUN apt-get update \
     && a2enmod headers \
     && a2dissite 000-default \
     && a2ensite localhost \
-    && a2ensite analitica.local \
-    && a2ensite analitica.local-ssl \
+    && a2ensite development.local \
+    && a2ensite development.local-ssl \
     && service apache2 restart \
     && apt-get autoremove -y
 

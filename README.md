@@ -47,9 +47,6 @@ launch.json example for local and remote debugging multiple root
 
 ```json
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
@@ -61,7 +58,7 @@ launch.json example for local and remote debugging multiple root
             "externalConsole": true,
             "pathMappings": {
                 "${workspaceFolder:flex-generator}/": "${workspaceFolder:flex-generator}/",
-                "/var/www/html/analitica/flex-generator": "${workspaceFolder:flex-generator}/",
+                "/var/www/html/flexphp/flex-generator": "${workspaceFolder:flex-generator}/",
             },
             "xdebugSettings": {
                 "max_data": 65535,
@@ -118,8 +115,8 @@ See: [https://curl.haxx.se/docs/sslcerts.html](https://curl.haxx.se/docs/sslcert
 0. Add in: C:C:\Windows\System32\drivers\etc\hosts
 
 ```
-127.0.0.1       analitica.local
-::1             analitica.local
+127.0.0.1       development.local
+::1             development.local
 ```
 
 1. Download certificate package from: https://curl.haxx.se/docs/caextract.html (save as: `curl-ca-bundle.crt`)
@@ -127,10 +124,10 @@ See: [https://curl.haxx.se/docs/sslcerts.html](https://curl.haxx.se/docs/sslcert
 2. Run in cmd (or sh with Git) command:
 
 ```bash
-openssl s_client -showcerts -servername analitica.local -connect analitica.local:443 > analitica.local.pem
+openssl s_client -showcerts -servername development.local -connect development.local:443 > development.local.pem
 ```
 
-3. Concat `analitica.local.pem` chain certificates in `curl-ca-bundle.crt` file.
+3. Concat `development.local.pem` chain certificates in `curl-ca-bundle.crt` file.
 
 4. Move file curl-ca-bundle.crt concatenated to:
 
@@ -141,7 +138,7 @@ C:/Windows/System32/curl-ca-bundle.crt
 5. Run in cmd to test (a URL valid), for example:
 
 ```bash
-curl -I https://analitica.local
+curl -I https://development.local
 ```
 
 It must be return: 302 | 200 HTTP Code
@@ -341,7 +338,7 @@ See [ZAP](https://github.com/Grunny/zap-cli)
 Scan baseline
 
 ```bash
-TARGET=https://analitica.local/Project/
+TARGET=https://development.local/Project/
 zap-baseline.py -t $TARGET -d
 ```
 
@@ -355,7 +352,7 @@ zap.sh -daemon -host 0.0.0.0 -port 2375 -config api.key=ZAPLocal -config scanner
 Scan url XSS (xss) or SQLInjection (sqli)
 
 ```bash
-TARGET=https://analitica.local/Project/
+TARGET=https://development.local/Project/
 zap-cli -p 2375 --api-key ZAPLocal open-url $TARGET
 zap-cli -p 2375 --api-key ZAPLocal spider $TARGET
 zap-cli -p 2375 --api-key ZAPLocal quick-scan --scanners xss -r $TARGET
