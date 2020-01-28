@@ -1,10 +1,10 @@
-FROM php:5.6-apache
+FROM php:7.2-apache
 
 COPY ./vhosts/* /etc/apache2/sites-available/
 COPY ./vhosts/security.conf /etc/apache2/conf-available/security.conf
 COPY ./alias.conf /etc/apache2/alias.conf
 COPY ./ssl/* /var/www/ssl/
-COPY ./php56/php.ini /usr/local/etc/php/php.ini
+COPY ./php72/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html
 
@@ -20,14 +20,11 @@ RUN apt-get update \
     zlib1g-dev \
     zip \
     libzip-dev \
-    libldap2-dev \
-    pdftk \
     libpng-dev \
     libjpeg-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ --with-png-dir=/usr/lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install -j$(nproc) mysql soap xsl shmop zip ldap gd \
+    && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip gd \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
