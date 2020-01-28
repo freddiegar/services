@@ -41,7 +41,18 @@ service apache2 reload
 > PHP 5.6: pecl install -f xdebug-2.5.5
 > PHP 7+: pecl install -f xdebug
 
-### VSCode 
+### Composer
+
+```bash
+# Unit Test in  PHP
+composer global require phpunit/phpunit
+# Fixes PHP
+composer global require friendsofphp/php-cs-fixer
+# Simulate request from Apache
+composer global require jelix/fakeserverconf
+```
+
+### VSCode
 
 launch.json example for local and remote debugging multiple root
 
