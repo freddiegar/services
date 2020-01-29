@@ -1,19 +1,6 @@
 version: '3.2'
 
 services:
-  proxy:
-    container_name: proxy
-    build:
-      context: .
-      dockerfile: ./proxy/Dockerfile
-    networks:
-      development:
-        ipv4_address: 172.20.0.100
-    ports:
-    - 80:80
-    - 443:443
-    - 32700:32700
-
   apache74:
     container_name: apache74
     build:
@@ -28,7 +15,7 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
+      - 'development.local:127.0.0.1'
 
   apache73:
     container_name: apache73
@@ -44,7 +31,7 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
+      - 'development.local:127.0.0.1'
 
   apache72:
     container_name: apache72
@@ -60,7 +47,7 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
+      - 'development.local:127.0.0.1'
 
   apache56:
     container_name: apache56
@@ -76,7 +63,20 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
+      - 'development.local:127.0.0.1'
+
+  proxy:
+    container_name: proxy
+    build:
+      context: .
+      dockerfile: ./proxy/Dockerfile
+    networks:
+      development:
+        ipv4_address: 172.20.0.100
+    ports:
+    - '80:80'
+    - '443:443'
+    - '32700:32700'
 
   pentesting:
     container_name: pentesting
@@ -89,7 +89,7 @@ services:
       development:
         ipv4_address: 172.20.0.99
     extra_hosts:
-      - "development.local:172.20.0.100"
+      - 'development.local:172.20.0.100'
 
   zap:
     container_name: zap
@@ -102,9 +102,23 @@ services:
       development:
         ipv4_address: 172.20.0.98
     ports:
-    - 2375:2375
+    - '2375:2375'
     extra_hosts:
-      - "development.local:172.20.0.100"
+      - 'development.local:172.20.0.100'
+
+  ftp:
+    image: atmoz/sftp:alpine
+    container_name: ftp
+    volumes:
+      - 'D:/var/www/analitica/Ventanillas/FTP/Entrada:/home/ftpusr/upload'
+    command: ftpusr:1q2w3e4r:1001
+    networks:
+      development:
+        ipv4_address: 172.20.0.97
+    ports:
+    - '8022:22'
+    extra_hosts:
+      - 'development.local:172.20.0.100'
 
 networks:
   development:
