@@ -160,7 +160,7 @@ See [Kali](https://www.kali.org/news/official-kali-linux-docker-images/) install
 
 ### XSSer
 
-See [XSSer](https://github.com/epsylon/xsser) and  [options](http://lordepsylon.users.sourceforge.net/)
+See [XSSer](https://github.com/epsylon/xsser) and [options](http://lordepsylon.users.sourceforge.net/)
 
 ```bash
 # Dumy
@@ -382,6 +382,27 @@ Updated command
 
 ```bash
 python3 opendoor.py --update
+```
+
+### Commix
+
+See [Commix]( https://github.com/commixproject/commix) and [options](https://github.com/commixproject/commix/wiki)
+
+```bash
+# Help
+python3 commix.py –-help
+# Wizard
+python3 commix.py –-wizard
+# Dumy
+python3 commix.py –url="MY_APP_URL?PARAM1=INJECT_HERE"
+# Unix and PHP
+python3 commix.py --url "MY_APP_URL?PARAM1=INJECT_HERE" --os=unix --cookie="foo=bar; bar=foo" --hostname --skip-calc --skip-empty --random-agent --os-cmd="date>/var/www/project/logs/commix.log"
+```
+
+Updated command
+
+```bash
+python3 commix --update
 ```
 
 ## Bootstrap Custom
