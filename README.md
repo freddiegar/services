@@ -1,10 +1,89 @@
-Docker Setup
+Services Setup
 ---
 
-## Requisites
+# Requisites
 
 - docker
 - docker-compose
+
+## Setup
+
+Set config vars in `.env` file
+
+```bash
+cp -p .env.example .env
+```
+
+## Deploy
+
+Install services
+
+```bash
+docker-compose up -d SERVICE_NAME
+```
+
+## Verify
+
+Verify development network
+
+```bash
+# Check if not exist
+docker network ls | grep development
+# Create network
+docker network create --driver=bridge --subnet=172.20.0.0/16 --gateway=172.20.0.1 development
+```
+
+Allow access from another networks segment to containers development network
+
+```bash
+# Connect another network in each container and use name over ip
+docker network connect <network-name> db
+docker network connect <network-name> cache
+```
+
+## Binding data
+
+Create folders data and log and set defaults
+
+```bash
+sudo mkdir -p /var/lib/mysql && sudo chown $(whoami):docker /var/lib/mysql
+sudo mkdir -p /var/log/mysql && sudo chown $(whoami):docker /var/log/mysql
+touch /var/log/mysql/error.log
+touch /var/log/mysql/mysql.log
+touch /var/log/mysql/slow.log
+chmod 660 /var/log/mysql/*.log
+```
+
+## MySQL
+
+### Logs
+
+Save logs file, in `db` container: 
+
+```bash
+docker exec -it db bash
+apt update && apt install vim -y
+vim /etc/mysql/mysql.conf.d/mysqld.cnf
+```
+
+Add this options in file
+
+```bash
+sql-mode               = "ALLOW_INVALID_DATES"
+log_error              = /var/log/mysql/error.log
+general_log            = 0
+general_log_file       = /var/log/mysql/mysql.log
+slow_query_log         = 1
+slow_query_log_file    = /var/log/mysql/slow.log
+long_query_time = 2
+log-queries-not-using-indexes
+```
+
+Restart server
+
+```bash
+/etc/init.d/mysql restart
+```
 
 ## XDebug in docker
 
@@ -91,39 +170,12 @@ launch.json example for local and remote debugging multiple root
     ]
 }
 ```
-## Verify
-
-Verify development network
-
-```bash
-# Check if not exist
-docker network ls | grep development
-# Create network
-docker network create --driver=bridge --subnet=172.20.0.0/16 --gateway=172.20.0.1 development
-```
-
-### Allow access from another networks segment to containers development network
-
-```bash
-# Connect another network in each container and use name over ip
-docker network connect <network-name> db
-docker network connect <network-name> cache
-# Example: docker network connect development db
-```
-
-### Deploy
-
-Deploy Apache Server with PHP 7.3 (apache73)
-
-```bash
-docker-compose up -d
-```
 
 ### SSL Certificate in Windows
 
 See: [https://curl.haxx.se/docs/sslcerts.html](https://curl.haxx.se/docs/sslcerts.html)
 
-0. Add in: C:C:\Windows\System32\drivers\etc\hosts
+0. Add in: C:\Windows\System32\drivers\etc\hosts
 
 ```
 127.0.0.1       development.local
