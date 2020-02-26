@@ -64,7 +64,18 @@ gnome-session-quit
 ```bash
 touch ~/.bash_aliases
 echo 'alias x=exit
+alias ll="ls -l"
 alias update="sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y"
+alias dup="docker-compose up -d --build"
+alias dexec="docker exec -it"
+alias dlogs="docker logs --tail 50 -f"
+alias dstart="docker start"
+alias dstop="docker stop"
+alias dstatus="docker ps --format \"{{.Names}}\""
+alias dphp56="docker exec -it apache56 bash"
+alias dphp74="docker exec -it apache74 bash"
+alias dphp56a74="docker stop apache56 && docker start apache74"
+alias dphp74a56="docker stop apache74 && docker start apache56"
 alias ducks="du -cks * | sort -rn | head"' > ~/.bash_aliases
 echo 'if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
