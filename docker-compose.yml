@@ -45,7 +45,8 @@ services:
     - 80
     - 443
     extra_hosts:
-      - development.local:127.0.0.1
+      - "development.local:127.0.0.1"
+      - "host.docker.internal:${HOST_DOCKER}"
 
   apache73:
     container_name: apache73
@@ -61,7 +62,8 @@ services:
     - 80
     - 443
     extra_hosts:
-      - development.local:127.0.0.1
+      - "development.local:127.0.0.1"
+      - "host.docker.internal:${HOST_DOCKER}"
 
   apache72:
     container_name: apache72
@@ -77,7 +79,8 @@ services:
     - 80
     - 443
     extra_hosts:
-      - development.local:127.0.0.1
+      - "development.local:127.0.0.1"
+      - "host.docker.internal:${HOST_DOCKER}"
 
   apache56:
     container_name: apache56
@@ -93,7 +96,8 @@ services:
     - 80
     - 443
     extra_hosts:
-      - development.local:127.0.0.1
+      - "development.local:127.0.0.1"
+      - "host.docker.internal:${HOST_DOCKER}"
 
   proxy:
     container_name: proxy
