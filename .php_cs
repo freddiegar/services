@@ -18,8 +18,8 @@ return PhpCsFixer\Config::create()
         'array_syntax' => ['syntax' => 'short'],
         'binary_operator_spaces' => [
             'operators' => [
-                '=' => 'align',
-                '=>' => 'align',
+                // '=' => 'align',
+                // '=>' => 'align',
             ],
         ],
         'blank_line_after_namespace' => true,
@@ -52,8 +52,7 @@ return PhpCsFixer\Config::create()
         'compact_nullable_typehint' => true,
         // 'concat_space' => ['spacing' => 'none'],
         'concat_space' => ['spacing' => 'one'],
-        // 'declare_equal_normalize' => ['space' => 'none'],
-        'declare_equal_normalize' => ['space' => 'single'],
+        'declare_equal_normalize' => ['space' => 'none'],
         'declare_strict_types' => true,
         'dir_constant' => true,
         'elseif' => true,
@@ -104,7 +103,10 @@ return PhpCsFixer\Config::create()
         'no_spaces_after_function_name' => true,
         'no_spaces_inside_parenthesis' => true,
         'no_superfluous_elseif' => true,
-        'no_superfluous_phpdoc_tags' => true,
+        // 'no_superfluous_phpdoc_tags' => true,
+        'no_superfluous_phpdoc_tags' => [
+            'allow_mixed' => true,
+        ],
         'no_trailing_comma_in_list_call' => true,
         'no_trailing_comma_in_singleline_array' => true,
         'no_trailing_whitespace' => true,
