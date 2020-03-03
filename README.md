@@ -104,7 +104,6 @@ xdebug.profiler_enable_trigger=0
 xdebug.coverage_enable=0
 ;xdebug.remote_log=/var/www/html/xdebug/xdebug.log
 zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
-
 # cat /usr/local/etc/php/conf.d/xdebug.ini
 # Restart apache to load changes
 service apache2 reload

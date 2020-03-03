@@ -2,7 +2,6 @@ UTIL COMMANDS
 ___
 
 Create database
-
 ```mysql
 create database homestead charset=utf8;
 ```
@@ -267,7 +266,7 @@ git remote -v
 Change origin in git repository
 ```bash
 git remote remove origin
-git remote add origin git@bitbucket.org:project/name.git
+git remote add origin git@github.org:owner/repository.git
 git remote -v
 ```
 

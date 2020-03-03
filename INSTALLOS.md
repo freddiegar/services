@@ -63,10 +63,12 @@ gnome-session-quit
 # Aliases
 ```bash
 touch ~/.bash_aliases
-echo 'alias x=exit
+echo 'alias x="exit"
 alias ll="ls -l"
 alias update="sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y"
 alias dup="docker-compose up -d --build"
+alias dconfig="docker-compose config"
+alias drm="docker rm -f"
 alias dexec="docker exec -it"
 alias dlogs="docker logs --tail 50 -f"
 alias dstart="docker start"
@@ -308,4 +310,12 @@ sudo apt-get install -y vagrant
 ## Remove LibreOffice
 ```bash
 sudo apt-get remove -y --purge libreoffice* && sudo apt-get clean && sudo apt-get autoremove
+```
+
+## Sublime Text
+```bash
+curl -L https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+sudo apt-get update
+sudo apt-get install -y sublime-text
 ```
