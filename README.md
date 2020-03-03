@@ -156,8 +156,7 @@ launch.json example for local and remote debugging multiple root
                 "max_children": 100,
                 "max_depth": 5
             },
-            "ignore": ["**/vendor/**/*.php"],
-            "log": true
+            "ignore": ["**/vendor/**/*.php"]
         },
         {
             "name": "Launch currently open script",

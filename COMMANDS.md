@@ -182,6 +182,15 @@ Copy all content folder local to server by ssh
 scp -r public/apidoc user@server:/var/www/html/sites/public/.
 ```
 
+Copy by SSH using password, it need 
+```bash
+# sudo apt-get install -y sshpass
+sshpass -p "password" scp filename.ext user@server:/var/www/html/sites
+# or
+sshpass -f "/file/with/password" scp filename.ext user@server:/var/www/html/sites
+```
+
+
 Copy from container to host in docker
 ```bash
 docker cp <containerId>:/from/container /to/host
