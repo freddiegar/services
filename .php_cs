@@ -45,7 +45,10 @@ return PhpCsFixer\Config::create()
             ],
         ],
         'braces' => true,
-        'cast_spaces' => true,
+        // 'cast_spaces' => true,
+        'cast_spaces' => [
+            'space' => 'none'
+        ],
         'class_attributes_separation' => ['elements' => ['const', 'method', 'property']],
         'combine_consecutive_issets' => true,
         'combine_consecutive_unsets' => true,
