@@ -108,12 +108,21 @@ zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/lo
 # Restart apache to load changes
 service apache2 reload
 
+# Web
 # Use to start
 # http://localhost?XDEBUG_SESSION_START=PHPSTORM
 # Use to stop
 # http://localhost?XDEBUG_SESSION_STOP=PHPSTORM
 # or
 # https://addons.mozilla.org/en-GB/firefox/addon/xdebug-helper-for-firefox/
+
+# CLI
+# On *nix
+# export XDEBUG_CONFIG="idekey=PHPSTORM"
+# On Windows
+# set XDEBUG_CONFIG="idekey=PHPSTORM"
+# After run
+# php -f file.php
 ```
 
 > PHP 5.6: pecl install -f xdebug-2.5.5
@@ -146,8 +155,10 @@ launch.json example for local and remote debugging multiple root
             "log": true,
             "externalConsole": true,
             "pathMappings": {
-                "${workspaceFolder:flex-generator}/": "${workspaceFolder:flex-generator}/",
+                // Remote
                 "/var/www/html/flexphp/flex-generator": "${workspaceFolder:flex-generator}/",
+                // Local
+                "${workspaceFolder:flex-generator}/": "${workspaceFolder:flex-generator}/",
             },
             "xdebugSettings": {
                 "max_data": 65535,
