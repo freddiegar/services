@@ -565,7 +565,7 @@ Run AST infection test
 - 1st Install: composer global require infection/infection
 - 2nd Into project root folder run:
 ```bash
-infection --threads=4
+infection --threads=$(nproc)
 ```
 
 Ignore polifyll in composer, add in composer.json

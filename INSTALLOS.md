@@ -135,6 +135,27 @@ sudo chmod +x /usr/local/bin/security-checker
 ## sudo rm /usr/local/bin/security-checker
 ```
 
+# Code Sniffer Fixer
+```bash
+cd ~
+sudo curl -L https://cs.symfony.com/download/php-cs-fixer-v2.phar -o /usr/local/bin/php-cs-fixer
+sudo chmod +x /usr/local/bin/php-cs-fixer
+## Command:
+## sudo rm /usr/local/bin/security-checker
+```
+
+# Mess Detector
+```bash
+cd ~
+sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.8.2/phpmd.phar -o /usr/local/bin/phpmd
+sudo chmod +x /usr/local/bin/phpmd
+## Command:
+## phpmd source/code format ruleset
+## phpmd src ansi cleancode,design,naming,unusedcode
+## phpmd src ansi cleancode,codesize,controversial,design,naming,unusedcode
+## sudo rm /usr/local/bin/phpmd
+```
+
 # Infection AST 
 ```bash
 cd ~
