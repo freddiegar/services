@@ -152,10 +152,10 @@ return PhpCsFixer\Config::create()
             ],
         ],
         'ordered_imports' => true,
-        'ordered_interfaces' => [
-            'direction' => 'ascend',
-            'order' => 'alpha',
-        ],
+        // 'ordered_interfaces' => [
+        //    'direction' => 'ascend',
+        //    'order' => 'alpha',
+        // ],
         'phpdoc_add_missing_param_annotation' => true,
         // 'phpdoc_align' => true,
         'phpdoc_align' => false,
