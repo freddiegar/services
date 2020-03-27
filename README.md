@@ -56,9 +56,7 @@ chmod 660 /var/log/mysql/*.log
 
 ## MySQL
 
-### Logs
-
-Save logs file, in `db` container: 
+Edit configuration file
 
 ```bash
 docker exec -it db bash
@@ -66,20 +64,65 @@ apt update && apt install vim -y
 vim /etc/mysql/mysql.conf.d/mysqld.cnf
 ```
 
-Add this options in file
+### Show Config
+
+```mysql
+SHOW VARIABLES LIKE '%version%';
+SHOW VARIABLES LIKE '%max_connections%';
+```
+
+### Logs
+
+Save logs file:
 
 ```bash
-sql-mode               = "ALLOW_INVALID_DATES"
-log_error              = /var/log/mysql/error.log
-general_log            = 0
-general_log_file       = /var/log/mysql/mysql.log
-slow_query_log         = 1
-slow_query_log_file    = /var/log/mysql/slow.log
-long_query_time = 2
+[mysqld]
+
+sql-mode                      = "ALLOW_INVALID_DATES"
+log_error                     = /var/log/mysql/error.log
+general_log                   = 0
+general_log_file              = /var/log/mysql/mysql.log
+slow_query_log                = 1 # In minutes
+slow_query_log_file           = /var/log/mysql/slow.log
+long_query_time               = 2 # In minutes
 log-queries-not-using-indexes
 ```
 
-Restart server
+### Memory
+
+- Set memory from server available to use in MySQL:
+
+```bash
+[mysqld]
+
+key_buffer_size               = 200MB # 20% of total RAM
+
+innodb_buffer_pool_size       = 1G   # 50% - 70 of total RAM
+innodb_log_file_size          = 256M # 25% of innodb_buffer_pool_size
+innodb_flush_method           = O_DIRECT # avoid double buffering
+innodb_file_per_table         = ON
+innodb_stats_on_metadata      = OFF
+innodb_buffer_pool_instances  = 1 # or 8 if innodb_buffer_pool_size < 1GB
+
+query_cache_type              = 0
+query_cache_size              = 0 # Deprecated in 5.7.20
+skip_name_resolve
+```
+
+### Tunning
+
+[See](https://github.com/major/MySQLTuner-perl)
+
+```bash
+apt update && apt install curl -y
+curl -L https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl -o /usr/local/bin/mysqltuner.pl
+chmod +x /usr/local/bin/mysqltuner.pl
+mysqltuner.pl --host 127.0.0.1
+# Updated
+# mysqltuner.pl --checkversion --updateversion
+```
+
+### Restart
 
 ```bash
 /etc/init.d/mysql restart
