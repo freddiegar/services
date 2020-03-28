@@ -65,6 +65,8 @@ gnome-session-quit
 touch ~/.bash_aliases
 echo 'alias x="exit"
 alias ll="ls -l"
+alias ct="composer test"
+alias cda="composer dump-autoload"
 alias update="sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y"
 alias dup="docker-compose up -d --build"
 alias dconfig="docker-compose config"
@@ -168,6 +170,36 @@ sudo chmod +x /usr/local/bin/infection
 ## sudo rm /usr/local/bin/infection
 ```
 
+# PHPLOC (Lines Of Code)
+```bash
+cd ~
+sudo curl -L https://phar.phpunit.de/phploc.phar -o /usr/local/bin/phploc
+sudo chmod +x /usr/local/bin/phploc
+## Command:
+## phploc -v --exclude=vendor --ansi .
+## sudo rm /usr/local/bin/phploc
+```
+
+# PHPCPD (Copy/Paste Dectector)
+```bash
+cd ~
+sudo curl -L https://phar.phpunit.de/phpcpd.phar -o /usr/local/bin/phpcpd
+sudo chmod +x /usr/local/bin/phpcpd
+## Command:
+## phpcpd -vvv --exclude=vendor --ansi --progress .
+## sudo rm /usr/local/bin/phpcpd
+```
+
+# PHPMetrics
+```bash
+cd ~
+sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.5.0/phpmetrics.phar -o /usr/local/bin/phpmetrics
+sudo chmod +x /usr/local/bin/phpmetrics
+## Command:
+## phpmetrics --excluded-dirs vendor --report-html=./tests/coverage/phpmetrics .
+## sudo rm /usr/local/bin/phpmetrics
+```
+
 # Docker (Container)
 
 [See 1](https://docs.docker.com/install/linux/docker-ce/ubuntu)
@@ -252,8 +284,8 @@ sudo snap install postman
 ```bash
 cd ~
 sudo dpkg -i vscode.deb
-tar -xvzf firefox.tar.gz -C dir_dest
-tar -xvjf firefox.tar.bz2 -C dir_dest
+tar -xvzf firefox.tar.gz -C /opt
+tar -xvjf firefox.tar.bz2 -C /opt
 ```
 
 # Node
