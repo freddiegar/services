@@ -150,6 +150,35 @@ docker exec -it mssql bash
 # /opt/mssql-tools/bin/sqlcmd -?
 ```
 
+### Enable extension in PHP
+
+[See](https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver15)
+
+[See](https://serverpilot.io/docs/how-to-install-the-php-sqlsrv-extension/)
+
+In container
+
+```bash
+# Dependencies
+apt-get install -y gnupg2
+curl -s https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
+apt-get update
+ACCEPT_EULA=Y apt-get -y install msodbcsql17
+apt-get install -y unixodbc-dev
+# apt-get -y install gcc g++ make autoconf libc-dev pkg-config
+# Installation
+pecl install sqlsrv
+# ecl install pdo_sqlsrv
+# Enabled
+echo "extension=$(find /usr/local/lib/php/extensions/ -name sqlsrv.so)" > /usr/local/etc/php/conf.d/sqlsrv.ini
+# cat /usr/local/etc/php/conf.d/sqlsrv.ini
+# echo "extension=$(find /usr/local/lib/php/extensions/ -name pdo_sqlsrv.so)" > /usr/local/etc/php/conf.d/pdo_sqlsrv.ini
+# Restart apache to load changes
+service apache2 reload
+
+```
+
 ## XDebug in docker
 
 [See](https://medium.com/@jasonterando/debugging-with-visual-studio-code-xdebug-and-docker-on-windows-b63a10b0dec)
