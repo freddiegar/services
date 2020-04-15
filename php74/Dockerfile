@@ -23,7 +23,8 @@ RUN apt-get update \
     libpng-dev \
     libjpeg-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-install -j$(nproc) pdo_mysql mysqli soap xsl shmop zip gd \
+    && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip gd \
+    && docker-php-ext-install -j$(nproc) pdo_mysql opcache \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
