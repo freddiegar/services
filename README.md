@@ -128,6 +128,28 @@ mysqltuner.pl --host 127.0.0.1
 /etc/init.d/mysql restart
 ```
 
+## MSSQL
+
+[See](https://hub.docker.com/_/microsoft-mssql-server)
+[Config](https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-mssql-conf?view=sql-server-ver15)
+
+Command Line Tools in container
+
+```bash
+docker exec -it mssql bash
+# Data and logs directory
+# /var/opt/mssql/
+# /var/opt/mssql/data
+# /var/opt/mssql/log
+# Status
+# sudo systemctl start mssql-server
+# sudo systemctl stop mssql-server
+# Client
+# /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P <password>
+# Help
+# /opt/mssql-tools/bin/sqlcmd -?
+```
+
 ## XDebug in docker
 
 [See](https://medium.com/@jasonterando/debugging-with-visual-studio-code-xdebug-and-docker-on-windows-b63a10b0dec)

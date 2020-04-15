@@ -19,6 +19,18 @@ services:
     ports:
     - $DB_PORT:3306
 
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    container_name: mssql
+    environment:
+      ACCEPT_EULA: 'Y'
+      SA_PASSWORD: $DB_ROOT_PASSWORD
+    networks:
+      development:
+        ipv4_address: 172.20.0.11
+    ports:
+    - 1433:1433
+
   cache:
     image: redis:alpine
     container_name: cache
