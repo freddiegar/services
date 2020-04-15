@@ -69,17 +69,18 @@ Diff in staged changes
 git diff --cached
 ```
 
-Reset with lost changes
+Reset (unstage) with lost changes
 ```bash
 git reset --soft HEAD^
 ```
 
-Reset add from all files
+Reset add (unstage) from all files
 ```bash
-git reset HEAD
+git reset HEAD~
+git commit -C ORIG_HEAD
 ```
 
-Reset add from one file
+Reset add (unstage) from one file
 ```bash
 git reset HEAD <path_to_file>
 ```
@@ -595,4 +596,14 @@ RegExp email (PHP)
 RegExp email (MySQL)
 ```
 ^[A-Z0-9._+-]*[^[:space:][:blank:].][+]?@[^[:space:][:blank:]_][A-Z0-9-]*(\\.[A-Z]{1,})+$ ~= RegExp email (PHP)
+```
+
+Add user to group
+```bash
+gpasswd -a -G group user
+```
+
+Delete group of user
+```bash
+gpasswd -d user group
 ```
