@@ -607,3 +607,25 @@ Delete group of user
 ```bash
 gpasswd -d user group
 ```
+
+Mount disk
+```bash
+# Show disk available
+fdisk -l
+## mkdir /folder/mount
+# mount /path/disk /folder/mount
+## auto-mount after restart machine
+## check type format /path/disk
+# parted -l
+vim /etc/fstab
+/path/disk /folder/mount ext4 defaults 1 2
+```
+
+Update packages in Linux
+```bash
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get -y autoremove
+sudo apt-get -y autoclean
+sudo reboot
+```
