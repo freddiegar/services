@@ -78,7 +78,7 @@ Save logs file:
 ```bash
 [mysqld]
 
-sql-mode                      = "ALLOW_INVALID_DATES"
+sql-mode                      = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
 log_error                     = /var/log/mysql/error.log
 general_log                   = 0
 general_log_file              = /var/log/mysql/mysql.log
