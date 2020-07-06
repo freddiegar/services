@@ -486,6 +486,18 @@ File large size list
 du -cks * | sort -rn | head
 ```
 
+File large size list
+```bash
+du -cksh * | sort -rn | head
+du -cksh * | sort -rn | head -10 # First 10
+```
+
+Dicrectory size
+```bash
+du -ch .
+du -cksh .
+```
+
 Add ACL (u=user , g=group)
 ```bash
 sudo setfacl -dR -m [u]:[username]:rwX [/path/file]
@@ -628,4 +640,221 @@ sudo apt-get -y upgrade
 sudo apt-get -y autoremove
 sudo apt-get -y autoclean
 sudo reboot
+```
+
+Repair and optimize all database in MySQL
+```bash
+mysqlcheck --auto-repair -o --all-databases
+# mysqlcheck --auto-repair -o -B dabase-name
+```
+
+Size tables in MySQL
+```bash
+SELECT
+  TABLE_NAME AS `Table`,
+  ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `Size (MB)`,
+  ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024) AS `Size (KB)`,
+  (DATA_LENGTH + INDEX_LENGTH) AS `Size (B)`
+FROM
+  information_schema.TABLES
+WHERE
+    TABLE_SCHEMA = 'bookstore'
+--   AND
+--    TABLE_NAME = 'book'
+ORDER BY
+  (DATA_LENGTH + INDEX_LENGTH)
+DESC;
+```
+
+Update node (nodejs)
+```bash
+npm cache clean -f
+npm install -g n
+n stable
+# node -v
+# Windows OS
+# Download msi file from: https://nodejs.org/en/download/
+```
+
+Update npm
+```bash
+npm install npm@latest -g
+# npm -v
+# Windows OS
+# On PowerShell
+# Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
+# > npm-windows-upgrade
+```
+
+Install webpack with babel
+```bash
+# if new npm init -y
+# in package.json
+  "jest": {
+    "transform": {
+        "(.*)\\.(js)$": "<rootDir>/node_modules/babel-jest"
+    }
+  },
+  "scripts": {
+    "watch": "webpack --watch --mode development",
+    "build": "webpack --mode production",
+    "test": "jest"
+  },
+npm install webpack --save-dev
+npm install webpack-cli --save-dev
+npm install @babel/core --save-dev
+npm install @babel/preset-env --save-dev
+npm install babel-loader --save-dev
+npm install babel-jest --save-dev
+echo "{
+  'presets': ['@babel/preset-env']
+}
+" >> .babelrc
+echo "const path = require('path');
+
+const config = {
+    entry: './src/js/index.js',
+    output: {
+        path: path.resolve(__dirname, 'public/assets/js'),
+        filename: 'bundle.js',
+    },
+    resolve: {
+        modules: [__dirname, 'node_modules'],
+        extensions: ['.js'],
+    },
+    module: {
+        rules: [
+            {
+                test: /\.m?js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
+                }
+            }
+        ]
+    }
+};
+
+module.exports = config;
+" >> webpack.config.js
+
+# after create js files and:
+npm run build
+```
+
+Fix repo in svn corrupt, in repo folder root run
+```bash
+sqlite3 .svn/wc.db "delete from work_queue" && svn cleanup
+```
+
+Install Latest Apache (2.4.43) on CentOS
+```bash
+cd ~
+cp -pR /etc/httpd ~/httpd
+sudo yum remove -y httpd
+sudo yum remove -y httpd-tools
+sudo rm -f /etc/yum.repos.d/codeit.mainline.el7.repo
+sudo yum install -y rpm-build gcc
+sudo yum install -y autoconf zlib-devel libselinux-devel libuuid-devel apr-devel apr-util-devel pcre-devel openldap-devel lua-devel libxml2-devel openssl-devel
+sudo yum install -y libtool doxygen
+
+yum info apr | grep Version
+yum info apr-devel | grep Version
+yum info apr-util-devel | grep Version
+# Si son diferentes las versiones compilar la version apr adecuada
+sudo yum remove -y apr
+wget https://archive.apache.org/dist/apr/apr-1.5.2.tar.bz2
+rpmbuild -ts apr-1.5.2.tar.bz2
+rpmbuild -tb apr-1.5.2.tar.bz2
+sudo rpm -U rpmbuild/RPMS/x86_64/apr-1.5.2-1.x86_64.rpm
+sudo rpm -U rpmbuild/RPMS/x86_64/apr-devel-1.5.2-1.x86_64.rpm
+sudo yum install -y apr-util-devel
+yum info apr | grep Version
+yum info apr-devel | grep Version
+yum info apr-util-devel | grep Version
+rm -Rf apr-1.5.2.tar.bz2 rpmbuild/
+
+wget https://downloads.apache.org//httpd/httpd-2.4.43.tar.bz2
+rpmbuild -ts httpd-2.4.43.tar.bz2
+rpmbuild -tb httpd-2.4.43.tar.bz2
+sudo rpm -U rpmbuild/RPMS/x86_64/httpd-2.4.43-1.x86_64.rpm
+sudo rpm -U rpmbuild/RPMS/x86_64/mod_ssl-2.4.43-1.x86_64.rpm
+sudo rpm -U rpmbuild/RPMS/x86_64/httpd-tools-2.4.43-1.x86_64.rpm
+sudo rpm -U rpmbuild/RPMS/x86_64/mod_lua-2.4.43-1.x86_64.rpm
+sudo rpm -U rpmbuild/RPMS/x86_64/mod_proxy_html-2.4.43-1.x86_64.rpm
+sudo rpm -U rpmbuild/RPMS/x86_64/httpd-debuginfo-2.4.43-1.x86_64.rpm
+httpd -v
+rm -Rf httpd-2.4.43.tar.bz2 rpmbuild/
+
+sudo yum remove -y libtool doxygen
+sudo yum remove -y autoconf zlib-devel libselinux-devel libuuid-devel apr-devel apr-util-devel pcre-devel openldap-devel lua-devel libxml2-devel openssl-devel
+sudo yum remove -y rpm-build gcc
+sudo yum autoremove -y
+
+cp -pR /etc/httpd ~/httpd_2_4_43
+cp -pR /etc/httpd ~/httpd_alex
+sudo rm -Rf /etc/httpd
+sudo cp -pR ~/httpd /etc/
+cd /etc/httpd
+ln -s /var/run run
+```
+
+Install PHP 7.4.7 as FPM (FastCGI Process Manager) in Centos7 with Apache
+```bash
+sudo vim /etc/httpd/conf/httpd.conf
+# Remove line
+# PhpIniDir ...
+
+sudo yum install epel-release yum-utils -y
+sudo yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+sudo yum-config-manager --enable remi-php74
+sudo yum clean all
+sudo yum install -y php74
+sudo yum install -y php-cli
+sudo yum install -y php-gd
+sudo yum install -y php-imap
+sudo yum install -y php-mbstring
+sudo yum install -y php-mysqlnd
+sudo yum install -y php-pdo
+sudo yum install -y php-zip
+sudo yum install -y php-soap
+sudo yum install -y php-xml
+sudo yum install -y php-curl
+sudo yum install -y php-opcache
+sudo yum install -y php-fpm
+
+sudo vim /etc/php.ini
+cgi.fix_pathinfo=1 => cgi.fix_pathinfo=0
+
+sudo vim /etc/php-fpm.d/www.conf
+;listen = 127.0.0.1:9000 => listen = /var/run/php-fpm/default.sock
+;listen.owner = nobody    => listen.owner = apache
+;listen.group = nobody    => listen.group = apache
+;listen.group = nobody    => listen.group = apache
+;listen.mode = 0660       => listen.mode = 0660
+
+sudo systemctl enable php-fpm
+sudo systemctl start php-fpm
+sudo systemctl restart httpd.service
+
+# References
+# https://www.linuxtechi.com/install-php-7-centos-7-rhel-7-server/
+# https://www.stephenrlang.com/2018/02/centos-7-apache-2-4-with-php-fpm/
+```
+
+Update docker container from images
+```bash
+docker images | grep php
+# php   7.4-apache   b7ec96dce970   7 weeks ago    414MB
+# php   7.2-apache   21d2326a0284   5 months ago   410MB
+docker pull php:7.4-apache
+docker stop apache74
+docker rm apache74
+docker build --name apache74
+# or docker-compose up -d --build apache74
+# php   7.4-apache   77c1bf5b4475   3 weeks ago    414MB
+# php   7.2-apache   21d2326a0284   5 months ago   410MB
 ```
