@@ -858,3 +858,37 @@ docker build --name apache74
 # php   7.4-apache   77c1bf5b4475   3 weeks ago    414MB
 # php   7.2-apache   21d2326a0284   5 months ago   410MB
 ```
+
+Inactive user account (CentOS)
+```bash
+sudo chage -E0 [username]
+# or: sudo usermod -s /sbin/nologin [username]
+```
+
+Allow httpd read/write content in Centos (SELinux)
+```bash
+ls -lZ /another/path/temp
+# Has httpd_sys_rw_content_t?
+sudo semanage fcontext -a -t httpd_sys_rw_content_t "/another/path/temp(/.*)?"
+# sudo semanage fcontext -a -t httpd_sys_content_t "/var/www/html(/.*)?"
+sudo restorecon -Rv /another/path/temp
+# @see https://www.serverlab.ca/tutorials/linux/web-servers-linux/configuring-selinux-policies-for-apache-web-servers/
+```
+
+Find files and folder where owner NOT is [username]
+```bash
+# owner NOT is [username]
+find -L /var/www/html \! -type l \! -user [username] -ls
+# owner is [username]
+find -L /var/www/html \! -type l -user [username] -ls
+# (G)roups has permission to erite
+find -L /var/www/html \! -type l -perm /g=w -ls
+# (O)thers has permission to erite
+find -L /var/www/html \! -type l -perm /o=w -ls
+```
+
+Apply actions in find
+```bash
+# Remove write to group
+find -L /Analitica/Produccion -group apache -perm /g=w -print | xargs chmod g-w
+```
