@@ -179,10 +179,12 @@ service apache2 reload
 
 ```
 
-## XDebug in docker
+## XDebug
 
 [See](https://medium.com/@jasonterando/debugging-with-visual-studio-code-xdebug-and-docker-on-windows-b63a10b0dec)
 or [Remote](https://xdebug.org/docs/remote)
+
+#### On docker - Remote
 
 ```bash
 # Install extension from PECL
@@ -222,6 +224,40 @@ service apache2 reload
 > PHP 5.6: pecl install -f xdebug-2.5.5
 > PHP 7+: pecl install -f xdebug
 
+#### Local
+
+In php.ini add:
+
+```bash
+;;;;;;;;;;
+; XDebug ;
+;;;;;;;;;;
+
+xdebug.remote_enable = 1
+xdebug.remote_mode=req
+xdebug.remote_host=localhost
+xdebug.remote_port=9000
+xdebug.remote_enable=0
+xdebug.remote_autostart=1
+xdebug.idekey=PHPSTORM
+; To enable profiler use XDEBUG_PROFILE=PHPSTORM in (GET|POST|COOKIE)
+xdebug.profiler_enable=0
+xdebug.profiler_enable_trigger=1
+zend_extension=/usr/local/lib/php/extensions/xdebug.xo
+; Windows
+; zend_extension=php_xdebug-2.9.5-7.3-vc15-nts-x86_64.dll
+```
+
+#### Troubles
+
+1. E: Could not connect to client. :-(
+- Check config in IDE, specialy: port enable
+- Check IP in: `xdebug.remote_host`
+- Check Port in: `xdebug.remote_port`
+
+2. E: Time-out connecting to client (Waited: 200 ms). :-(
+- Start listening in IDE
+
 ### Composer
 
 ```bash
@@ -246,13 +282,12 @@ launch.json example for local and remote debugging multiple root
             "type": "php",
             "request": "launch",
             "port": 9000,
-            "log": true,
-            "externalConsole": true,
             "pathMappings": {
-                // Remote
-                "/var/www/html/flexphp/flex-generator": "${workspaceFolder:flex-generator}/",
-                // Local
-                "${workspaceFolder:flex-generator}/": "${workspaceFolder:flex-generator}/",
+                // Remote (web)
+                "/var/www/html/flexphp/flex-generator": "${workspaceFolder:flex-generator}",
+                // Local (cli)
+                "${workspaceFolder:flex-generator}": "${workspaceFolder:flex-generator}",
+                // IMPORTANT: Romote or Local, not both
             },
             "xdebugSettings": {
                 "max_data": 65535,
