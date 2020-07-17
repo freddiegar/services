@@ -859,8 +859,15 @@ docker build --name apache74
 # php   7.2-apache   21d2326a0284   5 months ago   410MB
 ```
 
-Inactive user account (CentOS)
+Active/Inactive user account (CentOS)
 ```bash
+# Status
+sudo chage -l [username]
+# Active: No expire
+sudo chage -E-1 [username]
+# Active: Until
+sudo chage -E "2020-12-31" [username]
+# Inactive: Expired
 sudo chage -E0 [username]
 # or: sudo usermod -s /sbin/nologin [username]
 ```
