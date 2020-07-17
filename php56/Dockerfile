@@ -1,7 +1,10 @@
 FROM php:5.6-apache
 
-COPY ./vhosts/* /etc/apache2/sites-available/
+COPY ./vhosts/localhost.conf /etc/apache2/sites-available/localhost.conf
+COPY ./vhosts/development.local.conf /etc/apache2/sites-available/development.local.conf
+COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/development.local-ssl.conf
 COPY ./vhosts/security.conf /etc/apache2/conf-available/security.conf
+COPY ./vhosts/apache2.conf /etc/apache2/apache2.conf
 COPY ./alias.conf /etc/apache2/alias.conf
 COPY ./ssl/* /var/www/ssl/
 COPY ./php56/php.ini /usr/local/etc/php/php.ini

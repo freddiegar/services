@@ -1,7 +1,7 @@
 Alias /Alias "/var/www/html/path/"
 <Directory "/var/www/html/path">
-    Options -Indexes +FollowSymLinks
+    # Options -Indexes +FollowSymLinks
+    Options None
     AllowOverride None
-    Order allow,deny
-    Allow from all
+    Require all granted
 </Directory>
