@@ -77,7 +77,9 @@ git reset --soft HEAD^
 Reset add (unstage) from all files
 ```bash
 git reset HEAD~
-git commit -C ORIG_HEAD
+# Updated files, after
+git add .
+git commit --no-edit -C ORIG_HEAD
 ```
 
 Reset add (unstage) from one file
@@ -897,5 +899,17 @@ find -L /var/www/html \! -type l -perm /o=w -ls
 Apply actions in find
 ```bash
 # Remove write to group
-find -L /Analitica/Produccion -group apache -perm /g=w -print | xargs chmod g-w
+find -L /var/www -group apache -perm /g=w -print | xargs chmod g-w
+```
+
+Add repository from local path in composer. [See](https://getcomposer.org/doc/05-repositories.md#path)
+```bash
+    ...
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../name/repo"
+        }
+    ],
+  ...
 ```
