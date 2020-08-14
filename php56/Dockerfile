@@ -32,6 +32,9 @@ RUN apt-get update \
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ --with-png-dir=/usr/lib/x86_64-linux-gnu/ \
     && docker-php-ext-install -j$(nproc) mysql soap xsl shmop zip ldap gd \
     && docker-php-ext-install -j$(nproc) pdo_mysql opcache \
+    && apt-get -y install libssl-dev libc-client2007e-dev libkrb5-dev \
+    && docker-php-ext-configure imap --with-imap-ssl --with-kerberos \
+    && docker-php-ext-install -j$(nproc) imap \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
