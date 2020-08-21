@@ -913,3 +913,13 @@ Add repository from local path in composer. [See](https://getcomposer.org/doc/05
     ],
   ...
 ```
+
+Connect email provider account with PHP
+```php
+# Gmail
+imap_open('{pop.gmail.com:995/pop3/ssl/novalidate-cert}INBOX', 'account@email.com', 'password');
+# or imap_open('{imap.gmail.com:993/imap/ssl}INBOX', 'account@email.com', 'password');
+
+# enable: https://myaccount.google.com/u/1/lesssecureapps
+# and enable IMAP options: Gmail -> Settings -> Forwarding and POP/IMAP -> Enabled POP and IMAP options
+```
