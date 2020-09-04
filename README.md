@@ -64,6 +64,15 @@ apt update && apt install vim -y
 vim /etc/mysql/mysql.conf.d/mysqld.cnf
 ```
 
+### Check config file
+
+After change it run:
+
+```bash
+# which mysqld
+mysqld --verbose --help
+```
+
 ### Show Config
 
 ```mysql
@@ -105,8 +114,26 @@ innodb_stats_on_metadata      = OFF
 innodb_buffer_pool_instances  = 1 # or 8 if innodb_buffer_pool_size < 1GB
 
 query_cache_type              = 0
-query_cache_size              = 0 # Deprecated in 5.7.20
+# query_cache_size              = 0 # Deprecated in 5.7.20
 skip_name_resolve
+```
+
+### Charset
+
+```bash
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+[mysqld]
+# character-set-client-handshake = false #force encoding to uft8
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+[mysqld_safe]
+default-character-set=utf8
 ```
 
 ### Tunning

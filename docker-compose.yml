@@ -2,8 +2,11 @@ version: '3.2'
 
 services:
   db:
-    image: mysql:5.7
+    # https://hub.docker.com/_/mysql
     container_name: db
+    build:
+      context: .
+      dockerfile: ./db/Dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
       # To create user use:

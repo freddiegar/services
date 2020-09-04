@@ -1,0 +1,10 @@
+FROM mysql:5.7
+
+COPY ./db/mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf
+
+# RUN apt-get update \
+#     && apt-get install -y \
+#     vim \
+#     && apt-get autoremove -y
+
+CMD ["mysqld"]
