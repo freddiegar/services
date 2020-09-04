@@ -849,16 +849,27 @@ sudo systemctl restart httpd.service
 
 Update docker container from images
 ```bash
+# PHP
 docker images | grep php
 # php   7.4-apache   b7ec96dce970   7 weeks ago    414MB
-# php   7.2-apache   21d2326a0284   5 months ago   410MB
 docker pull php:7.4-apache
 docker stop apache74
 docker rm apache74
 docker build --name apache74
 # or docker-compose up -d --build apache74
 # php   7.4-apache   77c1bf5b4475   3 weeks ago    414MB
-# php   7.2-apache   21d2326a0284   5 months ago   410MB
+docker rmi b7ec96dce970
+
+# MySQL
+docker images | grep mysql
+# mysql  5.7         db39680b63ac   8 months ago   437MB
+docker pull mysql:5.7
+docker stop db
+docker rm db
+docker build --name db
+# or docker-compose up -d --build db
+# mysql  5.7         718a6da099d8   4 weeks ago    448MB
+docker rmi db39680b63ac
 ```
 
 Active/Inactive user account (CentOS)
@@ -922,4 +933,199 @@ imap_open('{pop.gmail.com:995/pop3/ssl/novalidate-cert}INBOX', 'account@email.co
 
 # enable: https://myaccount.google.com/u/1/lesssecureapps
 # and enable IMAP options: Gmail -> Settings -> Forwarding and POP/IMAP -> Enabled POP and IMAP options
+```
+
+Preload Files in PHP 7.4+
+```bash
+# for Symfony 5.1+
+opcache.preload=/app/var/cache/prod/App_KernelProdContainer.preload.php
+# for Symfony 4.4
+opcache.preload=/app/var/cache/prod/srcApp_KernelProdContainer.preload.php
+```
+
+PDF in PHP
+```php
+$pdf = new PDF('P', 'pt', 'letter');
+$pdf->AddPage();
+$pdf->SetAutoPageBreak(false);
+$pdf->SetFont('Arial', '', 5);
+...
+// $pdf->Text(X, Y, string);
+$pdf->Text(70, 125, $foo);
+$pdf->Text(335, 125, $bar);
+...
+$pdf->Output('output.fpdf','F');
+```
+
+Enable grid in fpdf
+```php
+$pdf->AddGrid(10, 10, 594, 770, 10);
+
+class MyFPDF extends FPDF
+{
+    ...
+
+    public function AddGrid($x1, $y1, $x2, $y2, $Dist = 8)
+    {
+        $this->AddGridRow($x1, $y1, $x2);
+        $this->AddGridRow($x1, $y2, $x2);
+        $this->AddGridColumn($x1, $y1, $y2);
+        $this->AddGridColumn($x2, $y1, $y2);
+
+        $NoHorz = ($y2 - $y1) / $Dist ;
+        $NoVert = ($x2 - $x1) / $Dist ;
+
+        for ($i = 1; $i < $NoHorz; $i++) {
+            $this->AddGridRow($x1, $y1 + ($i * $Dist), $x2);
+        }
+
+        for ($i = 1; $i < $NoVert; $i++) {
+            $this->AddGridColumn($x1 + ($i * $Dist), $y1, $y2);
+        }
+    }
+
+    public function AddGridRow($x1, $y, $x2)
+    {
+        $this->SetFont('Courier', '', 5);
+        $this->Line($x1, $y, $x2, $y);
+        $this->Text($x1 - (strlen($y) * 3) - 1.5, $y + 1.5, $y);
+        $this->Text($x2 + 1.5, $y + 1.5, $y);
+    }
+
+    public function AddGridColumn($x, $y1, $y2)
+    {
+        $this->SetFont('Courier', '', 5);
+        $this->Line($x, $y1, $x, $y2);
+        $this->Text($x - (strlen($x) * 1.5), $y1 - 2, $x);
+        $this->Text($x - 3, $y2 + 5.5, $x);
+    }
+}
+```
+
+Add background in PDF documents using PHP
+```php
+# apt-get install pdftk
+# file.fpdf is a file filled with coordinate using fpdf tool
+$fileInput = 'file.fpdf';
+$fileTemplate = 'template.pdf';
+$fileOutput = 'file.pdf';
+
+$response = [];
+$command = sprintf(
+    '/usr/bin/pdftk %s background %s output %s 2>&1',
+    escapeshellarg($fileInput),
+    escapeshellarg($fileTemplate),
+    escapeshellarg($fileOutput)
+);
+
+exec($command, $response, $codeStatus);
+```
+
+Merge PDF documents using PHP
+```php
+# apt-get install pdftk
+$fileInput1 = 'file1.pdf';
+$fileInput2 = 'file2.pdf';
+$fileOutput = 'file.pdf';
+
+$response = [];
+$command = sprintf(
+    '/usr/bin/pdftk %s %s cat output %s 2>&1',
+    escapeshellarg($fileInput1),
+    escapeshellarg($fileInput2),
+    escapeshellarg($fileOutput)
+);
+
+exec($command, $response, $codeStatus);
+```
+
+XSLT Transform in PHP
+```php
+libxml_use_internal_errors(true);
+
+$xslfile = 'file.xlst';
+$xsldata = file_get_contents($xslfile);
+
+$doc = new DOMDocument();
+$xsl = new XSLTProcessor();
+
+if (!$doc->loadXML($xsldata, LIBXML_PARSEHUGE)) {
+    die('Error: XSLT data');
+}
+
+if (!empty($xslfile)) {
+  $doc->documentURI = $xslfile;
+}
+
+$xsl->importStyleSheet($doc);
+
+if (!is_null($parameters)) {
+  $xsl->setParameter('http://namespaces/', $parameters);
+}
+
+if (empty($xmldata)) {
+  die('Error: Empty XML data');
+}
+
+if (!$doc->loadXML($xmldata, LIBXML_PARSEHUGE)) {
+  die('Error: XML data');
+}
+
+$html = @$xsl->transformToXML($doc);
+
+unset($doc, $xsl);
+
+if ($html === false) {
+  die('Error: Empty transform');
+}
+
+libxml_use_internal_errors(false);
+
+echo $html;
+```
+
+UTF-8 Charset [See](https://www.toptal.com/php/a-utf-8-primer-for-php-and-mysql)
+```bash
+# PHP
+# > php.ini: Affected content type headers
+default_charset = "utf-8"
+# Custom responses in PHP source code
+header('Content-Type: text/html; charset=utf-8');
+# Custom strings
+htmlspecialchars($str, ENT_NOQUOTES, "UTF-8");
+htmlentities($str, ENT_NOQUOTES, "UTF-8");
+# MySQL Connection
+$conn = mysql_connect('localhost', 'user', 'password');
+mysqli_set_charset('utf8', $conn);
+# MySQL Connection Symfony, in .env file
+DATABASE_URL=mysql://dbuser:dbpassword@dbhost:dbport/dbname?charset=utf8
+# Using XML files
+<?xml version="1.0" encoding="UTF-8"?>
+# Strip UTF-8 characters not allowed in XML content
+function utf8_for_xml($string)
+{
+    return preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', ' ', $string);
+}
+# Specify UTF-8 as the character set for all HTML content
+# HTML Content
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+# HTML Forms
+<form accept-charset="utf-8">
+# In Symfony Forms (Twig)
+
+
+# MySQL Configuration
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+[mysqld]
+# character-set-client-handshake = false #force encoding to uft8
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+[mysqld_safe]
+default-character-set=utf8
 ```
