@@ -1129,3 +1129,32 @@ collation-server=utf8_general_ci
 [mysqld_safe]
 default-character-set=utf8
 ```
+
+Dump MySQL many databases
+```bash
+DATETIME=`date +"%Y%m%d%H%M"`
+DBNAMES="db1 db2 ... dbn"
+
+for DBNAME in $DBNAMES
+do
+    mysqldump -P3306 --opt -uroot -p -c --default-character-set=utf8 ${DBNAME} > /var/mysqldump/${DBNAME}_${DATETIME}.sql
+    gzip /var/mysqldump/${DBNAME}_${DATETIME}.sql
+done
+```
+
+Restore dump MySQL many databases
+```bash
+# _mysqlrestore.sh
+DATETIME=$1
+DBNAMES="db1 db2 ... dbn"
+
+for DBNAME in $DBNAMES
+do
+    if [ -f ${DBNAME}.bak ]
+    then
+        echo "Skiping $DBNAME file"
+        continue
+    fi
+    mysql -P3306 -uroot -p ${DBNAME} < /var/mysqldump/${DBNAME}_${DATETIME}.sql
+done
+```
