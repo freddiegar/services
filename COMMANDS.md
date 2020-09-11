@@ -878,6 +878,8 @@ Active/Inactive user account (CentOS)
 sudo chage -l [username]
 # Active: No expire
 sudo chage -E-1 [username]
+# Disable password aging
+sudo chage -I -1 -m 0 -M 99999 -E -1 [username]
 # Active: Until
 sudo chage -E "2020-12-31" [username]
 # Inactive: Expired
