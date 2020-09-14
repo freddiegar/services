@@ -4,6 +4,7 @@ ___
 # Performance, not use swap while RAM < 90% used
 
 [Tips 1](https://www.linuxbabe.com/ubuntu/4-tips-speed-up-ubuntu-16-04)
+
 [Tips 2](https://github.com/akalongman/ubuntu-configuration)
 
 ```bash
@@ -69,6 +70,8 @@ alias ct="composer test"
 alias cda="composer dump-autoload"
 alias vt="vendor/bin/phpunit --stop-on-failure"
 alias vtf="vendor/bin/phpunit --stop-on-failure --filter"
+alias st="bin/phpunit --stop-on-failure"
+alias stf="bin/phpunit --stop-on-failure --filter"
 alias update="sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y"
 alias dup="docker-compose up -d --build"
 alias dconfig="docker-compose config"
@@ -78,11 +81,19 @@ alias dlogs="docker logs --tail 50 -f"
 alias dstart="docker start"
 alias dstop="docker stop"
 alias dstatus="docker ps --format \"{{.Names}}\""
-alias dphp56="docker exec -it apache56 bash"
+alias dphp80="docker exec -it apache80 bash"
 alias dphp74="docker exec -it apache74 bash"
-alias dphp56a74="docker stop apache56 && docker start apache74"
-alias dphp74a56="docker stop apache74 && docker start apache56"
-alias ducks="du -cks * | sort -rn | head"' > ~/.bash_aliases
+alias dphp80a74="docker start apache74 && docker stop apache80"
+alias dphp74a80="docker start apache80 && docker stop apache74"
+alias ducks="du -cks * | sort -rn | head"
+alias gst="git status"
+alias gd="git diff -w"
+alias gdc="git diff -w --cached"
+alias ga="git add"
+alias gcmsg="git commit -m"
+alias gca="git commit --amend -m"
+alias gl="git pull"
+' > ~/.bash_aliases
 echo 'if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi' >> ~/.zshrc
@@ -93,21 +104,20 @@ fi' >> ~/.zshrc
 sudo apt-get install -y software-properties-common
 sudo add-apt-repository ppa:ondrej/php # Only Ubuntu
 sudo apt-get update
-sudo apt-get install -y php7.3-cli
-sudo apt-get install -y php7.3-dev
-sudo apt-get install -y php7.3-mbstring
-sudo apt-get install -y php7.3-xml
-sudo apt-get install -y php7.3-mysql
-sudo apt-get install -y php7.3-curl
-sudo apt-get install -y php7.3-zip
-sudo apt-get install -y php7.3-soap
-sudo apt-get install -y php7.3-gd
-sudo apt-get install -y php7.3-sqlite3
-sudo apt-get install -y php7.3-intl
-sudo apt-get install -y php7.3-memcached
-sudo apt-get install -y php7.3-redis
-sudo apt-get install -y php7.3-bcmath
-## sudo apt-get remove php7.3* && sudo apt-get autoremove
+sudo apt-get install -y php7.4-cli
+sudo apt-get install -y php7.4-dev
+sudo apt-get install -y php7.4-mbstring
+sudo apt-get install -y php7.4-mysql
+sudo apt-get install -y php7.4-curl
+sudo apt-get install -y php7.4-zip
+sudo apt-get install -y php7.4-soap
+sudo apt-get install -y php7.4-gd
+sudo apt-get install -y php7.4-sqlite3
+sudo apt-get install -y php7.4-intl
+sudo apt-get install -y php7.4-memcached
+sudo apt-get install -y php7.4-redis
+sudo apt-get install -y php7.4-bcmath
+## sudo apt-get remove php7.4* && sudo apt-get autoremove
 ```
 
 # MySQL Client (Server is using Docker)
@@ -151,7 +161,7 @@ sudo chmod +x /usr/local/bin/php-cs-fixer
 # Mess Detector
 ```bash
 cd ~
-sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.8.2/phpmd.phar -o /usr/local/bin/phpmd
+sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.9.0/phpmd.phar -o /usr/local/bin/phpmd
 sudo chmod +x /usr/local/bin/phpmd
 ## Command:
 ## phpmd source/code format ruleset
@@ -163,7 +173,7 @@ sudo chmod +x /usr/local/bin/phpmd
 # Infection AST 
 ```bash
 cd ~
-sudo curl -L https://github.com/infection/infection/releases/download/0.15.3/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.17.5/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command: 
 ## infection -j$(nproc) [--filter=file.php]
@@ -205,6 +215,7 @@ sudo chmod +x /usr/local/bin/phpmetrics
 # Docker (Container)
 
 [See 1](https://docs.docker.com/install/linux/docker-ce/ubuntu)
+
 [See 2](https://docs.docker.com/install/linux/linux-postinstall/)
 
 ## Ubuntu 18.*, 19.*, Debian 10
@@ -233,7 +244,7 @@ sudo reboot
 # Docker Compose
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/1.27.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -261,7 +272,7 @@ cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
 
 # Xdebug
 ```bash
-pecl install -f xdebug
+sudo pecl install -f xdebug
 
 echo 'xdebug.idekey=PHPSTORM
 xdebug.remote_mode=req
@@ -272,7 +283,7 @@ xdebug.remote_autostart=1
 ; To enable profiler use XDEBUG_PROFILE=PHPSTORM in (GET|POST|COOKIE)
 xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=1
-zend_extension=/usr/lib/php/20180731/xdebug.so' | sudo tee /etc/php/7.3/mods-available/xdebug.ini
+zend_extension=/usr/lib/php/20180731/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 
 sudo phpenmod xdebug
 ```
@@ -282,12 +293,43 @@ cd ~
 sudo snap install postman
 ```
 
-# VSCode & Firefox
+# VSCode & Firefox (Dont use snap for this, security risk)
 ```bash
-cd ~
+cd ~/Downloads
 sudo dpkg -i vscode.deb
-tar -xvzf firefox.tar.gz -C /opt
-tar -xvjf firefox.tar.bz2 -C /opt
+sudo tar -xvjf firefox.tar.bz2 -C /opt
+# sudo tar -xvzf firefox.tar.gz -C /opt
+```
+
+## Shortcut for ...
+
+### Firefox Developer Edition
+
+```bash
+echo '[Desktop Entry]
+Version=1.0
+Name=Firefox Web Browser Developer Edition
+Comment=Browse the WWW
+GenericName=Web Browser
+Keywords=Internet;WWW;Browser;Web
+Exec=/opt/firefox/firefox %u
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=/opt/firefox/browser/chrome/icons/default/default128.png
+Categories=GNOME;GTK;Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
+StartupNotify=true
+Actions=new-window;new-private-window;
+StartupWMClass=Firefox Developer Edition
+
+[Desktop Action new-window]
+Name=Open a New Window
+Exec=/opt/firefox/firefox -new-window
+
+[Desktop Action new-private-window]
+Name=Open a New Private Window
+Exec=/opt/firefox/firefox -private-window' > ~/.local/share/applications/firefox.desktop
 ```
 
 # Node
@@ -295,15 +337,16 @@ tar -xvjf firefox.tar.bz2 -C /opt
 cd ~
 sudo apt-get update
 sudo apt-get install -y build-essential libssl-dev
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
 echo 'export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
 # Close Terminal to load changes
-nvm ls-remote # Show version available
-nvm install v10.15.3
-nvm alias default v10.15.3
-nvm current
+# Show version available
+nvm ls-remote
+nvm install v12.18.3
+# nvm alias default v12.18.3
+# nvm current
 ## Enabled to all users in Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
 ## Install pkg: npm install express
@@ -319,6 +362,15 @@ sudo apt-get autoremove
 
 # Optionals
 
+## Sublime Text
+```bash
+cd ~
+curl -L https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+sudo apt-get update
+sudo apt-get install -y sublime-text
+```
+
 ## Ubuntu: Tweak Tool
 ```bash
 gnome-shell --version
@@ -330,6 +382,14 @@ sudo apt-get install -y gnome-tweak-tool
 ```bash
 sudo apt-get install -y kcachegrind
 ## sudo apt-get remove kcachegrind && sudo apt-get autoremove
+```
+
+## OBS - Open Broadcasting Software
+```bash
+sudo apt install -y ffmpeg
+sudo add-apt-repository ppa:obsproject/obs-studio
+sudo apt update
+sudo apt install -y obs-studio
 ```
 
 ## Screen Recording
@@ -367,10 +427,3 @@ sudo apt-get install -y vagrant
 sudo apt-get remove -y --purge libreoffice* && sudo apt-get clean && sudo apt-get autoremove
 ```
 
-## Sublime Text
-```bash
-curl -L https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-sudo apt-get update
-sudo apt-get install -y sublime-text
-```
