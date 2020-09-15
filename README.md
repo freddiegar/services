@@ -328,7 +328,13 @@ launch.json example for local and remote debugging multiple root
 
 ### SSL Certificate
 
-#### On Linux
+Load certificate in browser
+
+```
+Authorities -> Import -> ssl/ca.cert.pem -> Identify Websites
+```
+
+####  On Linux
 
 0. Add in: /etc/hosts
 
@@ -336,12 +342,6 @@ launch.json example for local and remote debugging multiple root
 vim /etc/hosts
 127.0.0.1       development.local
 ::1             development.local
-```
-
-1. Load certificate in browser
-
-```
-Authorities -> Import -> ssl/ca.cert.pem -> Identify Websites
 ```
 
 #### On Windows

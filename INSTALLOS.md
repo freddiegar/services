@@ -10,6 +10,14 @@ ___
 ```bash
 echo '# Overwrite default: 60
 vm.swappiness=10' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
+sudo sysctl -p
+```
+
+# Change default User Max Watches
+```bash
+echo '# Overwrite default: 8192 ~ 8M to ~540M
+fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
+sudo sysctl -p
 ```
 
 # Change default time GRUB to 2
@@ -55,8 +63,12 @@ sudo apt-get install git-flow
 ```bash
 sudo apt-get install -y zsh
 # As User NOT root
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 chsh -s `which zsh`
+
+sudo sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
+sudo sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy\/mm\/dd"/g' ~/.zshrc
+
 gnome-session-quit
 ## sudo apt-get remove zsh && sudo apt-get autoremove
 ```
@@ -94,12 +106,15 @@ alias gcmsg="git commit -m"
 alias gca="git commit --amend -m"
 alias gl="git pull"
 ' > ~/.bash_aliases
-echo 'if [ -f ~/.bash_aliases ]; then
+
+echo '
+
+if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi' >> ~/.zshrc
 ```
 
-# PHP 7.3
+# PHP 7.4
 ```bash
 sudo apt-get install -y software-properties-common
 sudo add-apt-repository ppa:ondrej/php # Only Ubuntu
@@ -283,7 +298,7 @@ xdebug.remote_autostart=1
 ; To enable profiler use XDEBUG_PROFILE=PHPSTORM in (GET|POST|COOKIE)
 xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=1
-zend_extension=/usr/lib/php/20180731/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
+zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 
 sudo phpenmod xdebug
 ```
@@ -351,6 +366,37 @@ nvm install v12.18.3
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
 ## Install pkg: npm install express
 ## nvm deactivate && nvm uninstall v10.15.3
+```
+
+# Font Fira Code
+
+[See](https://dev.to/josuerodriguez98/installing-firacode-on-windows-and-ubuntu-1fn1)
+
+```bash
+# Ubuntu
+sudo apt install -y fonts-firacode
+```
+
+## ST3
+
+Menu -> Preferences -> Settings -> User Settings File
+
+```json
+{
+    ...
+    "font_face": "Fira Code",
+    "font_size": 18,
+    "font_options": [
+        "gray_antialias"
+    ],
+    "show_encoding": false,
+    "show_line_endings": false,
+    "default_line_ending": "unix",
+    "draw_white_space": "all",
+    "translate_tabs_to_spaces": true,
+    "word_wrap": false
+    ...
+}
 ```
 
 # Clean installation
