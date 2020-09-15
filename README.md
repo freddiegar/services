@@ -51,7 +51,7 @@ sudo mkdir -p /var/log/mysql && sudo chown $(whoami):docker /var/log/mysql
 touch /var/log/mysql/error.log
 touch /var/log/mysql/mysql.log
 touch /var/log/mysql/slow.log
-chmod 660 /var/log/mysql/*.log
+chmod 666 /var/log/mysql/*.log
 ```
 
 ## MySQL
@@ -233,9 +233,9 @@ service apache2 reload
 
 # Web
 # Use to start
-# http://localhost?XDEBUG_SESSION_START=PHPSTORM
+# https://development.local/?XDEBUG_SESSION_START=PHPSTORM
 # Use to stop
-# http://localhost?XDEBUG_SESSION_STOP=PHPSTORM
+# https://development.local/?XDEBUG_SESSION_STOP=PHPSTORM
 # or
 # https://addons.mozilla.org/en-GB/firefox/addon/xdebug-helper-for-firefox/
 
@@ -249,6 +249,7 @@ service apache2 reload
 ```
 
 > PHP 5.6: pecl install -f xdebug-2.5.5
+
 > PHP 7+: pecl install -f xdebug
 
 #### Local
@@ -284,17 +285,6 @@ zend_extension=/usr/local/lib/php/extensions/xdebug.xo
 
 2. E: Time-out connecting to client (Waited: 200 ms). :-(
 - Start listening in IDE
-
-### Composer
-
-```bash
-# Unit Test in  PHP
-composer global require phpunit/phpunit
-# Fixes PHP
-composer global require friendsofphp/php-cs-fixer
-# Simulate request from Apache
-composer global require jelix/fakeserverconf
-```
 
 ### VSCode
 
@@ -336,13 +326,31 @@ launch.json example for local and remote debugging multiple root
 }
 ```
 
-### SSL Certificate in Windows
+### SSL Certificate
+
+#### On Linux
+
+0. Add in: /etc/hosts
+
+```
+vim /etc/hosts
+127.0.0.1       development.local
+::1             development.local
+```
+
+1. Load certificate in browser
+
+```
+Authorities -> Import -> ssl/ca.cert.pem -> Identify Websites
+```
+
+#### On Windows
 
 See: [https://curl.haxx.se/docs/sslcerts.html](https://curl.haxx.se/docs/sslcerts.html)
 
 0. Add in: C:\Windows\System32\drivers\etc\hosts
 
-```
+```bash
 127.0.0.1       development.local
 ::1             development.local
 ```
@@ -370,6 +378,20 @@ curl -I https://development.local
 ```
 
 It must be return: 302 | 200 HTTP Code
+
+### Composer
+
+Test legacy code in PHP
+
+```bash
+# Unit Test in  PHP
+composer global require phpunit/phpunit
+# Fixes PHP
+composer global require friendsofphp/php-cs-fixer
+# Simulate request from Apache
+composer global require jelix/fakeserverconf
+```
+
 
 ## PenTesting
 

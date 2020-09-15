@@ -25,19 +25,19 @@
     </IfModule>
 </IfModule>
 
-Alias /alias "/var/www/html/path/"
-<Directory "/var/www/html/path">
-    Options None
-    AllowOverride None
-    Require all granted
+#Alias /alias "/var/www/html/path/"
+#<Directory "/var/www/html/path">
+#    Options None
+#    AllowOverride None
+#    Require all granted
 
-#    # Skip CORS in Development
-#    # https://benjaminhorn.io/code/setting-cors-cross-origin-resource-sharing-on-apache-with-correct-response-headers-allowing-everything-through/
-#    <IfModule mod_headers.c>
-#        Header always set Access-Control-Max-Age "86400"
-#        Header always set Access-Control-Allow-Origin "*"
-#        Header always set Access-Control-Allow-Methods "GET,POST,PUT,DELETE,HEAD,OPTIONS"
-#        Header always set Access-Control-Allow-Headers "Content-Type,X-Requested-With,Accept,Authorization,Origin,Access-Control-Request-Method,Access-Control-Request-Headers"
-#        Header always set Access-Control-Expose-Headers "Access-Control-Allow-Origin,Access-Control-Allow-Credentials"
-#    </IfModule>
-</Directory>
+##    # Skip CORS in Development
+##    # https://benjaminhorn.io/code/setting-cors-cross-origin-resource-sharing-on-apache-with-correct-response-headers-allowing-everything-through/
+##    <IfModule mod_headers.c>
+##        Header always set Access-Control-Max-Age "86400"
+##        Header always set Access-Control-Allow-Origin "*"
+##        Header always set Access-Control-Allow-Methods "GET,POST,PUT,DELETE,HEAD,OPTIONS"
+##        Header always set Access-Control-Allow-Headers "Content-Type,X-Requested-With,Accept,Authorization,Origin,Access-Control-Request-Method,Access-Control-Request-Headers"
+##        Header always set Access-Control-Expose-Headers "Access-Control-Allow-Origin,Access-Control-Allow-Credentials"
+##    </IfModule>
+#</Directory>
