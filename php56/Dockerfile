@@ -35,7 +35,8 @@ RUN apt-get update \
     && apt-get -y install libssl-dev libc-client2007e-dev libkrb5-dev \
     && docker-php-ext-configure imap --with-imap-ssl --with-kerberos \
     && docker-php-ext-install -j$(nproc) imap \
-    && mkdir -f /usr/share/man/man1 \
+    && docker-php-ext-install -j$(nproc) intl \
+    && mkdir -p /usr/share/man/man1 \
     && apt-get install -y default-jdk xvfb wkhtmltopdf \
     && a2enmod rewrite \
     && a2enmod ssl \

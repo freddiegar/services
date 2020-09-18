@@ -31,6 +31,7 @@ RUN apt-get update \
     && apt-get -y install libssl-dev libc-client2007e-dev libkrb5-dev \
     && docker-php-ext-configure imap --with-imap-ssl --with-kerberos \
     && docker-php-ext-install -j$(nproc) imap \
+    && docker-php-ext-install -j$(nproc) intl \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
