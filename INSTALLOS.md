@@ -68,6 +68,7 @@ chsh -s `which zsh`
 
 sudo sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
 sudo sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy\/mm\/dd"/g' ~/.zshrc
+sudo sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
 
 gnome-session-quit
 ## sudo apt-get remove zsh && sudo apt-get autoremove

@@ -950,13 +950,14 @@ PDF in PHP
 $pdf = new PDF('P', 'pt', 'letter');
 $pdf->AddPage();
 $pdf->SetAutoPageBreak(false);
+// $pdf->AddGrid(10, 10, 594, 770, 10);
 $pdf->SetFont('Arial', '', 5);
 ...
 // $pdf->Text(X, Y, string);
 $pdf->Text(70, 125, $foo);
 $pdf->Text(335, 125, $bar);
 ...
-$pdf->Output('output.fpdf','F');
+$pdf->Output('output.fpdf', 'F');
 ```
 
 Enable grid in fpdf
@@ -990,7 +991,7 @@ class MyFPDF extends FPDF
     {
         $this->SetFont('Courier', '', 5);
         $this->Line($x1, $y, $x2, $y);
-        $this->Text($x1 - (strlen($y) * 3) - 1.5, $y + 1.5, $y);
+        $this->Text($x1 - (strlen((string)$y) * 3) - 1.5, $y + 1.5, $y);
         $this->Text($x2 + 1.5, $y + 1.5, $y);
     }
 
@@ -998,7 +999,7 @@ class MyFPDF extends FPDF
     {
         $this->SetFont('Courier', '', 5);
         $this->Line($x, $y1, $x, $y2);
-        $this->Text($x - (strlen($x) * 1.5), $y1 - 2, $x);
+        $this->Text($x - (strlen((string)$x) * 1.5), $y1 - 2, $x);
         $this->Text($x - 3, $y2 + 5.5, $x);
     }
 }
