@@ -15,6 +15,7 @@ sudo sysctl -p
 
 # Change default User Max Watches
 ```bash
+cp -p /etc/sysctl.d/99-sysctl.conf /etc/sysctl.d/99-sysctl.conf.original
 echo '# Overwrite default: 8192 ~ 8M to ~540M
 fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 sudo sysctl -p
@@ -22,14 +23,25 @@ sudo sysctl -p
 
 # Change default time GRUB to 2
 ```bash
+cp -p /etc/default/grub /etc/default/grub.original
 sudo sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=2/g' /etc/default/grub
 sudo update-grub
 ```
 
+# Auto-update (on servers)
+
+```bash
+sudo apt-get install -y unattended-upgrades update-notifier-common
+sudo cp -p /etc/apt/apt.conf.d/50unattended-upgrades /etc/apt/apt.conf.d/50unattended-upgrades.original
+sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Kernel-Packages "false";/Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
+sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Dependencies "false";/Unattended-Upgrade::Remove-Unused-Dependencies "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
+sudo sed -i 's/\/\/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/g' /etc/apt/apt.conf.d/50unattended-upgrades
+```
+
 # Updated repos
 ```bash
-sudo apt update
-sudo apt upgrade
+sudo apt-get update
+sudo apt-get upgrade
 ```
 
 # Unzip, cURL, Vim and extra utils
@@ -66,6 +78,7 @@ sudo apt-get install -y zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 chsh -s `which zsh`
 
+sudo cp -p ~/.zshrc.original
 sudo sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
 sudo sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy\/mm\/dd"/g' ~/.zshrc
 sudo sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
@@ -85,7 +98,7 @@ alias vt="vendor/bin/phpunit --stop-on-failure"
 alias vtf="vendor/bin/phpunit --stop-on-failure --filter"
 alias st="bin/phpunit --stop-on-failure"
 alias stf="bin/phpunit --stop-on-failure --filter"
-alias update="sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y"
+alias update="sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y"
 alias dup="docker-compose up -d --build"
 alias dconfig="docker-compose config"
 alias drm="docker rm -f"
@@ -106,6 +119,7 @@ alias ga="git add"
 alias gcmsg="git commit -m"
 alias gca="git commit --amend -m"
 alias gl="git pull"
+alias gp="git push"
 ' > ~/.bash_aliases
 
 echo '
@@ -243,6 +257,7 @@ sudo apt-get update
 sudo apt-get install -y docker-ce
 sudo usermod -aG docker $(whoami)
 gnome-session-quit
+## sudo apt-get remove docker-ce && sudo apt-get autoremove
 ```
 
 ## Ubuntu 16.*
@@ -254,7 +269,7 @@ apt-cache policy docker-engine
 sudo apt-get install -y docker-engine
 sudo usermod -aG docker $(whoami)
 sudo reboot
-## sudo apt-get remove docker-engine docker-ce && sudo apt-get autoremove
+## sudo apt-get remove docker-engine && sudo apt-get autoremove
 ```
 
 # Docker Compose
@@ -354,7 +369,9 @@ cd ~
 sudo apt-get update
 sudo apt-get install -y build-essential libssl-dev
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
-echo 'export NVM_DIR="$HOME/.nvm"
+echo '
+
+export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
 # Close Terminal to load changes
@@ -365,6 +382,7 @@ nvm install v12.18.3
 # nvm current
 ## Enabled to all users in Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
+
 ## Install pkg: npm install express
 ## nvm deactivate && nvm uninstall v10.15.3
 ```
@@ -375,7 +393,8 @@ nvm install v12.18.3
 
 ```bash
 # Ubuntu
-sudo apt install -y fonts-firacode
+sudo apt-get install -y fonts-firacode
+## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
 ```
 
 ## ST3
@@ -416,6 +435,7 @@ curl -L https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
 echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
 sudo apt-get update
 sudo apt-get install -y sublime-text
+## sudo apt-get remove sublime-text && sudo apt-get autoremove
 ```
 
 ## Ubuntu: Tweak Tool
@@ -433,10 +453,10 @@ sudo apt-get install -y kcachegrind
 
 ## OBS - Open Broadcasting Software
 ```bash
-sudo apt install -y ffmpeg
 sudo add-apt-repository ppa:obsproject/obs-studio
-sudo apt update
-sudo apt install -y obs-studio
+sudo apt-get install -y ffmpeg obs-studio
+## sudo apt-get remove obs-studio ffmpeg
+## sudo add-apt-repository -r ppa:obsproject/obs-studio
 ```
 
 ## Screen Recording
@@ -474,3 +494,21 @@ sudo apt-get install -y vagrant
 sudo apt-get remove -y --purge libreoffice* && sudo apt-get clean && sudo apt-get autoremove
 ```
 
+## Clock Screen Saver
+
+[See](https://github.com/alexanderk23/gluqlo)
+
+```bash
+sudo apt-add-repository ppa:alexanderk23/ppa
+sudo apt-get update
+sudo apt-get install -y gluqlo
+
+sudo apt-get remove gnome-screensaver
+sudo apt-get install -y xscreensaver xscreensaver-data-extra xscreensaver-gl-extra
+
+vim ~/.xscreensaver
+gluqlo -root \n\
+
+## apt-get remove -y xscreensaver xscreensaver-data-extra xscreensaver-gl-extra gluqlo
+## sudo add-apt-repository -r ppa:alexanderk23/ppa
+```
