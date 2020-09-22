@@ -14,12 +14,32 @@ Set config vars in `.env` file
 cp -p .env.example .env
 ```
 
-## Deploy
+## Services
+
+### Deploy
 
 Install services
 
 ```bash
 docker-compose up -d SERVICE_NAME
+```
+
+### Override Services
+
+You can override setup in docker (production environment maybe), rename `docker-compose.override.yml.example` to `docker-compose.override.yml` and customize your installation, by example:
+
+```bash
+cp -p docker-compose.override.yml.example docker-compose.override.yml
+```
+
+```yaml
+version: "3.2"
+
+services:
+  # This service is shutdown
+  db:
+    entrypoint: "echo true"
+
 ```
 
 ## Verify
