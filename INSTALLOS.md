@@ -15,7 +15,7 @@ sudo sysctl -p
 
 # Change default User Max Watches
 ```bash
-cp -p /etc/sysctl.d/99-sysctl.conf /etc/sysctl.d/99-sysctl.conf.original
+sudo cp -p ~/.zshrc ~/.zshrc.original
 echo '# Overwrite default: 8192 ~ 8M to ~540M
 fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 sudo sysctl -p
@@ -23,7 +23,7 @@ sudo sysctl -p
 
 # Change default time GRUB to 2
 ```bash
-cp -p /etc/default/grub /etc/default/grub.original
+sudo cp -p ~/.zshrc ~/.zshrc.original
 sudo sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=2/g' /etc/default/grub
 sudo update-grub
 ```
@@ -32,7 +32,7 @@ sudo update-grub
 
 ```bash
 sudo apt-get install -y unattended-upgrades update-notifier-common
-sudo cp -p /etc/apt/apt.conf.d/50unattended-upgrades /etc/apt/apt.conf.d/50unattended-upgrades.original
+sudo cp -p ~/.zshrc ~/.zshrc.original
 sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Kernel-Packages "false";/Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Dependencies "false";/Unattended-Upgrade::Remove-Unused-Dependencies "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 sudo sed -i 's/\/\/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/g' /etc/apt/apt.conf.d/50unattended-upgrades
@@ -78,7 +78,7 @@ sudo apt-get install -y zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 chsh -s `which zsh`
 
-sudo cp -p ~/.zshrc.original
+sudo cp -p ~/.zshrc ~/.zshrc.original
 sudo sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
 sudo sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy\/mm\/dd"/g' ~/.zshrc
 sudo sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
