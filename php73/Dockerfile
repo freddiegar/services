@@ -17,6 +17,7 @@ RUN cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.
 RUN apt-get update \
     && apt-get install -y \
     vim \
+    cron \
     iputils-ping \
     libxml2-dev \
     libxslt1-dev \
