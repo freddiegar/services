@@ -328,6 +328,8 @@ sudo snap install postman
 ```bash
 cd ~/Downloads
 sudo dpkg -i vscode.deb
+
+curl -L https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US -o firefox.tar.bz2
 sudo tar -xvjf firefox.tar.bz2 -C /opt
 # sudo tar -xvzf firefox.tar.gz -C /opt
 ```
@@ -466,10 +468,17 @@ sudo apt-get install -y kazam
 ## sudo apt-get remove kazam && sudo apt-get autoremove
 ```
 
+## Tmux
+```bash
+sudo apt-get update
+sudo apt-get install -y tmux
+## sudo apt-get remove tmux && sudo apt-get autoremove
+```
+
 ## Google Chrome
 ```bash
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-wget https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+curl -L https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 sudo apt-get update
 sudo apt-get install -y google-chrome-stable
 ## sudo apt-get remove google-chrome-stable && sudo apt-get autoremove
