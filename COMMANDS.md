@@ -8,8 +8,12 @@ create database homestead charset=utf8;
 
 Create user database mysql
 ```mysql
-create user homestead identified by 'password';
-grant all privileges on homestead.* to 'homestead'@'%' identified by 'password' with grant option;
+-- create user homestead@'%' identified by 'password';
+
+-- grant all privileges on homestead.* to 'homestead'@'%' identified by 'password';
+
+-- grant all privileges on homestead.* to 'homestead'@'%' identified by 'password' with grant option;
+
 flush privileges;
 ```
 
@@ -1142,6 +1146,8 @@ for DBNAME in $DBNAMES
 do
     mysqldump -P3306 --opt -uroot -p -c --default-character-set=utf8 ${DBNAME} > /var/mysqldump/${DBNAME}_${DATETIME}.sql
     gzip /var/mysqldump/${DBNAME}_${DATETIME}.sql
+    # Decompress
+    # gzip -d /var/mysqldump/${DBNAME}_${DATETIME}.sql.gz
 done
 ```
 
@@ -1160,4 +1166,14 @@ do
     fi
     mysql -P3306 -uroot -p ${DBNAME} < /var/mysqldump/${DBNAME}_${DATETIME}.sql
 done
+```
+
+Install GPG v1
+```bash
+apt-get install -y gpgv1
+```
+
+Install cron in docker container
+```bash
+apt-get install -y cron
 ```
