@@ -60,6 +60,19 @@ Allow access from another networks segment to containers development network
 docker network connect <network-name> db
 docker network connect <network-name> cache
 ```
+### Hosts
+
+If DNS dont works, try editing `/etc/hosts`
+
+```bash
+# sudo vim /etc/hosts
+# IPv4
+127.0.0.1 development.local
+172.20.0.10 db
+172.20.0.20 cache
+# IPv6
+::1     development.local
+```
 
 ## Binding data
 
@@ -226,6 +239,17 @@ service apache2 reload
 
 ```
 
+## Redis
+
+```bash
+# Install extension from PECL
+pecl install -f redis \
+&& echo "extension=$(find /usr/local/lib/php/extensions/ -name redis.so)" > /usr/local/etc/php/conf.d/redis.ini
+# cat /usr/local/etc/php/conf.d/redis.ini
+# Restart apache to load changes
+service apache2 reload
+```
+
 ## XDebug
 
 [See](https://medium.com/@jasonterando/debugging-with-visual-studio-code-xdebug-and-docker-on-windows-b63a10b0dec)
@@ -358,11 +382,34 @@ Authorities -> Import -> ssl/ca.cert.pem -> Identify Websites
 
 0. Add in: /etc/hosts
 
-```
+```bash
 vim /etc/hosts
+
 127.0.0.1       development.local
 ::1             development.local
 ```
+
+1. Add development certificate in trusted certficates
+
+```bash
+sudo cp -p /var/www/html/freddiegar/services/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt
+sudo chown root:root /usr/local/share/ca-certificates/development.local.ca-cert.crt
+sudo chmod 644 /usr/local/share/ca-certificates/development.local.ca-cert.crt
+```
+
+1. Updated certificates
+
+```bash
+sudo update-ca-certificates
+```
+
+3. Run in cmd to test (a URL valid), for example:
+
+```bash
+curl -I https://development.local
+```
+
+> It must be return: 302 | 200 HTTP Code
 
 #### On Windows
 
@@ -397,7 +444,7 @@ C:/Windows/System32/curl-ca-bundle.crt
 curl -I https://development.local
 ```
 
-It must be return: 302 | 200 HTTP Code
+> It must be return: 302 | 200 HTTP Code
 
 ### Composer
 
