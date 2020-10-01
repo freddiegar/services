@@ -29,13 +29,18 @@ sudo update-grub
 ```
 
 # Auto-update (on servers)
-
 ```bash
 sudo apt-get install -y unattended-upgrades update-notifier-common
 sudo cp -p ~/.zshrc ~/.zshrc.original
 sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Kernel-Packages "false";/Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Dependencies "false";/Unattended-Upgrade::Remove-Unused-Dependencies "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 sudo sed -i 's/\/\/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/g' /etc/apt/apt.conf.d/50unattended-upgrades
+```
+
+# Disabled IPP Service: 631 (Internet Printer Protocol)
+```bash
+sudo service cups stop
+sudo systemctl disable cups
 ```
 
 # Updated repos
