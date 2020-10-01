@@ -48,6 +48,8 @@ RUN apt-get update \
     && a2ensite development.local \
     && a2ensite development.local-ssl \
     && service apache2 restart \
+    && update-rc.d cron defaults \
+    && service cron start \
     && apt-get autoremove -y
 
 ENTRYPOINT [ "/usr/sbin/apachectl" ]

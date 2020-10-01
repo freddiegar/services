@@ -1176,4 +1176,8 @@ apt-get install -y gpgv1
 Install cron in docker container
 ```bash
 apt-get install -y cron
+# Start service
+service cron start
+# Start on boot
+update-rc.d cron defaults
 ```
