@@ -472,19 +472,19 @@ git rm --cached --force ".env.testing"
 
 -- MySQL dump
 ```bash
-mysqldump --opt -u[user_name] -p [database_name] | gzip > [backup_file].dump.gz
+mysqldump --opt -u[user_name] -p [database_name] | gzip > [backup_file].sql.gz
 ```
 
 MySQL dump from container
 ```bash
-mysqldump --opt -u[user_name] -p [database_name] | gzip > [backup_file].dump.gz
+mysqldump --opt -u[user_name] -p [database_name] | gzip > [backup_file].sql.gz
 docker cp [container]:/path/in/container /path/in/host
 ```
 
 MySQL dump restore
 ```bash
-gunzip -k [backup_file].dump.gz
-mysql -u[user_name] -p [database_name] < [backup_file].dump
+gunzip -k [backup_file].sql.gz
+mysql -u[user_name] -p [database_name] < [backup_file].sql
 ```
 
 File large size list
