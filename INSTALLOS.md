@@ -64,9 +64,9 @@ sudo apt-get install -y htop
 ## Vim Configuration
 
 ```bash
-echo '
-" @see https://vim.fandom.com/wiki/Example_vimrc
-" @see https://vim.fandom.com/wiki/Best_Vim_Tips
+echo "\" VIM Config
+\" @see https://vim.fandom.com/wiki/Example_vimrc
+\" @see https://vim.fandom.com/wiki/Best_Vim_Tips
 set nocompatible
 set hidden
 set wildmenu
@@ -75,12 +75,16 @@ set incsearch
 set autoindent
 set cmdheight=2
 set smartcase
-set mouse-=a
 set cursorline
 set nowrap
 syntax enable
 
-" Custom View
+\" Optional
+if has('mouse')
+    set mouse=n
+endif
+
+\" Custom View
 set number
 set numberwidth=1
 set clipboard=unnamed
@@ -90,13 +94,55 @@ set encoding=utf-8
 set showmatch
 set relativenumber
 set laststatus=2
-" set noshowmode
+\" set noshowmode
 
-" Custom identation
+\" Custom identation
 set shiftwidth=4
 set softtabstop=4
 set expandtab
-' > ~/.vimrc
+
+\" Maps
+let mapleader = \"\<Space>\"
+" > ~/.vimrc
+```
+
+## Vim Plugins
+
+```bash
+# Install
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+# Enable
+echo "\" Plugins
+call plug#begin('~/.vim/plugged')
+Plug 'preservim/nerdtree'
+Plug 'StanAngeloff/php.vim'
+Plug 'easymotion/vim-easymotion'
+\" Plug 'mothetz/gruvbox'
+call plug#end()
+
+\" NerdTree
+\" @see https://github.com/preservim/nerdtree
+let NERDTreeShowHidden=1
+let g:plug_window = 'noautocmd vertical topleft new'
+autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
+autocmd VimEnter * if argc() == 0 | NERDTree | endif
+map <Leader>n :NERDTreeToggle<CR>
+
+\" PHPVim
+let g:php_version_id = 70400
+
+\" EasyMotion
+nmap <Leader>s <Plug>(easymotion-s2)
+
+\" Theme
+\" colorscheme gruvbox
+\" let g:gruvbox_contrast_dark = 'hard'
+" >> ~/.vimrc
+
+# Open vim and run
+:PlugInstall
 ```
 
 # GIT
