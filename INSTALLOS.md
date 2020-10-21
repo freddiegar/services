@@ -61,11 +61,50 @@ sudo apt-get install -y htop
 ## sudo apt-get remove unzip curl vim tree nmap apache2-utils htop && sudo apt-get autoremove
 ```
 
+## Vim Configuration
+
+```bash
+echo '
+" @see https://vim.fandom.com/wiki/Example_vimrc
+" @see https://vim.fandom.com/wiki/Best_Vim_Tips
+set nocompatible
+set hidden
+set wildmenu
+set hlsearch
+set incsearch
+set autoindent
+set cmdheight=2
+set smartcase
+set mouse-=a
+set cursorline
+set nowrap
+syntax enable
+
+" Custom View
+set number
+set numberwidth=1
+set clipboard=unnamed
+set showcmd
+set ruler
+set encoding=utf-8
+set showmatch
+set relativenumber
+set laststatus=2
+" set noshowmode
+
+" Custom identation
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+' > ~/.vimrc
+```
+
 # GIT
 ```bash
 sudo apt-get install -y git-core
 git config --global user.name "Freddie Gar"
 git config --global user.email freddie.gar@outlook.com
+git config --global core.editor "vim"
 git config --list
 ## sudo apt-get remove git-core && sudo apt-get autoremove
 ```
