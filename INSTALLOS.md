@@ -507,22 +507,3 @@ sudo apt-get install -y vagrant
 ```bash
 sudo apt-get remove -y --purge libreoffice* && sudo apt-get clean && sudo apt-get autoremove
 ```
-
-## Clock Screen Saver
-
-[See](https://github.com/alexanderk23/gluqlo)
-
-```bash
-sudo apt-add-repository ppa:alexanderk23/ppa
-sudo apt-get update
-sudo apt-get install -y gluqlo
-
-sudo apt-get remove gnome-screensaver
-sudo apt-get install -y xscreensaver xscreensaver-data-extra xscreensaver-gl-extra
-
-vim ~/.xscreensaver
-gluqlo -root \n\
-
-## apt-get remove -y xscreensaver xscreensaver-data-extra xscreensaver-gl-extra gluqlo
-## sudo add-apt-repository -r ppa:alexanderk23/ppa
-```
