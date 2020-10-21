@@ -67,29 +67,44 @@ sudo apt-get install -y htop
 echo "\" VIM Config
 \" @see https://vim.fandom.com/wiki/Example_vimrc
 \" @see https://vim.fandom.com/wiki/Best_Vim_Tips
+\" @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
 set nocompatible
 set hidden
 set wildmenu
+set cmdheight=2
+
 set hlsearch
 set incsearch
-set autoindent
-set cmdheight=2
 set smartcase
-set cursorline
-set nowrap
-syntax enable
 
-\" Optional
+set complete-=i
+set lazyredraw
+
+\" Custom Interface
+set title
+set novisualbell
+set autoread
+set backspace=indent,eol,start
+set clipboard=unnamedplus
 if has('mouse')
     set mouse=n
 endif
 
+\" Custom Render
+syntax enable
+set nowrap
+set display+=lastline
+set encoding=utf-8
+set linebreak
+set scrolloff=1
+set sidescrolloff=5
+
 \" Custom View
 set number
 set numberwidth=1
-set clipboard=unnamed
 set showcmd
 set ruler
+set cursorline
 set encoding=utf-8
 set showmatch
 set relativenumber
@@ -97,6 +112,7 @@ set laststatus=2
 \" set noshowmode
 
 \" Custom identation
+set autoindent
 set shiftwidth=4
 set softtabstop=4
 set expandtab
@@ -143,6 +159,16 @@ nmap <Leader>s <Plug>(easymotion-s2)
 
 # Open vim and run
 :PlugInstall
+```
+
+## Vim Copy/Paste (Share SO)
+
+```bash
+# Check: +xterm_clipboard
+vim --version | grep xterm
+# if -xterm_clipboard then
+# sudo apt-get install -y vim-gnome
+# Check again
 ```
 
 # GIT
