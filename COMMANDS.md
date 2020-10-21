@@ -585,6 +585,7 @@ Run AST infection test
 - 2nd Into project root folder run:
 ```bash
 infection --threads=$(nproc)
+# infection -j=$(nproc)
 ```
 
 Ignore polifyll in composer, add in composer.json
@@ -1180,4 +1181,9 @@ apt-get install -y cron
 service cron start
 # Start on boot
 update-rc.d cron defaults
+```
+
+Compare commits in GitHub
+```bash
+https://github.com/<user>/<repo>/compare/e27fd28..fe48547
 ```
