@@ -556,11 +556,33 @@ sudo apt-get install -y sublime-text
 ## sudo apt-get remove sublime-text && sudo apt-get autoremove
 ```
 
-## Ubuntu: Tweak Tool
+### Vi(ntage) Mode
+
+#### Enable
+1. Ctrl + Shift + P: Install Package Control
+2. Ctrl + Shift + P: Package Control: Enable Package<Enter>
+3. Select Vintage Option
+
+Ready! Vi Layout On :D
+
+#### Disable
+1. Ctrl + Shift + P: Package Control: Disable Package<Enter>
+2. Select Vintage Option
+
+Ready! Vi Layout Off :(
+
+## Ubuntu: Gnome Tweak Tool
 ```bash
 gnome-shell --version
 sudo apt-get install -y gnome-tweak-tool
 ## sudo apt-get remove gnome-tweak-tool && sudo apt-get autoremove
+```
+
+## Ubuntu: Gnome Clocks
+```bash
+gnome-shell --version
+sudo apt-get install -y gnome-clocks
+## sudo apt-get remove gnome-clocks && sudo apt-get autoremove
 ```
 
 ## Install Xdebug Profiler
@@ -589,6 +611,13 @@ sudo apt-get install -y kazam
 sudo apt-get update
 sudo apt-get install -y tmux
 ## sudo apt-get remove tmux && sudo apt-get autoremove
+```
+
+## CPU Usage Bar
+```bash
+sudo apt-get update
+sudo apt-get install -y indicator-multiload
+## sudo apt-get remove indicator-multiload && sudo apt-get autoremove
 ```
 
 ## Google Chrome
