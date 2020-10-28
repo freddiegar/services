@@ -140,16 +140,22 @@ call plug#end()
 
 \" NerdTree
 \" @see https://github.com/preservim/nerdtree
-let NERDTreeShowHidden=1
+\" @see https://github.com/victormours/dotfiles/tree/master/vim
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let NERDTreeShowHidden = 1
+let NERDTreeQuitOnOpen = 1
+let NERDTreeAutoDeleteBuffer = 1
 let g:plug_window = 'noautocmd vertical topleft new'
 autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
 autocmd VimEnter * if argc() == 0 | NERDTree | endif
-map <Leader>n :NERDTreeToggle<CR>
+nmap <Leader>f :NERDTreeToggle<Enter>
 
 \" PHPVim
 let g:php_version_id = 70400
 
 \" EasyMotion
+\" @see https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/moving-even-faster-with-vim-sneak-and-easymotion/
 nmap <Leader>s <Plug>(easymotion-s2)
 
 \" Theme
