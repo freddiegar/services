@@ -145,6 +145,7 @@ let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 1
+let NERDTreeIgnore = ['\.git']
 let NERDTreeAutoDeleteBuffer = 1
 let g:plug_window = 'noautocmd vertical topleft new'
 autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
@@ -213,13 +214,15 @@ gnome-session-quit
 ```bash
 touch ~/.bash_aliases
 echo 'alias x="exit"
-alias ll="ls -l"
+alias ll="ls -lh"
+alias ci="composer install"
+alias cu="composer update"
 alias ct="composer test"
 alias cda="composer dump-autoload"
-alias vt="vendor/bin/phpunit --stop-on-failure"
-alias vtf="vendor/bin/phpunit --stop-on-failure --filter"
-alias st="bin/phpunit --stop-on-failure"
-alias stf="bin/phpunit --stop-on-failure --filter"
+alias vt="vendor/bin/phpunit --stop-on-failure --no-coverage"
+alias vtf="vendor/bin/phpunit --stop-on-failure --no-coverage --filter"
+alias st="bin/phpunit --stop-on-failure --no-coverage"
+alias stf="bin/phpunit --stop-on-failure --no-coverage --filter"
 alias update="sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y"
 alias dup="docker-compose up -d --build"
 alias dconfig="docker-compose config"
@@ -234,6 +237,7 @@ alias dphp74="docker exec -it apache74 bash"
 alias dphp80a74="docker start apache74 && docker stop apache80"
 alias dphp74a80="docker start apache80 && docker stop apache74"
 alias ducks="du -cks * | sort -rn | head"
+alias gs="git summary"
 alias gst="git status"
 alias gd="git diff -w"
 alias gdc="git diff -w --cached"
