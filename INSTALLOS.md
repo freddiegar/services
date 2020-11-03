@@ -105,17 +105,23 @@ set numberwidth=1
 set showcmd
 set ruler
 set cursorline
-set encoding=utf-8
 set showmatch
 set relativenumber
 set laststatus=2
+set listchars=space:·
+set list
 \" set noshowmode
 
 \" Custom identation
 set autoindent
-set shiftwidth=4
 set softtabstop=4
+set shiftwidth=4
 set expandtab
+set fileformat=unix
+
+\" Enable folding : Hit za
+set foldmethod=indent
+set foldlevel=99
 
 \" Maps
 let mapleader = \"\<Space>\"
