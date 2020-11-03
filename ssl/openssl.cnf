@@ -135,10 +135,10 @@ countryName_min   = 2
 countryName_max   = 2
 
 stateOrProvinceName  = State or Province Name (full name)
-stateOrProvinceName_default = Antioquia
+stateOrProvinceName_default = Bogotá D.C
 
 localityName   = Locality Name (eg, city)
-localityName_default  = Medellin
+localityName_default  = Bogotá D.C
 
 0.organizationName  = Organization Name (eg, company)
 0.organizationName_default = Development Inc.
@@ -152,7 +152,7 @@ organizationalUnitName_default = Development
 
 commonName   = Common Name (e.g. server FQDN or YOUR name)
 commonName_max   = 64
-commonName_default  = *.development.local
+commonName_default  = development.local
 
 emailAddress   = Email Address
 emailAddress_max  = 64
@@ -233,6 +233,7 @@ subjectAltName = @alt_names
 [alt_names]
 DNS.1 = development.local
 DNS.2 = localhost
+DNS.3 = *.development.local
 
 [ v3_ca ]
 
