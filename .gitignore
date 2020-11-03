@@ -2,3 +2,5 @@
 .idea
 alias.conf
 docker-compose.override.yml
+*.swp
+
