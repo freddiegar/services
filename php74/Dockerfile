@@ -33,6 +33,7 @@ RUN apt-get update \
     && docker-php-ext-configure imap --with-imap-ssl --with-kerberos \
     && docker-php-ext-install -j$(nproc) imap \
     && docker-php-ext-install -j$(nproc) intl \
+    && docker-php-ext-install -j$(nproc) exif \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
