@@ -420,8 +420,9 @@ Load certificate in browser
 ```
 Authorities -> Import -> ssl/ca.cert.pem -> Identify Websites
 ```
+> Not exists? check below generate item
 
-####  On Linux
+###  On Linux
 
 0. Add in: /etc/hosts
 
@@ -432,7 +433,7 @@ vim /etc/hosts
 ::1             development.local
 ```
 
-1. Add development certificate in trusted certficates
+1. Add development certificate in trusted certficates in host machine
 
 ```bash
 sudo cp -p /var/www/html/freddiegar/services/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt
@@ -440,7 +441,7 @@ sudo chown root:root /usr/local/share/ca-certificates/development.local.ca-cert.
 sudo chmod 644 /usr/local/share/ca-certificates/development.local.ca-cert.crt
 ```
 
-1. Updated certificates
+2. Updated certificates
 
 ```bash
 sudo update-ca-certificates
@@ -454,7 +455,7 @@ curl -I https://development.local
 
 > It must be return: 302 | 200 HTTP Code
 
-#### On Windows
+### On Windows
 
 See: [https://curl.haxx.se/docs/sslcerts.html](https://curl.haxx.se/docs/sslcerts.html)
 
@@ -489,7 +490,7 @@ curl -I https://development.local
 
 > It must be return: 302 | 200 HTTP Code
 
-### Generate Certificates
+### Generate
 
 [See](https://lawebdefreddie.blogspot.com/2017/05/crear-certificados-ssl-autofirmados.html)
 
@@ -570,7 +571,6 @@ composer global require friendsofphp/php-cs-fixer
 # Simulate request from Apache
 composer global require jelix/fakeserverconf
 ```
-
 
 ## PenTesting
 

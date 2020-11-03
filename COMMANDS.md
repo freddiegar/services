@@ -856,14 +856,14 @@ Update docker container from images
 ```bash
 # PHP
 docker images | grep php
-# php   7.4-apache   b7ec96dce970   7 weeks ago    414MB
+# php                     7.4-apache          7a935726473b        7 weeks ago         414MB
 docker pull php:7.4-apache
 docker stop apache74
 docker rm apache74
-docker build --name apache74
-# or docker-compose up -d --build apache74
-# php   7.4-apache   77c1bf5b4475   3 weeks ago    414MB
-docker rmi b7ec96dce970
+docker-compose up -d --build apache74
+# or docker build --name apache74
+# php                     7.4-apache          d112b0774835        5 days ago          414MB
+docker rmi 7a935726473b
 
 # MySQL
 docker images | grep mysql
