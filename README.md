@@ -250,6 +250,49 @@ pecl install -f redis \
 service apache2 reload
 ```
 
+## VHosts (with subdomain)
+
+Copy configuration of default setup
+
+```bash
+cp -p /etc/apache2/sites-available/development.local-ssl.conf subdomain.development.local-ssl.conf
+vim subdomain.development.local-ssl.conf
+```
+
+Add new directory root
+
+```bash
+vim subdomain.development.local-ssl.conf
+# Change document root
+DocumentRoot "/var/www/html/subdomain/"
+```
+
+Test new configuration
+
+```bash
+apachectl configtest
+# Syntax OK
+```
+
+Enabled site and reload service to load changes in Apache
+
+```bash
+a2ensite subdomain.development.local-ssl
+service apache2 reload
+```
+
+### In development
+
+Need asocciation between IP Address and DNS
+
+```bash
+vim /etc/hosts
+# On docker
+127.0.0.1 subdomain.development.local
+# On host machine
+127.0.0.1 subdomain.development.local
+```
+
 ## XDebug
 
 [See](https://medium.com/@jasonterando/debugging-with-visual-studio-code-xdebug-and-docker-on-windows-b63a10b0dec)
@@ -370,7 +413,7 @@ launch.json example for local and remote debugging multiple root
 }
 ```
 
-### SSL Certificate
+## SSL Certificate
 
 Load certificate in browser
 
@@ -446,7 +489,76 @@ curl -I https://development.local
 
 > It must be return: 302 | 200 HTTP Code
 
-### Composer
+### Generate Certificates
+
+[See](https://lawebdefreddie.blogspot.com/2017/05/crear-certificados-ssl-autofirmados.html)
+
+```bash
+# Config file to use in process
+export OPENSSL_CONF=/var/www/html/freddiegar/services/ssl/openssl.conf
+
+mkdir /var/www/ssl
+cd /var/www/ssl
+mkdir certs crl newcerts private
+chmod 700 private
+touch index.txt
+echo 1000 > serial
+openssl genrsa -aes256 -out private/ca.key.pem 4096
+
+openssl req -new -x509 -days 3650 -key private/ca.key.pem -sha256 -extensions v3_ca -out certs/ca.cert.pem
+
+# Verification
+# openssl x509 -noout -text -in certs/ca.cert.pem
+
+mkdir intermediate
+cd /var/www/ssl/intermediate
+mkdir certs crl newcerts private
+chmod 700 private
+touch index.txt
+echo 1000 > serial
+openssl genrsa -aes256 -out private/intermediate.key.pem 4096
+
+openssl req -sha256 -new -key private/intermediate.key.pem -out certs/intermediate.csr.pem
+
+cd /var/www/ssl
+openssl ca -keyfile private/ca.key.pem -cert certs/ca.cert.pem -extensions v3_ca -notext -md sha256 -in intermediate/certs/intermediate.csr.pem -out intermediate/certs/intermediate.cert.pem
+
+# Verification
+# openssl verify -CAfile certs/ca.cert.pem intermediate/certs/intermediate.cert.pem
+
+cat intermediate/certs/intermediate.cert.pem certs/ca.cert.pem > intermediate/certs/ca-chain.cert.pem
+
+cd /var/www/ssl/intermediate
+openssl genrsa -out private/development.local.key.pem 2048
+chmod 644 private/development.local.key.pem
+openssl req -sha256 -new -key private/development.local.key.pem -out certs/development.local.csr.pem
+
+cd /var/www/ssl
+openssl ca -keyfile private/ca.key.pem -cert certs/ca.cert.pem -extensions usr_cert -notext -md sha256 -in intermediate/certs/development.local.csr.pem -out intermediate/certs/development.local.cert.pem
+
+# Optional: Lighttpd certificate
+# cat intermediate/private/development.local.key.pem intermediate/certs/development.local.cert.pem > intermediate/certs/development.local.lighttpd.pem
+
+find . -type d -exec chmod 755 {} +
+find . -type f -exec chmod 644 {} +
+chown freddie:freddie . -R
+ll /var/www/ssl/intermediate/certs/development.local.cert.pem
+ll /var/www/ssl/intermediate/private/development.local.key.pem
+ll /var/www/ssl/intermediate/certs/ca-chain.cert.pem
+# ll /var/www/ssl/intermediate/certs/development.local.lighttpd.pem
+
+# Copy new files in docker services
+
+cp -p /var/www/ssl/certs/ca.cert.pem /var/www/html/freddiegar/services/ssl/
+cp -p /var/www/ssl/intermediate/certs/ca-chain.cert.pem /var/www/html/freddiegar/services/ssl/
+cp -p /var/www/ssl/intermediate/certs/development.local.cert.pem /var/www/html/freddiegar/services/ssl/
+cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/freddiegar/services/ssl/
+
+```
+> Upload new CA in browser: /var/www/html/freddiegar/services/ssl/ca.cert.pem
+
+
+## Composer
 
 Test legacy code in PHP
 
