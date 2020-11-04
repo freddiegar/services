@@ -27,13 +27,16 @@ RUN apt-get update \
     libzip-dev \
     libpng-dev \
     libjpeg-dev \
+    libfreetype6-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip gd \
+    && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip \
     && docker-php-ext-install -j$(nproc) pdo_mysql opcache \
     && apt-get -y install libssl-dev libc-client2007e-dev libkrb5-dev \
     && docker-php-ext-configure imap --with-imap-ssl --with-kerberos \
     && docker-php-ext-install -j$(nproc) imap \
     && docker-php-ext-install -j$(nproc) intl \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype \
+    && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) exif \
     && a2enmod rewrite \
     && a2enmod ssl \
