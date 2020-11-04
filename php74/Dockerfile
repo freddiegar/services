@@ -6,6 +6,7 @@ COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/developmen
 COPY ./vhosts/security.conf /etc/apache2/conf-available/security.conf
 COPY ./vhosts/apache2.conf /etc/apache2/apache2.conf
 COPY ./alias.conf /etc/apache2/alias.conf
+COPY ./vhost.conf /etc/apache2/sites-available/vhost.conf
 COPY ./ssl/* /var/www/ssl/
 COPY ./php74/php.ini /usr/local/etc/php/php.ini
 
@@ -42,6 +43,7 @@ RUN apt-get update \
     && a2ensite localhost \
     && a2ensite development.local \
     && a2ensite development.local-ssl \
+    && a2ensite vhost \
     && service apache2 restart \
     && update-rc.d cron defaults \
     && service cron start \

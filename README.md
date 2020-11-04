@@ -255,16 +255,11 @@ service apache2 reload
 Copy configuration of default setup
 
 ```bash
-cp -p /etc/apache2/sites-available/development.local-ssl.conf subdomain.development.local-ssl.conf
-vim subdomain.development.local-ssl.conf
-```
-
-Add new directory root
-
-```bash
-vim subdomain.development.local-ssl.conf
-# Change document root
-DocumentRoot "/var/www/html/subdomain/"
+echo "<VirtualHost *:443>
+    ServerName subdomain.development.local
+    DocumentRoot "/var/www/html/subdomain/public/"
+</VirtualHost>
+" > subdomain.development.local-ssl.conf
 ```
 
 Test new configuration

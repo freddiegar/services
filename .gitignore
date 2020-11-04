@@ -1,6 +1,7 @@
 .env
 .idea
 alias.conf
+vhost.conf
 docker-compose.override.yml
 *.swp
 
