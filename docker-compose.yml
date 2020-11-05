@@ -21,6 +21,11 @@ services:
         ipv4_address: $DB_IP_ADDRESS
     ports:
     - $DB_PORT:3306
+    deploy:
+      resources:
+        limits:
+          memory: $DB_MEMORY
+
 
   mssql:
     image: mcr.microsoft.com/mssql/server:2017-latest
@@ -33,6 +38,10 @@ services:
         ipv4_address: 172.20.0.11
     ports:
     - 1433:1433
+    deploy:
+      resources:
+        limits:
+          memory: $DB_MEMORY
 
   cache:
     image: redis:alpine
@@ -45,6 +54,10 @@ services:
     networks:
       development:
         ipv4_address: $CACHE_IP_ADDRESS
+    deploy:
+      resources:
+        limits:
+          memory: $CACHE_MEMORY
 
   apache74:
     container_name: apache74
@@ -62,6 +75,10 @@ services:
     extra_hosts:
       - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
+    deploy:
+      resources:
+        limits:
+          memory: $WEB_MEMORY
 
   apache73:
     container_name: apache73
@@ -79,6 +96,10 @@ services:
     extra_hosts:
       - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
+    deploy:
+      resources:
+        limits:
+          memory: $WEB_MEMORY
 
   apache72:
     container_name: apache72
@@ -96,6 +117,10 @@ services:
     extra_hosts:
       - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
+    deploy:
+      resources:
+        limits:
+          memory: $WEB_MEMORY
 
   apache56:
     container_name: apache56
@@ -113,6 +138,10 @@ services:
     extra_hosts:
       - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
+    deploy:
+      resources:
+        limits:
+          memory: $WEB_MEMORY
 
   proxy:
     container_name: proxy
@@ -126,6 +155,10 @@ services:
     - '80:80'
     - '443:443'
     - '32700:32700'
+    deploy:
+      resources:
+        limits:
+          memory: $PROXY_MEMORY
 
   pentesting:
     container_name: pentesting
@@ -168,7 +201,12 @@ services:
     - '8022:22'
     extra_hosts:
       - development.local:$PROXY_IP_ADDRESS
+    deploy:
+      resources:
+        limits:
+          memory: $FTP_MEMORY
 
 networks:
   development:
     external: true
+

@@ -2,48 +2,27 @@ version: '3.2'
 
 services:
   db:
-    # https://hub.docker.com/_/mysql
-    container_name: db
     restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./db/Dockerfile
-    environment:
-      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
-    volumes:
-      - $DB_PATH_DATA:/var/lib/mysql
-      - $DB_PATH_LOG:/var/log/mysql
-    networks:
-      development:
-        ipv4_address: $DB_IP_ADDRESS
-    ports:
-    - $DB_PORT:3306
+    deploy:
+      resources:
+        limits:
+          memory: ''
 
   cache:
-    image: redis:alpine
-    container_name: cache
     restart: unless-stopped
-    networks:
-      development:
-        ipv4_address: $CACHE_IP_ADDRESS
+    deploy:
+      resources:
+        limits:
+          memory: ''
 
   apache74:
-    container_name: apache74
     restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./php74/Dockerfile
-    volumes:
-      - $WEB_DOCROOT:/var/www/html
-    networks:
-      development:
-        ipv4_address: 172.20.0.74
-    expose:
-    - 80
-    - 443
-    extra_hosts:
-      - "host.docker.internal:${HOST_DOCKER}"
+    deploy:
+      resources:
+        limits:
+          memory: ''
 
 networks:
   development:
     external: true
+
