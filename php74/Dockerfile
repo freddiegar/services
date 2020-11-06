@@ -19,11 +19,11 @@ RUN apt-get update \
     && apt-get install -y \
     vim \
     cron \
+    zip \
     iputils-ping \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
-    zip \
     libzip-dev \
     libpng-dev \
     libjpeg-dev \
@@ -38,6 +38,7 @@ RUN apt-get update \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) exif \
+    && printf "\n" | pecl install -o -f redis && rm -rf /tmp/pear && docker-php-ext-enable redis \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
