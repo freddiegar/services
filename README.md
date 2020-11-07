@@ -468,8 +468,10 @@ See: [https://curl.haxx.se/docs/sslcerts.html](https://curl.haxx.se/docs/sslcert
 ```bash
 openssl s_client -showcerts -servername development.local -connect development.local:443 > development.local.pem
 ```
+> Optional: content is saved in `ssl/development.local.pem` yet.
 
 3. Concat `development.local.pem` chain certificates in `curl-ca-bundle.crt` file.
+> Open file `ssl/development.local.pem` and paste content in `curl-ca-bundle.crt`.
 
 4. Move file curl-ca-bundle.crt concatenated to:
 
