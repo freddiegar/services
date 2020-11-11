@@ -590,6 +590,64 @@ composer global require friendsofphp/php-cs-fixer
 composer global require jelix/fakeserverconf
 ```
 
+## Benchmark Web Server
+
+### Apache Bench (ab)
+
+[See](http://www.devside.net/archives/wamp-server/load-testing-apache-with-ab-apache-bench) for examples or
+[See](https://httpd.apache.org/docs/2.4/programs/ab.html) for options
+
+```bash
+# Install
+sudo apt-get install -y apache-utils
+# 1 user - 1 page = local
+ab -n 1 -c 1 -t 10 -k -l -S -d -q -r -H "Accept-Encoding: gzip, deflate" localhost/
+# 1 user - 100 pages = test
+ab -n 100 -c 1 -t 10 -k -l -S -d -q -r -H "Accept-Encoding: gzip, deflate" localhost/
+# 5 users - 10 pages = production (~50000 hits/month)
+ab -n 50 -c 5 -t 10 -k -l -S -d -q -r -H "Accept-Encoding: gzip, deflate" localhost/
+# 10 users - 10 pages = production killer (~10 users in same minute :O)
+ab -n 100 -c 10 -t 10 -k -l -S -d -q -r -H "Accept-Encoding: gzip, deflate" localhost/
+# 30 users - 20 pages = production unicorn (top 1% of sites on internet)
+ab -n 600 -c 30 -t 10 -k -l -S -d -q -r -H "Accept-Encoding: gzip, deflate" localhost/
+# 90 users - 30 pages = production insane (top 1% of top 1%, really busiest site)
+ab -n 2700 -c 90 -t 10 -k -l -S -d -q -r -H "Accept-Encoding: gzip, deflate" localhost/
+```
+> ab send HTTP 1.0 request and not allowed self-signed certificates
+
+### Siege
+
+[See](https://www.euperia.com/wrote/speed-testing-your-website-with-siege-part-one/) for examples or
+[See](https://www.joedog.org/siege-manual/) for options or
+[See](https://www.ryadel.com/en/apache-mod_cache-mod_cache_disk-web-site-caching-reverse-proxy/) for ssl
+
+```bash
+# Install
+sudo apt-get install siege && siege.config
+# 1 user - 1 page = local
+siege -r1 -c1 -t10s -H "Accept-Encoding: gzip, deflate" localhost/
+# 1 user - 100 pages = test
+siege -r100 -c1 -t10s -H "Accept-Encoding: gzip, deflate" localhost/
+# 5 users - 10 pages = production (~50000 hits/month)
+siege -r50 -c5 -t10s -H "Accept-Encoding: gzip, deflate" localhost/
+# 10 users - 10 pages = production killer (~10 users in same minute :O)
+siege -r100 -c10 -t10s -H "Accept-Encoding: gzip, deflate" localhost/
+# 30 users - 20 pages = production unicorn (top 1% of sites on internet)
+siege -r600 -c30 -t10s -H "Accept-Encoding: gzip, deflate" localhost/
+# 90 users - 30 pages = production insane (top 1% of top 1%, really busiest site)
+siege -r2700 -c90 -t10s -H "Accept-Encoding: gzip, deflate" localhost/
+```
+> siege send HTTP 1.1 request
+
+# Manual
+
+```bash
+i=0; while [ $i -lt 10 ]; do \time -p curl -L -H "Accept-Encoding: gzip, deflate" "http://localhost/" > /dev/null; sleep 1; i=$[$i+1]; done 2>&1 | grep real | awk '{print $2}' | awk '{avg += ($1 - avg) / NR;} END {print "Average: " avg "s";}'
+```
+> It use 1 second between requests and 10 requests
+
+> time is reserved word (too in zsh) then use \time, more info [here](https://www.howtogeek.com/415977/how-to-use-the-time-command-on-linux/)
+
 ## PenTesting
 
 See [Kali](https://www.kali.org/news/official-kali-linux-docker-images/) installation from Docker

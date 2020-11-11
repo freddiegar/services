@@ -56,9 +56,8 @@ sudo apt-get install -y curl
 sudo apt-get install -y vim
 sudo apt-get install -y tree
 sudo apt-get install -y nmap
-sudo apt-get install -y apache2-utils
 sudo apt-get install -y htop
-## sudo apt-get remove unzip curl vim tree nmap apache2-utils htop && sudo apt-get autoremove
+## sudo apt-get remove unzip curl vim tree nmap htop && sudo apt-get autoremove
 ```
 
 ## Vim Configuration
