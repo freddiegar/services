@@ -293,7 +293,7 @@ vim /etc/hosts
 [See](https://medium.com/@jasonterando/debugging-with-visual-studio-code-xdebug-and-docker-on-windows-b63a10b0dec)
 or [Remote](https://xdebug.org/docs/remote)
 
-#### On docker - Remote
+### On docker - Remote
 
 ```bash
 # Install extension from PECL
@@ -308,6 +308,7 @@ xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=0
 xdebug.coverage_enable=0
 ;xdebug.remote_log=/var/www/html/xdebug/xdebug.log
+xdebug.file_link_format=vscode://file/%f:%l
 zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
 # cat /usr/local/etc/php/conf.d/xdebug.ini
 # Restart apache to load changes
@@ -334,16 +335,16 @@ service apache2 reload
 
 > PHP 7+: pecl install -f xdebug
 
-#### Local
+### Local
 
-In php.ini add:
+In `php.ini` file add:
 
 ```bash
 ;;;;;;;;;;
 ; XDebug ;
 ;;;;;;;;;;
 
-xdebug.remote_enable = 1
+xdebug.remote_enable=1
 xdebug.remote_mode=req
 xdebug.remote_host=localhost
 xdebug.remote_port=9000
@@ -353,12 +354,16 @@ xdebug.idekey=PHPSTORM
 ; To enable profiler use XDEBUG_PROFILE=PHPSTORM in (GET|POST|COOKIE)
 xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=1
-zend_extension=/usr/local/lib/php/extensions/xdebug.xo
+xdebug.file_link_format=vscode://file/%f:%l
+zend_extension=/usr/local/lib/php/extensions/xdebug.so
 ; Windows
 ; zend_extension=php_xdebug-2.9.5-7.3-vc15-nts-x86_64.dll
 ```
+> For Windows
 
-#### Troubles
+> For Linux use path: `/etc/php/{vr}/mods-available/xdebug.ini`
+
+### Troubles
 
 1. E: Could not connect to client. :-(
 - Check config in IDE, specialy: port enable
@@ -406,6 +411,22 @@ launch.json example for local and remote debugging multiple root
         }
     ]
 }
+```
+
+### Enable/Disable
+
+```bash
+# Ubuntu
+phpenmod xdebug
+phpdismod xdebug
+
+# Docker
+# vim /usr/local/etc/php/conf.d/xdebug.ini
+; zend_extension=...
+
+# Windows
+# php.ini
+; zend_extension=...
 ```
 
 ## SSL Certificate
