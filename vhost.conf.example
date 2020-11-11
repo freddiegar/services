@@ -2,9 +2,6 @@
 #     ServerName subdomain.development.local
 #     DocumentRoot "/var/www/html/subdomain/"
 
-#     SSLEngine On
-#     SSLCertificateFile /var/www/ssl/development.local.cert.pem
-#     SSLCertificateKeyFile /var/www/ssl/development.local.key.pem
-#     SSLCertificateChainFile /var/www/ssl/ca-chain.cert.pem
+#     Include /var/www/ssl/certificates.conf
 # </VirtualHost>
 
