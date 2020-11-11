@@ -637,7 +637,7 @@ siege -r600 -c30 -t10s -H "Accept-Encoding: gzip, deflate" localhost/
 # 90 users - 30 pages = production insane (top 1% of top 1%, really busiest site)
 siege -r2700 -c90 -t10s -H "Accept-Encoding: gzip, deflate" localhost/
 ```
-> siege send HTTP 1.1 request
+> siege send HTTP 1.1 request and accept self-signed certificates
 
 ### Manual
 
