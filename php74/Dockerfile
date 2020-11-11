@@ -43,12 +43,15 @@ RUN apt-get update \
     && a2enmod ssl \
     && a2enmod expires \
     && a2enmod headers \
+    && a2enmod cache \
+    && a2enmod cache_disk \
     && a2dissite 000-default \
     && a2ensite localhost \
     && a2ensite development.local \
     && a2ensite development.local-ssl \
     && a2ensite vhost \
     && service apache2 restart \
+    && service apache-htcacheclean start \
     && update-rc.d cron defaults \
     && service cron start \
     && apt-get autoremove -y

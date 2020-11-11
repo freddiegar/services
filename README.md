@@ -639,7 +639,7 @@ siege -r2700 -c90 -t10s -H "Accept-Encoding: gzip, deflate" localhost/
 ```
 > siege send HTTP 1.1 request
 
-# Manual
+### Manual
 
 ```bash
 i=0; while [ $i -lt 10 ]; do \time -p curl -L -H "Accept-Encoding: gzip, deflate" "http://localhost/" > /dev/null; sleep 1; i=$[$i+1]; done 2>&1 | grep real | awk '{print $2}' | awk '{avg += ($1 - avg) / NR;} END {print "Average: " avg "s";}'
