@@ -4,6 +4,7 @@ COPY ./vhosts/localhost.conf /etc/apache2/sites-available/localhost.conf
 COPY ./vhosts/development.local.conf /etc/apache2/sites-available/development.local.conf
 COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/development.local-ssl.conf
 COPY ./vhosts/security.conf /etc/apache2/conf-available/security.conf
+COPY ./vhosts/cache.conf /etc/apache2/conf-available/cache.conf
 COPY ./vhosts/apache2.conf /etc/apache2/apache2.conf
 COPY ./alias.conf /etc/apache2/alias.conf
 COPY ./vhost.conf /etc/apache2/sites-available/vhost.conf
@@ -45,16 +46,19 @@ RUN apt-get update \
     && a2enmod headers \
     && a2enmod cache \
     && a2enmod cache_disk \
+    && a2enconf cache \
     && a2dissite 000-default \
     && a2ensite localhost \
     && a2ensite development.local \
     && a2ensite development.local-ssl \
     && a2ensite vhost \
     && service apache2 restart \
-    && service apache-htcacheclean start \
-    && update-rc.d cron defaults \
-    && service cron start \
     && apt-get autoremove -y
+
+RUN update-rc.d apache-htcacheclean defaults \
+    && update-rc.d cron defaults \
+    && service apache-htcacheclean start \
+    && service cron start
 
 ENTRYPOINT [ "/usr/sbin/apachectl" ]
 CMD ["-D", "FOREGROUND"]
