@@ -1,5 +1,7 @@
 FROM php:7.4-apache
 
+LABEL maintainer="freddie.gar@outlook.com"
+
 COPY ./vhosts/localhost.conf /etc/apache2/sites-available/localhost.conf
 COPY ./vhosts/development.local.conf /etc/apache2/sites-available/development.local.conf
 COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/development.local-ssl.conf

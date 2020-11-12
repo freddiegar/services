@@ -24,6 +24,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: $DB_CORE
           memory: $DB_MEMORY
 
 
@@ -41,6 +42,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: $DB_CORE
           memory: $DB_MEMORY
 
   cache:
@@ -57,6 +59,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: $CACHE_CORE
           memory: $CACHE_MEMORY
 
   apache74:
@@ -78,6 +81,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: $WEB_CORE
           memory: $WEB_MEMORY
 
   apache73:
@@ -99,6 +103,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: $WEB_CORE
           memory: $WEB_MEMORY
 
   apache72:
@@ -120,6 +125,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: $WEB_CORE
           memory: $WEB_MEMORY
 
   apache56:
@@ -141,6 +147,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: $WEB_CORE
           memory: $WEB_MEMORY
 
   proxy:
@@ -158,6 +165,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: $PROXY_CORE
           memory: $PROXY_MEMORY
 
   pentesting:
@@ -204,6 +212,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: $FTP_CORE
           memory: $FTP_MEMORY
 
 networks:
