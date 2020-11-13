@@ -2,17 +2,14 @@ FROM php:7.4-apache
 
 LABEL maintainer="freddie.gar@outlook.com"
 
-COPY ./vhosts/localhost.conf /etc/apache2/sites-available/localhost.conf
-COPY ./vhosts/development.local.conf /etc/apache2/sites-available/development.local.conf
-COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/development.local-ssl.conf
-COPY ./vhosts/security.conf /etc/apache2/conf-available/security.conf
-COPY ./vhosts/cache.conf /etc/apache2/conf-available/cache.conf
-COPY ./vhosts/apache2.conf /etc/apache2/apache2.conf
-COPY ./alias.conf /etc/apache2/alias.conf
-COPY ./vhost.conf /etc/apache2/sites-available/vhost.conf
 COPY ./ssl/* /var/www/ssl/
-COPY ./php74/php.ini /usr/local/etc/php/php.ini
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY ./vhosts/cache.conf /etc/apache2/conf-available/
+COPY ./vhosts/security.conf /etc/apache2/conf-available/
+COPY ./vhosts/localhost.conf /etc/apache2/sites-available/
+COPY ./vhosts/development.local.conf /etc/apache2/sites-available/
+COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/
+COPY ./alias.conf /etc/apache2/
+COPY ./vhost.conf /etc/apache2/sites-available/
 
 WORKDIR /var/www/html
 
@@ -54,12 +51,15 @@ RUN apt-get update \
     && a2ensite development.local \
     && a2ensite development.local-ssl \
     && a2ensite vhost \
-    && service apache2 restart \
     && apt-get autoremove -y \
     && apt-get autoclean -y
 
-COPY crontab /etc/
-RUN chmod 0644 /etc/crontab \
-    && chmod 0544 /usr/local/bin/entrypoint.sh
+COPY ./entrypoint.sh /usr/local/bin/
+COPY ./vhosts/apache2.conf /etc/apache2/
+COPY ./php74/php.ini /usr/local/etc/php/
+COPY ./crontab /etc/
+
+RUN chmod 0600 /etc/crontab \
+    && chmod 0500 /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
