@@ -1,0 +1,2 @@
+0,30 * * * * www-data /usr/bin/htcacheclean -n -t -l128M -p/var/cache/apache2/mod_cache_disk/
+

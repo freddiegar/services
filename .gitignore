@@ -2,6 +2,7 @@
 .idea
 alias.conf
 vhost.conf
+crontab
 docker-compose.override.yml
 *.swp
 
