@@ -12,6 +12,7 @@ COPY ./alias.conf /etc/apache2/alias.conf
 COPY ./vhost.conf /etc/apache2/sites-available/vhost.conf
 COPY ./ssl/* /var/www/ssl/
 COPY ./php74/php.ini /usr/local/etc/php/php.ini
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 WORKDIR /var/www/html
 
@@ -46,8 +47,7 @@ RUN apt-get update \
     && a2enmod ssl \
     && a2enmod expires \
     && a2enmod headers \
-    && a2enmod cache \
-    && a2enmod cache_disk \
+    && a2enmod cache cache_disk \
     && a2enconf cache \
     && a2dissite 000-default \
     && a2ensite localhost \
@@ -55,12 +55,11 @@ RUN apt-get update \
     && a2ensite development.local-ssl \
     && a2ensite vhost \
     && service apache2 restart \
-    && apt-get autoremove -y
+    && apt-get autoremove -y \
+    && apt-get autoclean -y
 
-RUN update-rc.d apache-htcacheclean defaults \
-    && update-rc.d cron defaults \
-    && service apache-htcacheclean start \
-    && service cron start
+COPY crontab /etc/
+RUN chmod 0644 /etc/crontab \
+    && chmod 0544 /usr/local/bin/entrypoint.sh
 
-ENTRYPOINT [ "/usr/sbin/apachectl" ]
-CMD ["-D", "FOREGROUND"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
