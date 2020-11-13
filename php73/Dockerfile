@@ -17,7 +17,7 @@ RUN cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.
     && update-ca-certificates
 
 RUN apt-get update \
-    && apt-get install -y \
+    && apt-get install --no-install-recommends -y \
     vim \
     cron \
     zip \
