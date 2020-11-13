@@ -128,6 +128,28 @@ services:
           cpus: $WEB_CORE
           memory: $WEB_MEMORY
 
+  apache70:
+    container_name: apache70
+    build:
+      context: .
+      dockerfile: ./php70/Dockerfile
+    volumes:
+      - $WEB_DOCROOT:/var/www/html
+    networks:
+      development:
+        ipv4_address: 172.20.0.70
+    expose:
+    - 80
+    - 443
+    extra_hosts:
+      - "development.local:127.0.0.1"
+      - "host.docker.internal:${HOST_DOCKER}"
+    deploy:
+      resources:
+        limits:
+          cpus: $WEB_CORE
+          memory: $WEB_MEMORY
+
   apache56:
     container_name: apache56
     build:
