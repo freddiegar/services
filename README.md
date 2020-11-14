@@ -429,6 +429,41 @@ phpdismod xdebug
 ; zend_extension=...
 ```
 
+## Profiler
+
+### php-spx
+
+[See](https://github.com/NoiseByNorthwest/php-spx)
+
+```bash
+# Install in docker!
+sudo apt-get install -y zlib1g-dev
+mkdir -p /var/www/html/profiler
+git clone --depth=1 --branch=master https://github.com/NoiseByNorthwest/php-spx.git
+cd php-spx
+phpize
+./configure
+make
+make install
+
+# Enabled
+echo "spx.http_enabled=1
+spx.http_key="dev"
+spx.http_ip_whitelist="172.20.0.100"
+extension=$(find /usr/local/lib/php/extensions/ -name spx.so)" > /usr/local/etc/php/conf.d/spx.ini
+
+# Enabled in Apache
+service apache2 reload
+
+# Profiler Wer
+https://development.local/?SPX_KEY=dev&SPX_UI_URI=/
+https://development.local/project/?SPX_KEY=dev&SPX_UI_URI=/
+https://subdomain.development.local/?SPX_KEY=dev&SPX_UI_URI=/
+
+# Profiler cli
+SPX_ENABLED=1 SPX_REPORT=full php bin/console cache:clear
+```
+
 ## SSL Certificate
 
 Load certificate in browser
