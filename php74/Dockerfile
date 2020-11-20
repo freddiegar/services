@@ -41,7 +41,8 @@ RUN apt-get update \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) exif \
-    && printf "\n" | pecl install -o -f redis && rm -rf /tmp/pear && docker-php-ext-enable redis \
+    && printf "no\n" | pecl install -o -f apcu
+    && printf "\n" | pecl install -o -f redis && rm -rf /tmp/pear && docker-php-ext-enable redis apcu \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
