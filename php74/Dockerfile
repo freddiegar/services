@@ -13,6 +13,8 @@ COPY ./vhost.conf /etc/apache2/sites-available/
 
 WORKDIR /var/www/html
 
+ENV HOST_ENV="${HOST_ENV}"
+
 RUN cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt \
     && update-ca-certificates
 
@@ -30,7 +32,7 @@ RUN apt-get update \
     libjpeg-dev \
     libfreetype6-dev \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip \
+    && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip simplexml \
     && docker-php-ext-install -j$(nproc) pdo_mysql opcache \
     && apt-get -y install libssl-dev libc-client2007e-dev libkrb5-dev \
     && docker-php-ext-configure imap --with-imap-ssl --with-kerberos \
@@ -44,7 +46,7 @@ RUN apt-get update \
     && a2enmod ssl \
     && a2enmod expires \
     && a2enmod headers \
-    && a2enmod cache cache_disk \
+    && if [ "$HOST_ENV" = "prod" ] ; then a2enmod cache cache_disk; fi \
     && a2enconf cache \
     && a2dissite 000-default \
     && a2ensite localhost \

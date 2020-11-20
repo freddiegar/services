@@ -86,6 +86,8 @@ services:
 
   apache74:
     container_name: apache74
+    environment:
+      - HOST_ENV=${HOST_ENV:-prod}
     build:
       context: .
       dockerfile: ./php74/Dockerfile
