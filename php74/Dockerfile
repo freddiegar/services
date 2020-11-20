@@ -13,12 +13,14 @@ COPY ./vhost.conf /etc/apache2/sites-available/
 
 WORKDIR /var/www/html
 
-ENV HOST_ENV="${HOST_ENV}"
+ARG HOST_ENV=prod
+ENV HOST_ENV="$HOST_ENV"
 
 RUN cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt \
     && update-ca-certificates
 
-RUN apt-get update \
+RUN set -eux \
+    && apt-get update \
     && apt-get install --no-install-recommends -y \
     vim \
     cron \
@@ -41,8 +43,27 @@ RUN apt-get update \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) exif \
-    && printf "no\n" | pecl install -o -f apcu
-    && printf "\n" | pecl install -o -f redis && rm -rf /tmp/pear && docker-php-ext-enable redis apcu \
+    && printf "no\n" | pecl install -o -f apcu \
+    && printf "\n" | pecl install -o -f redis \
+    && docker-php-ext-enable redis apcu \
+    && if [ "$HOST_ENV" = "dev" ] ; then pecl install -o -f xdebug; fi \
+    && if [ "$HOST_ENV" = "dev" ] ; then docker-php-ext-enable xdebug; fi \
+    && if [ "$HOST_ENV" = "dev" ] ; then \
+    { \
+        echo "xdebug.idekey=PHPSTORM"; \
+        echo "xdebug.remote_mode=req"; \
+        echo "xdebug.remote_host=host.docker.internal"; \
+        echo "xdebug.remote_port=9000"; \
+        echo "xdebug.remote_enable=1"; \
+        echo ";xdebug.remote_autostart=0; Only by explicit request, see below:"; \
+        echo "xdebug.profiler_enable=0"; \
+        echo "xdebug.profiler_enable_trigger=0"; \
+        echo "xdebug.coverage_enable=0"; \
+        echo ";xdebug.remote_log=/var/www/html/xdebug/xdebug.log"; \
+        echo "xdebug.file_link_format=vscode://file/%f:%l"; \
+        echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)"; \
+    } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
+    && rm -rf /tmp/pear \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \

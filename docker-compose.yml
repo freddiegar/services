@@ -27,7 +27,6 @@ services:
           cpus: $DB_CORE
           memory: $DB_MEMORY
 
-
   mssql:
     image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: mssql
@@ -86,11 +85,11 @@ services:
 
   apache74:
     container_name: apache74
-    environment:
-      - HOST_ENV=${HOST_ENV:-prod}
     build:
       context: .
       dockerfile: ./php74/Dockerfile
+      args:
+        - HOST_ENV=${HOST_ENV:-prod}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
