@@ -228,7 +228,7 @@ alias vt="vendor/bin/phpunit --stop-on-failure --no-coverage"
 alias vtf="vendor/bin/phpunit --stop-on-failure --no-coverage --filter"
 alias st="bin/phpunit --stop-on-failure --no-coverage"
 alias stf="bin/phpunit --stop-on-failure --no-coverage --filter"
-alias update="sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y"
+alias update="sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y && sudo apt-get autoclean -y"
 alias dup="docker-compose up -d --build"
 alias dconfig="docker-compose config"
 alias drm="docker rm -f"
@@ -251,6 +251,7 @@ alias gcmsg="git commit -m"
 alias gca="git commit --amend -m"
 alias gl="git pull"
 alias gp="git push"
+alias gco="git checkout"
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 ' > ~/.bash_aliases
 
@@ -662,4 +663,9 @@ sudo apt-get install -y vagrant
 ## Remove LibreOffice
 ```bash
 sudo apt-get remove -y --purge libreoffice* && sudo apt-get clean && sudo apt-get autoremove
+```
+
+# Clean installation
+```bash
+sudo apt-get autoremove -y && sudo apt-get autoclean -y
 ```
