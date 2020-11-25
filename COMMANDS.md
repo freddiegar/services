@@ -1187,3 +1187,12 @@ Compare commits in GitHub
 ```bash
 https://github.com/<user>/<repo>/compare/e27fd28..fe48547
 ```
+
+Install extensions PECL without PECL in docker
+```bash
+FROM php:8.0.0RC5-cli-buster
+
+RUN mkdir -p /usr/src/php/ext/mongodb \
+    && curl -fsSL https://pecl.php.net/get/mongodb | tar xvz -C "/usr/src/php/ext/mongodb" --strip 1 \
+    && docker-php-ext-install mongodb
+```

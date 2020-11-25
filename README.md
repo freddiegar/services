@@ -333,7 +333,11 @@ service apache2 reload
 
 > PHP 5.6: pecl install -f xdebug-2.5.5
 
-> PHP 7+: pecl install -f xdebug
+> PHP 7.0: pecl install -f xdebug-2.6.1
+
+> PHP 7.1: pecl install -f xdebug-2.9.8
+
+> PHP 7.2+: pecl install -f xdebug
 
 ### Local
 

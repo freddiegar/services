@@ -55,7 +55,7 @@ RUN apt-get update \
 
 COPY ./entrypoint.sh /usr/local/bin/
 COPY ./vhosts/apache2.conf /etc/apache2/
-COPY ./php72/php.ini /usr/local/etc/php/
+COPY ./php56/php.ini /usr/local/etc/php/
 COPY ./crontab /etc/
 
 RUN chmod 0600 /etc/crontab \
