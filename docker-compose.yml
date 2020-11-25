@@ -66,6 +66,8 @@ services:
     build:
       context: .
       dockerfile: ./php80/Dockerfile
+      args:
+        - HOST_ENV=${HOST_ENV:-prod}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -112,6 +114,8 @@ services:
     build:
       context: .
       dockerfile: ./php73/Dockerfile
+      args:
+        - HOST_ENV=${HOST_ENV:-prod}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -134,6 +138,8 @@ services:
     build:
       context: .
       dockerfile: ./php72/Dockerfile
+      args:
+        - HOST_ENV=${HOST_ENV:-prod}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -156,6 +162,8 @@ services:
     build:
       context: .
       dockerfile: ./php71/Dockerfile
+      args:
+        - HOST_ENV=${HOST_ENV:-prod}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -178,6 +186,8 @@ services:
     build:
       context: .
       dockerfile: ./php70/Dockerfile
+      args:
+        - HOST_ENV=${HOST_ENV:-prod}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -200,6 +210,8 @@ services:
     build:
       context: .
       dockerfile: ./php56/Dockerfile
+      args:
+        - HOST_ENV=${HOST_ENV:-prod}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
