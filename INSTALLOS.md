@@ -438,6 +438,7 @@ cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
 ```bash
 sudo pecl install -f xdebug
 
+# Xdebug 2
 echo 'xdebug.idekey=PHPSTORM
 xdebug.remote_mode=req
 xdebug.remote_host=localhost
@@ -447,6 +448,16 @@ xdebug.remote_autostart=1
 ; To enable profiler use XDEBUG_PROFILE=PHPSTORM in (GET|POST|COOKIE)
 xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=1
+zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
+
+# Xdebug 3
+echo 'xdebug.idekey=PHPSTORM
+xdebug.mode=debug
+xdebug.start_with_request=trigger
+xdebug.client_host=host.docker.internal
+xdebug.client_port=9000
+;xdebug.log=/var/www/html/xdebug/xdebug.log
+xdebug.file_link_format=vscode://file/%f:%l
 zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 
 sudo phpenmod xdebug

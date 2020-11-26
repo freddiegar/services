@@ -297,8 +297,10 @@ or [Remote](https://xdebug.org/docs/remote)
 
 ```bash
 # Install extension from PECL
-pecl install -f xdebug \
-&& echo "xdebug.idekey=PHPSTORM
+pecl install -f xdebug
+
+# Xdebug 2
+echo "xdebug.idekey=PHPSTORM
 xdebug.remote_mode=req
 xdebug.remote_host=host.docker.internal
 xdebug.remote_port=9000
@@ -310,6 +312,17 @@ xdebug.coverage_enable=0
 ;xdebug.remote_log=/var/www/html/xdebug/xdebug.log
 xdebug.file_link_format=vscode://file/%f:%l
 zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
+
+# Xdebug 3
+echo 'xdebug.idekey=PHPSTORM
+xdebug.mode=debug
+xdebug.start_with_request=trigger
+xdebug.client_host=host.docker.internal
+xdebug.client_port=9000
+;xdebug.log=/var/www/html/xdebug/xdebug.log
+xdebug.file_link_format=vscode://file/%f:%l
+zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
+
 # cat /usr/local/etc/php/conf.d/xdebug.ini
 # Restart apache to load changes
 service apache2 reload
@@ -348,6 +361,7 @@ In `php.ini` file add:
 ; XDebug ;
 ;;;;;;;;;;
 
+; Xdebug 2
 xdebug.remote_enable=1
 xdebug.remote_mode=req
 xdebug.remote_host=localhost
@@ -360,10 +374,20 @@ xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=1
 xdebug.file_link_format=vscode://file/%f:%l
 zend_extension=/usr/local/lib/php/extensions/xdebug.so
+
+; Xdebug 3
+xdebug.idekey=PHPSTORM
+xdebug.mode=debug
+xdebug.start_with_request=trigger
+xdebug.client_host=localhost
+xdebug.client_port=9000
+xdebug.file_link_format=vscode://file/%f:%l
+zend_extension=/usr/local/lib/php/extensions/xdebug.so
+
 ; Windows
-; zend_extension=php_xdebug-2.9.5-7.3-vc15-nts-x86_64.dll
+; zend_extension=php_xdebug-{version}.dll
 ```
-> For Windows
+> For Windows use php.ini
 
 > For Linux use path: `/etc/php/{vr}/mods-available/xdebug.ini`
 
