@@ -51,15 +51,11 @@ RUN set -eux \
     && if [ "$HOST_ENV" = "dev" ] ; then \
     { \
         echo "xdebug.idekey=PHPSTORM"; \
-        echo "xdebug.remote_mode=req"; \
-        echo "xdebug.remote_host=host.docker.internal"; \
-        echo "xdebug.remote_port=9000"; \
-        echo "xdebug.remote_enable=1"; \
-        echo ";xdebug.remote_autostart=0; Only by explicit request, see below:"; \
-        echo "xdebug.profiler_enable=0"; \
-        echo "xdebug.profiler_enable_trigger=0"; \
-        echo "xdebug.coverage_enable=0"; \
-        echo ";xdebug.remote_log=/var/www/html/xdebug/xdebug.log"; \
+        echo "xdebug.mode=debug"; \
+        echo "xdebug.start_with_request=trigger"; \
+        echo "xdebug.client_host=host.docker.internal"; \
+        echo "xdebug.client_port=9000"; \
+        echo ";xdebug.log=/var/www/html/xdebug/xdebug.log"; \
         echo "xdebug.file_link_format=vscode://file/%f:%l"; \
         echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)"; \
     } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
