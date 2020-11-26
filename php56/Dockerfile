@@ -43,7 +43,7 @@ RUN set -eux \
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ --with-freetype-dir=/usr/lib/x86_64-linux-gnu/ --with-png-dir=/usr/lib/x86_64-linux-gnu/ \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) exif \
-    && printf "no\n" | pecl install -o -f apcu-4.0.8 \
+    && printf "no\n" | pecl install -o -f apcu-4.0.11 \
     && printf "\n" | pecl install -o -f redis-4.3.0 \
     && docker-php-ext-enable redis apcu \
     && if [ "$HOST_ENV" = "dev" ] ; then pecl install -o -f xdebug-2.5.5; fi \
