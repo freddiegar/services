@@ -15,6 +15,8 @@ WORKDIR /var/www/html
 
 ARG HOST_ENV=prod
 ENV HOST_ENV="$HOST_ENV"
+ARG PDFTK_ENABLE=off
+ENV PDFTK_ENABLE="$PDFTK_ENABLE"
 
 RUN cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt \
     && update-ca-certificates
@@ -33,6 +35,8 @@ RUN set -eux \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
+    && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
     && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip simplexml \
     && docker-php-ext-install -j$(nproc) pdo_mysql opcache \

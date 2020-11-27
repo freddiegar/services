@@ -92,6 +92,7 @@ services:
       dockerfile: ./php74/Dockerfile
       args:
         - HOST_ENV=${HOST_ENV:-prod}
+        - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
