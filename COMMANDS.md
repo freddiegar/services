@@ -1196,3 +1196,13 @@ RUN mkdir -p /usr/src/php/ext/mongodb \
     && curl -fsSL https://pecl.php.net/get/mongodb | tar xvz -C "/usr/src/php/ext/mongodb" --strip 1 \
     && docker-php-ext-install mongodb
 ```
+
+Debug slow queries in MySQL
+```bash
+mysqldumpslow -l /var/log/mysql/slow.log > ~/mysqldumpslow.log
+mysqldumpslow -a -s r -t 10 /var/log/mysql/slow.log > ~/mysqldumpslow_no_limit_10.log
+mysqldumpslow -a -s c -t 10 /var/log/mysql/slow.log > ~/mysqldumpslow_top_10.log
+
+# In mysql console:
+# > SHOW GLOBAL STATUS LIKE 'Slow_queries';
+```

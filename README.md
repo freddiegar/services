@@ -119,15 +119,17 @@ Save logs file:
 
 ```bash
 [mysqld]
+explicit_defaults_for_timestamp        = 1 # 1: Enable | 0: Disabled
 
-sql-mode                      = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
-log_error                     = /var/log/mysql/error.log
-general_log                   = 0
-general_log_file              = /var/log/mysql/mysql.log
-slow_query_log                = 1 # In minutes
-slow_query_log_file           = /var/log/mysql/slow.log
-long_query_time               = 2 # In minutes
-log-queries-not-using-indexes
+sql-mode                               = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+log_error                              = /var/log/mysql/error.log
+general_log                            = 0 # 1: Enable | 0: Disabled
+general_log_file                       = /var/log/mysql/mysql.log
+slow_query_log                         = 1 # 1: Enable | 0: Disabled
+long_query_time                        = 2 # In seconds
+log_queries_not_using_indexes          = 1 # 1: Enable | 0: Disabled
+log_throttle_queries_not_using_indexes = 1 # Same query not using index in same minute
+slow_query_log_file                    = /var/log/mysql/slow.log
 ```
 
 ### Memory
@@ -137,36 +139,35 @@ log-queries-not-using-indexes
 ```bash
 [mysqld]
 
-key_buffer_size               = 200MB # 20% of total RAM
+log_error_verbosity                    = 2 # 1: Error | 2: Errors + Warning | 3: Errors + Warnings + Info
+key_buffer_size                        = 200MB # 20% of total RAM
 
-innodb_buffer_pool_size       = 1G   # 50% - 70 of total RAM
-innodb_log_file_size          = 256M # 25% of innodb_buffer_pool_size
-innodb_flush_method           = O_DIRECT # avoid double buffering
-innodb_file_per_table         = ON
-innodb_stats_on_metadata      = OFF
-innodb_buffer_pool_instances  = 1 # or 8 if innodb_buffer_pool_size < 1GB
+innodb_buffer_pool_size                = 700M # 50% - 70 of total RAM
+innodb_log_file_size                   = 175M # 25% of innodb_buffer_pool_size
+innodb_flush_method                    = O_DIRECT # avoid double buffering
+innodb_file_per_table                  = 1
+innodb_stats_on_metadata               = 0
+innodb_buffer_pool_instances           = 1 # or 8 if innodb_buffer_pool_size > 1GB
 
-query_cache_type              = 0
-# query_cache_size              = 0 # Deprecated in 5.7.20
-skip_name_resolve
+skip_name_resolve                      = 1
 ```
+> Example using 1G RAM in servier
 
 ### Charset
 
 ```bash
 [client]
-default-character-set=utf8
+default-character-set                  = utf8
 
 [mysql]
-default-character-set=utf8
+default-character-set                  = utf8
 
 [mysqld]
-# character-set-client-handshake = false #force encoding to uft8
-character-set-server=utf8
-collation-server=utf8_general_ci
+character-set-server                   = utf8
+collation-server                       = utf8_general_ci
 
 [mysqld_safe]
-default-character-set=utf8
+default-character-set                  = utf8
 ```
 
 ### Tunning
@@ -177,7 +178,12 @@ default-character-set=utf8
 apt update && apt install curl -y
 curl -L https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl -o /usr/local/bin/mysqltuner.pl
 chmod +x /usr/local/bin/mysqltuner.pl
+# Localhost
 mysqltuner.pl --host 127.0.0.1
+# Remote
+mysqltuner.pl --host 172.20.0.10 --forcemem [RAM in MB]
+# CVE Security
+mysqltuner.pl --host 172.20.0.10 --forcemem [RAM in MB] --cvefile
 # Updated
 # mysqltuner.pl --checkversion --updateversion
 ```
