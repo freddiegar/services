@@ -1206,3 +1206,14 @@ mysqldumpslow -a -s c -t 10 /var/log/mysql/slow.log > ~/mysqldumpslow_top_10.log
 # In mysql console:
 # > SHOW GLOBAL STATUS LIKE 'Slow_queries';
 ```
+
+Ban IP with IPTABLES
+```bash
+# Added I: Initial, A: Append
+iptables -I OUTPUT -s IP-HERE -j DROP
+iptables -I INPUT -s IP-HERE -j DROP
+
+# Delete
+iptables -D OUTPUT -s IP-HERE -j DROP
+iptables -D INPUT -s IP-HERE -j DROP
+```

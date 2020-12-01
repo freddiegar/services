@@ -1,4 +1,4 @@
-FROM php:8.0-rc-apache
+FROM php:8.0-apache
 
 LABEL maintainer="freddie.gar@outlook.com"
 
@@ -43,13 +43,11 @@ RUN set -eux \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) exif \
-    && mkdir -p /usr/src/php/ext/{apcu,redis} \
-    && curl -fsSL https://pecl.php.net/get/apcu | tar xvz -C "/usr/src/php/ext/apcu" --strip 1 \
-    && curl -fsSL https://pecl.php.net/get/redis | tar xvz -C "/usr/src/php/ext/redis" --strip 1 \
-    && docker-php-ext-install redis apcu \
-    && if [ "$HOST_ENV" = "dev" ] ; then mkdir -p /usr/src/php/ext/xdebug; fi \
-    && if [ "$HOST_ENV" = "dev" ] ; then curl -fsSL https://pecl.php.net/get/xdebug | tar xvz -C "/usr/src/php/ext/xdebug" --strip 1; fi \
-    && if [ "$HOST_ENV" = "dev" ] ; then docker-php-ext-install xdebug; fi \
+    && printf "no\n" | pecl install -o -f apcu \
+    && printf "\n" | pecl install -o -f redis \
+    && docker-php-ext-enable redis apcu \
+    && if [ "$HOST_ENV" = "dev" ] ; then pecl install -o -f xdebug; fi \
+    && if [ "$HOST_ENV" = "dev" ] ; then docker-php-ext-enable xdebug; fi \
     && if [ "$HOST_ENV" = "dev" ] ; then \
     { \
         echo "xdebug.idekey=PHPSTORM"; \
@@ -61,6 +59,7 @@ RUN set -eux \
         echo "xdebug.file_link_format=vscode://file/%f:%l"; \
         echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)"; \
     } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
+    && rm -rf /tmp/pear \
     && a2enmod rewrite \
     && a2enmod ssl \
     && a2enmod expires \
