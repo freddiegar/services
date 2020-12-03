@@ -38,7 +38,7 @@ RUN set -eux \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-install -j$(nproc) mysqli soap xsl shmop zip simplexml \
+    && docker-php-ext-install -j$(nproc) mysqli soap xsl zip simplexml \
     && docker-php-ext-install -j$(nproc) pdo_mysql opcache \
     && apt-get -y install libssl-dev libc-client2007e-dev libkrb5-dev \
     && docker-php-ext-configure imap --with-imap-ssl --with-kerberos \
