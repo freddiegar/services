@@ -1216,4 +1216,25 @@ iptables -I INPUT -s IP-HERE -j DROP
 # Delete
 iptables -D OUTPUT -s IP-HERE -j DROP
 iptables -D INPUT -s IP-HERE -j DROP
+
+# Delete ALL WARNING!
+iptables -F
+
+# Preserve changes after reboot
+/sbin/iptables-save
 ```
+
+Hook in git [see](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
+```bash
+# Pre-commit option
+echo '#!/bin/sh
+
+# Run test before add message to commit
+vendor/bin/phpunit --stop-on-failure --no-coverage
+' > .git/hooks/pre-commit
+
+# Permission to execute
+sudo chmod u+x .git/hooks/pre-commit
+sudo chmod o-r .git/hooks/pre-commit
+```
+
