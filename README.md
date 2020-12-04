@@ -489,7 +489,7 @@ extension=$(find /usr/local/lib/php/extensions/ -name spx.so)" > /usr/local/etc/
 # Enabled in Apache
 service apache2 reload
 
-# Profiler Wer
+# Profiler Web
 https://development.local/?SPX_KEY=dev&SPX_UI_URI=/
 https://development.local/project/?SPX_KEY=dev&SPX_UI_URI=/
 https://subdomain.development.local/?SPX_KEY=dev&SPX_UI_URI=/

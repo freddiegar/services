@@ -1,6 +1,6 @@
 FROM php:7.4-apache
 
-LABEL maintainer="freddie.gar@outlook.com"
+LABEL maintainer="Freddie Gar <freddie.gar@outlook.com>"
 
 ARG HOST_ENV=prod
 ENV HOST_ENV="$HOST_ENV"
