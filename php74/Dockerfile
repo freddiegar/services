@@ -19,6 +19,7 @@ COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/
 COPY ./conf/entrypoint.sh /usr/local/bin/
 COPY ./conf/alias.conf /etc/apache2/
 COPY ./conf/vhost.conf /etc/apache2/sites-available/
+COPY ./conf/hosts_extra /etc/
 
 WORKDIR /var/www/html
 

@@ -77,7 +77,6 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
       resources:
@@ -102,7 +101,6 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
       resources:
@@ -126,7 +124,6 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
       resources:
@@ -150,7 +147,6 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
       resources:
@@ -174,7 +170,6 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
       resources:
@@ -198,7 +193,6 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
       resources:
@@ -222,7 +216,6 @@ services:
     - 80
     - 443
     extra_hosts:
-      - "development.local:127.0.0.1"
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
       resources:
