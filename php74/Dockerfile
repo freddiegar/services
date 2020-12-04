@@ -2,8 +2,12 @@ FROM php:7.4-apache
 
 LABEL maintainer="Freddie Gar <freddie.gar@outlook.com>"
 
-ARG HOST_ENV=prod
-ENV HOST_ENV="$HOST_ENV"
+ARG DEV_ENABLE=off
+ENV DEV_ENABLE="$DEV_ENABLE"
+ARG CACHE_ENABLE=on
+ENV CACHE_ENABLE="$CACHE_ENABLE"
+ARG XDEBUG_ENABLE=off
+ENV XDEBUG_ENABLE="$XDEBUG_ENABLE"
 ARG PDFTK_ENABLE=off
 ENV PDFTK_ENABLE="$PDFTK_ENABLE"
 
@@ -66,12 +70,12 @@ RUN set -eux \
     && printf "\n" | pecl install -o -f redis \
     && docker-php-ext-enable redis \
     # Extra for production
-    && if [ "$HOST_ENV" = "prod" ] ; then a2enmod cache cache_disk; fi \
-    && if [ "$HOST_ENV" = "prod" ] ; then a2enconf cache; fi \
+    && if [ "$CACHE_ENABLE" = "on" ] ; then a2enmod cache cache_disk; fi \
+    && if [ "$CACHE_ENABLE" = "on" ] ; then a2enconf cache; fi \
     # Extra for development
-    && if [ "$HOST_ENV" = "dev" ] ; then pecl install -o -f xdebug; fi \
-    && if [ "$HOST_ENV" = "dev" ] ; then docker-php-ext-enable xdebug; fi \
-    && if [ "$HOST_ENV" = "dev" ] ; then \
+    && if [ "$XDEBUG_ENABLE" = "on" ] ; then pecl install -o -f xdebug; fi \
+    && if [ "$XDEBUG_ENABLE" = "on" ] ; then docker-php-ext-enable xdebug; fi \
+    && if [ "$XDEBUG_ENABLE" = "on" ] ; then \
     { \
         echo "xdebug.idekey=PHPSTORM"; \
         echo "xdebug.mode=debug"; \
@@ -82,11 +86,11 @@ RUN set -eux \
         echo "xdebug.file_link_format=vscode://file/%f:%l"; \
         echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)"; \
     } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
-    && if [ "$HOST_ENV" = "dev" ] ; then a2ensite localhost; fi \
-    && if [ "$HOST_ENV" = "dev" ] ; then a2ensite development.local; fi \
-    && if [ "$HOST_ENV" = "dev" ] ; then a2ensite development.local-ssl; fi \
-    && if [ "$HOST_ENV" = "dev" ] ; then cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt; fi \
-    && if [ "$HOST_ENV" = "dev" ] ; then update-ca-certificates; fi \
+    && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite localhost; fi \
+    && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite development.local; fi \
+    && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite development.local-ssl; fi \
+    && if [ "$DEV_ENABLE" = "on" ] ; then cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt; fi \
+    && if [ "$DEV_ENABLE" = "on" ] ; then update-ca-certificates; fi \
     # Extra tools and options
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
