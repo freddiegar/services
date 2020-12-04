@@ -1,8 +1,8 @@
 .env
 .idea
-alias.conf
-vhost.conf
-crontab
 docker-compose.override.yml
+conf/alias.conf
+conf/vhost.conf
+conf/crontab
 *.swp
 

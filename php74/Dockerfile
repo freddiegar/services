@@ -2,32 +2,31 @@ FROM php:7.4-apache
 
 LABEL maintainer="freddie.gar@outlook.com"
 
-COPY ./ssl/* /var/www/ssl/
-COPY ./vhosts/cache.conf /etc/apache2/conf-available/
-COPY ./vhosts/security.conf /etc/apache2/conf-available/
-COPY ./vhosts/localhost.conf /etc/apache2/sites-available/
-COPY ./vhosts/development.local.conf /etc/apache2/sites-available/
-COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/
-COPY ./alias.conf /etc/apache2/
-COPY ./vhost.conf /etc/apache2/sites-available/
-
-WORKDIR /var/www/html
-
 ARG HOST_ENV=prod
 ENV HOST_ENV="$HOST_ENV"
 ARG PDFTK_ENABLE=off
 ENV PDFTK_ENABLE="$PDFTK_ENABLE"
 
-RUN cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt \
-    && update-ca-certificates
+COPY ./ssl/* /var/www/ssl/
+COPY ./vhosts/apache2.conf /etc/apache2/
+COPY ./vhosts/cache.conf /etc/apache2/conf-available/
+COPY ./vhosts/security.conf /etc/apache2/conf-available/
+
+COPY ./vhosts/localhost.conf /etc/apache2/sites-available/
+COPY ./vhosts/development.local.conf /etc/apache2/sites-available/
+COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/
+
+COPY ./conf/entrypoint.sh /usr/local/bin/
+COPY ./conf/alias.conf /etc/apache2/
+COPY ./conf/vhost.conf /etc/apache2/sites-available/
+
+WORKDIR /var/www/html
 
 RUN set -eux \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
     vim \
     cron \
-    zip \
-    iputils-ping \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
@@ -35,21 +34,40 @@ RUN set -eux \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
-    && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
+    # Permissions
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && docker-php-ext-install -j$(nproc) mysqli soap xsl zip simplexml \
-    && docker-php-ext-install -j$(nproc) pdo_mysql opcache \
-    && apt-get -y install libssl-dev libc-client2007e-dev libkrb5-dev \
-    && docker-php-ext-configure imap --with-imap-ssl --with-kerberos \
-    && docker-php-ext-install -j$(nproc) imap \
+    && chmod 0600 /etc/crontab \
+    && chmod 0500 /usr/local/bin/entrypoint.sh \
+    # Apache
+    && a2dissite 000-default \
+    && a2enmod rewrite \
+    && a2enmod ssl \
+    && a2enmod expires \
+    && a2enmod headers \
+    && a2ensite vhost \
+    # PHP
+    # Database connection
+    && docker-php-ext-install -j$(nproc) pdo_mysql \
+    # Performance
+    && docker-php-ext-install -j$(nproc) opcache \
+    # I18n
     && docker-php-ext-install -j$(nproc) intl \
+    # Read spreedsheets
+    && docker-php-ext-install -j$(nproc) zip \
+    # Manipulation images
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install -j$(nproc) gd \
+    # Extra information about images: grav
     && docker-php-ext-install -j$(nproc) exif \
+    # Cache
     && printf "no\n" | pecl install -o -f apcu \
+    && docker-php-ext-enable apcu \
     && printf "\n" | pecl install -o -f redis \
-    && docker-php-ext-enable redis apcu \
+    && docker-php-ext-enable redis \
+    # Extra for production
+    && if [ "$HOST_ENV" = "prod" ] ; then a2enmod cache cache_disk; fi \
+    && if [ "$HOST_ENV" = "prod" ] ; then a2enconf cache; fi \
+    # Extra for development
     && if [ "$HOST_ENV" = "dev" ] ; then pecl install -o -f xdebug; fi \
     && if [ "$HOST_ENV" = "dev" ] ; then docker-php-ext-enable xdebug; fi \
     && if [ "$HOST_ENV" = "dev" ] ; then \
@@ -63,27 +81,21 @@ RUN set -eux \
         echo "xdebug.file_link_format=vscode://file/%f:%l"; \
         echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)"; \
     } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
+    && if [ "$HOST_ENV" = "dev" ] ; then a2ensite localhost; fi \
+    && if [ "$HOST_ENV" = "dev" ] ; then a2ensite development.local; fi \
+    && if [ "$HOST_ENV" = "dev" ] ; then a2ensite development.local-ssl; fi \
+    && if [ "$HOST_ENV" = "dev" ] ; then cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt; fi \
+    && if [ "$HOST_ENV" = "dev" ] ; then update-ca-certificates; fi \
+    # Extra tools and options
+    && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
+    && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
+    # Clear
     && rm -rf /tmp/pear \
-    && a2enmod rewrite \
-    && a2enmod ssl \
-    && a2enmod expires \
-    && a2enmod headers \
-    && if [ "$HOST_ENV" = "prod" ] ; then a2enmod cache cache_disk; fi \
-    && a2enconf cache \
-    && a2dissite 000-default \
-    && a2ensite localhost \
-    && a2ensite development.local \
-    && a2ensite development.local-ssl \
-    && a2ensite vhost \
+    && rm -rf /var/lib/apt/lists/* \
     && apt-get autoremove -y \
     && apt-get autoclean -y
 
-COPY ./entrypoint.sh /usr/local/bin/
-COPY ./vhosts/apache2.conf /etc/apache2/
+COPY ./conf/crontab /etc/
 COPY ./php74/php.ini /usr/local/etc/php/
-COPY ./crontab /etc/
-
-RUN chmod 0600 /etc/crontab \
-    && chmod 0500 /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
