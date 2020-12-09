@@ -140,7 +140,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'preservim/nerdtree'
 Plug 'StanAngeloff/php.vim'
 Plug 'easymotion/vim-easymotion'
-\" Plug 'mothetz/gruvbox'
+\" Plug 'morhetz/gruvbox'
 call plug#end()
 
 \" NerdTree
@@ -167,10 +167,18 @@ nmap <Leader>s <Plug>(easymotion-s2)
 \" Theme
 \" colorscheme gruvbox
 \" let g:gruvbox_contrast_dark = 'hard'
+\" set background=dark
 " >> ~/.vimrc
 
 # Open vim and run
 :PlugInstall
+
+# Update all plugins
+:PlugUpdate
+:PlugUpdate NERDTree
+
+# Upgrade plugin manager
+:PlugUpgrade
 ```
 
 ## Vim Copy/Paste (Share SO)
@@ -237,10 +245,6 @@ alias dlogs="docker logs --tail 50 -f"
 alias dstart="docker start"
 alias dstop="docker stop"
 alias dstatus="docker ps --format \"{{.Names}}\""
-alias dphp80="docker exec -it apache80 bash"
-alias dphp74="docker exec -it apache74 bash"
-alias dphp80a74="docker start apache74 && docker stop apache80"
-alias dphp74a80="docker start apache80 && docker stop apache74"
 alias ducks="du -cks * | sort -rn | head"
 alias gs="git summary"
 alias gst="git status"
