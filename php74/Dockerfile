@@ -52,6 +52,7 @@ RUN set -eux \
     && a2ensite vhost \
     # PHP
     # Database connection
+    && docker-php-ext-install -j$(nproc) mysqli \
     && docker-php-ext-install -j$(nproc) pdo_mysql \
     # Performance
     && docker-php-ext-install -j$(nproc) opcache \
