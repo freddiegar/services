@@ -51,6 +51,8 @@ RUN set -eux \
     && a2enmod headers \
     && a2ensite vhost \
     # PHP
+    # Web services
+    && docker-php-ext-install -j$(nproc) soap \
     # Database connection
     && docker-php-ext-install -j$(nproc) mysqli \
     && docker-php-ext-install -j$(nproc) pdo_mysql \
