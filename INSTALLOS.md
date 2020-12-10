@@ -63,6 +63,9 @@ sudo apt-get install -y htop
 ## Vim Configuration
 
 ```bash
+# Set as default editor
+sudo update-alternatives --config editor
+
 echo "\" VIM Config
 \" @see https://vim.fandom.com/wiki/Example_vimrc
 \" @see https://vim.fandom.com/wiki/Best_Vim_Tips
@@ -140,7 +143,10 @@ call plug#begin('~/.vim/plugged')
 Plug 'preservim/nerdtree'
 Plug 'StanAngeloff/php.vim'
 Plug 'easymotion/vim-easymotion'
-\" Plug 'morhetz/gruvbox'
+Plug 'morhetz/gruvbox'
+Plug 'vim-syntastic/syntastic'
+Plug 'preservim/tagbar'
+Plug 'kien/ctrlp.vim'
 call plug#end()
 
 \" NerdTree
@@ -165,9 +171,18 @@ let g:php_version_id = 70400
 nmap <Leader>s <Plug>(easymotion-s2)
 
 \" Theme
-\" colorscheme gruvbox
-\" let g:gruvbox_contrast_dark = 'hard'
-\" set background=dark
+colorscheme gruvbox
+let g:gruvbox_contrast_dark = 'hard'
+set background=dark
+
+\" TagBar
+" @see https://github.com/preservim/tagbar
+nmap <F8> :TagbarToggle<CR>
+
+\" CtrlP
+\" @see https://github.com/kien/ctrlp.vim
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.vscode,.idea
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn|vscode|idea)$'
 " >> ~/.vimrc
 
 # Open vim and run
@@ -176,6 +191,9 @@ nmap <Leader>s <Plug>(easymotion-s2)
 # Update all plugins
 :PlugUpdate
 :PlugUpdate NERDTree
+
+# Clean plugins
+:PlugClean
 
 # Upgrade plugin manager
 :PlugUpgrade
