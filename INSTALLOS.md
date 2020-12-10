@@ -73,6 +73,7 @@ echo "\" VIM Config
 set nocompatible
 set hidden
 set wildmenu
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.vscode,.idea
 set cmdheight=2
 
 set hlsearch
@@ -146,7 +147,11 @@ Plug 'easymotion/vim-easymotion'
 Plug 'morhetz/gruvbox'
 Plug 'vim-syntastic/syntastic'
 Plug 'preservim/tagbar'
-Plug 'kien/ctrlp.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'editorconfig/editorconfig-vim'
 call plug#end()
 
 \" NerdTree
@@ -156,7 +161,7 @@ let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 1
-let NERDTreeIgnore = ['\.git']
+let NERDTreeIgnore = ['\.(git|vscode|idea)']
 let NERDTreeAutoDeleteBuffer = 1
 let g:plug_window = 'noautocmd vertical topleft new'
 autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
@@ -176,13 +181,13 @@ let g:gruvbox_contrast_dark = 'hard'
 set background=dark
 
 \" TagBar
-" @see https://github.com/preservim/tagbar
+\" @see https://github.com/preservim/tagbar
 nmap <F8> :TagbarToggle<CR>
 
-\" CtrlP
-\" @see https://github.com/kien/ctrlp.vim
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.vscode,.idea
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn|vscode|idea)$'
+\" Fzf
+\" @see https://github.com/junegunn/fzf.vim
+\" @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
+nnoremap <silent> <leader>p :Files<cr>
 " >> ~/.vimrc
 
 # Open vim and run
