@@ -73,13 +73,10 @@ echo "\" VIM Config
 set nocompatible
 set hidden
 set wildmenu
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.vscode,.idea
-set cmdheight=2
-
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea
 set hlsearch
 set incsearch
 set smartcase
-
 set complete-=i
 set lazyredraw
 
@@ -99,7 +96,7 @@ set nowrap
 set display+=lastline
 set encoding=utf-8
 set linebreak
-set scrolloff=1
+set scrolloff=5
 set sidescrolloff=5
 
 \" Custom View
@@ -110,10 +107,11 @@ set ruler
 set cursorline
 set showmatch
 set relativenumber
-set laststatus=2
 set listchars=space:·
 set list
-\" set noshowmode
+\" set cmdheight=2
+\" set laststatus=2
+set noshowmode
 
 \" Custom identation
 set autoindent
@@ -161,11 +159,11 @@ let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 1
-let NERDTreeIgnore = ['\.(git|vscode|idea)']
+let NERDTreeIgnore = ['*\.swp', '\.git', '\.vscode', '\.idea']
 let NERDTreeAutoDeleteBuffer = 1
 let g:plug_window = 'noautocmd vertical topleft new'
 autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
-autocmd VimEnter * if argc() == 0 | NERDTree | endif
+\" autocmd VimEnter * if argc() == 0 | NERDTree | endif
 nmap <Leader>f :NERDTreeToggle<Enter>
 
 \" PHPVim
