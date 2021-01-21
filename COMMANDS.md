@@ -1230,7 +1230,10 @@ Hook in git [see](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
 echo '#!/bin/sh
 
 # Run test before add message to commit
+if [ -e "vendor/bin/phpunit" ]
+then
 vendor/bin/phpunit --stop-on-failure --no-coverage
+fi
 ' > .git/hooks/pre-commit
 
 # Permission to execute
