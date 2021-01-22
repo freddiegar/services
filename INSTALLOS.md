@@ -107,8 +107,8 @@ set ruler
 set cursorline
 set showmatch
 set relativenumber
-set listchars=space:·
 set list
+set listchars=space:·,tab:»-
 \" set cmdheight=2
 \" set laststatus=2
 set noshowmode
@@ -121,11 +121,13 @@ set expandtab
 set fileformat=unix
 
 \" Enable folding : Hit za
+set nofoldenable
 set foldmethod=indent
+set foldnestmax=10
 set foldlevel=99
 
 \" Maps
-let mapleader = \"\<Space>\"
+let mapleader = "\<Space>\<Space>"
 " > ~/.vimrc
 ```
 
@@ -142,6 +144,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'preservim/nerdtree'
 Plug 'StanAngeloff/php.vim'
 Plug 'easymotion/vim-easymotion'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
 Plug 'morhetz/gruvbox'
 Plug 'vim-syntastic/syntastic'
 Plug 'preservim/tagbar'
