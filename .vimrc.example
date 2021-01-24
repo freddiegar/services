@@ -1,0 +1,180 @@
+" VIM Config
+" @see https://vim.fandom.com/wiki/Example_vimrc
+" @see https://vim.fandom.com/wiki/Best_Vim_Tips
+" @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
+set nocompatible
+set hidden
+set wildmenu
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea
+set hlsearch
+set incsearch
+set smartcase
+set ignorecase
+set complete-=i
+set lazyredraw
+
+" Custom Interface
+set title
+set novisualbell
+set autoread
+set backspace=indent,eol,start
+set clipboard=unnamedplus
+if has('mouse')
+    set mouse=n
+endif
+
+" Custom Render
+syntax enable
+set nowrap
+set display+=lastline
+set encoding=utf-8
+set linebreak
+set scrolloff=5
+set sidescrolloff=5
+
+" Custom View
+set number
+set numberwidth=4
+set showcmd
+set ruler
+set cursorline
+set showmatch
+set relativenumber
+set list
+set listchars=space:·,tab:»-
+" set cmdheight=2
+" set laststatus=2
+set noshowmode
+
+" Custom identation
+set autoindent
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set fileformat=unix
+
+" Enable folding : Hit za
+set nofoldenable
+set foldmethod=indent
+set foldnestmax=10
+set foldlevel=99
+
+" Maps
+let mapleader = "\<Space>"
+
+" Plugins
+call plug#begin('~/.vim/plugged')
+Plug 'morhetz/gruvbox'
+Plug 'vim-airline/vim-airline'
+Plug 'preservim/nerdtree'
+Plug 'easymotion/vim-easymotion'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+Plug 'Raimondi/delimitMate'
+Plug 'machakann/vim-swap'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'vim-syntastic/syntastic'
+Plug 'StanAngeloff/php.vim'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'vim-test/vim-test'
+Plug 'vim-scripts/autotags'
+Plug 'arnaud-lb/vim-php-namespace'
+Plug 'SirVer/ultisnips'
+Plug 'sniphpets/sniphpets'
+" Plug 'preservim/tagbar'
+" Plug 'editorconfig/editorconfig-vim'
+" Plug 'vim-vdebug/vdebug'
+call plug#end()
+
+" Maps
+" Repeat last macro
+nnoremap Q @@
+" Delete without save
+nnoremap s "_d
+
+" NerdTree
+" @see https://github.com/preservim/nerdtree
+" @see https://github.com/victormours/dotfiles/tree/master/vim
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let NERDTreeShowHidden = 1
+let NERDTreeQuitOnOpen = 1
+let NERDTreeIgnore = ['*\.swp', '\.git', '\.vscode', '\.idea']
+let NERDTreeAutoDeleteBuffer = 1
+let g:plug_window = 'noautocmd vertical topleft new'
+autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
+" autocmd VimEnter * if argc() == 0 | NERDTree | endif
+nmap <silent> <Leader>f :NERDTreeToggle<Enter>
+
+" PHPVim
+let g:php_version_id = 70400
+
+" EasyMotion
+" @see https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/moving-even-faster-with-vim-sneak-and-easymotion/
+nmap <silent> <Leader>s <Plug>(easymotion-s2)
+
+" Theme
+colorscheme gruvbox
+let g:gruvbox_contrast_dark = 'hard'
+set background=dark
+
+" TagBar
+" @see https://github.com/preservim/tagbar
+" nmap <silent> <F8> :TagbarToggle<Enter>
+
+" Fzf
+" @see https://github.com/junegunn/fzf.vim
+" @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
+nnoremap <silent> <Leader>p :Files<Enter>
+
+" Vim Tests
+let test#strategy = 'vimterminal'
+let test#php#phpunit#options = '--testdox --no-coverage --stop-on-failure'
+nmap <silent> <Leader>tn :TestNearest<Enter>
+nmap <silent> <Leader>tf :TestFile<Enter>
+nmap <silent> <Leader>ts :TestSuite<Enter>
+nmap <silent> <Leader>tl :TestLast<Enter>
+nmap <silent> <Leader>tg :TestVisit<Enter>
+
+" Vim PHP Namespaces
+let g:php_namespace_sort_after_insert = 1
+
+function! IPhpInsertUse()
+    call PhpInsertUse()
+    call feedkeys('a',  'n')
+endfunction
+autocmd FileType php inoremap <Leader>uu <Esc>:call IPhpInsertUse()<Enter>
+autocmd FileType php noremap <Leader>uu :call PhpInsertUse()<Enter>
+
+function! IPhpExpandClass()
+    call PhpExpandClass()
+    call feedkeys('a', 'n')
+endfunction
+autocmd FileType php inoremap <Leader>ue <Esc>:call IPhpExpandClass()<Enter>
+autocmd FileType php noremap <Leader>ue :call PhpExpandClass()<Enter>
+
+autocmd FileType php inoremap <Leader>us <Esc>:call PhpSortUse()<Enter>
+autocmd FileType php noremap <Leader>us :call PhpSortUse()<Enter>
+
+" Vim Debug
+" let g:vdebug_keymap = {
+" \    "run" : "<F5>",
+" \    "step_over" : "<F8>",
+" \    "step_into" : "<F7>",
+" \    "step_out" : "<S-F8>",
+" \    "close" : "<S-F5>",
+" \    "detach" : "<F10>",
+" \    "set_breakpoint" : "<C-F8>",
+" \    "eval_visual" : "<Leader>xe"
+" \}
+" let g:vdebug_options = {
+" \    'port' : 9000,
+" \    'break_on_open' : 0,
+" \    'ide_key' : 'PHPSTORM'
+" \}
+
+" Snippets
+let g:UltiSnipsEditSplit = 'vertical'
+let g:UltiSnipsUsePythonVersion = 3
+let g:sniphpets_strict_types = 1

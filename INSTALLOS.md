@@ -129,6 +129,10 @@ set foldlevel=99
 
 \" Maps
 let mapleader = "\<Space>"
+\" Repeat last macro
+nnoremap Q @@
+\" Delete without save
+nnoremap s \"_d
 " > ~/.vimrc
 ```
 
@@ -142,112 +146,13 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 # Enable
 echo "\" Plugins
 call plug#begin('~/.vim/plugged')
-Plug 'preservim/nerdtree'
-Plug 'StanAngeloff/php.vim'
-Plug 'easymotion/vim-easymotion'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-surround'
-Plug 'machakann/vim-swap'
 Plug 'morhetz/gruvbox'
-Plug 'vim-syntastic/syntastic'
-Plug 'preservim/tagbar'
-Plug 'vim-airline/vim-airline'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'editorconfig/editorconfig-vim'
-Plug 'vim-test/vim-test'
-Plug 'vim-scripts/autotags'
-Plug 'arnaud-lb/vim-php-namespace'
-Plug 'vim-vdebug/vdebug'
 call plug#end()
-
-\" Maps
-\" Repeat last macro
-nnoremap Q @@
-\" Delete without save
-nnoremap s \"_d
-
-\" NerdTree
-\" @see https://github.com/preservim/nerdtree
-\" @see https://github.com/victormours/dotfiles/tree/master/vim
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-let NERDTreeShowHidden = 1
-let NERDTreeQuitOnOpen = 1
-let NERDTreeIgnore = ['*\.swp', '\.git', '\.vscode', '\.idea']
-let NERDTreeAutoDeleteBuffer = 1
-let g:plug_window = 'noautocmd vertical topleft new'
-autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
-\" autocmd VimEnter * if argc() == 0 | NERDTree | endif
-nmap <silent> <Leader>f :NERDTreeToggle<Enter>
-
-\" PHPVim
-let g:php_version_id = 70400
-
-\" EasyMotion
-\" @see https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/moving-even-faster-with-vim-sneak-and-easymotion/
-nmap <silent> <Leader>s <Plug>(easymotion-s2)
 
 \" Theme
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'hard'
 set background=dark
-
-\" TagBar
-\" @see https://github.com/preservim/tagbar
-nmap <silent> <F8> :TagbarToggle<Enter>
-
-\" Fzf
-\" @see https://github.com/junegunn/fzf.vim
-\" @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
-nnoremap <silent> <Leader>p :Files<cr>
-
-\" Vim Tests
-let test#strategy = 'vimterminal'
-let test#php#phpunit#options = '--testdox --no-coverage --stop-on-failure'
-nmap <silent> <Leader>tn :TestNearest<Enter>
-nmap <silent> <Leader>tf :TestFile<Enter>
-nmap <silent> <Leader>ts :TestSuite<Enter>
-nmap <silent> <Leader>tl :TestLast<Enter>
-nmap <silent> <Leader>tg :TestVisit<Enter>
-
-\" Vim PHP Namespaces
-let g:php_namespace_sort_after_insert = 1
-
-function! IPhpInsertUse()
-    call PhpInsertUse()
-    call feedkeys('a',  'n')
-endfunction
-autocmd FileType php inoremap <Leader>uu <Esc>:call IPhpInsertUse()<Enter>
-autocmd FileType php noremap <Leader>uu :call PhpInsertUse()<Enter>
-
-function! IPhpExpandClass()
-    call PhpExpandClass()
-    call feedkeys('a', 'n')
-endfunction
-autocmd FileType php inoremap <Leader>ue <Esc>:call IPhpExpandClass()<Enter>
-autocmd FileType php noremap <Leader>ue :call PhpExpandClass()<Enter>
-
-autocmd FileType php inoremap <Leader>us <Esc>:call PhpSortUse()<Enter>
-autocmd FileType php noremap <Leader>us :call PhpSortUse()<Enter>
-
-\" Vim Debug
-let g:vdebug_keymap = {
-\\    "run" : "<F5>",
-\\    "step_over" : "<F8>",
-\\    "step_into" : "<F7>",
-\\    "step_out" : "<S-F8>",
-\\    "close" : "<S-F5>",
-\\    "detach" : "<F10>",
-\\    "set_breakpoint" : "<C-F8>",
-\\    "eval_visual" : "<Leader>xe"
-\\}
-let g:vdebug_options = {
-\\    'port' : 9000,
-\\    'break_on_open' : 0,
-\\    'ide_key' : 'PHPSTORM'
-\\}
 " >> ~/.vimrc
 
 # Open vim and run
@@ -263,6 +168,7 @@ let g:vdebug_options = {
 # Upgrade plugin manager
 :PlugUpgrade
 ```
+> See .vimrc.example file in root folder
 
 ## Vim Copy/Paste (Share SO)
 
@@ -291,7 +197,15 @@ echo "--recurse=yes
 
 ```bash
 # In vim run to generate tags files
+# Need: Plug 'vim-scripts/autotags'
 Pulse <F4>
+```
+
+## Snippets
+
+```bash
+# PHP
+mkdir -f ~/.vim/UltiSnips && cp -p php.snippets ~/.vim/UltiSnips/php.snippets
 ```
 
 # GIT
