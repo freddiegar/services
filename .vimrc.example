@@ -12,6 +12,8 @@ set smartcase
 set ignorecase
 set complete-=i
 set lazyredraw
+set timeoutlen=1200
+set ttimeoutlen=50
 
 " Custom Interface
 set title
@@ -45,6 +47,8 @@ set listchars=space:·,tab:»-
 " set cmdheight=2
 " set laststatus=2
 set noshowmode
+set colorcolumn=120
+set textwidth=120
 
 " Custom identation
 set autoindent
@@ -82,16 +86,16 @@ Plug 'vim-scripts/autotags'
 Plug 'arnaud-lb/vim-php-namespace'
 Plug 'SirVer/ultisnips'
 Plug 'sniphpets/sniphpets'
-" Plug 'preservim/tagbar'
+Plug 'vim-vdebug/vdebug'
+Plug 'preservim/tagbar'
 " Plug 'editorconfig/editorconfig-vim'
-" Plug 'vim-vdebug/vdebug'
 call plug#end()
 
 " Maps
-" Repeat last macro
 nnoremap Q @@
-" Delete without save
 nnoremap s "_d
+nnoremap Y y$
+nnoremap <silent> <F2> :source ~/.vimrc<Enter>
 
 " NerdTree
 " @see https://github.com/preservim/nerdtree
@@ -104,7 +108,7 @@ let NERDTreeIgnore = ['*\.swp', '\.git', '\.vscode', '\.idea']
 let NERDTreeAutoDeleteBuffer = 1
 let g:plug_window = 'noautocmd vertical topleft new'
 autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
-" autocmd VimEnter * if argc() == 0 | NERDTree | endif
+autocmd VimEnter * if argc() == 0 | NERDTree | endif
 nmap <silent> <Leader>f :NERDTreeToggle<Enter>
 
 " PHPVim
@@ -121,7 +125,7 @@ set background=dark
 
 " TagBar
 " @see https://github.com/preservim/tagbar
-" nmap <silent> <F8> :TagbarToggle<Enter>
+nmap <silent> <F8> :TagbarToggle<Enter>
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
@@ -131,7 +135,7 @@ nnoremap <silent> <Leader>p :Files<Enter>
 " Vim Tests
 let test#strategy = 'vimterminal'
 let test#php#phpunit#options = '--testdox --no-coverage --stop-on-failure'
-nmap <silent> <Leader>tn :TestNearest<Enter>
+nmap <silent> <Leader>tt :TestNearest<Enter>
 nmap <silent> <Leader>tf :TestFile<Enter>
 nmap <silent> <Leader>ts :TestSuite<Enter>
 nmap <silent> <Leader>tl :TestLast<Enter>
@@ -157,24 +161,49 @@ autocmd FileType php noremap <Leader>ue :call PhpExpandClass()<Enter>
 autocmd FileType php inoremap <Leader>us <Esc>:call PhpSortUse()<Enter>
 autocmd FileType php noremap <Leader>us :call PhpSortUse()<Enter>
 
+function! PhpCSFixer()
+    if bufname("%") == ''
+        echohl WarningMsg
+            echo messageTxt
+            echohl None
+            return 0
+    endif
+
+    let configfile = '/var/www/html/freddiegar/services/.php_cs'
+
+    if filereadable(expand('.php_cs'))
+        configfile = '.php_cs'
+    endif
+
+    silent write
+    let result = system('php-cs-fixer fix ' . bufname("%") . ' --config="' . configfile .'"')
+    silent :edit!
+endfunction
+autocmd FileType php nnoremap <silent> <F1> :call PhpCSFixer()<Enter>
+
 " Vim Debug
-" let g:vdebug_keymap = {
-" \    "run" : "<F5>",
-" \    "step_over" : "<F8>",
-" \    "step_into" : "<F7>",
-" \    "step_out" : "<S-F8>",
-" \    "close" : "<S-F5>",
-" \    "detach" : "<F10>",
-" \    "set_breakpoint" : "<C-F8>",
-" \    "eval_visual" : "<Leader>xe"
-" \}
-" let g:vdebug_options = {
-" \    'port' : 9000,
-" \    'break_on_open' : 0,
-" \    'ide_key' : 'PHPSTORM'
-" \}
+let g:vdebug_keymap = {
+\    "run" : "<F5>",
+\    "step_over" : "<F8>",
+\    "step_into" : "<F7>",
+\    "step_out" : "<S-F8>",
+\    "close" : "<S-F5>",
+\    "detach" : "<F10>",
+\    "set_breakpoint" : "<C-F8>",
+\    "eval_visual" : "<Leader>xe"
+\}
+let g:vdebug_options = {
+\    'port' : 9000,
+\    'break_on_open' : 0,
+\    'ide_key' : 'PHPSTORM'
+\}
 
 " Snippets
 let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsUsePythonVersion = 3
 let g:sniphpets_strict_types = 1
+
+if filereadable(expand('~/.vimrc.local'))
+  source ~/.vimrc.local
+endif
+
