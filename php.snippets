@@ -15,7 +15,6 @@ def retutypes():
 
 def functypes():
 	return ['public', 'protected', 'private']
-
 endglobal
 
 snippet nn "Get file name"
@@ -86,7 +85,7 @@ public function __construct($1 $$2$3)
 endsnippet
 
 snippet ffx "Function X" b
-public function $1($2): $3`!p snip.rv=autocomplete(t[3], retutypes())`;
+public function $1($2): $3`!p snip.rv=autocomplete(t[3], retutypes())`
 {
     $0
 }
@@ -125,6 +124,54 @@ public function get$1(): array
     return [
         [$0],
     ];
+}
+endsnippet
+
+snippet dd "Debug Dump"
+dd($$1, __FILE__ . __LINE__);
+endsnippet
+
+snippet du "Debug Dump"
+dump($$1, __FILE__ . __LINE__);
+endsnippet
+
+snippet php "Template Class" b
+<?php
+
+$0
+endsnippet
+
+snippet "tt(a|f)?c" "Template Class" br
+<?php
+
+namespace ${1:`!v sniphpets#namespace()`};
+
+`!p snip.rv='abstract ' if match.group(1) == 'a' else ('final ' if match.group(1) == 'f' else '')`class `!v
+sniphpets#basename()`
+{
+    $0
+}
+endsnippet
+
+snippet tti "Template Interface" b
+<?php
+
+namespace ${1:`!v sniphpets#namespace()`};
+
+interface `!v sniphpets#basename()`
+{
+    $0
+}
+endsnippet
+
+snippet ttt "Template Test" b
+<?php
+
+namespace ${1:`!v sniphpets#namespace()`};
+
+final class `!v sniphpets#basename()` extends TestCase
+{
+    $0
 }
 endsnippet
 
