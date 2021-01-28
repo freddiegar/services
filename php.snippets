@@ -128,11 +128,11 @@ public function get$1(): array
 endsnippet
 
 snippet dd "Debug Dump"
-dd($$1, __FILE__ . __LINE__);
+dd($$1, __FILE__ . ':' . __LINE__);
 endsnippet
 
 snippet du "Debug Dump"
-dump($$1, __FILE__ . __LINE__);
+dump($$1, __FILE__ . ':' . __LINE__);
 endsnippet
 
 snippet php "Template Class" b
@@ -141,37 +141,96 @@ snippet php "Template Class" b
 $0
 endsnippet
 
+snippet [] "Array" i
+[
+    $1 => $0,
+]
+endsnippet
+
+snippet "s(u|o|i)" "Scope" br
+`!p snip.rv='public' if match.group(1) == 'u' else ('protected' if match.group(1) == 'o' else 'private')`
+endsnippet
+
+snippet $ "This" i
+$this->$0
+endsnippet
+
 snippet "tt(a|f)?c" "Template Class" br
 <?php
 
-namespace ${1:`!v sniphpets#namespace()`};
+namespace $1`!v sniphpets#namespace()`;
 
 `!p snip.rv='abstract ' if match.group(1) == 'a' else ('final ' if match.group(1) == 'f' else '')`class `!v
 sniphpets#basename()`
 {
-    $0
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet tti "Template Interface" b
 <?php
 
-namespace ${1:`!v sniphpets#namespace()`};
+namespace $1`!v sniphpets#namespace()`;
 
 interface `!v sniphpets#basename()`
 {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet ttt "Template Trait" b
+<?php
+
+namespace $1`!v sniphpets#namespace()`;
+
+trait `!v sniphpets#basename()`
+{
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet ttu "Template Test Unit" b
+<?php
+
+namespace $1`!v sniphpets#namespace()`;
+
+final class `!v sniphpets#basename()` extends TestCase
+{
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet if "if"
+if ($1) {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet else "else"
+ else {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet elif "elseif"
+ else if ($1) {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet spr "Sprintf"
+sprintf('$1', $0)
+endsnippet
+
+snippet try "try/catch" b
+try {
+    ${VISUAL}$2
+} catch (${1:Exception} $e) {
     $0
 }
 endsnippet
 
-snippet ttt "Template Test" b
-<?php
-
-namespace ${1:`!v sniphpets#namespace()`};
-
-final class `!v sniphpets#basename()` extends TestCase
-{
-    $0
-}
+snippet eee "Throw a new exception" b
+throw new $1Exception($0);
 endsnippet
 

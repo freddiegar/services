@@ -3,6 +3,8 @@
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
 " @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
 set nocompatible
+set nomodeline
+set secure
 set hidden
 set wildmenu
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea
@@ -10,12 +12,14 @@ set hlsearch
 set incsearch
 set smartcase
 set ignorecase
-set notimeout
+set gdefault
 set lazyredraw " vim-airline conflict
+set nobackup
+set nowritebackup
 
 " Better Completion
-set complete-=i
-set complete=.,w,b,u,t
+" set complete-=i
+" set complete=.,w,b,u,t
 set completeopt=longest,menuone,preview
 
 " Custom Interface
@@ -34,7 +38,7 @@ set nowrap
 set display+=lastline
 set encoding=utf-8
 set linebreak
-set scrolloff=5
+set scrolloff=1
 set sidescrolloff=5
 
 " Custom View
@@ -51,8 +55,17 @@ set listchars=space:·,tab:»-
 " set laststatus=2
 set noshowmode
 set colorcolumn=120
-set textwidth=120
 set synmaxcol=800
+set winheight=1
+set winminheight=0
+set winheight=999
+set updatetime=300
+set shortmess+=c
+" if has("patch-8.1.1564")
+"   set signcolumn=number
+" else
+"   set signcolumn=yes
+" endif
 
 " Custom identation
 set autoindent
@@ -69,6 +82,36 @@ set foldlevel=99
 
 " Maps
 let mapleader = "\<Space>"
+let maplocalleader = "\<Space>"
+nnoremap Q @@
+nnoremap s "_d
+nnoremap Y y$
+nnoremap <silent> ,<Space> :nohlsearch<Enter>
+" inoremap <silent> jf <Esc>
+
+" Tabs navigation
+" nnoremap <silent> <Leader>h gT
+" nnoremap <silent> <Leader>l gt
+" nnoremap <silent> <Leader>1 1gt
+" nnoremap <silent> <Leader>2 2gt
+" nnoremap <silent> <Leader>3 3gt
+" nnoremap <silent> <Leader>4 4gt
+" nnoremap <silent> <Leader>5 5gt
+" nnoremap <silent> <Leader>6 6gt
+" nnoremap <silent> <Leader>7 7gt
+" nnoremap <silent> <Leader>8 8gt
+" nnoremap <silent> <Leader>9 9gt
+" nnoremap <silent> <Leader>0 :tablast<Enter>
+" Change buffers using TAB key
+nnoremap <silent> <Tab> :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bnext<Enter>
+nnoremap <silent> <S-Tab> :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bprevious<Enter>
+nnoremap <F12> :source ~/.vimrc<Enter>
+nnoremap <silent> ,b :ls<Enter>:buffer<Space>
+
+if has('terminal')
+    nnoremap <silent> <C-S-X> :term<Enter>
+    tnoremap <Esc><Esc> <C-\><C-N>:bd!<Enter>
+endif
 
 " Plugins
 call plug#begin('~/.vim/plugged')
@@ -93,35 +136,19 @@ Plug 'SirVer/ultisnips'
 Plug 'sniphpets/sniphpets'
 Plug 'vim-vdebug/vdebug'
 Plug 'preservim/tagbar'
-" Plug 'editorconfig/editorconfig-vim'
+Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'} " After :CocInstall coc-phpls
+Plug 'editorconfig/editorconfig-vim'
+" Plug 'pechorin/any-jump.vim'
 call plug#end()
 
-" Maps
-nnoremap Q @@
-nnoremap s "_d
-nnoremap Y y$
-" Tabs navigation
-nnoremap H gT
-nnoremap L gt
-nnoremap <silent> <Leader>1 1gt
-nnoremap <silent> <Leader>2 2gt
-nnoremap <silent> <Leader>3 3gt
-nnoremap <silent> <Leader>4 4gt
-nnoremap <silent> <Leader>5 5gt
-nnoremap <silent> <Leader>6 6gt
-nnoremap <silent> <Leader>7 7gt
-nnoremap <silent> <Leader>8 8gt
-nnoremap <silent> <Leader>9 9gt
-nnoremap <silent> <Leader>0 :tablast<Enter>
-nnoremap <silent> <F2> :source ~/.vimrc<Enter>
-if has('terminal')
-    nnoremap <silent> <C-S-X> :term<Enter>
-    tnoremap <silent> <Esc><Esc> <C-\><C-N>:q!<Enter>
-endif
-
+" Theme
+colorscheme gruvbox
+let g:gruvbox_contrast_dark = 'hard'
+set background=dark
 
 " Save when losing focus
-autocmd FocusLost * :silent! w
+" autocmd FocusLost * :silent! w
 " Resize splits when the window is resized
 autocmd VimResized * :wincmd =
 
@@ -132,28 +159,35 @@ let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 1
-let NERDTreeIgnore = ['*\.swp', '\.git', '\.vscode', '\.idea']
 let NERDTreeAutoDeleteBuffer = 1
+let NERDTreeShowLineNumbers=1
+let NERDTreeMapOpenInTab='\t'
+let NERDTreeIgnore = ['*\.swp', '\.git', '\.vscode', '\.idea']
 let g:plug_window = 'noautocmd vertical topleft new'
 autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
 " autocmd VimEnter * if argc() == 0 | NERDTree | endif
-nnoremap <silent> <Leader>f :NERDTreeToggle<Enter>
+nmap <silent> <F2> :NERDTreeToggle<Enter>
+
+" Snippets
+let g:UltiSnipsEditSplit = 'vertical'
+let g:UltiSnipsExpandTrigger="<Tab><Tab>"
+let g:UltiSnipsUsePythonVersion = 3
 
 " PHPVim
 let g:php_version_id = 70400
+autocmd FileType php set iskeyword+=$
 
 " EasyMotion
 " @see https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/moving-even-faster-with-vim-sneak-and-easymotion/
-nnoremap <silent> <Leader>s <Plug>(easymotion-s2)
-
-" Theme
-colorscheme gruvbox
-let g:gruvbox_contrast_dark = 'hard'
-set background=dark
+nmap <silent> <Leader>s <Plug>(easymotion-s2)
 
 " TagBar
 " @see https://github.com/preservim/tagbar
-nnoremap <silent> <F8> :TagbarToggle<Enter>
+nmap <silent> <F8> :TagbarToggle<Enter>
+
+" Airline
+let g:airline#extensions#tabline#enabled=1
+let g:airline#extensions#tabline#buffer_nr_show=1
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
@@ -161,13 +195,14 @@ nnoremap <silent> <F8> :TagbarToggle<Enter>
 nnoremap <silent> <Leader>p :Files<Enter>
 
 " Vim Tests
+" https://github.com/vim-test/vim-test
 let test#strategy = 'vimterminal'
 let test#php#phpunit#options = '--testdox --no-coverage --stop-on-failure'
-nnoremap <silent> <Leader>tt :TestNearest<Enter>
-nnoremap <silent> <Leader>tf :TestFile<Enter>
-nnoremap <silent> <Leader>ts :TestSuite<Enter>
-nnoremap <silent> <Leader>tl :TestLast<Enter>
-nnoremap <silent> <Leader>tg :TestVisit<Enter>
+nmap <silent> <Leader>tt :TestNearest<Enter>
+nmap <silent> <Leader>tf :TestFile<Enter>
+nmap <silent> <Leader>ts :TestSuite<Enter>
+nmap <silent> <Leader>tl :TestLast<Enter>
+nmap <silent> <Leader>tg :TestVisit<Enter>
 
 " Vim PHP Namespaces
 let g:php_namespace_sort_after_insert = 1
@@ -192,7 +227,7 @@ autocmd FileType php nnoremap <Leader>us :call PhpSortUse()<Enter>
 function! PhpCSFixer()
     if bufname("%") == ''
         echohl WarningMsg
-            echo messageTxt
+            echo 'Save file first!. Canceled.'
             echohl None
             return 0
     endif
@@ -222,11 +257,53 @@ let g:vdebug_options = {
 \    'ide_key' : 'PHPSTORM'
 \}
 
-" Snippets
-let g:UltiSnipsEditSplit = 'vertical'
-let g:UltiSnipsExpandTrigger="<Tab>"
-let g:UltiSnipsUsePythonVersion = 3
-let g:sniphpets_strict_types = 1
+"""""""""""""""""""""""""""""""
+" COC Completion
+let g:coc_disable_startup_warning=1
+
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <Tab>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-Tab> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-@> coc#refresh()
+
+" Make <Enter> auto-select the first completion item and notify coc.nvim to
+" format on enter, <Enter> could be remapped by other vim plugin
+" inoremap <silent><expr> <Enter> pumvisible() ? coc#_select_confirm()
+"                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gi <Plug>(coc-implementation)
+
+" https://vim.fandom.com/wiki/Faster_loading_of_large_files
+" file is large from 2mb
+let g:LargeFile = 1024 * 1024 * 2
+augroup LargeFile 
+  au!
+  autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
+augroup END
+
+function! LargeFile()
+"  No syntax highlighting
+set eventignore+=FileType
+setlocal bufhidden=unload
+setlocal buftype=nowrite
+setlocal undolevels=-1
+autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed."
+endfunction
 
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local

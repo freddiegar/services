@@ -43,6 +43,12 @@ sudo service cups stop
 sudo systemctl disable cups
 ```
 
+# Vim latest :D
+```bash
+sudo add-apt-repository ppa:jonathonf/vim
+## sudo apt-get remove vim && sudo add-apt-repository --remove ppa:jonathonf/vim
+```
+
 # Updated repos
 ```bash
 sudo apt-get update
