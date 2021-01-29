@@ -51,10 +51,9 @@ set showmatch
 set relativenumber
 set list
 set listchars=space:·,tab:»-
-" set cmdheight=2
-" set laststatus=2
 set noshowmode
 set colorcolumn=120
+set textwidth=120
 set synmaxcol=800
 set winheight=1
 set winminheight=0
@@ -81,47 +80,74 @@ set foldnestmax=10
 set foldlevel=99
 
 " Maps
+let &t_TI = ""
+let &t_TE = ""
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 nnoremap Q @@
-nnoremap s "_d
+nnoremap X "_d
 nnoremap Y y$
 nnoremap <silent> ,<Space> :nohlsearch<Enter>
-" inoremap <silent> jf <Esc>
+inoremap <silent> jf <Esc>
+inoremap <silent> fj <Esc>
+inoremap <silent> jj <Esc>
 
 " Tabs navigation
-" nnoremap <silent> <Leader>h gT
-" nnoremap <silent> <Leader>l gt
-" nnoremap <silent> <Leader>1 1gt
-" nnoremap <silent> <Leader>2 2gt
-" nnoremap <silent> <Leader>3 3gt
-" nnoremap <silent> <Leader>4 4gt
-" nnoremap <silent> <Leader>5 5gt
-" nnoremap <silent> <Leader>6 6gt
-" nnoremap <silent> <Leader>7 7gt
-" nnoremap <silent> <Leader>8 8gt
-" nnoremap <silent> <Leader>9 9gt
-" nnoremap <silent> <Leader>0 :tablast<Enter>
-" Change buffers using TAB key
-nnoremap <silent> <Tab> :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bnext<Enter>
-nnoremap <silent> <S-Tab> :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bprevious<Enter>
+nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bprevious<Enter>
+nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bnext<Enter>
+nnoremap <silent> ,x :ls<Enter>:buffer<Space>
+
 nnoremap <F12> :source ~/.vimrc<Enter>
-nnoremap <silent> ,b :ls<Enter>:buffer<Space>
+
+nnoremap <leader>o :only<Enter>
+nnoremap <leader>w :update<Enter>
+nnoremap <leader>q :q<Enter>
+nnoremap <leader>x :update<Enter>:bd<Enter>
+
+" Better split switching
+map <C-h> <C-W>h
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-l> <C-W>l
+
+" Print full path
+map <Leader>f :echo expand("%:p")<cr>
+
+cabbrev vt :!vendor/bin/phpunit --no-coverage --testdox --stop-on-failure
+cabbrev vtf :!vendor/bin/phpunit --no-coverage --testdox --stop-on-failure --filter %s
 
 if has('terminal')
     nnoremap <silent> <C-S-X> :term<Enter>
     tnoremap <Esc><Esc> <C-\><C-N>:bd!<Enter>
+
+    " Mappings to move out from terminal to other views
+    tnoremap <C-h> <C-w>h
+    tnoremap <C-j> <C-w>j
+    tnoremap <C-k> <C-w>k
+    tnoremap <C-l> <C-w>l
+endif
+
+if !has('gui_running')
+    set notimeout
+    set ttimeout
+    set ttimeoutlen=10
+    augroup FastEscape
+        autocmd!
+        autocmd InsertEnter * set timeoutlen=0
+        autocmd InsertLeave * set timeoutlen=1000
+    augroup END
 endif
 
 " Plugins
 call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox'
+" Plug 'sainnhe/gruvbox-material'
 Plug 'vim-airline/vim-airline'
 Plug 'preservim/nerdtree'
-Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
+Plug 'justinmk/vim-sneak'
 Plug 'Raimondi/delimitMate'
 Plug 'machakann/vim-swap'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -138,19 +164,40 @@ Plug 'vim-vdebug/vdebug'
 Plug 'preservim/tagbar'
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " After :CocInstall coc-phpls
-Plug 'editorconfig/editorconfig-vim'
+" Plug 'editorconfig/editorconfig-vim'
 " Plug 'pechorin/any-jump.vim'
 call plug#end()
 
+if has('termguicolors')
+    set termguicolors
+endif
+
 " Theme
+
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'hard'
+
+" colorscheme gruvbox-material
+" let gruvbox_material_background = 'hard'
+" let g:gruvbox_material_enable_bold = 1
+
+" Transparency
 set background=dark
+hi Normal guibg=NONE ctermbg=NONE
 
 " Save when losing focus
 " autocmd FocusLost * :silent! w
 " Resize splits when the window is resized
 autocmd VimResized * :wincmd =
+
+" DelitMate
+let g:delimitMate_expand_cr = 1
+let g:delimitMate_expand_space = 1
+let g:delimitMate_smart_quotes = 1
+let g:delimitMate_expand_inside_quotes = 0
+let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
+
+imap <expr> <Enter> pumvisible() ? "\<C-y>" : "<Plug>delimitMateCR"
 
 " NerdTree
 " @see https://github.com/preservim/nerdtree
@@ -161,29 +208,30 @@ let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 1
 let NERDTreeAutoDeleteBuffer = 1
 let NERDTreeShowLineNumbers=1
-let NERDTreeMapOpenInTab='\t'
+" let NERDTreeMapOpenInTab='\t'
 let NERDTreeIgnore = ['*\.swp', '\.git', '\.vscode', '\.idea']
 let g:plug_window = 'noautocmd vertical topleft new'
-autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
+" autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
 " autocmd VimEnter * if argc() == 0 | NERDTree | endif
-nmap <silent> <F2> :NERDTreeToggle<Enter>
+nnoremap <silent> <F2> :NERDTreeToggle<Enter>
 
 " Snippets
 let g:UltiSnipsEditSplit = 'vertical'
-let g:UltiSnipsExpandTrigger="<Tab><Tab>"
+let g:UltiSnipsExpandTrigger='<Tab>'
+let g:UltiSnipsJumpForwardTrigger = '<Tab>'
+let g:UltiSnipsJumpBackwardTrigger='<S-Tab>'
 let g:UltiSnipsUsePythonVersion = 3
 
 " PHPVim
 let g:php_version_id = 70400
 autocmd FileType php set iskeyword+=$
 
-" EasyMotion
-" @see https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/moving-even-faster-with-vim-sneak-and-easymotion/
-nmap <silent> <Leader>s <Plug>(easymotion-s2)
+" Vim Snake
+let g:sneak#label = 1
 
 " TagBar
 " @see https://github.com/preservim/tagbar
-nmap <silent> <F8> :TagbarToggle<Enter>
+nnoremap <silent> <F8> :TagbarToggle<Enter>
 
 " Airline
 let g:airline#extensions#tabline#enabled=1
@@ -198,11 +246,11 @@ nnoremap <silent> <Leader>p :Files<Enter>
 " https://github.com/vim-test/vim-test
 let test#strategy = 'vimterminal'
 let test#php#phpunit#options = '--testdox --no-coverage --stop-on-failure'
-nmap <silent> <Leader>tt :TestNearest<Enter>
-nmap <silent> <Leader>tf :TestFile<Enter>
-nmap <silent> <Leader>ts :TestSuite<Enter>
-nmap <silent> <Leader>tl :TestLast<Enter>
-nmap <silent> <Leader>tg :TestVisit<Enter>
+nnoremap <silent> <Leader>tt :TestNearest<Enter>
+nnoremap <silent> <Leader>tf :TestFile<Enter>
+nnoremap <silent> <Leader>ts :TestSuite<Enter>
+nnoremap <silent> <Leader>tl :TestLast<Enter>
+nnoremap <silent> <Leader>tg :TestVisit<Enter>
 
 " Vim PHP Namespaces
 let g:php_namespace_sort_after_insert = 1
@@ -213,16 +261,6 @@ function! IPhpInsertUse()
 endfunction
 autocmd FileType php inoremap <Leader>uu <Esc>:call IPhpInsertUse()<Enter>
 autocmd FileType php nnoremap <Leader>uu :call PhpInsertUse()<Enter>
- 
-function! IPhpExpandClass()
-    call PhpExpandClass()
-    call feedkeys('a', 'n')
-endfunction
-autocmd FileType php inoremap <Leader>ue <Esc>:call IPhpExpandClass()<Enter>
-autocmd FileType php nnoremap <Leader>ue :call PhpExpandClass()<Enter>
-
-autocmd FileType php inoremap <Leader>us <Esc>:call PhpSortUse()<Enter>
-autocmd FileType php nnoremap <Leader>us :call PhpSortUse()<Enter>
 
 function! PhpCSFixer()
     if bufname("%") == ''
@@ -259,34 +297,14 @@ let g:vdebug_options = {
 
 """""""""""""""""""""""""""""""
 " COC Completion
-let g:coc_disable_startup_warning=1
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <Tab>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-Tab> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
 
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-@> coc#refresh()
 
 " Make <Enter> auto-select the first completion item and notify coc.nvim to
 " format on enter, <Enter> could be remapped by other vim plugin
-" inoremap <silent><expr> <Enter> pumvisible() ? coc#_select_confirm()
-"                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
-
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> gi <Plug>(coc-implementation)
+inoremap <silent><expr> <Enter> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
 
 " https://vim.fandom.com/wiki/Faster_loading_of_large_files
 " file is large from 2mb
@@ -297,12 +315,12 @@ augroup LargeFile
 augroup END
 
 function! LargeFile()
-"  No syntax highlighting
-set eventignore+=FileType
-setlocal bufhidden=unload
-setlocal buftype=nowrite
-setlocal undolevels=-1
-autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed."
+    " No syntax highlighting
+    set eventignore+=FileType
+    setlocal bufhidden=unload
+    setlocal buftype=nowrite
+    setlocal undolevels=-1
+    autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed."
 endfunction
 
 if filereadable(expand('~/.vimrc.local'))
