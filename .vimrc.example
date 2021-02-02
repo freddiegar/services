@@ -13,7 +13,7 @@ set incsearch
 set smartcase
 set ignorecase
 set gdefault
-set lazyredraw " vim-airline conflict
+set lazyredraw
 set nobackup
 set nowritebackup
 
@@ -28,6 +28,9 @@ set novisualbell
 set autoread
 set backspace=indent,eol,start
 set clipboard=unnamedplus
+set splitbelow
+set splitright
+set signcolumn=number
 if has('mouse')
     set mouse=n
 endif
@@ -60,11 +63,6 @@ set winminheight=0
 set winheight=999
 set updatetime=300
 set shortmess+=c
-" if has("patch-8.1.1564")
-"   set signcolumn=number
-" else
-"   set signcolumn=yes
-" endif
 
 " Custom identation
 set autoindent
@@ -84,25 +82,23 @@ let &t_TI = ""
 let &t_TE = ""
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
+map gd <C-}>
 nnoremap Q @@
 nnoremap X "_d
 nnoremap Y y$
 nnoremap <silent> ,<Space> :nohlsearch<Enter>
-inoremap <silent> jf <Esc>
-inoremap <silent> fj <Esc>
-inoremap <silent> jj <Esc>
+inoremap <silent> jj <Esc>:update<Enter>
 
 " Tabs navigation
+nnoremap <silent> ,x :ls<Enter>:buffer<Space>
 nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bprevious<Enter>
 nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bnext<Enter>
-nnoremap <silent> ,x :ls<Enter>:buffer<Space>
 
 nnoremap <F12> :source ~/.vimrc<Enter>
 
 nnoremap <leader>o :only<Enter>
 nnoremap <leader>w :update<Enter>
-nnoremap <leader>q :q<Enter>
-nnoremap <leader>x :update<Enter>:bd<Enter>
+nnoremap <leader>q :update<Enter>:bd<Enter>
 
 " Better split switching
 map <C-h> <C-W>h
@@ -113,8 +109,10 @@ map <C-l> <C-W>l
 " Print full path
 map <Leader>f :echo expand("%:p")<cr>
 
-cabbrev vt :!vendor/bin/phpunit --no-coverage --testdox --stop-on-failure
-cabbrev vtf :!vendor/bin/phpunit --no-coverage --testdox --stop-on-failure --filter %s
+cabbrev vt :!clear && vendor/bin/phpunit --no-coverage --stop-on-failure
+cabbrev vtf :!clear && vendor/bin/phpunit --no-coverage --stop-on-failure --filter <cword>
+cabbrev ga :!clear && git status && git add .
+cabbrev gd :!clear && git diff
 
 if has('terminal')
     nnoremap <silent> <C-S-X> :term<Enter>
@@ -168,25 +166,25 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'} " After :CocInstall coc-phpls
 " Plug 'pechorin/any-jump.vim'
 call plug#end()
 
+" Theme
+
 if has('termguicolors')
     set termguicolors
 endif
-
-" Theme
 
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'hard'
 
 " colorscheme gruvbox-material
-" let gruvbox_material_background = 'hard'
-" let g:gruvbox_material_enable_bold = 1
+" let g:gruvbox_material_background = 'hard'
+" let g:gruvbox_material_enable_bold = 0
+" let g:gruvbox_material_palette = 'original'
 
 " Transparency
 set background=dark
-hi Normal guibg=NONE ctermbg=NONE
+highlight Normal ctermbg=NONE
+" highlight Normal guibg=NONE ctermbg=NONE
 
-" Save when losing focus
-" autocmd FocusLost * :silent! w
 " Resize splits when the window is resized
 autocmd VimResized * :wincmd =
 
@@ -196,7 +194,6 @@ let g:delimitMate_expand_space = 1
 let g:delimitMate_smart_quotes = 1
 let g:delimitMate_expand_inside_quotes = 0
 let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
-
 imap <expr> <Enter> pumvisible() ? "\<C-y>" : "<Plug>delimitMateCR"
 
 " NerdTree
@@ -208,11 +205,8 @@ let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 1
 let NERDTreeAutoDeleteBuffer = 1
 let NERDTreeShowLineNumbers=1
-" let NERDTreeMapOpenInTab='\t'
 let NERDTreeIgnore = ['*\.swp', '\.git', '\.vscode', '\.idea']
 let g:plug_window = 'noautocmd vertical topleft new'
-" autocmd BufEnter * if (winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()) | q | endif
-" autocmd VimEnter * if argc() == 0 | NERDTree | endif
 nnoremap <silent> <F2> :NERDTreeToggle<Enter>
 
 " Snippets
@@ -244,8 +238,8 @@ nnoremap <silent> <Leader>p :Files<Enter>
 
 " Vim Tests
 " https://github.com/vim-test/vim-test
-let test#strategy = 'vimterminal'
-let test#php#phpunit#options = '--testdox --no-coverage --stop-on-failure'
+let g:test#strategy = 'vimterminal'
+let g:test#php#phpunit#options = '--testdox --no-coverage --stop-on-failure'
 nnoremap <silent> <Leader>tt :TestNearest<Enter>
 nnoremap <silent> <Leader>tf :TestFile<Enter>
 nnoremap <silent> <Leader>ts :TestSuite<Enter>
@@ -295,15 +289,13 @@ let g:vdebug_options = {
 \    'ide_key' : 'PHPSTORM'
 \}
 
-"""""""""""""""""""""""""""""""
 " COC Completion
-
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-@> coc#refresh()
-
-" Make <Enter> auto-select the first completion item and notify coc.nvim to
-" format on enter, <Enter> could be remapped by other vim plugin
+" Make <Enter> and <Leader><Tab> auto-select the first completion item
 inoremap <silent><expr> <Enter> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
+inoremap <silent><expr> <Leader><Tab> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
 
 " https://vim.fandom.com/wiki/Faster_loading_of_large_files
