@@ -147,6 +147,10 @@ snippet [] "Array" i
 ]
 endsnippet
 
+snippet fn "Function" i
+function
+endsnippet
+
 snippet "s(u|o|i)" "Scope" br
 `!p snip.rv='public' if match.group(1) == 'u' else ('protected' if match.group(1) == 'o' else 'private')`
 endsnippet
@@ -228,6 +232,10 @@ try {
 } catch (${1:Exception} $e) {
     $0
 }
+endsnippet
+
+snippet "mt(i|s)" "Mark Test Incomplete" br
+$this->markTest`!p snip.rv='Incomplete' if match.group(1) == 'i' else 'Skipped'`();$0
 endsnippet
 
 snippet eee "Throw a new exception" b

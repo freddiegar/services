@@ -8,18 +8,20 @@ set secure
 set hidden
 set wildmenu
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea
+set lazyredraw
+set nobackup
+set nowritebackup
+
+" Search
 set hlsearch
 set incsearch
 set smartcase
 set ignorecase
 set gdefault
-set lazyredraw
-set nobackup
-set nowritebackup
 
 " Better Completion
-" set complete-=i
-" set complete=.,w,b,u,t
+set complete-=i
+set complete=.,w,b,u,t
 set completeopt=longest,menuone,preview
 
 " Custom Interface
@@ -30,7 +32,8 @@ set backspace=indent,eol,start
 set clipboard=unnamedplus
 set splitbelow
 set splitright
-set signcolumn=number
+set signcolumn=yes
+
 if has('mouse')
     set mouse=n
 endif
@@ -83,19 +86,27 @@ let &t_TE = ""
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 map gd <C-}>
+map <silent><Leader><Esc> :call popup_clear(1)<Enter>
+
+" Purify
+noremap <Up> <Nop>
+noremap <Down> <Nop>
+noremap <Left> <Nop>
+noremap <Right> <Nop>
+
+" Utility
 nnoremap Q @@
 nnoremap X "_d
 nnoremap Y y$
-nnoremap <silent> ,<Space> :nohlsearch<Enter>
+nnoremap <silent> <Enter> :nohlsearch<Enter>
+nnoremap <silent> T _vg_
 inoremap <silent> jj <Esc>:update<Enter>
 
 " Tabs navigation
 nnoremap <silent> ,x :ls<Enter>:buffer<Space>
 nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bprevious<Enter>
 nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bnext<Enter>
-
 nnoremap <F12> :source ~/.vimrc<Enter>
-
 nnoremap <leader>o :only<Enter>
 nnoremap <leader>w :update<Enter>
 nnoremap <leader>q :update<Enter>:bd<Enter>
@@ -167,7 +178,6 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'} " After :CocInstall coc-phpls
 call plug#end()
 
 " Theme
-
 if has('termguicolors')
     set termguicolors
 endif
@@ -185,8 +195,15 @@ set background=dark
 highlight Normal ctermbg=NONE
 " highlight Normal guibg=NONE ctermbg=NONE
 
+" Signcolumn with same color of theme
+autocmd ColorScheme * highlight! link SignColumn LineNr
+
 " Resize splits when the window is resized
 autocmd VimResized * :wincmd =
+
+" Airline
+let g:airline#extensions#tabline#enabled=1
+let g:airline#extensions#tabline#buffer_nr_show=1
 
 " DelitMate
 let g:delimitMate_expand_cr = 1
@@ -218,7 +235,9 @@ let g:UltiSnipsUsePythonVersion = 3
 
 " PHPVim
 let g:php_version_id = 70400
-autocmd FileType php set iskeyword+=$
+" autocmd FileType php set iskeyword+=$
+autocmd FileType php set commentstring=//\ %s
+" autocmd BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
 " Vim Snake
 let g:sneak#label = 1
@@ -227,14 +246,11 @@ let g:sneak#label = 1
 " @see https://github.com/preservim/tagbar
 nnoremap <silent> <F8> :TagbarToggle<Enter>
 
-" Airline
-let g:airline#extensions#tabline#enabled=1
-let g:airline#extensions#tabline#buffer_nr_show=1
-
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
-nnoremap <silent> <Leader>p :Files<Enter>
+nnoremap <silent> <Leader>p :GFiles<Enter>
+nnoremap <silent> <Leader>s :Files<Enter>
 
 " Vim Tests
 " https://github.com/vim-test/vim-test
@@ -314,6 +330,10 @@ function! LargeFile()
     setlocal undolevels=-1
     autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed."
 endfunction
+
+" Mark two or more spaces after some text as an error
+syntax match DoubleSpace /\S\zs {2,}/
+highlight link DoubleSpace Error
 
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
