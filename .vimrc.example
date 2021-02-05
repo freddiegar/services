@@ -1,8 +1,12 @@
 " VIM Config
+" @see https://blog.joren.ga/tools/vim-learning-steps
+" Build-in improve % option (works with if statements)
+runtime macros/matchit.vim
+
 " @see https://vim.fandom.com/wiki/Example_vimrc
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
 " @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
-set nocompatible
+" @See :h quickref
 set nomodeline
 set secure
 set hidden
@@ -11,6 +15,7 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea
 set lazyredraw
 set nobackup
 set nowritebackup
+set path=.,,
 
 " Search
 set hlsearch
@@ -85,8 +90,7 @@ let &t_TI = ""
 let &t_TE = ""
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
-map gd <C-}>
-map <silent><Leader><Esc> :call popup_clear(1)<Enter>
+map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
 " Purify
 noremap <Up> <Nop>
@@ -95,6 +99,8 @@ noremap <Left> <Nop>
 noremap <Right> <Nop>
 
 " Utility
+nnoremap j gj
+nnoremap k gk
 nnoremap Q @@
 nnoremap X "_d
 nnoremap Y y$
@@ -103,27 +109,19 @@ nnoremap <silent> T _vg_
 inoremap <silent> jj <Esc>:update<Enter>
 
 " Tabs navigation
-nnoremap <silent> ,x :ls<Enter>:buffer<Space>
+nnoremap <silent> <Leader>b :ls<Enter>:buffer<Space>
 nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bprevious<Enter>
 nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bnext<Enter>
-nnoremap <F12> :source ~/.vimrc<Enter>
-nnoremap <leader>o :only<Enter>
-nnoremap <leader>w :update<Enter>
-nnoremap <leader>q :update<Enter>:bd<Enter>
+nnoremap <silent> <Leader>o :only<Enter>
+nnoremap <silent> <Leader>w :update<Enter>
+nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
+nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
 
 " Better split switching
 map <C-h> <C-W>h
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-l> <C-W>l
-
-" Print full path
-map <Leader>f :echo expand("%:p")<cr>
-
-cabbrev vt :!clear && vendor/bin/phpunit --no-coverage --stop-on-failure
-cabbrev vtf :!clear && vendor/bin/phpunit --no-coverage --stop-on-failure --filter <cword>
-cabbrev ga :!clear && git status && git add .
-cabbrev gd :!clear && git diff
 
 if has('terminal')
     nnoremap <silent> <C-S-X> :term<Enter>
@@ -140,8 +138,10 @@ if !has('gui_running')
     set notimeout
     set ttimeout
     set ttimeoutlen=10
+
     augroup FastEscape
         autocmd!
+
         autocmd InsertEnter * set timeoutlen=0
         autocmd InsertLeave * set timeoutlen=1000
     augroup END
@@ -150,7 +150,6 @@ endif
 " Plugins
 call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox'
-" Plug 'sainnhe/gruvbox-material'
 Plug 'vim-airline/vim-airline'
 Plug 'preservim/nerdtree'
 Plug 'tpope/vim-commentary'
@@ -185,21 +184,15 @@ endif
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'hard'
 
-" colorscheme gruvbox-material
-" let g:gruvbox_material_background = 'hard'
-" let g:gruvbox_material_enable_bold = 0
-" let g:gruvbox_material_palette = 'original'
+augroup ThemeColors
+    set background=dark
 
-" Transparency
-set background=dark
-highlight Normal ctermbg=NONE
-" highlight Normal guibg=NONE ctermbg=NONE
+    " Transparency
+    highlight Normal ctermbg=NONE
 
-" Signcolumn with same color of theme
-autocmd ColorScheme * highlight! link SignColumn LineNr
-
-" Resize splits when the window is resized
-autocmd VimResized * :wincmd =
+    " Signcolumn with same color of theme
+    highlight! link SignColumn LineNr
+augroup END
 
 " Airline
 let g:airline#extensions#tabline#enabled=1
@@ -235,9 +228,6 @@ let g:UltiSnipsUsePythonVersion = 3
 
 " PHPVim
 let g:php_version_id = 70400
-" autocmd FileType php set iskeyword+=$
-autocmd FileType php set commentstring=//\ %s
-" autocmd BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
 " Vim Snake
 let g:sneak#label = 1
@@ -265,14 +255,12 @@ nnoremap <silent> <Leader>tg :TestVisit<Enter>
 " Vim PHP Namespaces
 let g:php_namespace_sort_after_insert = 1
 
-function! IPhpInsertUse()
+function! IPhpInsertUse() abort
     call PhpInsertUse()
     call feedkeys('a',  'n')
 endfunction
-autocmd FileType php inoremap <Leader>uu <Esc>:call IPhpInsertUse()<Enter>
-autocmd FileType php nnoremap <Leader>uu :call PhpInsertUse()<Enter>
 
-function! PhpCSFixer()
+function! PhpCSFixer() abort
     if bufname("%") == ''
         echohl WarningMsg
             echo 'Save file first!. Canceled.'
@@ -286,7 +274,6 @@ function! PhpCSFixer()
     let result = system('php-cs-fixer fix ' . bufname("%") . ' --config="' . configfile .'"')
     silent :edit!
 endfunction
-autocmd FileType php nnoremap <silent> <F1> :call PhpCSFixer()<Enter>
 
 " Vim Debug
 let g:vdebug_keymap = {
@@ -307,33 +294,49 @@ let g:vdebug_options = {
 
 " COC Completion
 " Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-@> coc#refresh()
+inoremap <silent> <expr> <c-@> coc#refresh()
 " Make <Enter> and <Leader><Tab> auto-select the first completion item
-inoremap <silent><expr> <Enter> pumvisible() ? coc#_select_confirm()
+inoremap <silent> <expr> <Enter> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
-inoremap <silent><expr> <Leader><Tab> pumvisible() ? coc#_select_confirm()
+inoremap <silent> <expr> <Leader><Tab> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
 
 " https://vim.fandom.com/wiki/Faster_loading_of_large_files
 " file is large from 2mb
 let g:LargeFile = 1024 * 1024 * 2
-augroup LargeFile 
-  au!
+
+augroup LargeFile
+  autocmd!
+
   autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
 augroup END
 
-function! LargeFile()
+function! LargeFile() abort
     " No syntax highlighting
     set eventignore+=FileType
     setlocal bufhidden=unload
     setlocal buftype=nowrite
     setlocal undolevels=-1
+
     autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed."
 endfunction
 
-" Mark two or more spaces after some text as an error
-syntax match DoubleSpace /\S\zs {2,}/
-highlight link DoubleSpace Error
+" CTags
+let g:autotags_no_global = 0
+let g:autotags_cscope_file_extensions = ".php .h .c"
+
+augroup AutoCommands
+    autocmd!
+
+    " Reload after save
+    autocmd BufWritePost ~/.vimrc source ~/.vimrc
+
+    " PHP Customization
+    autocmd FileType php set commentstring=//\ %s
+    autocmd FileType php inoremap <Leader>uu <Esc>:call IPhpInsertUse()<Enter>
+    autocmd FileType php nnoremap <Leader>uu :call PhpInsertUse()<Enter>
+    autocmd FileType php nnoremap <silent> <F1> :call PhpCSFixer()<Enter>
+augroup END
 
 if filereadable(expand('~/.vimrc.local'))
   source ~/.vimrc.local
