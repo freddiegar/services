@@ -72,74 +72,7 @@ sudo apt-get install -y htop
 # Set as default editor
 sudo update-alternatives --config editor
 
-echo "\" VIM Config
-\" @see https://vim.fandom.com/wiki/Example_vimrc
-\" @see https://vim.fandom.com/wiki/Best_Vim_Tips
-\" @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
-set nocompatible
-set hidden
-set wildmenu
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea
-set hlsearch
-set incsearch
-set smartcase
-set ignorecase
-set complete-=i
-set lazyredraw
-
-\" Custom Interface
-set title
-set novisualbell
-set autoread
-set backspace=indent,eol,start
-set clipboard=unnamedplus
-if has('mouse')
-    set mouse=n
-endif
-
-\" Custom Render
-syntax enable
-set nowrap
-set display+=lastline
-set encoding=utf-8
-set linebreak
-set scrolloff=5
-set sidescrolloff=5
-
-\" Custom View
-set number
-set numberwidth=4
-set showcmd
-set ruler
-set cursorline
-set showmatch
-set relativenumber
-set list
-set listchars=space:·,tab:»-
-\" set cmdheight=2
-\" set laststatus=2
-set noshowmode
-
-\" Custom identation
-set autoindent
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-set fileformat=unix
-
-\" Enable folding : Hit za
-set nofoldenable
-set foldmethod=indent
-set foldnestmax=10
-set foldlevel=99
-
-\" Maps
-let mapleader = "\<Space>"
-\" Repeat last macro
-nnoremap Q @@
-\" Delete without save
-nnoremap s \"_d
-" > ~/.vimrc
+# cp -p .vimrc.example ~/.vimrc
 ```
 
 ## Vim Plugins
@@ -166,7 +99,6 @@ set background=dark
 
 # Update all plugins
 :PlugUpdate
-:PlugUpdate NERDTree
 
 # Clean plugins
 :PlugClean
@@ -247,41 +179,11 @@ gnome-session-quit
 ```
 
 # Aliases
-```bash
-touch ~/.bash_aliases
-echo 'alias x="exit"
-alias ll="ls -lh"
-alias ci="composer install"
-alias cu="composer update"
-alias ct="composer test"
-alias cda="composer dump-autoload"
-alias vt="vendor/bin/phpunit --stop-on-failure --no-coverage"
-alias vtf="vendor/bin/phpunit --stop-on-failure --no-coverage --filter"
-alias st="bin/phpunit --stop-on-failure --no-coverage"
-alias stf="bin/phpunit --stop-on-failure --no-coverage --filter"
-alias update="sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y && sudo apt-get autoclean -y"
-alias dup="docker-compose up -d --build"
-alias dconfig="docker-compose config"
-alias drm="docker rm -f"
-alias dexec="docker exec -it"
-alias dlogs="docker logs --tail 50 -f"
-alias dstart="docker start"
-alias dstop="docker stop"
-alias dstatus="docker ps --format \"{{.Names}}\""
-alias ducks="du -cks * | sort -rn | head"
-alias gs="git summary"
-alias gst="git status"
-alias gd="git diff -w"
-alias gdc="git diff -w --cached"
-alias ga="git add"
-alias gcmsg="git commit -m"
-alias gca="git commit --amend -m"
-alias gl="git pull"
-alias gp="git push"
-alias gco="git checkout"
-alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-' > ~/.bash_aliases
 
+```bash
+cp -p .bash_aliases ~/.bash_aliases
+
+# Enable alias in zsh
 echo '
 
 if [ -f ~/.bash_aliases ]; then

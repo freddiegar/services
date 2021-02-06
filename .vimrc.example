@@ -104,7 +104,7 @@ function! StatuslineGit() abort
     return strlen(l:branchname) > 0 ? l:branchname : ''
 endfunction
 
-set noshowcmd
+set showcmd
 set noruler
 set noshowmode
 set shortmess+=WFAIcwas
@@ -142,20 +142,22 @@ noremap <Right> <Nop>
 nnoremap j gj
 nnoremap k gk
 nnoremap Q @@
-nnoremap X "_d
-nnoremap Y y$
+nnoremap Y y$<Left>
+
 nnoremap <silent> <Enter> :nohlsearch<Enter>
 nnoremap <silent> T _vg_
+nnoremap <silent> <Leader>y "+y
+nnoremap <silent> <Leader>d "_d
+nnoremap <silent> <Leader>o :only<Enter>
+nnoremap <silent> <Leader>w :update<Enter>
+nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
+nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
 inoremap <silent> jj <Esc>:update<Enter>
 
 " Tabs navigation
 nnoremap <silent> <Leader>b :ls<Enter>:buffer<Space>
 nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bprevious<Enter>
 nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bnext<Enter>
-nnoremap <silent> <Leader>o :only<Enter>
-nnoremap <silent> <Leader>w :update<Enter>
-nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
-nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
 
 " Better split switching
 map <C-h> <C-W>h
