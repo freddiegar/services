@@ -95,6 +95,20 @@ let g:currentmode={
    \ 't'  : 'TERMINAL ',
    \}
 
+function! ChangeStatuslineColor() abort
+    if (mode() =~# '\v(n|no)')
+        execute "highlight! StatusLine guifg='#1d2021' guibg='#7c6f64' ctermfg=234 ctermbg=243"
+    elseif (mode() =~# '\v(v|V|t)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
+        execute "highlight! StatusLine guifg='#fc802d' guibg='#1a2528' ctermfg=172 ctermbg=237"
+    elseif (mode() ==# 'i')
+        execute "highlight! StatusLine guifg='#84a598' guibg='#1a2528' ctermfg=109 ctermbg=237"
+    elseif (mode() ==# 'R')
+        execute "highlight! StatusLine guifg='#8fbf7f' guibg='#1a2528' ctermfg=72 ctermbg=237"
+    endif
+
+    return ''
+endfunction
+
 function! GitBranch() abort
     return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
 endfunction
@@ -111,7 +125,9 @@ set shortmess+=WFAIca
 set shortmess-=S
 set laststatus=2
 
-set statusline=%#LineNr#
+set statusline=
+" set statusline+=%#LineNr#
+set statusline+=%{ChangeStatuslineColor()}
 set statusline+=\ %n
 set statusline+=\ %{g:currentmode[mode()]}
 set statusline+=\ %f
@@ -155,11 +171,17 @@ nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
 nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
-nnoremap <silent> <Leader>; :execute "normal! mqA;\<Esc>`q"
+nnoremap <silent> <Leader>c :execute "normal! mcA;\e`c"<Enter>
 
 " Improvements
 onoremap <silent> i( :<C-u>normal! f(vi(<Enter>
 onoremap <silent> a( :<C-u>normal! f(va(<Enter>
+onoremap <silent> i{ :<C-u>normal! f{vi{<Enter>
+onoremap <silent> a{ :<C-u>normal! f{va{<Enter>
+onoremap <silent> i[ :<C-u>normal! f[vi[<Enter>
+onoremap <silent> a[ :<C-u>normal! f[va[<Enter>
+onoremap <silent> i, :<C-u>normal! T,vf,<Enter>
+onoremap <silent> a, :<C-u>normal! F,vf,<Enter>
 
 " Tabs navigation
 nnoremap <silent> <Leader>b :ls<Enter>:buffer<Space>
@@ -363,7 +385,7 @@ augroup AutoCommands
     " Return to last edit position when opening files
     autocmd BufReadPost *
          \ if line("'\"") > 0 && line("'\"") <= line("$") |
-         \   exe "normal! g`\"" |
+         \   execute "normal! g`\"" |
          \ endif
 
     " Remember info about open buffers on close
