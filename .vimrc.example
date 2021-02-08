@@ -69,7 +69,7 @@ set winheight=999
 set updatetime=300
 
 " Custom identation
-set autoindent
+" set autoindent
 set softtabstop=4
 set shiftwidth=4
 set expandtab
@@ -107,12 +107,11 @@ endfunction
 set showcmd
 set noruler
 set noshowmode
-set shortmess+=WFAIcwas
+set shortmess+=WFAIca
 set shortmess-=S
 set laststatus=2
 
-set statusline=
-set statusline+=%#LineNr#
+set statusline=%#LineNr#
 set statusline+=\ %n
 set statusline+=\ %{g:currentmode[mode()]}
 set statusline+=\ %f
@@ -137,27 +136,35 @@ noremap <Up> <Nop>
 noremap <Down> <Nop>
 noremap <Left> <Nop>
 noremap <Right> <Nop>
+" inoremap <Esc> <Nop> " In multicursor it fails :(
 
 " Utility
 nnoremap j gj
 nnoremap k gk
 nnoremap Q @@
-nnoremap Y y$<Left>
+nnoremap Y y$
 
+" Shortcuts
 nnoremap <silent> <Enter> :nohlsearch<Enter>
 nnoremap <silent> T _vg_
+inoremap <silent> jk <Esc>
 nnoremap <silent> <Leader>y "+y
+nnoremap <silent> <Leader>p "+p
+nnoremap <silent> <Leader>P "+P
 nnoremap <silent> <Leader>d "_d
-nnoremap <silent> <Leader>o :only<Enter>
 nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
 nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
-inoremap <silent> jj <Esc>:update<Enter>
+nnoremap <silent> <Leader>; :execute "normal! mqA;\<Esc>`q"
+
+" Improvements
+onoremap <silent> i( :<C-u>normal! f(vi(<Enter>
+onoremap <silent> a( :<C-u>normal! f(va(<Enter>
 
 " Tabs navigation
 nnoremap <silent> <Leader>b :ls<Enter>:buffer<Space>
-nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bprevious<Enter>
-nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :write<Enter> :endif<Enter>:bnext<Enter>
+nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter>:bprevious<Enter>
+nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter>:bnext<Enter>
 
 " Better split switching
 map <C-h> <C-W>h
@@ -192,8 +199,6 @@ endif
 " Plugins
 call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox'
-" Plug 'vim-airline/vim-airline'
-" Plug 'preservim/nerdtree'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -214,8 +219,6 @@ Plug 'vim-vdebug/vdebug'
 Plug 'preservim/tagbar'
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " After :CocInstall coc-phpls
-" Plug 'editorconfig/editorconfig-vim'
-" Plug 'pechorin/any-jump.vim'
 call plug#end()
 
 " Theme
@@ -231,37 +234,18 @@ augroup ThemeColors
 
     " Transparency
     " Use #1D2021 in Terminal
-    " highlight! Normal ctermbg=NONE
     highlight! Normal guibg=NONE ctermbg=NONE
 
     " Signcolumn with same color of theme
     highlight! link SignColumn LineNr
 augroup END
 
-" Airline
-" let g:airline#extensions#tabline#enabled=1
-" let g:airline#extensions#tabline#buffer_nr_show=1
-
 " DelitMate
 let g:delimitMate_expand_cr = 1
-let g:delimitMate_expand_space = 1
 let g:delimitMate_smart_quotes = 1
 let g:delimitMate_expand_inside_quotes = 0
 let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 imap <expr> <Enter> pumvisible() ? "\<C-y>" : "<Plug>delimitMateCR"
-
-" NerdTree
-" @see https://github.com/preservim/nerdtree
-" @see https://github.com/victormours/dotfiles/tree/master/vim
-" let NERDTreeMinimalUI = 1
-" let NERDTreeDirArrows = 1
-" let NERDTreeShowHidden = 1
-" let NERDTreeQuitOnOpen = 1
-" let NERDTreeAutoDeleteBuffer = 1
-" let NERDTreeShowLineNumbers=1
-" let NERDTreeIgnore = ['*\.swp', '\.git', '\.vscode', '\.idea']
-" let g:plug_window = 'noautocmd vertical topleft new'
-" nnoremap <silent> <F2> :NERDTreeToggle<Enter>
 
 " Snippets
 let g:UltiSnipsEditSplit = 'vertical'
@@ -283,7 +267,7 @@ nnoremap <silent> <F8> :TagbarToggle<Enter>
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
-nnoremap <silent> <Leader>p :GFiles<Enter>
+nnoremap <silent> <Leader>o :GFiles<Enter>
 nnoremap <silent> <Leader>s :Files<Enter>
 
 " Vim Tests
@@ -350,9 +334,9 @@ inoremap <silent> <expr> <Leader><Tab> pumvisible() ? coc#_select_confirm()
 let g:LargeFile = 1024 * 1024 * 2
 
 augroup LargeFile
-  autocmd!
+    autocmd!
 
-  autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
+    autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
 augroup END
 
 function! LargeFile() abort
@@ -393,6 +377,6 @@ augroup AutoCommands
 augroup END
 
 if filereadable(expand('~/.vimrc.local'))
-  source ~/.vimrc.local
+    source ~/.vimrc.local
 endif
 

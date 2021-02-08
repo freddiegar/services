@@ -1232,7 +1232,7 @@ echo '#!/bin/sh
 # Run test before add message to commit
 if [ -e "vendor/bin/phpunit" ]
 then
-vendor/bin/phpunit --stop-on-failure --no-coverage
+vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite=unit
 fi
 ' > .git/hooks/pre-commit
 

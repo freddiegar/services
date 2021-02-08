@@ -14,6 +14,7 @@ alias stf="bin/phpunit --stop-on-failure --no-coverage --filter"
 
 alias ducks="du -cks * | sort -rn | head"
 alias update="sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y && sudo apt-get autoclean -y"
+alias fo="/opt/firefox/firefox --new-tab"
 
 alias dexec="docker exec -it"
 alias dlogs="docker logs --tail 50 -f"
