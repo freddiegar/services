@@ -8,6 +8,7 @@ runtime macros/matchit.vim
 " @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
 " @See :h quickref
 set nomodeline
+set exrc
 set secure
 set hidden
 set wildmenu
@@ -15,6 +16,7 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea
 set lazyredraw
 set nobackup
 set nowritebackup
+set noswapfile
 set path=.,,
 
 " Search
@@ -165,23 +167,11 @@ nnoremap <silent> <Enter> :nohlsearch<Enter>
 nnoremap <silent> T _vg_
 inoremap <silent> jk <Esc>
 nnoremap <silent> <Leader>y "+y
-nnoremap <silent> <Leader>p "+p
-nnoremap <silent> <Leader>P "+P
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
 nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
 nnoremap <silent> <Leader>c :execute "normal! mcA;\e`c"<Enter>
-
-" Improvements
-onoremap <silent> i( :<C-u>normal! f(vi(<Enter>
-onoremap <silent> a( :<C-u>normal! f(va(<Enter>
-onoremap <silent> i{ :<C-u>normal! f{vi{<Enter>
-onoremap <silent> a{ :<C-u>normal! f{va{<Enter>
-onoremap <silent> i[ :<C-u>normal! f[vi[<Enter>
-onoremap <silent> a[ :<C-u>normal! f[va[<Enter>
-onoremap <silent> i, :<C-u>normal! T,vf,<Enter>
-onoremap <silent> a, :<C-u>normal! F,vf,<Enter>
 
 " Tabs navigation
 nnoremap <silent> <Leader>b :ls<Enter>:buffer<Space>
@@ -224,9 +214,12 @@ Plug 'morhetz/gruvbox'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
+Plug 'wellle/targets.vim'
+Plug 'michaeljsmith/vim-indent-object'
 Plug 'justinmk/vim-sneak'
-Plug 'Raimondi/delimitMate'
 Plug 'machakann/vim-swap'
+Plug 'Raimondi/delimitMate'
+Plug 'luochen1990/rainbow'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-syntastic/syntastic'
@@ -290,7 +283,7 @@ nnoremap <silent> <F8> :TagbarToggle<Enter>
 " @see https://github.com/junegunn/fzf.vim
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
 nnoremap <silent> <Leader>o :GFiles<Enter>
-nnoremap <silent> <Leader>s :Files<Enter>
+nnoremap <silent> <Leader>p :Files<Enter>
 
 " Vim Tests
 " https://github.com/vim-test/vim-test
@@ -327,18 +320,28 @@ endfunction
 
 " Vim Debug
 let g:vdebug_keymap = {
-\    "run" : "<F5>",
-\    "step_over" : "<F8>",
-\    "step_into" : "<F7>",
-\    "step_out" : "<S-F8>",
-\    "close" : "<S-F5>",
-\    "detach" : "<F10>",
-\    "set_breakpoint" : "<C-F8>",
-\    "eval_visual" : "<Leader>xe"
+\    'run' : '<F5>',
+\    'step_into' : '<F7>',
+\    'step_over' : '<F8>',
+\    'step_out' : '<S-F8>',
+\    'close' : '<S-F5>',
+\    'detach' : '<F10>',
+\    'set_breakpoint' : '<C-F8>',
+\    'eval_visual' : '<Leader>xe'
 \}
+
+if !exists('g:vdebug_options')
+    let g:vdebug_options = {}
+endif
+
 let g:vdebug_options = {
 \    'port' : 9000,
+\    'timeout' : 10,
+\    'on_close' : 'detach',
 \    'break_on_open' : 0,
+\    'watch_window_style' : 'compact',
+\    'simplified_status' : 1,
+\    'continuous_mode' : 1,
 \    'ide_key' : 'PHPSTORM'
 \}
 
@@ -376,6 +379,9 @@ endfunction
 let g:autotags_no_global = 0
 let g:autotags_cscope_file_extensions = ".php .h .c"
 
+" Rainbow
+let g:rainbow_active = 1
+
 augroup AutoCommands
     autocmd!
 
@@ -387,9 +393,6 @@ augroup AutoCommands
          \ if line("'\"") > 0 && line("'\"") <= line("$") |
          \   execute "normal! g`\"" |
          \ endif
-
-    " Remember info about open buffers on close
-    set viminfo^=%
 
     " PHP Customization
     autocmd FileType php set commentstring=//\ %s
