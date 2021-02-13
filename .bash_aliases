@@ -1,4 +1,5 @@
 alias x="exit"
+alias v="vim"
 alias ll="ls -lh"
 alias ci="composer install"
 alias cu="composer update"
