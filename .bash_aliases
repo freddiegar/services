@@ -1,10 +1,16 @@
 alias x="exit"
 alias v="vim"
+alias m="man"
 alias ll="ls -lh"
+
+alias c="composer"
 alias ci="composer install"
 alias cu="composer update"
 alias ct="composer test"
 alias cda="composer dump-autoload"
+
+alias pex="sudo phpenmod xdebug"
+alias pdx="sudo phpdismod xdebug"
 
 alias vt="vendor/bin/phpunit --stop-on-failure --no-coverage"
 alias vtu="vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
@@ -32,6 +38,7 @@ alias gcmsg="git commit -m"
 alias gca="git commit --amend -m"
 alias gl="git pull"
 alias gp="git push"
+alias gfa="git fetch --all"
 alias gco="git checkout"
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
