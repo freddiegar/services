@@ -368,6 +368,33 @@ inoremap <silent> <expr> <Enter> pumvisible() ? coc#_select_confirm()
 inoremap <silent> <expr> <Leader><Tab> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
 
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation() abort
+    " @see https://github.com/vim/vim/issues/4738
+    let s:uri = expand('<cWORD>')
+    let s:uri = substitute(s:uri, '?', '\\?', '')
+    let s:uri = shellescape(s:uri, 1)
+    if s:uri != ''
+        silent execute "!/opt/firefox/firefox '" . s:uri . "'"
+        :redraw!
+    endif
+
+    if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
+    elseif (coc#rpc#ready())
+        call CocActionAsync('doHover')
+    else
+        execute '!' . &keywordprg . " " . expand('<cword>')
+    endif
+endfunction
+
 " https://vim.fandom.com/wiki/Faster_loading_of_large_files
 " file is large from 2mb
 let g:LargeFile = 1024 * 1024 * 2
