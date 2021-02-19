@@ -165,13 +165,15 @@ nnoremap Y y$
 " Shortcuts
 nnoremap <silent> <Enter> :nohlsearch<Enter>
 nnoremap <silent> T _vg_
-inoremap <silent> jk <Esc>
 nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
 nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
 nnoremap <silent> <Leader>c :execute "normal! mcA;\e`c"<Enter>
+nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo "Added: " . expand("%")<Enter>
+inoremap <silent> jk <Esc>
+inoremap <silent> jj <Esc>
 
 " Tabs navigation
 nnoremap <silent> <Leader>b :ls<Enter>:buffer<Space>
@@ -234,6 +236,7 @@ Plug 'vim-vdebug/vdebug'
 Plug 'preservim/tagbar'
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " After :CocInstall coc-phpls
+Plug 'skywind3000/asyncrun.vim'
 call plug#end()
 
 " Theme
