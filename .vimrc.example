@@ -295,6 +295,16 @@ nnoremap <silent> <Leader>ts :TestSuite<Enter>
 nnoremap <silent> <Leader>tl :TestLast<Enter>
 nnoremap <silent> <Leader>tg :TestVisit<Enter>
 
+" Syntastic
+set statusline+=%#warningmsg#
+set statusline+=\ %{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_stl_format = '%fe!'
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_php_checkers = ['php']
+
 " Vim PHP Namespaces
 let g:php_namespace_sort_after_insert = 1
 
@@ -346,6 +356,7 @@ let g:vdebug_options = {
 \}
 
 " COC Completion
+" @see https://github.com/neoclide/coc.nvim
 " Use <c-space> to trigger completion.
 inoremap <silent> <expr> <c-@> coc#refresh()
 " Make <Enter> and <Leader><Tab> auto-select the first completion item
