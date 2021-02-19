@@ -101,7 +101,7 @@ public function $1(): $2
 
 public function set${1/^([a-z]){1}/\u$1/}($2 $$1): void
 {
-    $this->$1 = $1;
+    $this->$1 = $$1;
 }$0
 endsnippet
 
@@ -151,7 +151,7 @@ snippet fn "Function" i
 function
 endsnippet
 
-snippet "s(u|o|i)" "Scope" br
+snippet "s(u|o|i)" "Scope" ir
 `!p snip.rv='public' if match.group(1) == 'u' else ('protected' if match.group(1) == 'o' else 'private')`
 endsnippet
 
@@ -236,6 +236,10 @@ endsnippet
 
 snippet "mt(i|s)" "Mark Test Incomplete" br
 $this->markTest`!p snip.rv='Incomplete' if match.group(1) == 'i' else 'Skipped'`();$0
+endsnippet
+
+snippet eeu "Use exception" b
+use $1Exception;$0
 endsnippet
 
 snippet eee "Throw a new exception" b
