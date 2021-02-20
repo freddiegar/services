@@ -170,7 +170,8 @@ nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
 nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
-nnoremap <silent> <Leader>c :execute "normal! mcA;\e`c"<Enter>
+nnoremap <silent> <Leader>c :execute "normal! mcA,\e`c"<Enter>
+nnoremap <silent> <Leader>s :execute "normal! mcA;\e`c"<Enter>
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo "Added: " . expand("%")<Enter>
 inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
@@ -264,6 +265,10 @@ let g:delimitMate_smart_quotes = 1
 let g:delimitMate_expand_inside_quotes = 0
 let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 imap <expr> <Enter> pumvisible() ? "\<C-y>" : "<Plug>delimitMateCR"
+
+" Multiple Cursors
+let g:multi_cursor_select_all_word_key = '<C-a>'
+let g:multi_cursor_select_all_key      = 'g<C-a>'
 
 " Snippets
 let g:UltiSnipsEditSplit = 'vertical'
@@ -377,21 +382,32 @@ nmap <silent> gr <Plug>(coc-references)
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation() abort
-    " @see https://github.com/vim/vim/issues/4738
-    let s:uri = expand('<cWORD>')
-    let s:uri = substitute(s:uri, '?', '\\?', '')
-    let s:uri = shellescape(s:uri, 1)
-    if s:uri != ''
-        silent execute "!/opt/firefox/firefox '" . s:uri . "'"
-        :redraw!
-    endif
-
     if (index(['vim','help'], &filetype) >= 0)
-        execute 'h '.expand('<cword>')
+        execute 'h ' . expand('<cword>')
     elseif (coc#rpc#ready())
         call CocActionAsync('doHover')
     else
         execute '!' . &keywordprg . " " . expand('<cword>')
+    endif
+endfunction
+
+" Remap <C-f> and <C-b> for scroll float windows/popups. (Used in long file definitions)
+if has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+" @see https://github.com/vim/vim/issues/4738
+nnoremap gx :call OpenURLUnderCursor()<CR>
+
+function! OpenURLUnderCursor() abort
+    let s:uri = expand('<cWORD>')
+    let s:uri = substitute(s:uri, '?', '\\?', '')
+    let s:uri = shellescape(s:uri, 1)
+
+    if s:uri != ''
+        silent execute "!/opt/firefox/firefox '" . s:uri . "'"
+        :redraw!
     endif
 endfunction
 
@@ -433,6 +449,7 @@ augroup AutoCommands
     autocmd BufReadPost *
          \ if line("'\"") > 0 && line("'\"") <= line("$") |
          \   execute "normal! g`\"" |
+         \   execute "normal! zz" |
          \ endif
 
     " PHP Customization
