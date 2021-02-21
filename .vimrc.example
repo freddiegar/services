@@ -434,7 +434,9 @@ endfunction
 " CTags
 " https://github.com/vim-scripts/autotags
 let g:autotags_no_global = 0
-let g:autotags_cscope_file_extensions = ".php .h .c"
+let g:autotags_cscope_file_extensions = '.php .h .c'
+let g:autotags_ctags_global_include = ''
+let g:autotags_ctags_opts = '--exclude=.git --exclude=bin --exclude=var --exclude=storage --c++-kinds=+p --fields=+iaS --extra=+q'
 
 " Rainbow
 let g:rainbow_active = 1
@@ -462,4 +464,3 @@ augroup END
 if filereadable(expand('~/.vimrc.local'))
     source ~/.vimrc.local
 endif
-
