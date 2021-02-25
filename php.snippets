@@ -66,7 +66,7 @@ endsnippet
 snippet ffs "Setter Function" b
 public function set${1/^([a-z]){1}/\u$1/}($2`!p snip.rv=autocomplete(t[2], proptypes())` $$1): void
 {
-    $this->$1 = $1;
+    $this->$1 = $$1;
 }$0
 endsnippet
 
