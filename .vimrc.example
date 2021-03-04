@@ -173,6 +173,9 @@ nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
 nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
 nnoremap <silent> <Leader>c :execute "normal! mcA,\e`c"<Enter>
 nnoremap <silent> <Leader>s :execute "normal! mcA;\e`c"<Enter>
+nnoremap <silent> <Leader>x :execute "normal! mcg_x\e`c"<Enter>
+nnoremap <silent> <Leader>r :Rg<Enter>
+nnoremap <silent> <Leader>/ :BLines<Enter>
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo "Added: " . expand("%")<Enter>
 inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
@@ -512,6 +515,9 @@ augroup AutoCommands
     autocmd FileType sql set commentstring=--\ %s
     autocmd BufRead,BufNewFile *.twig set filetype=html
     autocmd BufRead,BufNewFile *.blade.php set filetype=html
+
+    " Rg not find in file names
+    command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case " . shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 augroup END
 
 augroup ThemeColors

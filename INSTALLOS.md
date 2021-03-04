@@ -118,6 +118,20 @@ vim --version | grep xterm
 # Check again
 ```
 
+## RigGrep for Vim search
+
+```bash
+sudo add-apt-repository ppa:x4121/ripgrep
+sudo apt-get update
+sudo apt-get install ripgrep
+
+echo "
+if type rg &> /dev/null; then
+    export FZF_DEFAULT_COMMAND='rg --files'
+    export FZF_DEFAULT_OPTS='-m --height 50% --border'
+fi " >> ~/.zshrc
+```
+
 ## Ctags
 
 echo "--recurse=yes
@@ -185,7 +199,6 @@ cp -p .bash_aliases ~/.bash_aliases
 
 # Enable alias in zsh
 echo '
-
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi' >> ~/.zshrc
@@ -445,7 +458,6 @@ sudo apt-get update
 sudo apt-get install -y build-essential libssl-dev
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
 echo '
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
