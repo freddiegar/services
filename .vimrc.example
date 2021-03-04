@@ -245,6 +245,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer ins
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " After :CocInstall coc-phpls
 Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
+Plug 'AndrewRadev/tagalong.vim'
 call plug#end()
 
 " Use Syntastic to diagnostics
@@ -326,7 +327,7 @@ let g:syntastic_enable_highlighting = 0
 let g:syntastic_error_symbol = 'E'
 let g:syntastic_warning_symbol = 'W'
 let g:syntastic_style_error_symbol = 'S'
-let g:syntastic_style_warning_symbol = 'S'
+let g:syntastic_style_warning_symbol = 's'
 
 " Vim PHP Namespaces
 let g:php_namespace_sort_after_insert = 1
@@ -464,6 +465,10 @@ let g:gitgutter_close_preview_on_escape = 1
 " Rainbow
 " @see https://github.com/luochen1990/rainbow
 let g:rainbow_active = 1
+
+" Tagalong
+" @see https://github.com/AndrewRadev/tagalong.vim
+let g:tagalong_filetypes = ['html', 'xml']
 
 nnoremap <Leader>l :call CreateArgumentsList()<Enter>
 function! CreateArgumentsList() abort
