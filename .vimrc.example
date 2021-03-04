@@ -497,6 +497,32 @@ function! CreateArgumentsList() abort
     let @@ = saved_unnamed_register
 endfunction
 
+nnoremap <Leader>a :call CreateArrayList()<Enter>
+function! CreateArrayList() abort
+    let saved_unnamed_register = @@
+
+    if match(getline('.'), '[') > 0 && match(getline('.'), ']') > 0 && match(getline('.'), ',') > 0
+        execute "normal! _f[vi[y"
+
+        let command_string = ''
+        let arguments_list = split(@@, ',')
+
+        for argument in arguments_list
+            let command_string .= "\t" . trim(argument) . ",\r"
+        endfor
+
+        execute "normal! \"_di[i\r" . command_string . "\eJkg_"
+
+        echom 'Array list created'
+    else
+        echohl WarningMsg
+        echom 'Array list not found'
+        echohl None
+    endif
+
+    let @@ = saved_unnamed_register
+endfunction
+
 augroup AutoCommands
     autocmd!
 
