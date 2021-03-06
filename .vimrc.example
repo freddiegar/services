@@ -25,6 +25,9 @@ set incsearch
 set smartcase
 set ignorecase
 set gdefault
+set viminfo=!,'20,<50,s10,h
+" set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+" setglobal grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 
 " Better Completion
 set complete-=i
@@ -128,7 +131,6 @@ set shortmess-=S
 set laststatus=2
 
 set statusline=
-" set statusline+=%#LineNr#
 set statusline+=%{ChangeStatuslineColor()}
 set statusline+=\ %n
 set statusline+=\ %{g:currentmode[mode()]}
@@ -136,18 +138,17 @@ set statusline+=\ %f
 set statusline+=%=
 set statusline+=\%m
 set statusline+=\%r
-" set statusline+=\ ascii:%b
+set statusline+=\ #:%3b
 set statusline+=\ l:%3l/%3L\ c:%3c
 set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
 set statusline+=\ %{StatuslineGit()}
-" set statusline+=\ @\ %{strftime(\"%H:%M\")}
+set statusline+=\ @\ %{strftime(\"%H:%M\")}
 
 " Maps
 let &t_TI = ""
 let &t_TE = ""
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
-map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
 " Purify
 noremap <Up> <Nop>
@@ -163,6 +164,10 @@ nnoremap Q @@
 nnoremap Y y$
 
 " Shortcuts
+vnoremap <silent> T _vg_
+vnoremap <silent> <Leader>y "+y
+vnoremap <silent> <Leader>d "_d
+
 nnoremap <silent> <Enter> :nohlsearch<Enter>
 nnoremap <silent> T _vg_
 nnoremap <silent> <Leader>y "+y
@@ -170,13 +175,14 @@ nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>e :update<Enter>
 nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
-nnoremap <silent> <Leader>f :echo expand("%:p")<Enter>
+nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
 nnoremap <silent> <Leader>c :execute "normal! mcA,\e`c"<Enter>
 nnoremap <silent> <Leader>s :execute "normal! mcA;\e`c"<Enter>
-nnoremap <silent> <Leader>x :execute "normal! mcg_x\e`c"<Enter>
+nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
 nnoremap <silent> <Leader>r :Rg<Enter>
-nnoremap <silent> <Leader>/ :BLines<Enter>
-nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo "Added: " . expand("%")<Enter>
+nnoremap <silent> <Leader>f :execute 'Rg ' . expand('<cword>')<Enter>
+nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo 'Added: ' . expand('%')<Enter>
+
 inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
@@ -265,8 +271,6 @@ endif
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
 
-colorscheme gruvbox
-
 " DelitMate
 let g:delimitMate_expand_cr = 1
 let g:delimitMate_smart_quotes = 1
@@ -300,11 +304,16 @@ nnoremap <silent> <F8> :TagbarToggle<Enter>
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
 nnoremap <silent> <Leader>o :GFiles<Enter>
 nnoremap <silent> <Leader>p :Files<Enter>
+nnoremap <silent> <Leader>i :execute 'Files ' . expand('%:p:h')<Enter>
 
 " Vim Tests
 " https://github.com/vim-test/vim-test
 let g:test#strategy = 'vimterminal'
-let g:test#php#phpunit#options = '--testdox --no-coverage --stop-on-failure'
+let g:test#php#phpunit#options = {
+    \ 'nearest': '--no-coverage --stop-on-failure',
+    \ 'file':    '--no-coverage --stop-on-failure',
+    \ 'suite':   '--no-coverage --stop-on-failure',
+\}
 nnoremap <silent> <Leader>tt :TestNearest<Enter>
 nnoremap <silent> <Leader>tf :TestFile<Enter>
 nnoremap <silent> <Leader>ts :TestSuite<Enter>
@@ -338,7 +347,7 @@ function! IPhpInsertUse() abort
 endfunction
 
 function! PhpCSFixer() abort
-    if bufname("%") == ''
+    if bufname('%') == ''
         echohl WarningMsg
         echo 'Save file first!. Canceled.'
         echohl None
@@ -348,7 +357,7 @@ function! PhpCSFixer() abort
     let configfile = !filereadable(expand('.php_cs')) ? '/var/www/html/freddiegar/services/.php_cs' : '.php_cs'
 
     silent write
-    let result = system('php-cs-fixer fix ' . bufname("%") . ' --config="' . configfile .'"')
+    let result = system('php-cs-fixer fix ' . bufname('%') . ' --config="' . configfile .'"')
     silent :edit!
 endfunction
 
@@ -399,11 +408,11 @@ nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation() abort
     if (index(['vim','help'], &filetype) >= 0)
-        execute 'h ' . expand('<cword>')
+        execute 'help ' . expand('<cword>')
     elseif (coc#rpc#ready())
         call CocActionAsync('doHover')
     else
-        execute '!' . &keywordprg . " " . expand('<cword>')
+        execute '!' . &keywordprg . ' ' . expand('<cword>')
     endif
 endfunction
 
@@ -434,7 +443,7 @@ let g:LargeFile = 1024 * 1024 * 2
 augroup LargeFile
     autocmd!
 
-    autocmd BufReadPre * let f=getfsize(expand("<afile>")) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
+    autocmd BufReadPre * let f=getfsize(expand('<afile>')) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
 augroup END
 
 function! LargeFile() abort
@@ -444,7 +453,7 @@ function! LargeFile() abort
     setlocal buftype=nowrite
     setlocal undolevels=-1
 
-    autocmd VimEnter *  echo "The file is larger than " . (g:LargeFile / 1024 / 1024) . " MB, so some options are changed."
+    autocmd VimEnter *  echo 'The file is larger than ' . (g:LargeFile / 1024 / 1024) . ' MB, so some options are changed.'
 endfunction
 
 " CTags
@@ -475,7 +484,7 @@ function! CreateArgumentsList() abort
     let saved_unnamed_register = @@
 
     if match(getline('.'), '(') > 0 && match(getline('.'), ')') > 0 && match(getline('.'), ',') > 0
-        execute "normal! _f(vi(y"
+        execute 'normal! _f(vi(y'
 
         let command_string = ''
         let arguments_list = split(@@, ',')
@@ -487,10 +496,10 @@ function! CreateArgumentsList() abort
 
         execute "normal! \"_di(i\r" . command_string . "\eJkg_"
 
-        echom 'Arguments list created'
+        echomsg 'Arguments list created'
     else
         echohl WarningMsg
-        echom 'Arguments list not found'
+        echomsg 'Arguments list not found'
         echohl None
     endif
 
@@ -502,7 +511,7 @@ function! CreateArrayList() abort
     let saved_unnamed_register = @@
 
     if match(getline('.'), '[') > 0 && match(getline('.'), ']') > 0 && match(getline('.'), ',') > 0
-        execute "normal! _f[vi[y"
+        execute 'normal! _f[vi[y'
 
         let command_string = ''
         let arguments_list = split(@@, ',')
@@ -513,10 +522,10 @@ function! CreateArrayList() abort
 
         execute "normal! \"_di[i\r" . command_string . "\eJkg_"
 
-        echom 'Array list created'
+        echomsg 'Array list created'
     else
         echohl WarningMsg
-        echom 'Array list not found'
+        echomsg 'Array list not found'
         echohl None
     endif
 
@@ -531,9 +540,9 @@ augroup AutoCommands
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
-         \ if line("'\"") > 0 && line("'\"") <= line("$") |
+         \ if line("'\"") > 0 && line("'\"") <= line('$') |
          \   execute "normal! g`\"" |
-         \   execute "normal! zz" |
+         \   execute 'normal! zz' |
          \ endif
 
     " PHP Customization
@@ -553,6 +562,8 @@ augroup END
 
 augroup ThemeColors
     set background=dark
+
+    colorscheme gruvbox
 
     " Transparency
     " Use #1D2021 in Terminal
