@@ -557,7 +557,42 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.blade.php set filetype=html
 
     " Rg not find in file names
-    command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case " . shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
+    function! RipgrepFzf(query, fullscreen)
+        let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+        let initial_command = printf(command_fmt, shellescape(a:query))
+        let reload_command = printf(command_fmt, '{q}')
+        let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . reload_command]}
+
+        call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+    endfunction
+
+    command! -nargs=* -bang Rg call RipgrepFzf(<q-args>, <bang>0)
+
+    " Save|Load sessions
+    let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . '.vim')
+
+    function! LoadSession() abort
+        if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
+            execute 'source ' . g:session_file
+
+            highlight! link SignColumn LineNr
+            highlight! link StatusLine LineNr
+
+            echomsg 'Loaded ' . g:session_file . ' session'
+        else
+            echomsg 'None ' . g:session_file . ' session'
+        endif
+    endfunction
+
+    function! SaveSession() abort
+        if isdirectory('.git')
+            execute 'mksession! ' . g:session_file
+            echomsg 'Saved ' . g:session_file . ' session'
+        endif
+    endfunction
+
+    autocmd VimEnter * nested call LoadSession()
+    autocmd VimLeavePre * call SaveSession()
 augroup END
 
 augroup ThemeColors
