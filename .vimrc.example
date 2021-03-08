@@ -102,15 +102,18 @@ let g:currentmode={
    \}
 
 function! ChangeStatuslineColor() abort
-    if (mode() =~# '\v(n|no)')
-        execute "highlight! StatusLine guifg='#1d2021' guibg='#7c6f64' ctermfg=234 ctermbg=243"
-    elseif (mode() =~# '\v(v|V|t)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
-        execute "highlight! StatusLine guifg='#fc802d' guibg='#1a2528' ctermfg=172 ctermbg=237"
-    elseif (mode() ==# 'i')
-        execute "highlight! StatusLine guifg='#84a598' guibg='#1a2528' ctermfg=109 ctermbg=237"
-    elseif (mode() ==# 'R')
-        execute "highlight! StatusLine guifg='#8fbf7f' guibg='#1a2528' ctermfg=72 ctermbg=237"
-    endif
+    try
+        if (mode() =~# '\v(n|no)')
+            execute "highlight! StatusLine guifg='#1d2021' guibg='#7c6f64' ctermfg=234 ctermbg=243"
+        elseif (mode() =~# '\v(v|V|t)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
+            execute "highlight! StatusLine guifg='#fc802d' guibg='#1a2528' ctermfg=172 ctermbg=237"
+        elseif (mode() ==# 'i')
+            execute "highlight! StatusLine guifg='#84a598' guibg='#1a2528' ctermfg=109 ctermbg=237"
+        elseif (mode() ==# 'R')
+            execute "highlight! StatusLine guifg='#8fbf7f' guibg='#1a2528' ctermfg=72 ctermbg=237"
+        endif
+    catch
+    endtry
 
     return ''
 endfunction
@@ -151,6 +154,9 @@ let &t_TE = ""
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
+" Indent without kill the selection in vmode
+vmap < <gv
+vmap > >gv
 
 " Purify
 noremap <Up> <Nop>
@@ -165,11 +171,18 @@ nnoremap k gk
 nnoremap Q @@
 nnoremap Y y$
 
+" Arrow keys resize windows
+" nnoremap <Left> :vertical resize -10<Enter>
+" nnoremap <Right> :vertical resize +10<Enter>
+" nnoremap <Up> :resize -10<Enter>
+" nnoremap <Down> :resize +10<Enter>
+
 " Shortcuts
 vnoremap <silent> T _vg_
 vnoremap <silent> <Leader>y "+y
 vnoremap <silent> <Leader>d "_d
 
+nnoremap <silent> <F10> :edit ~/.vimrc<Enter>
 nnoremap <silent> <Enter> :nohlsearch<Enter>
 nnoremap <silent> T _vg_
 nnoremap <silent> <Leader>y "+y
@@ -181,7 +194,7 @@ nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
 nnoremap <silent> <Leader>c :execute "normal! mcA,\e`c"<Enter>
 nnoremap <silent> <Leader>s :execute "normal! mcA;\e`c"<Enter>
 nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
-nnoremap <silent> <Leader>r :Rg<Enter>
+nnoremap <silent> <Leader>F :Rg<Enter>
 nnoremap <silent> <Leader>f :execute 'Rg ' . expand('<cword>')<Enter>
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo 'Added: ' . expand('%')<Enter>
 
@@ -229,6 +242,7 @@ Plug 'morhetz/gruvbox'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-abolish'
 Plug 'wellle/targets.vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'justinmk/vim-sneak'
@@ -553,9 +567,9 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <F1> :call PhpCSFixer()<Enter>
 
     " Customization
-    autocmd FileType sql set commentstring=--\ %s
-    autocmd BufRead,BufNewFile *.twig set filetype=html
-    autocmd BufRead,BufNewFile *.blade.php set filetype=html
+    autocmd FileType sql setlocal commentstring=--\ %s
+    autocmd BufRead,BufNewFile *.twig setlocal filetype=html
+    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html
 
     " Autosave
     autocmd FocusLost * let s:confirm = &confirm | setglobal noconfirm | silent! update | let &confirm = s:confirm
