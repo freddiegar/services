@@ -51,6 +51,7 @@ alias grh="git reset HEAD"
 alias gffs="git flow feature start"
 alias gfff="git flow feature finish"
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias glogp="glog -p"
 
 alias cdt="cd /var/www/html/atar"
 alias cdf="cd /var/www/html/freddiegar"

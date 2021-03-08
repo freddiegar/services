@@ -18,6 +18,7 @@ set nobackup
 set nowritebackup
 set noswapfile
 set path=.,,
+set sessionoptions-=buffers sessionoptions+=globals
 
 " Search
 set hlsearch
@@ -149,6 +150,7 @@ let &t_TI = ""
 let &t_TE = ""
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
+map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
 " Purify
 noremap <Up> <Nop>
@@ -461,7 +463,7 @@ endfunction
 let g:autotags_no_global = 0
 let g:autotags_cscope_file_extensions = '.php .h .c'
 let g:autotags_ctags_global_include = ''
-let g:autotags_ctags_opts = '--exclude=.git --exclude=bin --exclude=var --exclude=storage --exclude=database --c++-kinds=+p --fields=+iaS --extra=+q'
+let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[ 	]*trait[ 	]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
@@ -542,7 +544,6 @@ augroup AutoCommands
     autocmd BufReadPost *
          \ if line("'\"") > 0 && line("'\"") <= line('$') |
          \   execute "normal! g`\"" |
-         \   execute 'normal! zz' |
          \ endif
 
     " PHP Customization
@@ -555,6 +556,9 @@ augroup AutoCommands
     autocmd FileType sql set commentstring=--\ %s
     autocmd BufRead,BufNewFile *.twig set filetype=html
     autocmd BufRead,BufNewFile *.blade.php set filetype=html
+
+    " Autosave
+    autocmd FocusLost * let s:confirm = &confirm | setglobal noconfirm | silent! update | let &confirm = s:confirm
 
     " Rg not find in file names
     function! RipgrepFzf(query, fullscreen)
