@@ -256,28 +256,42 @@ Plug 'StanAngeloff/php.vim'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'vim-test/vim-test'
 Plug 'vim-scripts/autotags'
-Plug 'arnaud-lb/vim-php-namespace'
 Plug 'SirVer/ultisnips'
 Plug 'sniphpets/sniphpets'
 Plug 'vim-vdebug/vdebug'
 Plug 'preservim/tagbar'
-" Enable namespace set auto in snippets
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
 " Enable autocompletion
-Plug 'neoclide/coc.nvim', {'branch': 'release'} " After :CocInstall coc-phpls
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
 call plug#end()
 
 " Use Syntastic to diagnostics
-" Not use PHPActor as LSP
+" PHPActor as LSP
 " :CocConfig add append
 "{
 "    "diagnostic.enable": false,
 "    "diagnostic.enableSign": false,
+"    "phpactor.enable": true,
+"    "phpactor.path": "/usr/local/bin/phpactor"
 "}
 
+"{
+"    "language_server_completion.trim_leading_dollar": true,
+"    "snippets.ultisnips.directories": [
+"        "UltiSnips"
+"    ],
+"    "snippets.userSnippetsDirectory": "~/.vim/UltiSnips",
+"    "suggest.snippetIndicator": " ►",
+"    "diagnostic.enable": false,
+"    "diagnostic.enableSign": false,
+"    "phpactor.enable": true,
+"    "phpactor.path": "/usr/local/bin/phpactor",
+"    "coc.preferences.hoverTarget": "float",
+"    "html.format.enable": true
+"}
 
 " Theme
 if has('termguicolors')
@@ -310,6 +324,9 @@ let g:php_version_id = 70400
 
 " Vim Snake
 let g:sneak#label = 1
+
+" PHPActor
+let g:phpactorOmniError = v:true
 
 " TagBar
 " @see https://github.com/preservim/tagbar
@@ -354,13 +371,10 @@ let g:syntastic_warning_symbol = 'W'
 let g:syntastic_style_error_symbol = 'S'
 let g:syntastic_style_warning_symbol = 's'
 
-" Vim PHP Namespaces
-let g:php_namespace_sort_after_insert = 1
-
-function! IPhpInsertUse() abort
-    call PhpInsertUse()
-    call feedkeys('a',  'n')
-endfunction
+" function! IPhpInsertUse() abort
+"     call PhpInsertUse()
+"     call feedkeys('a',  'n')
+" endfunction
 
 function! PhpCSFixer() abort
     if bufname('%') == ''
@@ -406,6 +420,15 @@ let g:vdebug_options = {
 
 " COC Completion
 " @see https://github.com/neoclide/coc.nvim
+
+" Coc extensions
+let g:coc_global_extensions = [
+    \ 'coc-css',
+    \ 'coc-html',
+    \ 'coc-json',
+    \ 'coc-yaml',
+    \ 'coc-phpactor'
+    \]
 " Use <c-space> to trigger completion.
 inoremap <silent> <expr> <c-@> coc#refresh()
 " Make <Enter> and <Leader><Tab> auto-select the first completion item
@@ -561,9 +584,40 @@ augroup AutoCommands
          \ endif
 
     " PHP Customization
-    autocmd FileType php set commentstring=//\ %s
-    autocmd FileType php inoremap <Leader>uu <Esc>:call IPhpInsertUse()<Enter>
-    autocmd FileType php nnoremap <Leader>uu :call PhpInsertUse()<Enter>
+    autocmd FileType php setlocal commentstring=//\ %s
+    " autocmd FileType php setlocal omnifunc=phpactor#Complete
+    autocmd FileType php inoremap <silent> <buffer><Leader>uu <Esc>:call phpactor#UseAdd()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
+
+    " PHP Refactor
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rnc :call phpactor#ClassNew()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rxc :call phpactor#ClassExpand()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>ric :call phpactor#ImportMissingClasses()<Enter>
+
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rmf :call phpactor#MoveFile()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rcf :call phpactor#CopyFile()<Enter>
+
+    autocmd FileType php nnoremap <silent> <buffer><Leader>ram :call PHPModify('implement_contracts')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call PHPModify('add_missing_properties')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rfc :call PHPModify('complete_constructor')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>run :call PHPModify('fix_namespace_class_name')<Enter>
+
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
+    autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-U>call phpactor#ExtractMethod()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rec :call phpactor#ExtractConstant()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>ree :call phpactor#ExtractExpression(v:true)<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rrr :call phpactor#ContextMenu()<Enter>
+
+    autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
+    autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
+    autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
+
+    function! PHPModify(transformer)
+        normal! ggdG
+        execute 'read !phpactor class:transform ' . expand('%') . ' --transform=' . a:transformer
+        normal! ggdd
+    endfunction
+
     autocmd FileType php nnoremap <silent> <F1> :call PhpCSFixer()<Enter>
 
     " Customization
