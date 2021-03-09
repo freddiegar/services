@@ -72,7 +72,7 @@ sudo apt-get install -y htop
 # Set as default editor
 sudo update-alternatives --config editor
 
-# cp -p .vimrc.example ~/.vimrc
+# cp -p .vimrc ~/.vimrc
 ```
 
 ## Vim Plugins
@@ -106,7 +106,7 @@ set background=dark
 # Upgrade plugin manager
 :PlugUpgrade
 ```
-> See .vimrc.example file in root folder
+> See .vimrc file in root folder
 
 ## Vim Copy/Paste (Share SO)
 
