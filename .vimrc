@@ -190,6 +190,7 @@ nnoremap j gj
 nnoremap k gk
 nnoremap Q @@
 nnoremap Y y$
+nnoremap gl '.
 
 " Arrow keys resize windows
 nnoremap <Left> :vertical resize -10<Enter>
@@ -452,7 +453,7 @@ inoremap <silent> <expr> <Leader><Tab> pumvisible() ? coc#_select_confirm()
 
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gy <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
