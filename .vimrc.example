@@ -12,14 +12,15 @@ set exrc
 set secure
 set hidden
 set wildmenu
-set wildmode=full
+set wildmode=list:longest,full
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea,*.log,*.vimrc
 set lazyredraw
 set nobackup
 set nowritebackup
 set noswapfile
 set path=.,,
-set sessionoptions-=buffers sessionoptions+=globals
+set sessionoptions-=buffers sessionoptions+=globals sessionoptions-=options
+set viewoptions-=options
 
 " Search
 set hlsearch
@@ -35,8 +36,9 @@ if executable('ag')
 endif
 
 " Better Completion
+" @see :h 'complete'
 set complete-=i
-set complete=.,w,b,u,t
+set complete=.,w,b,t
 set completeopt=longest,menuone,preview
 
 " Custom Interface
@@ -61,6 +63,7 @@ set encoding=utf-8
 set linebreak
 set scrolloff=1
 set sidescrolloff=5
+set nojoinspaces
 
 " Custom View
 set number
@@ -288,7 +291,7 @@ call plug#end()
 "    "diagnostic.enable": false,
 "    "diagnostic.enableSign": false,
 "    "phpactor.enable": true,
-"    "phpactor.path": "/usr/local/bin/phpactor",
+"    "phpactor.path": "/usr/local/bin/phpactor"
 "}
 
 " ~/.config/phpactor/phpactor.json
@@ -498,7 +501,7 @@ endfunction
 let g:autotags_no_global = 0
 let g:autotags_cscope_file_extensions = '.php .h .c'
 let g:autotags_ctags_global_include = ''
-let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[ 	]*trait[ 	]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
+let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=node_modules --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[ 	]*trait[ 	]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
@@ -585,8 +588,8 @@ augroup AutoCommands
     autocmd FileType c setlocal omnifunc=ccomplete#CompleteCpp
     autocmd FileType js setlocal omnifunc=javascriptcomplete#CompleteJS
     autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-    " autocmd FileType php setlocal omnifunc=phpactor#Complete
-    autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
+    autocmd FileType php setlocal omnifunc=phpactor#Complete
+    " autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
     autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 
     " PHP Customization
