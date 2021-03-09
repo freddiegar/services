@@ -110,11 +110,15 @@ let g:currentmode={
 
 function! ChangeStatuslineColor() abort
     try
+        execute "set relativenumber"
+
         if (mode() =~# '\v(n|no)')
             execute "highlight! StatusLine guifg='#1d2021' guibg='#7c6f64' ctermfg=234 ctermbg=243"
         elseif (mode() =~# '\v(v|V|t)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
             execute "highlight! StatusLine guifg='#fc802d' guibg='#1a2528' ctermfg=172 ctermbg=237"
         elseif (mode() ==# 'i')
+            execute "set norelativenumber"
+
             execute "highlight! StatusLine guifg='#84a598' guibg='#1a2528' ctermfg=109 ctermbg=237"
         elseif (mode() ==# 'R')
             execute "highlight! StatusLine guifg='#8fbf7f' guibg='#1a2528' ctermfg=72 ctermbg=237"
@@ -188,10 +192,10 @@ nnoremap Q @@
 nnoremap Y y$
 
 " Arrow keys resize windows
-" nnoremap <Left> :vertical resize -10<Enter>
-" nnoremap <Right> :vertical resize +10<Enter>
-" nnoremap <Up> :resize -10<Enter>
-" nnoremap <Down> :resize +10<Enter>
+nnoremap <Left> :vertical resize -10<Enter>
+nnoremap <Right> :vertical resize +10<Enter>
+nnoremap <Up> :resize -10<Enter>
+nnoremap <Down> :resize +10<Enter>
 
 " Shortcuts
 vnoremap <silent> T _vg_
@@ -282,6 +286,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
+Plug 'junegunn/goyo.vim'
 call plug#end()
 
 " Use Syntastic to diagnostics
@@ -332,6 +337,13 @@ let g:sneak#label = 1
 
 " PHPActor
 let g:phpactorOmniError = v:true
+
+" Goyo
+" @see https://github.com/junegunn/goyo.vim
+let g:goyo_linenr = 1
+let g:goyo_width = 120
+let g:goyo_hegiht = '100%'
+nnoremap <silent> <F12> :Goyo<Enter>
 
 " TagBar
 " @see https://github.com/preservim/tagbar
@@ -654,9 +666,8 @@ augroup AutoCommands
     function! LoadSession() abort
         if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
             execute 'source ' . g:session_file
-
-            highlight! link SignColumn LineNr
-            highlight! link StatusLine LineNr
+            execute 'highlight! link SignColumn LineNr'
+            execute 'highlight! link StatusLine LineNr'
 
             echomsg 'Loaded ' . g:session_file . ' session'
         else
@@ -699,6 +710,9 @@ augroup ThemeColors
     " Syntastic with same color of theme
     highlight! SyntasticErrorSign guifg=#ff2222 ctermfg=1
     highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
+
+    " Goyo
+    autocmd! User GoyoLeave nested highlight! link SignColumn LineNr
 augroup END
 
 if filereadable(expand('~/.vimrc.local'))
