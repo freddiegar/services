@@ -270,26 +270,31 @@ call plug#end()
 
 " Use Syntastic to diagnostics
 " PHPActor as LSP
-" :CocConfig add append
+" :CocConfig append
 "{
 "    "diagnostic.enable": false,
 "    "diagnostic.enableSign": false,
 "    "phpactor.enable": true,
-"    "phpactor.path": "/usr/local/bin/phpactor"
+"    "phpactor.path": "/usr/local/bin/phpactor",
+"    "language_server_completion.trim_leading_dollar": true
 "}
 
+" Using ultisnips
 "{
-"    "language_server_completion.trim_leading_dollar": true,
+"    "snippets.snipmate.enable": false,
+"    "snippets.loadFromExtensions": false,
 "    "snippets.ultisnips.directories": [
 "        "UltiSnips"
 "    ],
-"    "snippets.userSnippetsDirectory": "~/.vim/UltiSnips",
+"    "snippets.ultisnips.enable": true,
+"    "snippets.ultisnips.usePythonx": false,
+"    "snippets.ultisnips.pythonVersion": 3,
 "    "suggest.snippetIndicator": " ►",
 "    "diagnostic.enable": false,
 "    "diagnostic.enableSign": false,
 "    "phpactor.enable": true,
 "    "phpactor.path": "/usr/local/bin/phpactor",
-"    "coc.preferences.hoverTarget": "float",
+"    "language_server_completion.trim_leading_dollar": true
 "    "html.format.enable": true
 "}
 
@@ -306,11 +311,10 @@ let g:delimitMate_expand_cr = 1
 let g:delimitMate_smart_quotes = 1
 let g:delimitMate_expand_inside_quotes = 0
 let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
-imap <expr> <Enter> pumvisible() ? "\<C-y>" : "<Plug>delimitMateCR"
 
 " Multiple Cursors
 let g:multi_cursor_select_all_word_key = '<C-a>'
-let g:multi_cursor_select_all_key      = 'g<C-a>'
+let g:multi_cursor_select_all_key = 'g<C-a>'
 
 " Snippets
 let g:UltiSnipsEditSplit = 'vertical'
@@ -371,11 +375,7 @@ let g:syntastic_warning_symbol = 'W'
 let g:syntastic_style_error_symbol = 'S'
 let g:syntastic_style_warning_symbol = 's'
 
-" function! IPhpInsertUse() abort
-"     call PhpInsertUse()
-"     call feedkeys('a',  'n')
-" endfunction
-
+" PHP Fixer
 function! PhpCSFixer() abort
     if bufname('%') == ''
         echohl WarningMsg
@@ -421,7 +421,6 @@ let g:vdebug_options = {
 " COC Completion
 " @see https://github.com/neoclide/coc.nvim
 
-" Coc extensions
 let g:coc_global_extensions = [
     \ 'coc-css',
     \ 'coc-html',
@@ -612,7 +611,7 @@ augroup AutoCommands
     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
 
-    function! PHPModify(transformer)
+    function! PHPModify(transformer) abort
         normal! ggdG
         execute 'read !phpactor class:transform ' . expand('%') . ' --transform=' . a:transformer
         normal! ggdd
@@ -629,7 +628,7 @@ augroup AutoCommands
     autocmd FocusLost * let s:confirm = &confirm | setglobal noconfirm | silent! update | let &confirm = s:confirm
 
     " Rg not find in file names
-    function! RipgrepFzf(query, fullscreen)
+    function! RipgrepFzf(query, fullscreen) abort
         let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
         let initial_command = printf(command_fmt, shellescape(a:query))
         let reload_command = printf(command_fmt, '{q}')
