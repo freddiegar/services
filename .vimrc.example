@@ -12,7 +12,8 @@ set exrc
 set secure
 set hidden
 set wildmenu
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea
+set wildmode=full
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea,*.log,*.vimrc
 set lazyredraw
 set nobackup
 set nowritebackup
@@ -27,8 +28,11 @@ set smartcase
 set ignorecase
 set gdefault
 set viminfo=!,'20,<50,s10,h
-" set grepprg=rg\ --vimgrep\ --smart-case\ --follow
-" setglobal grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
+
+if executable('ag')
+    set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+    set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
+endif
 
 " Better Completion
 set complete-=i
@@ -154,9 +158,18 @@ let &t_TE = ""
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
+
 " Indent without kill the selection in vmode
 vmap < <gv
 vmap > >gv
+
+" Visual lines as actual lines
+noremap j gj
+noremap k gk
+
+" Prevent x from overriding what's in the clipboard.
+noremap x "_x
+noremap X "_x
 
 " Purify
 noremap <Up> <Nop>
@@ -276,26 +289,11 @@ call plug#end()
 "    "diagnostic.enableSign": false,
 "    "phpactor.enable": true,
 "    "phpactor.path": "/usr/local/bin/phpactor",
-"    "language_server_completion.trim_leading_dollar": true
 "}
 
-" Using ultisnips
+" ~/.config/phpactor/phpactor.json
 "{
-"    "snippets.snipmate.enable": false,
-"    "snippets.loadFromExtensions": false,
-"    "snippets.ultisnips.directories": [
-"        "UltiSnips"
-"    ],
-"    "snippets.ultisnips.enable": true,
-"    "snippets.ultisnips.usePythonx": false,
-"    "snippets.ultisnips.pythonVersion": 3,
-"    "suggest.snippetIndicator": " ►",
-"    "diagnostic.enable": false,
-"    "diagnostic.enableSign": false,
-"    "phpactor.enable": true,
-"    "phpactor.path": "/usr/local/bin/phpactor",
 "    "language_server_completion.trim_leading_dollar": true
-"    "html.format.enable": true
 "}
 
 " Theme
@@ -379,7 +377,7 @@ let g:syntastic_style_warning_symbol = 's'
 function! PhpCSFixer() abort
     if bufname('%') == ''
         echohl WarningMsg
-        echo 'Save file first!. Canceled.'
+        echomsg 'Save file first!. Canceled.'
         echohl None
         return 0
     endif
@@ -420,7 +418,6 @@ let g:vdebug_options = {
 
 " COC Completion
 " @see https://github.com/neoclide/coc.nvim
-
 let g:coc_global_extensions = [
     \ 'coc-css',
     \ 'coc-html',
@@ -428,8 +425,10 @@ let g:coc_global_extensions = [
     \ 'coc-yaml',
     \ 'coc-phpactor'
     \]
-" Use <c-space> to trigger completion.
-inoremap <silent> <expr> <c-@> coc#refresh()
+
+" Use <Ctrl-Space> to trigger completion.
+inoremap <silent> <expr> <C-@> coc#refresh()
+
 " Make <Enter> and <Leader><Tab> auto-select the first completion item
 inoremap <silent> <expr> <Enter> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
@@ -582,9 +581,16 @@ augroup AutoCommands
          \   execute "normal! g`\"" |
          \ endif
 
+    " Ominifunctions
+    autocmd FileType c setlocal omnifunc=ccomplete#CompleteCpp
+    autocmd FileType js setlocal omnifunc=javascriptcomplete#CompleteJS
+    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+    " autocmd FileType php setlocal omnifunc=phpactor#Complete
+    autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
+    autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
+
     " PHP Customization
     autocmd FileType php setlocal commentstring=//\ %s
-    " autocmd FileType php setlocal omnifunc=phpactor#Complete
     autocmd FileType php inoremap <silent> <buffer><Leader>uu <Esc>:call phpactor#UseAdd()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
 
