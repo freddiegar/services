@@ -15,6 +15,7 @@ set wildmenu
 set wildmode=list:longest,full
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea,*.log,*.vimrc
 set lazyredraw
+set redrawtime=3000
 set nobackup
 set nowritebackup
 set noswapfile
@@ -199,6 +200,8 @@ nnoremap <Up> :resize -10<Enter>
 nnoremap <Down> :resize +10<Enter>
 
 " Shortcuts
+cnoremap W execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+
 vnoremap <silent> T _vg_
 vnoremap <silent> <Leader>y "+y
 vnoremap <silent> <Leader>d "_d
@@ -212,6 +215,7 @@ nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>e :update<Enter>
 nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
 nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
+nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> : echo expand('%:p') . ' copied'<Enter>
 nnoremap <silent> <Leader>c :execute "normal! mcA,\e`c"<Enter>
 nnoremap <silent> <Leader>s :execute "normal! mcA;\e`c"<Enter>
 nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
@@ -288,6 +292,7 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'junegunn/goyo.vim'
+Plug 'mattn/emmet-vim'
 call plug#end()
 
 " Use Syntastic to diagnostics
@@ -332,6 +337,10 @@ let g:UltiSnipsUsePythonVersion = 3
 
 " PHPVim
 let g:php_version_id = 70400
+
+" Emmet
+let g:user_emmet_install_global = 0
+let g:user_emmet_leader_key = ','
 
 " Vim Snake
 let g:sneak#label = 1
@@ -600,9 +609,9 @@ augroup AutoCommands
     " Ominifunctions
     autocmd FileType c setlocal omnifunc=ccomplete#CompleteCpp
     autocmd FileType js setlocal omnifunc=javascriptcomplete#CompleteJS
-    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
     autocmd FileType php setlocal omnifunc=phpactor#Complete
     " autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
+    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
     autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 
     " PHP Customization
@@ -643,6 +652,7 @@ augroup AutoCommands
 
     " Customization
     autocmd FileType sql setlocal commentstring=--\ %s
+    autocmd FileType html,css EmmetInstall
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html
 
