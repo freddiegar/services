@@ -263,7 +263,12 @@ endif
 
 " Plugins
 call plug#begin('~/.vim/plugged')
-Plug 'morhetz/gruvbox'
+Plug 'gruvbox-community/gruvbox'
+Plug 'dracula/vim'
+Plug 'arcticicestudio/nord-vim'
+Plug 'sainnhe/sonokai'
+
+Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -274,25 +279,26 @@ Plug 'justinmk/vim-sneak'
 Plug 'machakann/vim-swap'
 Plug 'Raimondi/delimitMate'
 Plug 'luochen1990/rainbow'
+
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-syntastic/syntastic'
 Plug 'StanAngeloff/php.vim'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'vim-test/vim-test'
+Plug 'vim-test/vim-test', {'for': 'php'}
 Plug 'vim-scripts/autotags'
 Plug 'SirVer/ultisnips'
-Plug 'sniphpets/sniphpets'
-Plug 'vim-vdebug/vdebug'
+Plug 'vim-vdebug/vdebug', {'for': 'php'}
 Plug 'preservim/tagbar'
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
+
 " Enable autocompletion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'junegunn/goyo.vim'
-Plug 'mattn/emmet-vim'
+Plug 'mattn/emmet-vim', {'for': ['html', 'css']}
 call plug#end()
 
 " Use Syntastic to diagnostics
@@ -317,6 +323,17 @@ endif
 
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
+
+let g:gruvbox8_hard = 'hard'
+let g:gruvbox_filetype_hi_groups = 1
+
+let g:dracula_italic = 1
+
+let g:nord_italic = 1
+let g:nord_italic_comments = 1
+
+let g:sonokai_style = 'andromeda'
+let g:sonokai_enable_italic = 1
 
 " DelitMate
 let g:delimitMate_expand_cr = 1
@@ -701,6 +718,10 @@ augroup ThemeColors
     set background=dark
 
     colorscheme gruvbox
+    " colorscheme dracula
+    " colorscheme solarized8 " Never
+    " colorscheme nord
+    " colorscheme sonokai
 
     " Transparency
     " Use #1D2021 in Terminal
@@ -708,6 +729,7 @@ augroup ThemeColors
 
     " SignColumn with same color of theme
     highlight! link SignColumn LineNr
+    highlight! SpecialKey ctermfg=239 guifg=#504945
 
     " GitGutter with same color of theme
     highlight! GitGutterAdd    guifg=#009900 ctermfg=2
