@@ -95,33 +95,44 @@ set foldmethod=indent
 set foldnestmax=10
 set foldlevel=99
 
+execute 'augroup Freddie'
+autocmd!
+
 " Statusline
 let g:currentmode={
-   \ 'n'  : 'NORMAL   ',
-   \ 'v'  : 'VISUAL   ',
-   \ 'V'  : 'V-LINE   ',
-   \ '' : 'V-BLOCK  ',
-   \ 'i'  : 'INSERT   ',
-   \ 'R'  : 'REPLACE  ',
-   \ 'Rv' : 'V-REPLACE',
-   \ 'c'  : 'COMMAND  ',
-   \ '!'  : 'SHELL    ',
-   \ 't'  : 'TERMINAL ',
-   \}
+    \ 'c'     : 'COMMAND  ',
+    \ 'i'     : 'INSERT   ',
+    \ 'ic'    : 'INSERT   ',
+    \ 'ix'    : 'INSERT   ',
+    \ 'n'     : 'NORMAL   ',
+    \ 'multi' : 'MULTIPLE ',
+    \ 'ni'    : 'NORMAL   ',
+    \ 'no'    : 'NORMAL   ',
+    \ 'R'     : 'REPLACE  ',
+    \ 'Rv'    : 'R-VIRTUAL',
+    \ 's'     : 'SELECT   ',
+    \ 'S'     : 'S-LINE   ',
+    \ ''    : 'S-BLOCK  ',
+    \ '!'     : 'SHELL    ',
+    \ 't'     : 'TERMINAL ',
+    \ 'v'     : 'VISUAL   ',
+    \ 'V'     : 'V-LINE   ',
+    \ ''    : 'V-BLOCK  ',
+    \}
 
 function! ChangeStatuslineColor() abort
     try
         execute "set relativenumber"
 
-        if (mode() =~# '\v(n|no)')
+        if (mode() =~# '\v(n|no|ni)')
             execute "highlight! StatusLine guifg='#1d2021' guibg='#7c6f64' ctermfg=234 ctermbg=243"
         elseif (mode() =~# '\v(v|V|t)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
             execute "highlight! StatusLine guifg='#fc802d' guibg='#1a2528' ctermfg=172 ctermbg=237"
-        elseif (mode() ==# 'i')
+        elseif (mode() =~# 'i')
             execute "set norelativenumber"
 
             execute "highlight! StatusLine guifg='#84a598' guibg='#1a2528' ctermfg=109 ctermbg=237"
-        elseif (mode() ==# 'R')
+        elseif (mode() =~# 'R')
             execute "highlight! StatusLine guifg='#8fbf7f' guibg='#1a2528' ctermfg=72 ctermbg=237"
         endif
     catch
@@ -154,6 +165,7 @@ set statusline+=\ %f
 set statusline+=%=
 set statusline+=\%m
 set statusline+=\%r
+set statusline+=\ [%{&filetype}]
 set statusline+=\ #:%3b
 set statusline+=\ l:%3l/%3L\ c:%3c
 set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
@@ -161,8 +173,8 @@ set statusline+=\ %{StatuslineGit()}
 set statusline+=\ @\ %{strftime(\"%H:%M\")}
 
 " Maps
-let &t_TI = ""
-let &t_TE = ""
+let &t_TI = ''
+let &t_TE = ''
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
@@ -171,20 +183,18 @@ map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 vmap < <gv
 vmap > >gv
 
-" Visual lines as actual lines
-noremap j gj
-noremap k gk
-
-" Prevent x from overriding what's in the clipboard.
-noremap x "_x
-noremap X "_x
-
 " Purify
 noremap <Up> <Nop>
 noremap <Down> <Nop>
 noremap <Left> <Nop>
 noremap <Right> <Nop>
 " inoremap <Esc> <Nop> " In multicursor it fails :(
+
+" Arrow keys resize windows
+nnoremap <Left> :vertical resize -10<Enter>
+nnoremap <Right> :vertical resize +10<Enter>
+nnoremap <Up> :resize -10<Enter>
+nnoremap <Down> :resize +10<Enter>
 
 " Utility
 nnoremap j gj
@@ -193,14 +203,8 @@ nnoremap Q @@
 nnoremap Y y$
 nnoremap gl '.
 
-" Arrow keys resize windows
-nnoremap <Left> :vertical resize -10<Enter>
-nnoremap <Right> :vertical resize +10<Enter>
-nnoremap <Up> :resize -10<Enter>
-nnoremap <Down> :resize +10<Enter>
-
 " Shortcuts
-cnoremap W execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 vnoremap <silent> T _vg_
 vnoremap <silent> <Leader>y "+y
@@ -215,19 +219,59 @@ nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>e :update<Enter>
 nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
 nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
-nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> : echo expand('%:p') . ' copied'<Enter>
+nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> : echo 'Copied: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>c :execute "normal! mcA,\e`c"<Enter>
 nnoremap <silent> <Leader>s :execute "normal! mcA;\e`c"<Enter>
 nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
-nnoremap <silent> <Leader>F :Rg<Enter>
-nnoremap <silent> <Leader>f :execute 'Rg ' . expand('<cword>')<Enter>
+nnoremap <silent> <Leader>f :Rg<Enter>
+nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo 'Added: ' . expand('%')<Enter>
+nnoremap <silent> <Leader>tc :call RunTestInConsole()<Enter>
+
+function! RunTestInConsole() abort
+    if expand('%:e') ==# 'php'
+        let testname = expand('%:t:r')
+        let testfunction = GetFunctionName()
+        let testcommand = testname
+
+        if len(testfunction) > 0
+            let testcommand .= '::' . testfunction
+        endif
+
+        let @+=testcommand
+
+        echomsg 'Copied: ' . testcommand
+    else
+        echohl WarningMsg
+        echomsg 'Not is a php file.'
+        echohl None
+    endif
+
+    return 0
+endfunction
+
+function! GetFunctionName() abort
+    let parts = split(getline(search("^\\( \\{4}\\|\\t\\)\\?\\a\\S\\{-}\\( \\a\\S\\{-}\\)\\+\\s\\?(.*[^;]\\s\\{-}$", 'bWnc')), ' ')
+    let counter = 1
+    let result = ''
+
+    for part in parts
+        if part ==# 'function'
+            let result = parts[counter]
+            break
+        endif
+
+        let counter += 1
+    endfor
+
+    return substitute(result, '(.*)', '', 'g')
+endfunction
 
 inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
 " Tabs navigation
-nnoremap <silent> <Leader>b :ls<Enter>:buffer<Space>
+nnoremap <silent> <Leader>b :Buffers<Enter>
 nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter>:bprevious<Enter>
 nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter>:bnext<Enter>
 
@@ -558,7 +602,7 @@ let g:rainbow_active = 1
 " @see https://github.com/AndrewRadev/tagalong.vim
 let g:tagalong_filetypes = ['html', 'xml']
 
-nnoremap <Leader>l :call CreateArgumentsList()<Enter>
+nnoremap <Leader>lp :call CreateArgumentsList()<Enter>
 function! CreateArgumentsList() abort
     let saved_unnamed_register = @@
 
@@ -585,7 +629,7 @@ function! CreateArgumentsList() abort
     let @@ = saved_unnamed_register
 endfunction
 
-nnoremap <Leader>a :call CreateArrayList()<Enter>
+nnoremap <Leader>la :call CreateArrayList()<Enter>
 function! CreateArrayList() abort
     let saved_unnamed_register = @@
 
@@ -672,6 +716,7 @@ augroup AutoCommands
     autocmd FileType html,css EmmetInstall
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html
+    autocmd BufRead,BufNewFile *.local setlocal filetype=sh
 
     " Autosave
     autocmd FocusLost * let s:confirm = &confirm | setglobal noconfirm | silent! update | let &confirm = s:confirm
@@ -751,3 +796,5 @@ augroup END
 if filereadable(expand('~/.vimrc.local'))
     source ~/.vimrc.local
 endif
+
+execute 'augroup END'
