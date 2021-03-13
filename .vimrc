@@ -13,7 +13,11 @@ set secure
 set hidden
 set wildmenu
 set wildmode=list:longest,full
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,.git,.vscode,.idea,*.log,*.vimrc
+set wildignore+=.git,.vscode,.idea,.vimrc
+set wildignore+=*.zip,*.tar,*.tar.gz,*.gz
+set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*
+set wildignore+=*.jpg,*.png,*.gif,*.jpeg
+set wildignore+=node_modules,vendor
 set lazyredraw
 set redrawtime=3000
 set nobackup
@@ -28,10 +32,9 @@ set hlsearch
 set incsearch
 set smartcase
 set ignorecase
-set gdefault
 set viminfo=!,'20,<50,s10,h
 
-if executable('ag')
+if executable('rg')
     set grepprg=rg\ --vimgrep\ --smart-case\ --follow
     set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 endif
@@ -53,7 +56,7 @@ set splitright
 set signcolumn=yes
 
 if has('mouse')
-    set mouse=n
+    set mouse=
 endif
 
 " Custom Render
@@ -136,6 +139,7 @@ function! ChangeStatuslineColor() abort
             execute "highlight! StatusLine guifg='#8fbf7f' guibg='#1a2528' ctermfg=72 ctermbg=237"
         endif
     catch
+        let &ro = &ro
     endtry
 
     return ''
@@ -153,7 +157,7 @@ endfunction
 set showcmd
 set noruler
 set noshowmode
-set shortmess+=WFAIca
+set shortmess+=WFAIcat
 set shortmess-=S
 set laststatus=2
 
@@ -165,11 +169,11 @@ set statusline+=\ %f
 set statusline+=%=
 set statusline+=\%m
 set statusline+=\%r
-set statusline+=\ [%{&filetype}]
+set statusline+=\ %3{&filetype}
 set statusline+=\ #:%3b
 set statusline+=\ l:%3l/%3L\ c:%3c
 set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\ %{StatuslineGit()}
+set statusline+=\ %<%{StatuslineGit()}
 set statusline+=\ @\ %{strftime(\"%H:%M\")}
 
 " Maps
@@ -177,24 +181,24 @@ let &t_TI = ''
 let &t_TE = ''
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
-map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
+nnoremap <Space> <Nop>
 
-" Indent without kill the selection in vmode
+" Indent without kill the selection in visual mode
 vmap < <gv
 vmap > >gv
+vmap . :normal .<Enter>
 
 " Purify
 noremap <Up> <Nop>
 noremap <Down> <Nop>
 noremap <Left> <Nop>
 noremap <Right> <Nop>
-" inoremap <Esc> <Nop> " In multicursor it fails :(
 
 " Arrow keys resize windows
-nnoremap <Left> :vertical resize -10<Enter>
-nnoremap <Right> :vertical resize +10<Enter>
 nnoremap <Up> :resize -10<Enter>
 nnoremap <Down> :resize +10<Enter>
+nnoremap <Left> :vertical resize -10<Enter>
+nnoremap <Right> :vertical resize +10<Enter>
 
 " Utility
 nnoremap j gj
@@ -202,6 +206,9 @@ nnoremap k gk
 nnoremap Q @@
 nnoremap Y y$
 nnoremap gl '.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
 " Shortcuts
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
@@ -271,6 +278,7 @@ inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
 " Tabs navigation
+nnoremap <silent> <Tab> :buffer #<Enter>
 nnoremap <silent> <Leader>b :Buffers<Enter>
 nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter>:bprevious<Enter>
 nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter>:bnext<Enter>
@@ -307,6 +315,7 @@ endif
 
 " Plugins
 call plug#begin('~/.vim/plugged')
+
 Plug 'gruvbox-community/gruvbox'
 Plug 'dracula/vim'
 Plug 'arcticicestudio/nord-vim'
@@ -336,13 +345,13 @@ Plug 'vim-vdebug/vdebug', {'for': 'php'}
 Plug 'preservim/tagbar'
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
 
-" Enable autocompletion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'junegunn/goyo.vim'
 Plug 'mattn/emmet-vim', {'for': ['html', 'css']}
+
 call plug#end()
 
 " Use Syntastic to diagnostics
@@ -367,9 +376,6 @@ endif
 
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
-
-let g:gruvbox8_hard = 'hard'
-let g:gruvbox_filetype_hi_groups = 1
 
 let g:dracula_italic = 1
 
@@ -413,7 +419,8 @@ let g:phpactorOmniError = v:true
 " @see https://github.com/junegunn/goyo.vim
 let g:goyo_linenr = 1
 let g:goyo_width = 120
-let g:goyo_hegiht = '100%'
+let g:goyo_height = '100%'
+let g:goyo_bg = '#1D2021'
 nnoremap <silent> <F12> :Goyo<Enter>
 
 " TagBar
@@ -443,9 +450,11 @@ nnoremap <silent> <Leader>tg :TestVisit<Enter>
 
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
-set statusline+=%#warningmsg#
-set statusline+=\ %{SyntasticStatuslineFlag()}
-set statusline+=%*
+if exists('g:loaded_syntastic_plugin')
+    set statusline+=%#warningmsg#
+    set statusline+=\ %{SyntasticStatuslineFlag()}
+    set statusline+=%*
+endif
 
 let g:syntastic_stl_format = '%fe!'
 let g:syntastic_check_on_open = 1
@@ -471,7 +480,7 @@ function! PhpCSFixer() abort
     let configfile = !filereadable(expand('.php_cs')) ? '/var/www/html/freddiegar/services/.php_cs' : '.php_cs'
 
     silent write
-    let result = system('php-cs-fixer fix ' . bufname('%') . ' --config="' . configfile .'"')
+    let result = system('php-cs-fixer fix ' . bufname('%') . ' --config="' . configfile . '"')
     silent :edit!
 endfunction
 
@@ -559,7 +568,7 @@ function! OpenURLUnderCursor() abort
     endif
 endfunction
 
-" https://vim.fandom.com/wiki/Faster_loading_of_large_files
+" @see https://vim.fandom.com/wiki/Faster_loading_of_large_files
 " file is large from 2mb
 let g:LargeFile = 1024 * 1024 * 2
 
@@ -663,7 +672,7 @@ augroup AutoCommands
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
-         \ if line("'\"") > 0 && line("'\"") <= line('$') |
+         \ if &filetype != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
          \   execute "normal! g`\"" |
          \ endif
 
@@ -704,9 +713,13 @@ augroup AutoCommands
     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
 
     function! PHPModify(transformer) abort
+        silent write
+
         normal! ggdG
         execute 'read !phpactor class:transform ' . expand('%') . ' --transform=' . a:transformer
         normal! ggdd
+
+        silent :edit!
     endfunction
 
     autocmd FileType php nnoremap <silent> <F1> :call PhpCSFixer()<Enter>
@@ -751,22 +764,32 @@ augroup AutoCommands
     function! SaveSession() abort
         if isdirectory('.git')
             execute 'mksession! ' . g:session_file
+
             echomsg 'Saved ' . g:session_file . ' session'
         endif
     endfunction
 
     autocmd VimEnter * nested call LoadSession()
     autocmd VimLeavePre * call SaveSession()
+    autocmd VimResized * wincmd =
 augroup END
 
 augroup ThemeColors
     set background=dark
 
-    colorscheme gruvbox
-    " colorscheme dracula
-    " colorscheme solarized8 " Never
-    " colorscheme nord
-    " colorscheme sonokai
+    try
+        colorscheme gruvbox
+        " colorscheme dracula
+        " colorscheme nord
+        " colorscheme sonokai
+        " colorscheme solarized8 " Never
+    catch /^Vim\%((\a\+)\)\=:E185/
+        colorscheme evening
+
+        " echohl WarningMsg
+        " echo 'Not found colorscheme!'
+        " echohl None
+    endtry
 
     " Transparency
     " Use #1D2021 in Terminal
@@ -777,7 +800,7 @@ augroup ThemeColors
     highlight! SpecialKey ctermfg=239 guifg=#504945
 
     " GitGutter with same color of theme
-    highlight! GitGutterAdd    guifg=#009900 ctermfg=2
+    highlight! GitGutterAdd guifg=#009900 ctermfg=2
     highlight! GitGutterChange guifg=#bbbb00 ctermfg=3
     highlight! GitGutterDelete guifg=#ff2222 ctermfg=1
     highlight! link GitGutterAddLineNr Underlined
@@ -790,7 +813,10 @@ augroup ThemeColors
     highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
 
     " Goyo
-    autocmd! User GoyoLeave nested highlight! link SignColumn LineNr
+    autocmd! User GoyoLeave nested
+        \ highlight! link SignColumn LineNr |
+        \ highlight! SpecialKey ctermfg=239 guifg=#504945 |
+        \ highlight! Normal guibg=NONE ctermbg=NONE
 augroup END
 
 if filereadable(expand('~/.vimrc.local'))
