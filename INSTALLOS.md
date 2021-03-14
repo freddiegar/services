@@ -589,6 +589,14 @@ sudo apt-get install -y indicator-multiload
 ## sudo apt-get remove indicator-multiload && sudo apt-get autoremove
 ```
 
+## Extensions GUI
+```bash
+# Clock to right (Frippery Move Clock)
+https://extensions.gnome.org/extension/2/move-clock/
+# Activities button hidden
+https://ubuntuhandbook.org/index.php/2020/03/hide-activities-button-ubuntu-18-04/
+```
+
 ## Google Chrome
 ```bash
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list

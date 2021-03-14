@@ -125,15 +125,11 @@ let g:currentmode={
 
 function! ChangeStatuslineColor() abort
     try
-        execute "set relativenumber"
-
         if (mode() =~# '\v(n|no|ni)')
             execute "highlight! StatusLine guifg='#1d2021' guibg='#7c6f64' ctermfg=234 ctermbg=243"
         elseif (mode() =~# '\v(v|V|t)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
             execute "highlight! StatusLine guifg='#fc802d' guibg='#1a2528' ctermfg=172 ctermbg=237"
         elseif (mode() =~# 'i')
-            execute "set norelativenumber"
-
             execute "highlight! StatusLine guifg='#84a598' guibg='#1a2528' ctermfg=109 ctermbg=237"
         elseif (mode() =~# 'R')
             execute "highlight! StatusLine guifg='#8fbf7f' guibg='#1a2528' ctermfg=72 ctermbg=237"
@@ -369,7 +365,7 @@ call plug#end()
 "    "language_server_completion.trim_leading_dollar": true
 "}
 
-" Theme
+" Themes
 if has('termguicolors')
     set termguicolors
 endif
@@ -770,6 +766,8 @@ augroup AutoCommands
     endfunction
 
     autocmd VimEnter * nested call LoadSession()
+    autocmd InsertEnter * :set norelativenumber
+    autocmd InsertLeave * :set relativenumber
     autocmd VimLeavePre * call SaveSession()
     autocmd VimResized * wincmd =
 augroup END
@@ -786,9 +784,9 @@ augroup ThemeColors
     catch /^Vim\%((\a\+)\)\=:E185/
         colorscheme evening
 
-        " echohl WarningMsg
-        " echo 'Not found colorscheme!'
-        " echohl None
+        echohl WarningMsg
+        echo 'Not found colorscheme!'
+        echohl None
     endtry
 
     " Transparency
