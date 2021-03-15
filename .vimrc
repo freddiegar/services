@@ -202,8 +202,8 @@ nnoremap k gk
 nnoremap Q @@
 nnoremap Y y$
 nnoremap gl '.
-nnoremap n nzzzv
-nnoremap N Nzzzv
+nnoremap <silent> n nzzzv
+nnoremap <silent> N Nzzzv
 map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
 " Shortcuts
@@ -219,8 +219,8 @@ nnoremap <silent> T _vg_
 nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>w :update<Enter>
-nnoremap <silent> <Leader>e :update<Enter>
-nnoremap <silent> <Leader>q :update<Enter>:bd<Enter>
+nnoremap <silent> <Leader>e :normal "1 w"<Enter>
+nnoremap <silent> <Leader>q :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
 nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> : echo 'Copied: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>c :execute "normal! mcA,\e`c"<Enter>
@@ -274,10 +274,11 @@ inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
 " Tabs navigation
+vnoremap <silent> <Tab> :buffer #<Enter>
 nnoremap <silent> <Tab> :buffer #<Enter>
 nnoremap <silent> <Leader>b :Buffers<Enter>
-nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter>:bprevious<Enter>
-nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter>:bnext<Enter>
+nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
+nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter> :bnext<Enter>
 
 " Better split switching
 map <C-h> <C-W>h
@@ -286,14 +287,25 @@ map <C-k> <C-W>k
 map <C-l> <C-W>l
 
 if has('terminal')
-    nnoremap <silent> <C-S-X> :term<Enter>
-    tnoremap <Esc><Esc> <C-\><C-N>:bd!<Enter>
+    nnoremap <silent> <C-S-X> :call ShowTerminalBuffer()<Enter>
+    tnoremap <silent> <Esc><Esc> <C-\><C-N>:buffer #<Enter>
 
     " Mappings to move out from terminal to other views
     tnoremap <C-h> <C-w>h
     tnoremap <C-j> <C-w>j
     tnoremap <C-k> <C-w>k
     tnoremap <C-l> <C-w>l
+
+    function! ShowTerminalBuffer() abort
+        let tbuffer = filter(map(getbufinfo(), 'v:val.bufnr'), 'getbufvar(v:val, "&buftype") is# "terminal"')
+
+        if len(tbuffer) > 0
+            :execute 'buffer ' . join(tbuffer)
+        else
+            :terminal
+        endif
+
+    endfunction
 endif
 
 if !has('gui_running')
@@ -337,6 +349,7 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'vim-test/vim-test', {'for': 'php'}
 Plug 'vim-scripts/autotags'
 Plug 'SirVer/ultisnips'
+Plug 'sniphpets/sniphpets'
 Plug 'vim-vdebug/vdebug', {'for': 'php'}
 Plug 'preservim/tagbar'
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
@@ -346,7 +359,7 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'junegunn/goyo.vim'
-Plug 'mattn/emmet-vim', {'for': ['html', 'css']}
+Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
 
 call plug#end()
 
@@ -476,7 +489,9 @@ function! PhpCSFixer() abort
     let configfile = !filereadable(expand('.php_cs')) ? '/var/www/html/freddiegar/services/.php_cs' : '.php_cs'
 
     silent write
+
     let result = system('php-cs-fixer fix ' . bufname('%') . ' --config="' . configfile . '"')
+
     silent :edit!
 endfunction
 
@@ -722,7 +737,8 @@ augroup AutoCommands
 
     " Customization
     autocmd FileType sql setlocal commentstring=--\ %s
-    autocmd FileType html,css EmmetInstall
+    autocmd FileType html,css,vue EmmetInstall
+    autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html
     autocmd BufRead,BufNewFile *.local setlocal filetype=sh
