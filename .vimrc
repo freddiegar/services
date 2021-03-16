@@ -125,17 +125,19 @@ let g:currentmode={
 
 function! ChangeStatuslineColor() abort
     try
-        if (mode() =~# '\v(n|no|ni)')
+        if (mode() =~# '\v(n|no|ni|c|f)')
             execute "highlight! StatusLine guifg='#1d2021' guibg='#7c6f64' ctermfg=234 ctermbg=243"
-        elseif (mode() =~# '\v(v|V|t)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
-            execute "highlight! StatusLine guifg='#fc802d' guibg='#1a2528' ctermfg=172 ctermbg=237"
-        elseif (mode() =~# 'i')
+        elseif (mode() =~# '\v^i')
             execute "highlight! StatusLine guifg='#84a598' guibg='#1a2528' ctermfg=109 ctermbg=237"
-        elseif (mode() =~# 'R')
+        elseif (mode() =~# '\v(v|V|t|!)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
+            execute "highlight! StatusLine guifg='#fc802d' guibg='#1a2528' ctermfg=172 ctermbg=237"
+        elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
+            execute "highlight! StatusLine guifg='#fabd2f' guibg='#1a2528' ctermfg=214 ctermbg=237"
+        elseif (mode() =~# '\v^R')
             execute "highlight! StatusLine guifg='#8fbf7f' guibg='#1a2528' ctermfg=72 ctermbg=237"
         endif
     catch
-        let &ro = &ro
+        let &readonly = &readonly
     endtry
 
     return ''
@@ -267,7 +269,7 @@ function! GetFunctionName() abort
         let counter += 1
     endfor
 
-    return substitute(result, '(.*)', '', 'g')
+    return substitute(substitute(result, '(.*)', '', 'g'), ':', '', 'g')
 endfunction
 
 inoremap <silent> jk <Esc>
@@ -329,7 +331,6 @@ Plug 'dracula/vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'sainnhe/sonokai'
 
-Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -360,6 +361,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'junegunn/goyo.vim'
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
+Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
+Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}
 
 call plug#end()
 

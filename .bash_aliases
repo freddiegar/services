@@ -1,5 +1,6 @@
 alias x="exit"
 alias v="vim"
+alias g="grep"
 alias m="man"
 alias l="less"
 alias t="touch"
