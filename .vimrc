@@ -125,17 +125,22 @@ let g:currentmode={
 
 function! ChangeStatuslineColor() abort
     try
-        if (mode() =~# '\v(n|no|ni|c|f)')
-            execute "highlight! StatusLine guifg='#1d2021' guibg='#7c6f64' ctermfg=234 ctermbg=243"
+        if (mode() =~# '\v(n|no|ni|c)')
+            execute "highlight! link StatusLine LineNr"
         elseif (mode() =~# '\v^i')
-            execute "highlight! StatusLine guifg='#84a598' guibg='#1a2528' ctermfg=109 ctermbg=237"
-        elseif (mode() =~# '\v(v|V|t|!)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
-            execute "highlight! StatusLine guifg='#fc802d' guibg='#1a2528' ctermfg=172 ctermbg=237"
-        elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
-            execute "highlight! StatusLine guifg='#fabd2f' guibg='#1a2528' ctermfg=214 ctermbg=237"
+            execute "highlight! StatusLine guifg=#84a598 guibg=#1a2528 ctermfg=109 ctermbg=237"
         elseif (mode() =~# '\v^R')
-            execute "highlight! StatusLine guifg='#8fbf7f' guibg='#1a2528' ctermfg=72 ctermbg=237"
+            execute "highlight! StatusLine guifg=#8fbf7f guibg=#1a2528 ctermfg=72 ctermbg=237"
+        elseif (mode() =~# '\v(v|V|t|!)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
+            execute "highlight! StatusLine guifg=#fc802d guibg=#1a2528 ctermfg=172 ctermbg=237"
+        elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
+            execute "highlight! StatusLine guifg=#d3869b guibg=#1a2528 ctermfg=175 ctermbg=237"
+        else
+            echo 'Mode no color: ' . mode()
+            execute "highlight! StatusLine guifg=#fb4934 guibg=#1a2528 ctermfg=175 ctermbg=237"
         endif
+
+        :silent redraw
     catch
         let &readonly = &readonly
     endtry
@@ -144,11 +149,8 @@ function! ChangeStatuslineColor() abort
 endfunction
 
 function! GitBranch() abort
-    return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
-endfunction
+    let l:branchname = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
 
-function! StatuslineGit() abort
-    let l:branchname = GitBranch()
     return strlen(l:branchname) > 0 ? l:branchname : ''
 endfunction
 
@@ -170,8 +172,8 @@ set statusline+=\%r
 set statusline+=\ %3{&filetype}
 set statusline+=\ #:%3b
 set statusline+=\ l:%3l/%3L\ c:%3c
-set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\ %<%{StatuslineGit()}
+set statusline+=\%<\ %{&fileencoding?&fileencoding:&encoding}
+" set statusline+=\ %<%{GitBranch()}
 set statusline+=\ @\ %{strftime(\"%H:%M\")}
 
 " Maps
@@ -231,7 +233,19 @@ nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
 nnoremap <silent> <Leader>f :Rg<Enter>
 nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo 'Added: ' . expand('%')<Enter>
+nnoremap <silent> <Leader>gb :echo 'Branch: ' . GitBranch()<Enter>
+nnoremap <silent> <Leader>gl :call GotoLine()<Enter>
 nnoremap <silent> <Leader>tc :call RunTestInConsole()<Enter>
+
+function! GotoLine() abort
+    let s:parts = split(expand('<cWORD>'), ':')
+    let s:file = strlen(s:parts[0]) > 0 ? s:parts[0] : ''
+    let s:line = strlen(s:parts[1]) > 0 ? s:parts[1] : 0
+
+    if filereadable(s:file) && s:line > 0
+        execute 'edit +' . s:line . ' ' . s:file
+    endif
+endfunction
 
 function! RunTestInConsole() abort
     if expand('%:e') ==# 'php'
@@ -336,23 +350,23 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-abolish'
 Plug 'wellle/targets.vim'
-Plug 'michaeljsmith/vim-indent-object'
+" Plug 'michaeljsmith/vim-indent-object'
 Plug 'justinmk/vim-sneak'
 Plug 'machakann/vim-swap'
 Plug 'Raimondi/delimitMate'
-Plug 'luochen1990/rainbow'
+" Plug 'luochen1990/rainbow'
+Plug 'terryma/vim-multiple-cursors'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-syntastic/syntastic'
 Plug 'StanAngeloff/php.vim'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'vim-test/vim-test', {'for': 'php'}
+Plug 'preservim/tagbar'
 Plug 'vim-scripts/autotags'
 Plug 'SirVer/ultisnips'
 Plug 'sniphpets/sniphpets'
+Plug 'vim-test/vim-test', {'for': 'php'}
 Plug 'vim-vdebug/vdebug', {'for': 'php'}
-Plug 'preservim/tagbar'
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -361,7 +375,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'junegunn/goyo.vim'
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
-Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
+" Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}
 
 call plug#end()
@@ -388,14 +402,19 @@ endif
 
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
+let g:gruvbox_bold = 0
+let g:gruvbox_invert_selection = 0
 
 let g:dracula_italic = 1
+let g:dracula_bold = 0
+let g:dracula_inverse = 0
 
 let g:nord_italic = 1
 let g:nord_italic_comments = 1
 
 let g:sonokai_style = 'andromeda'
 let g:sonokai_enable_italic = 1
+let g:sonokai_better_performance = 1
 
 " DelitMate
 let g:delimitMate_expand_cr = 1
@@ -463,7 +482,7 @@ nnoremap <silent> <Leader>tg :TestVisit<Enter>
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
 if exists('g:loaded_syntastic_plugin')
-    set statusline+=%#warningmsg#
+    set statusline+=%#WarningMsg#
     set statusline+=\ %{SyntasticStatuslineFlag()}
     set statusline+=%*
 endif
@@ -578,7 +597,8 @@ function! OpenURLUnderCursor() abort
 
     if s:uri != ''
         silent execute "!/opt/firefox/firefox '" . s:uri . "'"
-        :redraw!
+
+        :silent redraw!
     endif
 endfunction
 
@@ -792,6 +812,8 @@ augroup AutoCommands
 augroup END
 
 augroup ThemeColors
+    autocmd!
+
     set background=dark
 
     try
