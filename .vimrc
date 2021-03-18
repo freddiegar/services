@@ -80,6 +80,8 @@ set listchars=space:·,tab:»-
 set colorcolumn=121
 set textwidth=120
 set synmaxcol=150
+set winminheight=0
+set winheight=999
 set updatetime=300
 
 " Custom identation
@@ -608,22 +610,29 @@ endfunction
 
 " @see https://vim.fandom.com/wiki/Faster_loading_of_large_files
 " file is large from 2mb
-let g:LargeFile = 1024 * 1024 * 2
-
 augroup LargeFile
     autocmd!
 
-    autocmd BufReadPre * let f=getfsize(expand('<afile>')) | if f > g:LargeFile || f == -2 | call LargeFile() | endif
+    autocmd VimEnter * nested call CheckLargeFile()
+    autocmd BufReadPre * call CheckLargeFile()
 augroup END
 
-function! LargeFile() abort
-    " No syntax highlighting
-    set eventignore+=FileType
-    setlocal bufhidden=unload
-    setlocal buftype=nowrite
-    setlocal undolevels=-1
+function! CheckLargeFile() abort
+    let l:maxsize = 1024 * 1024 * 2
+    let l:fsize = getfsize(expand('<afile>'))
 
-    autocmd VimEnter * nested echo 'The file is larger than ' . (g:LargeFile / 1024 / 1024) . ' MB, so some options are changed.'
+    if l:fsize > l:maxsize || l:fsize == -2
+        " No syntax highlighting event
+        set eventignore+=FileType
+        setlocal noswapfile
+        setlocal bufhidden=unload
+        setlocal buftype=nowrite
+        setlocal undolevels=-1
+
+        echohl WarningMsg
+        echomsg 'The file is larger than ' . (l:maxsize / 1024 / 1024) . ' MB, so some options are changed.'
+        echohl None
+    endif
 endfunction
 
 " CTags
