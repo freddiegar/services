@@ -77,12 +77,9 @@ set cursorline
 set showmatch
 set list
 set listchars=space:·,tab:»-
-set colorcolumn=120
+set colorcolumn=121
 set textwidth=120
-set synmaxcol=800
-set winheight=1
-set winminheight=0
-set winheight=999
+set synmaxcol=150
 set updatetime=300
 
 " Custom identation
