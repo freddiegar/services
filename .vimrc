@@ -304,7 +304,8 @@ map <C-l> <C-W>l
 
 if has('terminal')
     nnoremap <silent> <C-S-X> :call ShowTerminalBuffer()<Enter>
-    tnoremap <silent> <Esc><Esc> <C-\><C-N>:buffer #<Enter>
+    tnoremap <silent> <C-S-X> <C-\><C-N>:buffer #<Enter>
+    tnoremap <silent> <Esc><Esc> <C-\><C-N>
 
     " Mappings to move out from terminal to other views
     tnoremap <C-h> <C-w>h
@@ -317,10 +318,10 @@ if has('terminal')
 
         if len(l:tbuffer) > 0
             :execute 'buffer ' . join(l:tbuffer)
+            :execute 'normal i'
         else
             :terminal
         endif
-
     endfunction
 endif
 
@@ -344,6 +345,7 @@ Plug 'gruvbox-community/gruvbox'
 Plug 'dracula/vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'sainnhe/sonokai'
+Plug 'nanotech/jellybeans.vim'
 
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
@@ -415,6 +417,8 @@ let g:nord_italic_comments = 1
 let g:sonokai_style = 'andromeda'
 let g:sonokai_enable_italic = 1
 let g:sonokai_better_performance = 1
+
+let g:jellybeans_use_term_italics = 1
 
 " DelitMate
 let g:delimitMate_expand_cr = 1
@@ -777,7 +781,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html
-    autocmd BufRead,BufNewFile *.local setlocal filetype=sh
+    autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
 
     " Autosave
     autocmd FocusLost * let s:confirm = &confirm | setglobal noconfirm | silent! update | let &confirm = s:confirm
@@ -834,6 +838,7 @@ augroup ThemeColors
         " colorscheme dracula
         " colorscheme nord
         " colorscheme sonokai
+        " colorscheme jellybeans
         " colorscheme solarized8 " Never
     catch /^Vim\%((\a\+)\)\=:E185/
         colorscheme evening
