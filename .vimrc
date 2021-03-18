@@ -232,31 +232,32 @@ nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . GitBranch()<Enter>
 nnoremap <silent> <Leader>gl :call GotoLine()<Enter>
+nnoremap <silent> <Leader>gp :pwd<Enter>
 nnoremap <silent> <Leader>tc :call RunTestInConsole()<Enter>
 
 function! GotoLine() abort
-    let s:parts = split(expand('<cWORD>'), ':')
-    let s:file = strlen(s:parts[0]) > 0 ? s:parts[0] : ''
-    let s:line = strlen(s:parts[1]) > 0 ? s:parts[1] : 0
+    let l:parts = split(expand('<cWORD>'), ':')
+    let l:file = strlen(l:parts[0]) > 0 ? l:parts[0] : ''
+    let l:line = strlen(l:parts[1]) > 0 ? l:parts[1] : 0
 
-    if filereadable(s:file) && s:line > 0
-        execute 'edit +' . s:line . ' ' . s:file
+    if filereadable(l:file) && l:line > 0
+        execute 'edit +' . l:line . ' ' . l:file
     endif
 endfunction
 
 function! RunTestInConsole() abort
     if expand('%:e') ==# 'php'
-        let testname = expand('%:t:r')
-        let testfunction = GetFunctionName()
-        let testcommand = testname
+        let l:testname = expand('%:t:r')
+        let l:testfunction = GetFunctionName()
+        let l:testcommand = l:testname
 
-        if len(testfunction) > 0
-            let testcommand .= '::' . testfunction
+        if len(l:testfunction) > 0
+            let l:testcommand .= '::' . l:testfunction
         endif
 
-        let @+=testcommand
+        let @+=l:testcommand
 
-        echomsg 'Copied: ' . testcommand
+        echomsg 'Copied: ' . l:testcommand
     else
         echohl WarningMsg
         echomsg 'Not is a php file.'
@@ -267,20 +268,20 @@ function! RunTestInConsole() abort
 endfunction
 
 function! GetFunctionName() abort
-    let parts = split(getline(search("^\\( \\{4}\\|\\t\\)\\?\\a\\S\\{-}\\( \\a\\S\\{-}\\)\\+\\s\\?(.*[^;]\\s\\{-}$", 'bWnc')), ' ')
-    let counter = 1
-    let result = ''
+    let l:parts = split(getline(search("^\\( \\{4}\\|\\t\\)\\?\\a\\S\\{-}\\( \\a\\S\\{-}\\)\\+\\s\\?(.*[^;]\\s\\{-}$", 'bWnc')), ' ')
+    let l:counter = 1
+    let l:result = ''
 
-    for part in parts
-        if part ==# 'function'
-            let result = parts[counter]
+    for l:part in l:parts
+        if l:part ==# 'function'
+            let l:result = l:parts[l:counter]
             break
         endif
 
-        let counter += 1
+        let l:counter += 1
     endfor
 
-    return substitute(substitute(result, '(.*)', '', 'g'), ':', '', 'g')
+    return substitute(l:result, '(.*', '', 'g')
 endfunction
 
 inoremap <silent> jk <Esc>
@@ -310,10 +311,10 @@ if has('terminal')
     tnoremap <C-l> <C-w>l
 
     function! ShowTerminalBuffer() abort
-        let tbuffer = filter(map(getbufinfo(), 'v:val.bufnr'), 'getbufvar(v:val, "&buftype") is# "terminal"')
+        let l:tbuffer = filter(map(getbufinfo(), 'v:val.bufnr'), 'getbufvar(v:val, "&buftype") is# "terminal"')
 
-        if len(tbuffer) > 0
-            :execute 'buffer ' . join(tbuffer)
+        if len(l:tbuffer) > 0
+            :execute 'buffer ' . join(l:tbuffer)
         else
             :terminal
         endif
@@ -505,11 +506,11 @@ function! PhpCSFixer() abort
         return 0
     endif
 
-    let configfile = !filereadable(expand('.php_cs')) ? '/var/www/html/freddiegar/services/.php_cs' : '.php_cs'
+    let l:configfile = !filereadable(expand('.php_cs')) ? '/var/www/html/freddiegar/services/.php_cs' : '.php_cs'
 
     silent write
 
-    let result = system('php-cs-fixer fix ' . bufname('%') . ' --config="' . configfile . '"')
+    let l:result = system('php-cs-fixer fix ' . bufname('%') . ' --config="' . l:configfile . '"')
 
     silent :edit!
 endfunction
@@ -566,15 +567,21 @@ nmap <silent> gy <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+nnoremap <silent> K :call <SID>show_documentation()<Enter>
 
 function! s:show_documentation() abort
+    let l:word = expand('<cword>')
+
     if (index(['vim','help'], &filetype) >= 0)
-        execute 'help ' . expand('<cword>')
+        try
+            execute 'help ' . l:word
+        catch
+            echo 'Not found: ' . l:word
+        endtry
     elseif (coc#rpc#ready())
         call CocActionAsync('doHover')
     else
-        execute '!' . &keywordprg . ' ' . expand('<cword>')
+        execute '!' . &keywordprg . ' ' . l:word
     endif
 endfunction
 
@@ -585,15 +592,15 @@ if has('patch-8.2.0750')
 endif
 
 " @see https://github.com/vim/vim/issues/4738
-nnoremap gx :call OpenURLUnderCursor()<CR>
+nnoremap gx :call OpenURLUnderCursor()<Enter>
 
 function! OpenURLUnderCursor() abort
-    let s:uri = expand('<cWORD>')
-    let s:uri = substitute(s:uri, '?', '\\?', '')
-    let s:uri = shellescape(s:uri, 1)
+    let l:uri = expand('<cWORD>')
+    let l:uri = substitute(l:uri, '?', '\\?', '')
+    let l:uri = shellescape(l:uri, 1)
 
-    if s:uri != ''
-        silent execute "!/opt/firefox/firefox '" . s:uri . "'"
+    if l:uri != ''
+        silent execute "!/opt/firefox/firefox '" . l:uri . "'"
 
         :silent redraw!
     endif
@@ -616,7 +623,7 @@ function! LargeFile() abort
     setlocal buftype=nowrite
     setlocal undolevels=-1
 
-    autocmd VimEnter *  echo 'The file is larger than ' . (g:LargeFile / 1024 / 1024) . ' MB, so some options are changed.'
+    autocmd VimEnter * nested echo 'The file is larger than ' . (g:LargeFile / 1024 / 1024) . ' MB, so some options are changed.'
 endfunction
 
 " CTags
@@ -644,20 +651,20 @@ let g:tagalong_filetypes = ['html', 'xml']
 
 nnoremap <Leader>lp :call CreateArgumentsList()<Enter>
 function! CreateArgumentsList() abort
-    let saved_unnamed_register = @@
+    let l:saved_unnamed_register = @@
 
     if match(getline('.'), '(') > 0 && match(getline('.'), ')') > 0 && match(getline('.'), ',') > 0
         execute 'normal! _f(vi(y'
 
-        let command_string = ''
-        let arguments_list = split(@@, ',')
+        let l:command_string = ''
+        let l:arguments_list = split(@@, ',')
 
-        for argument in arguments_list
-            let command_string .= "\t" . trim(argument) . (len(arguments_list) > 1 ? ',' : '') . "\r"
-            call remove(arguments_list, 0)
+        for l:argument in l:arguments_list
+            let l:command_string .= "\t" . trim(l:argument) . (len(l:arguments_list) > 1 ? ',' : '') . "\r"
+            call remove(l:arguments_list, 0)
         endfor
 
-        execute "normal! \"_di(i\r" . command_string . "\eJkg_"
+        execute "normal! \"_di(i\r" . l:command_string . "\eJkg_"
 
         echomsg 'Arguments list created'
     else
@@ -666,24 +673,24 @@ function! CreateArgumentsList() abort
         echohl None
     endif
 
-    let @@ = saved_unnamed_register
+    let @@ = l:saved_unnamed_register
 endfunction
 
 nnoremap <Leader>la :call CreateArrayList()<Enter>
 function! CreateArrayList() abort
-    let saved_unnamed_register = @@
+    let l:saved_unnamed_register = @@
 
     if match(getline('.'), '[') > 0 && match(getline('.'), ']') > 0 && match(getline('.'), ',') > 0
         execute 'normal! _f[vi[y'
 
-        let command_string = ''
-        let arguments_list = split(@@, ',')
+        let l:command_string = ''
+        let l:arguments_list = split(@@, ',')
 
-        for argument in arguments_list
-            let command_string .= "\t" . trim(argument) . ",\r"
+        for l:argument in l:arguments_list
+            let l:command_string .= "\t" . trim(l:argument) . ",\r"
         endfor
 
-        execute "normal! \"_di[i\r" . command_string . "\eJkg_"
+        execute "normal! \"_di[i\r" . l:command_string . "\eJkg_"
 
         echomsg 'Array list created'
     else
@@ -692,7 +699,7 @@ function! CreateArrayList() abort
         echohl None
     endif
 
-    let @@ = saved_unnamed_register
+    let @@ = l:saved_unnamed_register
 endfunction
 
 augroup AutoCommands
@@ -709,11 +716,11 @@ augroup AutoCommands
 
     " Ominifunctions
     autocmd FileType c setlocal omnifunc=ccomplete#CompleteCpp
-    autocmd FileType js setlocal omnifunc=javascriptcomplete#CompleteJS
     autocmd FileType php setlocal omnifunc=phpactor#Complete
     " autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
     autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
     autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
+    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 
     " PHP Customization
     autocmd FileType php setlocal commentstring=//\ %s
@@ -768,12 +775,12 @@ augroup AutoCommands
 
     " Rg not find in file names
     function! RipgrepFzf(query, fullscreen) abort
-        let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
-        let initial_command = printf(command_fmt, shellescape(a:query))
-        let reload_command = printf(command_fmt, '{q}')
-        let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . reload_command]}
+        let l:command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+        let l:initial_command = printf(l:command_fmt, shellescape(a:query))
+        let l:reload_command = printf(l:command_fmt, '{q}')
+        let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
 
-        call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+        call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
     endfunction
 
     command! -nargs=* -bang Rg call RipgrepFzf(<q-args>, <bang>0)
