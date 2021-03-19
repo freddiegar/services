@@ -180,7 +180,7 @@ let &t_TI = ''
 let &t_TE = ''
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
-nnoremap <Space> <Nop>
+noremap <Space> <Nop>
 
 " Indent without kill the selection in visual mode
 vmap < <gv
@@ -210,15 +210,15 @@ nnoremap <silent> N Nzzzv
 map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
 " Shortcuts
+" Command Mode
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
-vnoremap <silent> T _vg_
-vnoremap <silent> <Leader>y "+y
-vnoremap <silent> <Leader>d "_d
+" Visual /Select and Normal Mode
+noremap <silent> <F10> :edit ~/.vimrc<Enter>
+noremap <silent> <Enter> :nohlsearch<Enter>
+noremap <silent> T _vg_
 
-nnoremap <silent> <F10> :edit ~/.vimrc<Enter>
-nnoremap <silent> <Enter> :nohlsearch<Enter>
-nnoremap <silent> T _vg_
+" Normal Mode
 nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>w :update<Enter>
@@ -226,16 +226,17 @@ nnoremap <silent> <Leader>e :normal "1 w"<Enter>
 nnoremap <silent> <Leader>q :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
 nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> : echo 'Copied: ' . expand('%:p')<Enter>
-nnoremap <silent> <Leader>c :execute "normal! mcA,\e`c"<Enter>
-nnoremap <silent> <Leader>s :execute "normal! mcA;\e`c"<Enter>
-nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
 nnoremap <silent> <Leader>f :Rg<Enter>
 nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
+nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
+nnoremap <silent> <Leader>ac :execute "normal! mcA,\e`c"<Enter>
+nnoremap <silent> <Leader>as :execute "normal! mcA;\e`c"<Enter>
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo 'Added: ' . expand('%')<Enter>
+nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped'<Enter>
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . GitBranch()<Enter>
 nnoremap <silent> <Leader>gl :call GotoLine()<Enter>
 nnoremap <silent> <Leader>gp :pwd<Enter>
-nnoremap <silent> <Leader>tc :call RunTestInConsole()<Enter>
+nnoremap <silent> <Leader>gt :call RunTestInConsole()<Enter>
 
 function! GotoLine() abort
     let l:parts = split(expand('<cWORD>'), ':')
@@ -290,11 +291,10 @@ inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
 " Tabs navigation
-vnoremap <silent> <Tab> :buffer #<Enter>
-nnoremap <silent> <Tab> :buffer #<Enter>
-nnoremap <silent> <Leader>b :Buffers<Enter>
-nnoremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
-nnoremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter> :bnext<Enter>
+noremap <silent> <Tab> :buffer #<Enter>
+noremap <silent> <Leader>b :Buffers<Enter>
+noremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
+noremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter> :bnext<Enter>
 
 " Better split switching
 map <C-h> <C-W>h
@@ -308,10 +308,10 @@ if has('terminal')
     tnoremap <silent> <Esc><Esc> <C-\><C-N>
 
     " Mappings to move out from terminal to other views
-    tnoremap <C-h> <C-w>h
-    tnoremap <C-j> <C-w>j
-    tnoremap <C-k> <C-w>k
-    tnoremap <C-l> <C-w>l
+    tnoremap <C-h> <C-W>h
+    tnoremap <C-j> <C-W>j
+    tnoremap <C-k> <C-W>k
+    tnoremap <C-l> <C-W>l
 
     function! ShowTerminalBuffer() abort
         let l:tbuffer = filter(map(getbufinfo(), 'v:val.bufnr'), 'getbufvar(v:val, "&buftype") is# "terminal"')
@@ -427,8 +427,8 @@ let g:delimitMate_expand_inside_quotes = 0
 let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 
 " Multiple Cursors
-let g:multi_cursor_select_all_word_key = '<C-a>'
-let g:multi_cursor_select_all_key = 'g<C-a>'
+let g:multi_cursor_select_all_word_key = '<C-s>'
+let g:multi_cursor_select_all_key = 'g<C-s>'
 
 " Snippets
 let g:UltiSnipsEditSplit = 'vertical'
