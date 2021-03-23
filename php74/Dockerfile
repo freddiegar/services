@@ -65,6 +65,8 @@ RUN set -eux \
     # Manipulation images
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install -j$(nproc) gd \
+    # Best math operations
+    && docker-php-ext-install -j$(nproc) bcmath \
     # Extra information about images: grav
     && docker-php-ext-install -j$(nproc) exif \
     # Cache
