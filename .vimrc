@@ -13,18 +13,19 @@ set secure
 set hidden
 set wildmenu
 set wildmode=list:longest,full
-set wildignore+=.git,.vscode,.idea,.vimrc
-set wildignore+=*.zip,*.tar,*.tar.gz,*.gz
-set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*
-set wildignore+=*.jpg,*.png,*.gif,*.jpeg
-set wildignore+=node_modules,vendor
+set wildignore+=.git,.vscode,.idea,.vimrc,
+set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,
+set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*,
+set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
+set wildignore+=node_modules,vendor,
+set wildignore+=/usr/bin/zsh,.php_cs
 set lazyredraw
 set redrawtime=3000
 set nobackup
 set nowritebackup
 set noswapfile
 set path=.,,
-set sessionoptions-=buffers sessionoptions+=globals sessionoptions-=options
+set sessionoptions-=buffers sessionoptions-=options sessionoptions+=globals sessionoptions-=terminal
 set viewoptions-=options
 
 " Search
@@ -79,7 +80,7 @@ set list
 set listchars=space:·,tab:»-
 set colorcolumn=121
 set textwidth=120
-set synmaxcol=150
+set synmaxcol=200
 set winminheight=0
 set winheight=999
 set updatetime=300
@@ -217,6 +218,7 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 noremap <silent> <F10> :edit ~/.vimrc<Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> T _vg_
+noremap <silent> QQ :qall<Enter>
 
 " Normal Mode
 nnoremap <silent> <Leader>y "+y
@@ -225,7 +227,7 @@ nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>e :normal "1 w"<Enter>
 nnoremap <silent> <Leader>q :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
 nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
-nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> : echo 'Copied: ' . expand('%:p')<Enter>
+nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>f :Rg<Enter>
 nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
 nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
@@ -759,9 +761,9 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>ree :call phpactor#ExtractExpression(v:true)<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rrr :call phpactor#ContextMenu()<Enter>
 
-    autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
-    autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
-    autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
+"     autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
+"     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
+"     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
 
     function! PHPModify(transformer) abort
         silent write

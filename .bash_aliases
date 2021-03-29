@@ -5,6 +5,7 @@ alias m="man"
 alias l="less"
 alias t="touch"
 alias d="diff"
+alias vd="vimdiff"
 alias ll="ls -lh"
 
 alias c="composer"
