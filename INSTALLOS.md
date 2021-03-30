@@ -382,10 +382,17 @@ gpg --full-generate-key
 
 # List key
 gpg --list-secret-keys --keyid-format LONG
+> sec   rsa4096/C292DDB5 2021-03-30 [SC] [expires: 2022-03-30]
+>       93AA89FC183E5D2A83114F49C6F296FCC292DDB5
+> uid         [ultimate] Freddie Gar (Personal GPG Key) <freddie.gar@outlook.com>
+> ssb   rsa4096/9567702A 2021-03-30 [E] [expires: 2022-03-30]
 
 # Enable
 git config --global commit.gpgsign true
 git config --global user.signingkey [ID]
+
+# Use ssb short id: 9567702A, in this example
+git config --global user.signingkey 9567702A
 
 # Override by repository
 cd git/repository
