@@ -370,6 +370,9 @@ cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
 ```
 
 # GPG Keys
+
+[See](https://docs.github.com/en/enterprise-server@2.22/github/authenticating-to-github/generating-a-new-gpg-key)
+
 ```bash
 # Create key
 gpg --full-generate-key
@@ -397,6 +400,17 @@ git config --global user.signingkey 9567702A
 # Override by repository
 cd git/repository
 git config user.signingkey [ID]
+```
+
+## Export Public GPG Key (for GitHub example)
+
+[See](https://github.com/settings/keys)
+
+```bash
+gpg --armor --export [ID]
+
+# Use sec short id: C292DDB5, in this example
+gpg --armor --export C292DDB5
 ```
 
 # Xdebug
