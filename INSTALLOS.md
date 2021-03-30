@@ -63,7 +63,8 @@ sudo apt-get install -y vim
 sudo apt-get install -y tree
 sudo apt-get install -y nmap
 sudo apt-get install -y htop
-## sudo apt-get remove unzip curl vim tree nmap htop && sudo apt-get autoremove
+sudo apt-get install -y konsole
+## sudo apt-get remove unzip curl vim tree nmap htop konsole && sudo apt-get autoremove
 ```
 
 ## Vim Configuration
@@ -242,16 +243,9 @@ cd ~
 curl -L https://getcomposer.org/installer -o composer-setup.php
 sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 rm -Rf composer-setup.php
+## Update
+## composer self-update
 ## rm -Rf /usr/local/bin/composer
-```
-
-# Security Checker
-```bash
-cd ~
-sudo curl -L http://get.sensiolabs.org/security-checker.phar -o /usr/local/bin/security-checker
-sudo chmod +x /usr/local/bin/security-checker
-## Command: 
-## sudo rm /usr/local/bin/security-checker
 ```
 
 # Code Sniffer Fixer
@@ -260,13 +254,14 @@ cd ~
 sudo curl -L https://cs.symfony.com/download/php-cs-fixer-v2.phar -o /usr/local/bin/php-cs-fixer
 sudo chmod +x /usr/local/bin/php-cs-fixer
 ## Command:
+## php-cs-fixer
 ## sudo rm /usr/local/bin/security-checker
 ```
 
 # Mess Detector
 ```bash
 cd ~
-sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.9.0/phpmd.phar -o /usr/local/bin/phpmd
+sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.9.1/phpmd.phar -o /usr/local/bin/phpmd
 sudo chmod +x /usr/local/bin/phpmd
 ## Command:
 ## phpmd source/code format ruleset
@@ -278,12 +273,10 @@ sudo chmod +x /usr/local/bin/phpmd
 # Infection AST 
 ```bash
 cd ~
-sudo curl -L https://github.com/infection/infection/releases/download/0.17.5/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.21.4/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command: 
 ## infection -j$(nproc) [--filter=file.php]
-## Update: 
-## infection self-update
 ## sudo rm /usr/local/bin/infection
 ```
 
@@ -310,7 +303,7 @@ sudo chmod +x /usr/local/bin/phpcpd
 # PHPMetrics
 ```bash
 cd ~
-sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.5.0/phpmetrics.phar -o /usr/local/bin/phpmetrics
+sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.7.3/phpmetrics.phar -o /usr/local/bin/phpmetrics
 sudo chmod +x /usr/local/bin/phpmetrics
 ## Command:
 ## phpmetrics --excluded-dirs vendor --report-html=./tests/coverage/phpmetrics .
@@ -350,7 +343,7 @@ sudo reboot
 # Docker Compose
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/1.27.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/1.28.6/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -371,9 +364,32 @@ sudo chmod +x /usr/local/bin/git-summary
 
 # SSH Keys
 ```bash
-ssh-keygen                 # Insert passprhase (Algo ...)
+ssh-keygen                 # Insert passphrase (Algo ...)
 ls ~/.ssh
 cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
+```
+
+# GPG Keys
+```bash
+# Create key
+gpg --full-generate-key
+> Kind:     RSA and RSA
+> Long:     4096
+> Time:     1y
+> Name:     Freddie Gar
+> Mail:     freddie.gar@outlook.com
+> Comment:  Personal GPG Key
+
+# List key
+gpg --list-secret-keys --keyid-format LONG
+
+# Enable
+git config --global commit.gpgsign true
+git config --global user.signingkey [ID]
+
+# Override by repository
+cd git/repository
+git config user.signingkey [ID]
 ```
 
 # Xdebug
@@ -456,7 +472,7 @@ Exec=/opt/firefox/firefox -private-window' > ~/.local/share/applications/firefox
 cd ~
 sudo apt-get update
 sudo apt-get install -y build-essential libssl-dev
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.38.0/install.sh | bash
 echo '
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -464,13 +480,13 @@ export NVM_DIR="$HOME/.nvm"
 # Close Terminal to load changes
 # Show version available
 nvm ls-remote
-nvm install v12.18.3
-# nvm alias default v12.18.3
+nvm install v14.16.0
+# nvm alias default v14.16.0
 # nvm current
 ## Enabled to all users in Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
 
-## Install pkg: npm install express
+## Install package: npm install express
 ## nvm deactivate && nvm uninstall v10.15.3
 ```
 
@@ -573,13 +589,6 @@ sudo apt-get install -y ffmpeg obs-studio
 sudo apt-get update
 sudo apt-get install -y kazam
 ## sudo apt-get remove kazam && sudo apt-get autoremove
-```
-
-## Tmux
-```bash
-sudo apt-get update
-sudo apt-get install -y tmux
-## sudo apt-get remove tmux && sudo apt-get autoremove
 ```
 
 ## CPU Usage Bar
