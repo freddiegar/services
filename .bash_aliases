@@ -14,8 +14,8 @@ alias cu="composer update"
 alias ct="composer test"
 alias cda="composer dump-autoload"
 
-alias ccs="sudo chmod 770 -Rf var && sudo php bin/console cache:clear && sudo chown freddie:www-data -Rf var && sudo chmod 770 -Rf var"
-alias ccl="sudo chmod 770 -Rf storage && sudo php artisan cache:clear && sudo chown freddie:www-data -Rf storage && sudo chmod 770 -Rf storage"
+alias ccs="sudo chmod 770 -Rf var && sudo php bin/console cache:clear && sudo chown freddie:www-data -Rf var && sudo chmod 770 -Rf var && gco var"
+alias ccl="sudo chmod 770 -Rf storage && sudo php artisan cache:clear && sudo chown freddie:www-data -Rf storage && sudo chmod 770 -Rf storage && gco storage"
 
 alias pex="sudo phpenmod xdebug"
 alias pdx="sudo phpdismod xdebug"
