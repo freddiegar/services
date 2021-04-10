@@ -17,7 +17,7 @@ set wildignore+=.git,.vscode,.idea,.vimrc,
 set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,
 set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*,
 set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
-set wildignore+=node_modules,vendor,
+set wildignore+=node_modules,vendor,*/coverage/*,
 set lazyredraw
 set redrawtime=3000
 set nobackup
@@ -187,7 +187,7 @@ noremap <Space> <Nop>
 " Indent without kill the selection in visual mode
 vmap < <gv
 vmap > >gv
-vmap . :normal .<Enter>
+vmap . :normal! .<Enter>
 
 " Purify
 noremap <Up> <Nop>
@@ -224,16 +224,16 @@ nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>w :update<Enter>
-" nnoremap <silent> <Leader>e :normal "1 w"<Enter>
 nnoremap <silent> <Leader>z :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
 nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>f :Rg<Enter>
 nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
-nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
 
+nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
 nnoremap <silent> <Leader>ac :execute "normal! mcA,\e`c"<Enter>
 nnoremap <silent> <Leader>as :execute "normal! mcA;\e`c"<Enter>
+
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped'<Enter>
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . GitBranch()<Enter>
@@ -294,7 +294,7 @@ inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
 " Tabs navigation
-noremap <silent> <Tab> :buffer #<Enter>
+noremap <silent> <Tab> <C-^>
 noremap <silent> <Leader><Leader> :Buffers<Enter>
 noremap <silent> <Leader>j :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
 noremap <silent> <Leader>k :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bnext<Enter>
@@ -365,7 +365,7 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'junegunn/goyo.vim'
-Plug 'farmergreg/vim-lastplace'
+" Plug 'farmergreg/vim-lastplace'
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
 " Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}
@@ -420,7 +420,8 @@ let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 let g:multi_cursor_select_all_word_key = '<C-s>'
 let g:multi_cursor_select_all_key = 'g<C-s>'
 
-" Snippets
+" Snippets (Default Maps: <Tab> <C-j> <C-k>
+" @see https://github.com/SirVer/ultisnips
 let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsExpandTrigger='<Tab>'
 let g:UltiSnipsJumpForwardTrigger = '<Tab>'
@@ -551,11 +552,11 @@ let g:coc_global_extensions = [
 " Use <Ctrl-Space> to trigger completion.
 inoremap <silent> <expr> <C-@> coc#refresh()
 
-" Make <Enter> and <Leader><Tab> auto-select the first completion item
+" Make <Enter> and <Tab> auto-select the first completion item
 inoremap <silent> <expr> <Enter> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
-inoremap <silent> <expr> <Leader><Tab> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
+" inoremap <silent> <expr> <Tab> pumvisible() ? coc#_select_confirm()
+"                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
 
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
@@ -713,11 +714,10 @@ augroup AutoCommands
     autocmd BufWritePost ~/.vimrc source ~/.vimrc
 
     " Return to last edit position when opening files
-    " NOW use farmergreg/vim-lastplace plugin
-    " autocmd BufReadPost *
-    "      \ if &filetype != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
-    "      \   execute "normal! g`\"" |
-    "      \ endif
+    autocmd BufReadPost *
+         \ if &filetype != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
+         \   execute "normal! g`\"" |
+         \ endif
 
     " Ominifunctions
     autocmd FileType c setlocal omnifunc=ccomplete#CompleteCpp
@@ -749,7 +749,7 @@ augroup AutoCommands
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-U>call phpactor#ExtractMethod()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rec :call phpactor#ExtractConstant()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>ree :call phpactor#ExtractExpression(v:true)<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rrr :call phpactor#ContextMenu()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
 
     autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
 "     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
