@@ -27,17 +27,19 @@ set path=.,,
 set sessionoptions-=buffers sessionoptions-=options sessionoptions+=globals sessionoptions-=terminal
 set viewoptions-=options
 
-" Search
+" Better Search
 set hlsearch
 set incsearch
 set smartcase
 set ignorecase
-set viminfo=!,'20,<50,s10,h
-
 if executable('rg')
     set grepprg=rg\ --vimgrep\ --smart-case\ --follow
     set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 endif
+
+" Tell vim to remember certain things when we exit
+" @see https://vimhelp.org/options.txt.html#%27viminfo%27
+set viminfo=!,'20,<50,s10,h
 
 " Better Completion
 " @see :h 'complete'
@@ -209,30 +211,30 @@ nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
 map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
-" Shortcuts
-" Command Mode
+" Sudo rescue
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
-" Visual /Select and Normal Mode
+" Visual / Select and Normal Mode
 noremap <silent> <F10> :edit ~/.vimrc<Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT _vg_
-noremap <silent> QQ :qall<Enter>
 
 " Normal Mode
 nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>d "_d
+nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>w :update<Enter>
-nnoremap <silent> <Leader>e :normal "1 w"<Enter>
-nnoremap <silent> <Leader>q :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
+" nnoremap <silent> <Leader>e :normal "1 w"<Enter>
+nnoremap <silent> <Leader>z :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
 nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>f :Rg<Enter>
 nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
 nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
+
 nnoremap <silent> <Leader>ac :execute "normal! mcA,\e`c"<Enter>
 nnoremap <silent> <Leader>as :execute "normal! mcA;\e`c"<Enter>
-nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :echo 'Added: ' . expand('%')<Enter>
+nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped'<Enter>
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . GitBranch()<Enter>
 nnoremap <silent> <Leader>gl :call GotoLine()<Enter>
@@ -293,9 +295,9 @@ inoremap <silent> jj <Esc>
 
 " Tabs navigation
 noremap <silent> <Tab> :buffer #<Enter>
-noremap <silent> <Leader>b :Buffers<Enter>
-noremap <silent> <Leader>j :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
-noremap <silent> <Leader>k :if &modifiable && !&readonly && &modified <Enter> :update<Enter> :endif<Enter> :bnext<Enter>
+noremap <silent> <Leader><Leader> :Buffers<Enter>
+noremap <silent> <Leader>j :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
+noremap <silent> <Leader>k :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bnext<Enter>
 
 " Better split switching
 map <C-h> <C-W>h
@@ -350,7 +352,8 @@ Plug 'junegunn/fzf.vim'
 Plug 'vim-syntastic/syntastic'
 Plug 'StanAngeloff/php.vim'
 Plug 'preservim/tagbar'
-Plug 'vim-scripts/autotags'
+Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}
+" Plug 'vim-scripts/autotags'
 Plug 'SirVer/ultisnips'
 Plug 'sniphpets/sniphpets'
 Plug 'vim-test/vim-test', {'for': 'php'}
@@ -362,6 +365,7 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'junegunn/goyo.vim'
+Plug 'farmergreg/vim-lastplace'
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
 " Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}
@@ -627,6 +631,7 @@ endfunction
 
 " CTags
 " @see https://github.com/vim-scripts/autotags
+nnoremap <C-]> g<C-]>
 let g:autotags_no_global = 0
 let g:autotags_cscope_file_extensions = '.php .h .c'
 let g:autotags_ctags_global_include = ''
@@ -708,10 +713,11 @@ augroup AutoCommands
     autocmd BufWritePost ~/.vimrc source ~/.vimrc
 
     " Return to last edit position when opening files
-    autocmd BufReadPost *
-         \ if &filetype != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
-         \   execute "normal! g`\"" |
-         \ endif
+    " NOW use farmergreg/vim-lastplace plugin
+    " autocmd BufReadPost *
+    "      \ if &filetype != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
+    "      \   execute "normal! g`\"" |
+    "      \ endif
 
     " Ominifunctions
     autocmd FileType c setlocal omnifunc=ccomplete#CompleteCpp
@@ -729,7 +735,7 @@ augroup AutoCommands
     " PHP Refactor
     autocmd FileType php nnoremap <silent> <buffer><Leader>rnc :call phpactor#ClassNew()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rxc :call phpactor#ClassExpand()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>ric :call phpactor#ImportMissingClasses()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>ruu :call phpactor#ImportMissingClasses()<Enter>
 
     autocmd FileType php nnoremap <silent> <buffer><Leader>rmf :call phpactor#MoveFile()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rcf :call phpactor#CopyFile()<Enter>
@@ -745,7 +751,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>ree :call phpactor#ExtractExpression(v:true)<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rrr :call phpactor#ContextMenu()<Enter>
 
-"     autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
+    autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
 "     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
 "     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
 

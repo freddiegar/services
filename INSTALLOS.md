@@ -14,6 +14,7 @@ sudo sysctl -p
 ```
 
 # Change default User Max Watches
+
 ```bash
 sudo cp -p ~/.zshrc ~/.zshrc.original
 echo '# Overwrite default: 8192 ~ 8M to ~540M
@@ -22,6 +23,7 @@ sudo sysctl -p
 ```
 
 # Change default time GRUB to 2
+
 ```bash
 sudo cp -p ~/.zshrc ~/.zshrc.original
 sudo sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=2/g' /etc/default/grub
@@ -29,6 +31,7 @@ sudo update-grub
 ```
 
 # Auto-update (on servers)
+
 ```bash
 sudo apt-get install -y unattended-upgrades update-notifier-common
 sudo cp -p ~/.zshrc ~/.zshrc.original
@@ -38,24 +41,28 @@ sudo sed -i 's/\/\/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/Unattended
 ```
 
 # Disabled IPP Service: 631 (Internet Printer Protocol)
+
 ```bash
 sudo service cups stop
 sudo systemctl disable cups
 ```
 
-# Vim latest :D
+# Vim Latest :D
+
 ```bash
 sudo add-apt-repository ppa:jonathonf/vim
 ## sudo apt-get remove vim && sudo add-apt-repository --remove ppa:jonathonf/vim
 ```
 
 # Updated repos
+
 ```bash
 sudo apt-get update
 sudo apt-get upgrade
 ```
 
 # Unzip, cURL, Vim and extra utils
+
 ```bash
 sudo apt-get install -y unzip
 sudo apt-get install -y curl
@@ -154,6 +161,17 @@ echo "--recurse=yes
 Pulse <F4>
 ```
 
+### PHP Ctags
+
+```bash
+cd ~
+sudo curl -L https://github.com/vim-php/phpctags/raw/gh-pages/install/phpctags.phar -o /usr/local/bin/phpctags
+sudo chmod +x /usr/local/bin/phpctags
+## Command:
+## phpctags
+## sudo rm /usr/local/bin/phpctags
+```
+
 ## Snippets
 
 ```bash
@@ -161,7 +179,14 @@ Pulse <F4>
 mkdir -f ~/.vim/UltiSnips && cp -p php.snippets ~/.vim/UltiSnips/php.snippets
 ```
 
+## PHPStorm
+
+```bash
+# cp -p .ideavimrc ~/.ideavimrc
+```
+
 # GIT
+
 ```bash
 sudo apt-get install -y git-core
 git config --global user.name "Freddie Gar"
@@ -172,12 +197,14 @@ git config --list
 ```
 
 # GIT Flow
+
 ```bash
 sudo apt-get install git-flow
 ## sudo apt-get remove git-flow && sudo apt-get autoremove
 ```
 
 # Zsh
+
 ```bash
 sudo apt-get install -y zsh
 # As User NOT root
@@ -206,6 +233,7 @@ fi' >> ~/.zshrc
 ```
 
 # PHP 7.4
+
 ```bash
 sudo apt-get install -y software-properties-common
 sudo add-apt-repository ppa:ondrej/php # Only Ubuntu
@@ -227,6 +255,7 @@ sudo apt-get install -y php7.4-bcmath
 ```
 
 # MySQL Client (Server is using Docker)
+
 ```bash
 # Ubuntu
 sudo apt-get install -y mysql-client
@@ -238,6 +267,7 @@ sudo apt-get install -y mariadb-client
 ```
 
 # Composer
+
 ```bash
 cd ~
 curl -L https://getcomposer.org/installer -o composer-setup.php
@@ -249,16 +279,18 @@ rm -Rf composer-setup.php
 ```
 
 # Code Sniffer Fixer
+
 ```bash
 cd ~
 sudo curl -L https://cs.symfony.com/download/php-cs-fixer-v2.phar -o /usr/local/bin/php-cs-fixer
 sudo chmod +x /usr/local/bin/php-cs-fixer
 ## Command:
 ## php-cs-fixer
-## sudo rm /usr/local/bin/security-checker
+## sudo rm /usr/local/bin/php-cs-fixer
 ```
 
 # Mess Detector
+
 ```bash
 cd ~
 sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.9.1/phpmd.phar -o /usr/local/bin/phpmd
@@ -271,6 +303,7 @@ sudo chmod +x /usr/local/bin/phpmd
 ```
 
 # Infection AST 
+
 ```bash
 cd ~
 sudo curl -L https://github.com/infection/infection/releases/download/0.21.4/infection.phar -o /usr/local/bin/infection
@@ -281,6 +314,7 @@ sudo chmod +x /usr/local/bin/infection
 ```
 
 # PHPLOC (Lines Of Code)
+
 ```bash
 cd ~
 sudo curl -L https://phar.phpunit.de/phploc.phar -o /usr/local/bin/phploc
@@ -291,6 +325,7 @@ sudo chmod +x /usr/local/bin/phploc
 ```
 
 # PHPCPD (Copy/Paste Dectector)
+
 ```bash
 cd ~
 sudo curl -L https://phar.phpunit.de/phpcpd.phar -o /usr/local/bin/phpcpd
@@ -301,6 +336,7 @@ sudo chmod +x /usr/local/bin/phpcpd
 ```
 
 # PHPMetrics
+
 ```bash
 cd ~
 sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.7.3/phpmetrics.phar -o /usr/local/bin/phpmetrics
@@ -317,6 +353,7 @@ sudo chmod +x /usr/local/bin/phpmetrics
 [See 2](https://docs.docker.com/install/linux/linux-postinstall/)
 
 ## Ubuntu 18.*, 19.*, Debian 10
+
 ```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common
 curl -L https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -329,6 +366,7 @@ gnome-session-quit
 ```
 
 ## Ubuntu 16.*
+
 ```bash
 sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
@@ -341,6 +379,7 @@ sudo reboot
 ```
 
 # Docker Compose
+
 ```bash
 cd ~
 sudo curl -L https://github.com/docker/compose/releases/download/1.28.6/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
@@ -349,11 +388,13 @@ sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 # Docker Network
+
 ```bash
 docker network create --driver=bridge --subnet=172.20.0.0/16 --gateway=172.20.0.1 development
 ```
 
 # GIT Summary
+
 ```bash
 cd ~
 sudo apt-get install -y gawk
@@ -363,6 +404,7 @@ sudo chmod +x /usr/local/bin/git-summary
 ```
 
 # SSH Keys
+
 ```bash
 ssh-keygen                 # Insert passphrase (Algo ...)
 ls ~/.ssh
@@ -414,6 +456,7 @@ gpg --armor --export C292DDB5
 ```
 
 # Xdebug
+
 ```bash
 sudo pecl install -f xdebug
 
@@ -442,12 +485,14 @@ zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-ava
 sudo phpenmod xdebug
 ```
 # Postman
+
 ```bash
 cd ~
 sudo snap install postman
 ```
 
 # VSCode & Firefox (Dont use snap for this, security risk)
+
 ```bash
 cd ~/Downloads
 sudo dpkg -i vscode.deb
@@ -489,6 +534,7 @@ Exec=/opt/firefox/firefox -private-window' > ~/.local/share/applications/firefox
 ```
 
 # Node
+
 ```bash
 cd ~
 sudo apt-get update
@@ -553,6 +599,7 @@ sudo apt-get autoremove
 # Optionals
 
 ## Sublime Text
+
 ```bash
 cd ~
 curl -L https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
@@ -578,6 +625,7 @@ Ready! Vi Layout On :D
 Ready! Vi Layout Off :(
 
 ## Ubuntu: Gnome Tweak Tool
+
 ```bash
 gnome-shell --version
 sudo apt-get install -y gnome-tweak-tool
@@ -585,6 +633,7 @@ sudo apt-get install -y gnome-tweak-tool
 ```
 
 ## Ubuntu: Gnome Clocks
+
 ```bash
 gnome-shell --version
 sudo apt-get install -y gnome-clocks
@@ -592,12 +641,14 @@ sudo apt-get install -y gnome-clocks
 ```
 
 ## Install Xdebug Profiler
+
 ```bash
 sudo apt-get install -y kcachegrind
 ## sudo apt-get remove kcachegrind && sudo apt-get autoremove
 ```
 
 ## OBS - Open Broadcasting Software
+
 ```bash
 sudo add-apt-repository ppa:obsproject/obs-studio
 sudo apt-get install -y ffmpeg obs-studio
@@ -606,6 +657,7 @@ sudo apt-get install -y ffmpeg obs-studio
 ```
 
 ## Screen Recording
+
 ```bash
 sudo apt-get update
 sudo apt-get install -y kazam
@@ -613,6 +665,7 @@ sudo apt-get install -y kazam
 ```
 
 ## CPU Usage Bar
+
 ```bash
 sudo apt-get update
 sudo apt-get install -y indicator-multiload
@@ -620,6 +673,7 @@ sudo apt-get install -y indicator-multiload
 ```
 
 ## Extensions GUI
+
 ```bash
 # Clock to right (Frippery Move Clock)
 https://extensions.gnome.org/extension/2/move-clock/
@@ -628,6 +682,7 @@ https://ubuntuhandbook.org/index.php/2020/03/hide-activities-button-ubuntu-18-04
 ```
 
 ## Google Chrome
+
 ```bash
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
 curl -L https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -637,6 +692,7 @@ sudo apt-get install -y google-chrome-stable
 ```
 
 ## Virtual Box
+
 ```bash
 cd ~
 sudo apt-get update
@@ -645,17 +701,20 @@ sudo apt-get install virtualbox
 ```
 
 ## Vagrant (VM)
+
 ```bash
 sudo apt-get install -y vagrant
 ## sudo apt-get remove vagrant && sudo apt-get autoremove
 ```
 
 ## Remove LibreOffice
+
 ```bash
 sudo apt-get remove -y --purge libreoffice* && sudo apt-get clean && sudo apt-get autoremove
 ```
 
 # Clean installation
+
 ```bash
 sudo apt-get autoremove -y && sudo apt-get autoclean -y
 ```
