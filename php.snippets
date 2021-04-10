@@ -204,29 +204,51 @@ final class `!v sniphpets#basename()` extends TestCase
 }
 endsnippet
 
-snippet if "if"
+snippet if "If"
 if ($1) {
     ${VISUAL}$0
 }
 endsnippet
 
-snippet else "else"
+snippet else "Else"
  else {
     ${VISUAL}$0
 }
 endsnippet
 
-snippet elif "elseif"
+snippet elif "Elseif"
  else if ($1) {
     ${VISUAL}$0
 }
+endsnippet
+
+snippet fir "For loop"
+for ($i = 0; $i ${1:<} $2; ++$i) {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet for "Foreach loop"
+foreach ($1 as $1$2) {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet fas "Foreach key => val"
+foreach ($1 as $${2:key} => $${3:value}) {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet "ar(f|m|r)" "Array operations" r
+array_`!p snip.rv='filter' if match.group(1) == 'f' else ('map' if match.group(1) == 'm' else 'reduce')`($1)$0
 endsnippet
 
 snippet spr "Sprintf"
 sprintf('$1', $0)
 endsnippet
 
-snippet try "try/catch" b
+snippet try "Try/catch" b
 try {
     ${VISUAL}$2
 } catch (${1:Exception} $e) {
