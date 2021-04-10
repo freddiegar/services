@@ -18,7 +18,6 @@ set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,
 set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*,
 set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
 set wildignore+=node_modules,vendor,
-set wildignore+=/usr/bin/zsh,.php_cs
 set lazyredraw
 set redrawtime=3000
 set nobackup
@@ -79,7 +78,7 @@ set showmatch
 set list
 set listchars=space:·,tab:»-
 set colorcolumn=121
-set textwidth=120
+" set textwidth=120
 set synmaxcol=200
 set winminheight=0
 set winheight=999
@@ -217,7 +216,7 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 " Visual /Select and Normal Mode
 noremap <silent> <F10> :edit ~/.vimrc<Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
-noremap <silent> T _vg_
+noremap <silent> TT _vg_
 noremap <silent> QQ :qall<Enter>
 
 " Normal Mode
@@ -305,26 +304,11 @@ map <C-k> <C-W>k
 map <C-l> <C-W>l
 
 if has('terminal')
-    nnoremap <silent> <C-S-X> :call ShowTerminalBuffer()<Enter>
-    tnoremap <silent> <C-S-X> <C-\><C-N>:buffer #<Enter>
-    tnoremap <silent> <Esc><Esc> <C-\><C-N>
-
     " Mappings to move out from terminal to other views
     tnoremap <C-h> <C-W>h
     tnoremap <C-j> <C-W>j
     tnoremap <C-k> <C-W>k
     tnoremap <C-l> <C-W>l
-
-    function! ShowTerminalBuffer() abort
-        let l:tbuffer = filter(map(getbufinfo(), 'v:val.bufnr'), 'getbufvar(v:val, "&buftype") is# "terminal"')
-
-        if len(l:tbuffer) > 0
-            :execute 'buffer ' . join(l:tbuffer)
-            :execute 'normal i'
-        else
-            :terminal
-        endif
-    endfunction
 endif
 
 if !has('gui_running')

@@ -1,0 +1,55 @@
+set surround
+set multiple-cursors
+set commentary
+
+" Search
+set hlsearch
+set incsearch
+set smartcase
+set ignorecase
+
+" Custom Render
+set scrolloff=1
+set sidescrolloff=5
+
+" Custom View
+set number
+set numberwidth=1
+set relativenumber
+set cursorline
+set showmatch
+
+set showcmd
+set noruler
+set noshowmode
+set laststatus=2
+
+" Maps
+let mapleader = "\<Space>"
+let maplocalleader = "\<Space>"
+noremap <Space> <Nop>
+
+" Indent without kill the selection in visual mode
+vmap < <gv
+vmap > >gv
+vmap . :normal .<Enter>
+
+" Purify
+noremap <Up> <Nop>
+noremap <Down> <Nop>
+noremap <Left> <Nop>
+noremap <Right> <Nop>
+
+" Utility
+nnoremap j gj
+nnoremap k gk
+nnoremap Q @@
+nnoremap Y y$
+nnoremap gl '.
+
+noremap <silent> <Enter> :nohlsearch<Enter>
+noremap <silent> QQ :qall<Enter>
+
+inoremap <silent> jk <Esc>
+inoremap <silent> jj <Esc>
+
