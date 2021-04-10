@@ -645,6 +645,33 @@ cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/
 ```
 > Upload new CA in browser: /var/www/html/freddiegar/services/ssl/ca.cert.pem
 
+### Update OpenSSL binary
+
+[See](https://askubuntu.com/questions/1102803/how-to-upgrade-openssl-1-1-0-to-1-1-1-in-ubuntu-18-04)
+[Vulnerabilities](https://www.openssl.org/news/vulnerabilities-1.1.1.html)
+
+```bash
+# Current version
+openssl version
+# Future version
+cd ~
+curl -L https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_1_1_1k.tar.gz -o openssl.tar.gz
+tar -zxf openssl.tar.gz
+cd openssl*
+# Prepare new version
+./config && make && make test
+# Backup current version, I'm human
+sudo mv /usr/bin/openssl /usr/bin/openssl.$(openssl version | cut -d ' ' -f2)
+# Deploy version
+sudo make install
+sudo ln -s /usr/local/bin/openssl /usr/bin/openssl
+sudo ldconfig
+# Check version
+openssl version
+# Clean house
+rm -Rf openssl*
+```
+> Dependencies require: sudo apt-get install make gcc
 
 ## Composer
 
