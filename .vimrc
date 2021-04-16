@@ -235,10 +235,12 @@ nnoremap <silent> <Leader>ac :execute "normal! mcA,\e`c"<Enter>
 nnoremap <silent> <Leader>as :execute "normal! mcA;\e`c"<Enter>
 
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
-nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped'<Enter>
+nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
+
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . GitBranch()<Enter>
+nnoremap <silent> <Leader>gp :echo 'Path: ' . getcwd()<Enter>
+
 nnoremap <silent> <Leader>gl :call GotoLine()<Enter>
-nnoremap <silent> <Leader>gp :pwd<Enter>
 nnoremap <silent> <Leader>gt :call RunTestInConsole()<Enter>
 
 function! GotoLine() abort
@@ -826,17 +828,17 @@ augroup ThemeColors
     set background=dark
 
     try
-        colorscheme gruvbox
-        " colorscheme dracula
-        " colorscheme nord
-        " colorscheme sonokai
-        " colorscheme jellybeans
-        " colorscheme solarized8 " Never
+        let g:weekDay = str2nr(strftime('%w') - 1)
+        let g:colorschemes = ['jellybeans', 'dracula', 'nord', 'sonokai']
+        let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
+        " colorscheme solarized " Never
+
+        execute 'colorscheme ' . g:colorscheme
     catch /^Vim\%((\a\+)\)\=:E185/
         colorscheme evening
 
         echohl WarningMsg
-        echo 'Not found colorscheme!'
+        echo 'Not found colorscheme: ' . g:colorscheme
         echohl None
     endtry
 
