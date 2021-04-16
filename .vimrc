@@ -503,24 +503,6 @@ let g:syntastic_warning_symbol = 'W'
 let g:syntastic_style_error_symbol = 'S'
 let g:syntastic_style_warning_symbol = 's'
 
-" PHP Fixer
-function! PhpCSFixer() abort
-    if bufname('%') == ''
-        echohl WarningMsg
-        echomsg 'Save file first!. Canceled.'
-        echohl None
-        return 0
-    endif
-
-    let l:configfile = !filereadable(expand('.php_cs')) ? '/var/www/html/freddiegar/services/.php_cs' : '.php_cs'
-
-    silent write
-
-    let l:result = system('php-cs-fixer fix ' . bufname('%') . ' --config="' . l:configfile . '"')
-
-    silent :edit!
-endfunction
-
 " Vim Debug
 let g:vdebug_keymap = {
 \    'run' : '<F5>',
@@ -770,7 +752,26 @@ augroup AutoCommands
         silent :edit!
     endfunction
 
-    autocmd FileType php nnoremap <silent> <F1> :call PhpCSFixer()<Enter>
+    " PHPFixer
+    autocmd FileType php nnoremap <silent> <buffer><F1> :call <SID>phpfixer()<Enter>
+
+    function! s:phpfixer() abort
+        if bufname('%') == ''
+            echohl WarningMsg
+            echomsg 'Save file first!. Canceled.'
+            echohl None
+
+            return 0
+        endif
+
+        let l:configfile = !filereadable(expand('.php_cs')) ? '/var/www/html/freddiegar/services/.php_cs' : '.php_cs'
+
+        silent update!
+
+        let l:result = system('php-cs-fixer fix ' . expand('%') . ' --config="' . l:configfile . '"')
+
+        silent :edit!
+    endfunction
 
     " Customization
     autocmd FileType sql setlocal commentstring=--\ %s
