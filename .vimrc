@@ -44,7 +44,7 @@ set viminfo=!,'20,<50,s10,h
 " Better Completion
 " @see :h 'complete'
 set complete-=i
-set complete=.,w,b,t
+set complete=.,w,b
 set completeopt=longest,menuone,preview
 
 " Custom Interface
@@ -376,17 +376,27 @@ call plug#end()
 
 " Use Syntastic to diagnostics
 " PHPActor as LSP
-" :CocConfig append
+" ~/.vim/coc-settings.json
 "{
-"    "diagnostic.enable": false,
-"    "diagnostic.enableSign": false,
-"    "phpactor.enable": true,
-"    "phpactor.path": "/usr/local/bin/phpactor"
+"  "_suggest.autoTrigger": "trigger",
+"  "diagnostic.enable": false,
+"  "diagnostic.enableSign": false,
+"  "diagnostic.signOffset": 9999999,
+"  "phpactor.enable": true,
+"  "phpactor.path": "~/.vim/plugged/phpactor/bin/phpactor"
 "}
-
 " ~/.config/phpactor/phpactor.json
 "{
-"    "language_server_completion.trim_leading_dollar": true
+"  "language_server_code_transform.import_globals": true,
+"  "language_server_completion.trim_leading_dollar": true,
+"  "file_path_resolver.enable_logging": true,
+"  "completion_worse.disabled_completors": [],
+"  "indexer.exclude_patterns": [
+"    "\/tests\/coverage\/**\/*",
+"    "\/vendor\/**\/Tests\/**\/*",
+"    "\/vendor\/**\/tests\/**\/*",
+"    "\/vendor\/composer\/**\/*"
+"  ]
 "}
 
 " Themes
@@ -425,9 +435,9 @@ let g:multi_cursor_select_all_key = 'g<C-s>'
 " Snippets (Default Maps: <Tab> <C-j> <C-k>
 " @see https://github.com/SirVer/ultisnips
 let g:UltiSnipsEditSplit = 'vertical'
-let g:UltiSnipsExpandTrigger='<Tab>'
+let g:UltiSnipsExpandTrigger = '<Tab>'
 let g:UltiSnipsJumpForwardTrigger = '<Tab>'
-let g:UltiSnipsJumpBackwardTrigger='<S-Tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
 let g:UltiSnipsUsePythonVersion = 3
 
 " PHPVim
@@ -439,9 +449,6 @@ let g:user_emmet_leader_key = ','
 
 " Vim Snake
 let g:sneak#label = 1
-
-" PHPActor
-let g:phpactorOmniError = v:true
 
 " Goyo
 " @see https://github.com/junegunn/goyo.vim
@@ -557,8 +564,6 @@ inoremap <silent> <expr> <C-@> coc#refresh()
 " Make <Enter> and <Tab> auto-select the first completion item
 inoremap <silent> <expr> <Enter> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
-" inoremap <silent> <expr> <Tab> pumvisible() ? coc#_select_confirm()
-"                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
 
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
@@ -742,10 +747,10 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>rmf :call phpactor#MoveFile()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rcf :call phpactor#CopyFile()<Enter>
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>ram :call PHPModify('implement_contracts')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call PHPModify('add_missing_properties')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rfc :call PHPModify('complete_constructor')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>run :call PHPModify('fix_namespace_class_name')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>ram :call <SID>phpactor('implement_contracts')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call <SID>phpactor('add_missing_properties')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rfc :call <SID>phpactor('complete_constructor')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>run :call <SID>phpactor('fix_namespace_class_name')<Enter>
 
     autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-U>call phpactor#ExtractMethod()<Enter>
@@ -757,12 +762,10 @@ augroup AutoCommands
 "     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
 "     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
 
-    function! PHPModify(transformer) abort
-        silent write
+    function! s:phpactor(transformer) abort
+        silent update!
 
-        normal! ggdG
-        execute 'read !phpactor class:transform ' . expand('%') . ' --transform=' . a:transformer
-        normal! ggdd
+        let l:result = system(g:phpactorbinpath . ' class:transform ' . expand('%') . ' --transform="' . a:transformer . '"')
 
         silent :edit!
     endfunction
