@@ -77,6 +77,7 @@ set numberwidth=1
 set relativenumber
 set cursorline
 set showmatch
+set matchtime=2
 set list
 set listchars=space:·,tab:»-
 set colorcolumn=121
@@ -141,7 +142,7 @@ function! ChangeStatuslineColor() abort
             execute "highlight! StatusLine guifg=#fb4934 guibg=#1a2528 ctermfg=175 ctermbg=237"
         endif
 
-        :silent redraw
+        silent redraw
     catch
         let &readonly = &readonly
     endtry
@@ -149,7 +150,7 @@ function! ChangeStatuslineColor() abort
     return ''
 endfunction
 
-function! GitBranch() abort
+function! s:get_branch() abort
     let l:branchname = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
 
     return strlen(l:branchname) > 0 ? l:branchname : ''
@@ -174,7 +175,7 @@ set statusline+=\ %3{&filetype}
 set statusline+=\ #:%3b
 set statusline+=\ l:%3l/%3L\ c:%3c
 set statusline+=\%<\ %{&fileencoding?&fileencoding:&encoding}
-" set statusline+=\ %<%{GitBranch()}
+" set statusline+=\ %<%{get_branch()}
 set statusline+=\ @\ %{strftime(\"%H:%M\")}
 
 " Maps
@@ -237,26 +238,39 @@ nnoremap <silent> <Leader>as :execute "normal! mcA;\e`c"<Enter>
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
 
-nnoremap <silent> <Leader>gb :echo 'Branch: ' . GitBranch()<Enter>
+nnoremap <silent> <Leader>gb :echo 'Branch: ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path: ' . getcwd()<Enter>
 
-nnoremap <silent> <Leader>gl :call GotoLine()<Enter>
-nnoremap <silent> <Leader>gt :call RunTestInConsole()<Enter>
+nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_function_name()<Enter>
+nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
+nnoremap <silent> <Leader>gc :call <SID>get_current_function()<Enter>
 
-function! GotoLine() abort
-    let l:parts = split(expand('<cWORD>'), ':')
-    let l:file = strlen(l:parts[0]) > 0 ? l:parts[0] : ''
-    let l:line = strlen(l:parts[1]) > 0 ? l:parts[1] : 0
+function! s:go_line() abort
+    try
+        if match(getline('.'), ':') < 0
+            throw 'Line dont has colon.'
+        endif
 
-    if filereadable(l:file) && l:line > 0
-        execute 'edit +' . l:line . ' ' . l:file
-    endif
+        let l:parts = split(expand('<cWORD>'), ':')
+        let l:file = strlen(l:parts[0]) > 0 ? l:parts[0] : ''
+        let l:line = strlen(l:parts[1]) > 0 ? l:parts[1] : 0
+
+        if filereadable(l:file) && l:line > 0
+            execute 'edit +' . l:line . ' ' . l:file
+        endif
+    catch
+        echohl WarningMsg
+        echomsg 'Not is a valid line.'
+        echohl None
+    endtry
+
+    return 0
 endfunction
 
-function! RunTestInConsole() abort
-    if expand('%:e') ==# 'php'
+function! s:get_current_function() abort
+    if (index(['php'], &filetype) >= 0)
         let l:testname = expand('%:t:r')
-        let l:testfunction = GetFunctionName()
+        let l:testfunction = <SID>get_function_name()
         let l:testcommand = l:testname
 
         if len(l:testfunction) > 0
@@ -275,7 +289,7 @@ function! RunTestInConsole() abort
     return 0
 endfunction
 
-function! GetFunctionName() abort
+function! s:get_function_name() abort
     let l:parts = split(getline(search("^\\( \\{4}\\|\\t\\)\\?\\a\\S\\{-}\\( \\a\\S\\{-}\\)\\+\\s\\?(.*[^;]\\s\\{-}$", 'bWnc')), ' ')
     let l:counter = 1
     let l:result = ''
@@ -298,8 +312,9 @@ inoremap <silent> jj <Esc>
 " Tabs navigation
 noremap <silent> <Tab> <C-^>
 noremap <silent> <Leader><Leader> :Buffers<Enter>
-noremap <silent> <Leader>j :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
-noremap <silent> <Leader>k :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bnext<Enter>
+" noremap <silent> <Leader>j :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bnext<Enter>
+" noremap <silent> <Leader>k :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
+noremap <silent> <S-Tab> :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
 
 " Better split switching
 map <C-h> <C-W>h
@@ -329,6 +344,7 @@ if !has('gui_running')
 endif
 
 " Plugins
+" @see https://github.com/junegunn/vim-plug
 call plug#begin('~/.vim/plugged')
 
 Plug 'gruvbox-community/gruvbox'
@@ -347,29 +363,30 @@ Plug 'justinmk/vim-sneak'
 Plug 'machakann/vim-swap'
 Plug 'Raimondi/delimitMate'
 " Plug 'luochen1990/rainbow'
-Plug 'terryma/vim-multiple-cursors'
-
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'vim-syntastic/syntastic'
-Plug 'StanAngeloff/php.vim'
-Plug 'preservim/tagbar'
-Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}
-" Plug 'vim-scripts/autotags'
-Plug 'SirVer/ultisnips'
-Plug 'sniphpets/sniphpets'
-Plug 'vim-test/vim-test', {'for': 'php'}
-Plug 'vim-vdebug/vdebug', {'for': 'php'}
-Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
+Plug 'mg979/vim-visual-multi'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'skywind3000/asyncrun.vim'
 Plug 'airblade/vim-gitgutter'
-Plug 'AndrewRadev/tagalong.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'vim-syntastic/syntastic'
+Plug 'SirVer/ultisnips'
+Plug 'sniphpets/sniphpets'
 Plug 'junegunn/goyo.vim'
-" Plug 'farmergreg/vim-lastplace'
-Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
+
+Plug 'StanAngeloff/php.vim', {'for': 'php'}
+Plug 'preservim/tagbar', {'for': 'php'}
+Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}
+Plug 'vim-test/vim-test', {'for': 'php'}
+Plug 'vim-vdebug/vdebug', {'for': 'php'}
+Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
+
+" Plug 'vim-scripts/autotags', {'for': 'c'}
 " Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
+
+Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}
+Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
 Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}
 
 call plug#end()
@@ -423,16 +440,19 @@ let g:sonokai_better_performance = 1
 let g:jellybeans_use_term_italics = 1
 
 " DelitMate
+" @see https://github.com/Raimondi/delimitMate
 let g:delimitMate_expand_cr = 1
 let g:delimitMate_smart_quotes = 1
 let g:delimitMate_expand_inside_quotes = 0
 let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 
 " Multiple Cursors
-let g:multi_cursor_select_all_word_key = '<C-s>'
-let g:multi_cursor_select_all_key = 'g<C-s>'
+" @see https://github.com/mg979/vim-visual-multi
+let g:VM_maps = {}
+let g:VM_maps['Find Under'] = '<C-n>'
+let g:VM_maps["Select All"] = '<C-s>'
 
-" Snippets (Default Maps: <Tab> <C-j> <C-k>
+" Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
 let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsExpandTrigger = '<Tab>'
@@ -441,13 +461,16 @@ let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
 let g:UltiSnipsUsePythonVersion = 3
 
 " PHPVim
+" @see https://github.com/StanAngeloff/php.vim
 let g:php_version_id = 70400
 
 " Emmet
+" @see https://github.com/mattn/emmet-vim
 let g:user_emmet_install_global = 0
 let g:user_emmet_leader_key = ','
 
 " Vim Snake
+" @see https://github.com/justinmk/vim-sneak
 let g:sneak#label = 1
 
 " Goyo
@@ -504,6 +527,7 @@ let g:syntastic_style_error_symbol = 'S'
 let g:syntastic_style_warning_symbol = 's'
 
 " Vim Debug
+" @see vim-vdebug/vdebug
 let g:vdebug_keymap = {
 \    'run' : '<F5>',
 \    'step_into' : '<F7>',
@@ -543,7 +567,7 @@ let g:coc_global_extensions = [
 " Use <Ctrl-Space> to trigger completion.
 inoremap <silent> <expr> <C-@> coc#refresh()
 
-" Make <Enter> and <Tab> auto-select the first completion item
+" Make <Enter> auto-select the first completion item
 inoremap <silent> <expr> <Enter> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
 
@@ -578,9 +602,9 @@ if has('patch-8.2.0750')
 endif
 
 " @see https://github.com/vim/vim/issues/4738
-nnoremap gx :call OpenURLUnderCursor()<Enter>
+nnoremap gx :call <SID>go_url()<Enter>
 
-function! OpenURLUnderCursor() abort
+function! s:go_url() abort
     let l:uri = expand('<cWORD>')
     let l:uri = substitute(l:uri, '?', '\\?', '')
     let l:uri = shellescape(l:uri, 1)
@@ -588,7 +612,7 @@ function! OpenURLUnderCursor() abort
     if l:uri != ''
         silent execute "!/opt/firefox/firefox '" . l:uri . "'"
 
-        :silent redraw!
+        silent redraw!
     endif
 endfunction
 
@@ -597,11 +621,11 @@ endfunction
 augroup LargeFile
     autocmd!
 
-    autocmd VimEnter * nested call CheckLargeFile()
-    autocmd BufReadPre * call CheckLargeFile()
+    autocmd VimEnter * nested call <SID>check_large_file()
+    autocmd BufReadPre * call <SID>check_large_file()
 augroup END
 
-function! CheckLargeFile() abort
+function! s:check_large_file() abort
     let l:maxsize = 1024 * 1024 * 2
     let l:fsize = getfsize(expand('<afile>'))
 
@@ -643,8 +667,8 @@ let g:rainbow_active = 1
 " @see https://github.com/AndrewRadev/tagalong.vim
 let g:tagalong_filetypes = ['html', 'xml']
 
-nnoremap <Leader>lp :call CreateArgumentsList()<Enter>
-function! CreateArgumentsList() abort
+nnoremap <Leader>lp :call <SID>create_list_parameters()<Enter>
+function! s:create_list_parameters() abort
     let l:saved_unnamed_register = @@
 
     if match(getline('.'), '(') > 0 && match(getline('.'), ')') > 0 && match(getline('.'), ',') > 0
@@ -658,20 +682,20 @@ function! CreateArgumentsList() abort
             call remove(l:arguments_list, 0)
         endfor
 
-        execute "normal! \"_di(i\r" . l:command_string . "\eJkg_"
+        execute "normal! \"_di(i\r" . l:command_string . "\e"
 
-        echomsg 'Arguments list created'
+        echomsg 'Parameter list created'
     else
         echohl WarningMsg
-        echomsg 'Arguments list not found'
+        echomsg 'Not is a parameter list'
         echohl None
     endif
 
     let @@ = l:saved_unnamed_register
 endfunction
 
-nnoremap <Leader>la :call CreateArrayList()<Enter>
-function! CreateArrayList() abort
+nnoremap <Leader>la :call <SID>create_list_array()<Enter>
+function! s:create_list_array() abort
     let l:saved_unnamed_register = @@
 
     if match(getline('.'), '[') > 0 && match(getline('.'), ']') > 0 && match(getline('.'), ',') > 0
@@ -684,12 +708,12 @@ function! CreateArrayList() abort
             let l:command_string .= "\t" . trim(l:argument) . ",\r"
         endfor
 
-        execute "normal! \"_di[i\r" . l:command_string . "\eJkg_"
+        execute "normal! \"_di[i\r" . l:command_string . "\e"
 
         echomsg 'Array list created'
     else
         echohl WarningMsg
-        echomsg 'Array list not found'
+        echomsg 'Not is an array list'
         echohl None
     endif
 
@@ -722,6 +746,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
 
     " PHP Refactor
+    " @see https://github.com/phpactor/phpactor
     autocmd FileType php nnoremap <silent> <buffer><Leader>rnc :call phpactor#ClassNew()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rxc :call phpactor#ClassExpand()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>ruu :call phpactor#ImportMissingClasses()<Enter>
@@ -735,7 +760,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>run :call <SID>phpactor('fix_namespace_class_name')<Enter>
 
     autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
-    autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-U>call phpactor#ExtractMethod()<Enter>
+    autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rec :call phpactor#ExtractConstant()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>ree :call phpactor#ExtractExpression(v:true)<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
@@ -749,7 +774,7 @@ augroup AutoCommands
 
         let l:result = system(g:phpactorbinpath . ' class:transform ' . expand('%') . ' --transform="' . a:transformer . '"')
 
-        silent :edit!
+        silent edit!
     endfunction
 
     " PHPFixer
@@ -758,7 +783,7 @@ augroup AutoCommands
     function! s:phpfixer() abort
         if bufname('%') == ''
             echohl WarningMsg
-            echomsg 'Save file first!. Canceled.'
+            echomsg 'Save file first!.'
             echohl None
 
             return 0
@@ -770,7 +795,7 @@ augroup AutoCommands
 
         let l:result = system('php-cs-fixer fix ' . expand('%') . ' --config="' . l:configfile . '"')
 
-        silent :edit!
+        silent edit!
     endfunction
 
     " Customization
@@ -785,7 +810,9 @@ augroup AutoCommands
     autocmd FocusLost * let s:confirm = &confirm | setglobal noconfirm | silent! update | let &confirm = s:confirm
 
     " Rg not find in file names
-    function! RipgrepFzf(query, fullscreen) abort
+    command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
+
+    function! s:rgfzf(query, fullscreen) abort
         let l:command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
         let l:initial_command = printf(l:command_fmt, shellescape(a:query))
         let l:reload_command = printf(l:command_fmt, '{q}')
@@ -794,12 +821,10 @@ augroup AutoCommands
         call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
     endfunction
 
-    command! -nargs=* -bang Rg call RipgrepFzf(<q-args>, <bang>0)
-
     " Save|Load sessions
     let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . '.vim')
 
-    function! LoadSession() abort
+    function! s:sessionload() abort
         if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
             execute 'source ' . g:session_file
             execute 'highlight! link SignColumn LineNr'
@@ -811,7 +836,7 @@ augroup AutoCommands
         endif
     endfunction
 
-    function! SaveSession() abort
+    function! s:sessionsave() abort
         if isdirectory('.git')
             execute 'mksession! ' . g:session_file
 
@@ -819,10 +844,10 @@ augroup AutoCommands
         endif
     endfunction
 
-    autocmd VimEnter * nested call LoadSession()
+    autocmd VimEnter * nested call <SID>sessionload()
     autocmd InsertEnter * :set norelativenumber
     autocmd InsertLeave * :set relativenumber
-    autocmd VimLeavePre * call SaveSession()
+    autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimResized * wincmd =
 augroup END
 
