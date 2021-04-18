@@ -1,30 +1,34 @@
 " VIM Config
 " @see https://blog.joren.ga/tools/vim-learning-steps
 " Build-in improve % option (works with if statements)
-runtime macros/matchit.vim
+" runtime macros/matchit.vim
 
 " @see https://vim.fandom.com/wiki/Example_vimrc
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
 " @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
 " @See :h quickref
-set nomodeline
-set exrc
-set secure
-set hidden
-set wildmenu
-set wildmode=list:longest,full
-set wildignore+=.git,.vscode,.idea,.vimrc,
+set nomodeline                                                       " Security!
+set secure                                                           " Security!: Not autocmd in .vimrc file
+set exrc                                                             " Always search config in .vimrc file
+set hidden                                                           " Allow change between buffer without save
+set wildmenu                                                         " Autocomplete in command-line with <Tab>
+set wildmode=full
+" set wildmode=list:longest,full
+set wildignore+=.git,.vscode,.idea,.vimrc,                           " Ignored files in command-line autocomplete
 set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,
 set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*,
 set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
 set wildignore+=node_modules,vendor,*/coverage/*,
-set lazyredraw
-set redrawtime=3000
+set lazyredraw                                                       " No redraw when macro is running
+set redrawtime=3000                                                  " Time for highlighting: +size need +time
 set nobackup
 set nowritebackup
 set noswapfile
 set path=.,,
-set sessionoptions-=buffers sessionoptions-=options sessionoptions+=globals sessionoptions-=terminal
+set sessionoptions+=globals
+" set sessionoptions-=buffers
+set sessionoptions-=options
+set sessionoptions-=terminal
 set viewoptions-=options
 
 " Better Search
@@ -39,7 +43,7 @@ endif
 
 " Tell vim to remember certain things when we exit
 " @see https://vimhelp.org/options.txt.html#%27viminfo%27
-set viminfo=!,'20,<50,s10,h
+" set viminfo=!,'20,<50,s10,h                                          " TODO: Session not works
 
 " Better Completion
 " @see :h 'complete'
@@ -76,8 +80,8 @@ set number
 set numberwidth=1
 set relativenumber
 set cursorline
-set showmatch
-set matchtime=2
+set noshowmatch
+set matchtime=0
 set list
 set listchars=space:·,tab:»-
 set colorcolumn=121
@@ -138,7 +142,7 @@ function! ChangeStatuslineColor() abort
         elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
             execute "highlight! StatusLine guifg=#d3869b guibg=#1a2528 ctermfg=175 ctermbg=237"
         else
-            echo 'Mode no color: ' . mode()
+            echomsg 'Mode no color: ' . mode()
             execute "highlight! StatusLine guifg=#fb4934 guibg=#1a2528 ctermfg=175 ctermbg=237"
         endif
 
@@ -216,7 +220,7 @@ map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 " Visual / Select and Normal Mode
-noremap <silent> <F10> :edit ~/.vimrc<Enter>
+noremap <silent> <F10> :if expand('%:t:r') == '.vimrc'<Enter> :PlugInstall<Enter> :else<Enter> :edit ~/.vimrc<Enter> :endif<Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT _vg_
 
@@ -225,25 +229,71 @@ nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>w :update<Enter>
-nnoremap <silent> <Leader>z :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
 nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>f :Rg<Enter>
 nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
+nnoremap <silent> <Leader>q :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
 
-nnoremap <silent> <Leader>x :execute "normal! mc$x\e`c"<Enter>
-nnoremap <silent> <Leader>ac :execute "normal! mcA,\e`c"<Enter>
-nnoremap <silent> <Leader>as :execute "normal! mcA;\e`c"<Enter>
+nnoremap <silent> <Leader>as :call <SID>append_char()<Enter>
 
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
+nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter> :echo 'Docker starting...'<Enter>
 
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path: ' . getcwd()<Enter>
 
 nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_function_name()<Enter>
 nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
-nnoremap <silent> <Leader>gc :call <SID>get_current_function()<Enter>
+nnoremap <silent> <Leader>gc :call <SID>get_current_function(1)<Enter>
+
+nnoremap <silent> <Leader>gts :call <SID>run_test('')<Enter>
+nnoremap <silent> <Leader>gtt :call <SID>run_test(<SID>get_current_function(0))<Enter>
+
+function! s:append_char() abort
+    let l:saved_unnamed_register = @@
+    execute "normal! ma$vy"
+    let l:lastchar = @@
+
+    if l:lastchar == ';'
+        execute "normal! xA,\e"
+    elseif l:lastchar == ','
+        execute "normal! xA;\e"
+    elseif l:lastchar == ' '
+        execute "normal! x$x\e"
+    else
+        echomsg 'Nothing to append with: ' . l:lastchar
+    endif
+
+    execute "normal! `a"
+    let @@ = l:saved_unnamed_register
+endfunction
+
+function! s:run_test(testname) abort
+    try
+        let l:error = 0
+        let l:binary = getcwd() . '/bin/phpunit'
+        let l:filter = strlen(a:testname) > 0 ? '--filter ' . a:testname : ''
+
+        if !filereadable(l:binary)
+            let l:error = 1
+            let l:binary = getcwd() . '/vendor/bin/phpunit'
+        endif
+
+        if l:error && !filereadable(l:binary)
+            throw 'Not found PHPUnit'
+        endif
+
+        execute 'AsyncRun -raw -silent ' . l:binary . ' --stop-on-failure --no-coverage ' . l:filter
+
+        echomsg 'Running ' . l:binary . '... <F9> to see'
+    catch
+        echohl WarningMsg
+        echomsg 'Not found phpunit in: ' . getcwd()
+        echohl None
+    endtry
+endfunction
 
 function! s:go_line() abort
     try
@@ -267,26 +317,29 @@ function! s:go_line() abort
     return 0
 endfunction
 
-function! s:get_current_function() abort
+function! s:get_current_function(copy) abort
     if (index(['php'], &filetype) >= 0)
-        let l:testname = expand('%:t:r')
-        let l:testfunction = <SID>get_function_name()
-        let l:testcommand = l:testname
+        let l:filename = expand('%:t:r')
+        let l:functionname = <SID>get_function_name()
+        let l:namespace = l:filename
 
-        if len(l:testfunction) > 0
-            let l:testcommand .= '::' . l:testfunction
+        if len(l:functionname) > 0
+            let l:namespace .= '::' . l:functionname
         endif
 
-        let @+=l:testcommand
+        if a:copy == 1
+            let @+=l:namespace
+            echomsg 'Copied: ' . l:namespace
+        endif
 
-        echomsg 'Copied: ' . l:testcommand
-    else
+        return l:namespace
+    elseif a:copy == 1
         echohl WarningMsg
         echomsg 'Not is a php file.'
         echohl None
     endif
 
-    return 0
+    return ''
 endfunction
 
 function! s:get_function_name() abort
@@ -351,43 +404,44 @@ Plug 'gruvbox-community/gruvbox'
 Plug 'dracula/vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'sainnhe/sonokai'
-Plug 'nanotech/jellybeans.vim'
+Plug 'jacoborus/tender.vim'
+Plug 'fenetikm/falcon'
 
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-abolish'
-Plug 'wellle/targets.vim'
-" Plug 'michaeljsmith/vim-indent-object'
-Plug 'justinmk/vim-sneak'
-Plug 'machakann/vim-swap'
-Plug 'Raimondi/delimitMate'
-" Plug 'luochen1990/rainbow'
-Plug 'mg979/vim-visual-multi'
+Plug 'tpope/vim-commentary'                                          " gcc
+Plug 'tpope/vim-surround'                                            " cs"', viwS'
+Plug 'tpope/vim-repeat'                                              " Repeat: surround and other more
+" Plug 'tpope/vim-abolish'
+Plug 'wellle/targets.vim'                                            " cia, caa, dia, daa
+" " Plug 'michaeljsmith/vim-indent-object'
+Plug 'justinmk/vim-sneak'                                            " f, F with super powers: s{2-chars}, S{2-chars}
+Plug 'machakann/vim-swap'                                            " Swag args: g>, g<
+Plug 'Raimondi/delimitMate'                                          " Append close: ', ", ), ], etc
+" " Plug 'luochen1990/rainbow'
+Plug 'mg979/vim-visual-multi'                                        " <C-n>, <C-s>
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'skywind3000/asyncrun.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'vim-syntastic/syntastic'
-Plug 'SirVer/ultisnips'
-Plug 'sniphpets/sniphpets'
-Plug 'junegunn/goyo.vim'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}                      " Autocomplete
+Plug 'skywind3000/asyncrun.vim'                                      " Async tasks from vim: git add, docker start, etc
+Plug 'airblade/vim-gitgutter'                                        " Show changes in git
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }                  " Open and find files
+Plug 'junegunn/fzf.vim'                                              " using a fuzzy finder
+" Plug 'vim-syntastic/syntastic'
+Plug 'SirVer/ultisnips'                                              " Performance using shortcuts
+Plug 'sniphpets/sniphpets'                                           " PHP snippet with namespace resolve
+" Plug 'junegunn/goyo.vim'
 
-Plug 'StanAngeloff/php.vim', {'for': 'php'}
-Plug 'preservim/tagbar', {'for': 'php'}
-Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}
-Plug 'vim-test/vim-test', {'for': 'php'}
-Plug 'vim-vdebug/vdebug', {'for': 'php'}
-Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'}
+Plug 'StanAngeloff/php.vim', {'for': 'php'}                          " Better highlight syntax for PHP: unmanteined
+Plug 'preservim/tagbar', {'for': ['php', 'c']}                       " Navigate: methods, vars, etc
+Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}                   " Tagbar for PHP in on-the-fly
+Plug 'vim-test/vim-test', {'for': 'php'}                             " Run test: <Leader>{tt|tf|ts|tg}
+" Plug 'vim-vdebug/vdebug', {'for': 'php'}
+Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'} " LSP and refactor tool
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
 " Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 
-Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}
-Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
-Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}
+" Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}
+" Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
+Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}     " Preview html colors
 
 call plug#end()
 
@@ -437,7 +491,7 @@ let g:sonokai_style = 'andromeda'
 let g:sonokai_enable_italic = 1
 let g:sonokai_better_performance = 1
 
-let g:jellybeans_use_term_italics = 1
+let g:one_allow_italics = 1
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -586,7 +640,9 @@ function! s:show_documentation() abort
         try
             execute 'help ' . l:word
         catch
-            echo 'Not found: ' . l:word
+            echohl WarningMsg
+            echomsg 'Not found: ' . l:word
+            echohl None
         endtry
     elseif (coc#rpc#ready())
         call CocActionAsync('doHover')
@@ -720,6 +776,19 @@ function! s:create_list_array() abort
     let @@ = l:saved_unnamed_register
 endfunction
 
+noremap <silent> <F9> :call <SID>quickfix_toggle(0)<Enter>
+function! s:quickfix_toggle(forced)
+    if exists('g:qfix_win') && a:forced == 0
+        cclose
+        unlet g:qfix_win
+    else
+        copen 10
+        let g:qfix_win = bufnr('$')
+    endif
+
+    return 0
+endfunction
+
 augroup AutoCommands
     autocmd!
 
@@ -801,10 +870,12 @@ augroup AutoCommands
     " Customization
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType html,css,vue EmmetInstall
+    autocmd FileType html,xml setlocal matchpairs+=<:>
+    autocmd FileType php,c setlocal matchpairs-=<:>
+    autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html
-    autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
 
     " Autosave
     autocmd FocusLost * let s:confirm = &confirm | setglobal noconfirm | silent! update | let &confirm = s:confirm
@@ -857,17 +928,16 @@ augroup ThemeColors
     set background=dark
 
     try
-        let g:weekDay = str2nr(strftime('%w') - 1)
-        let g:colorschemes = ['jellybeans', 'dracula', 'nord', 'sonokai']
+        let g:weekDay = str2nr(strftime('%w'))
+        let g:colorschemes = ['tender', 'falcon', 'dracula', 'nord', 'sonokai']
         let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
-        " colorscheme solarized " Never
 
         execute 'colorscheme ' . g:colorscheme
     catch /^Vim\%((\a\+)\)\=:E185/
         colorscheme evening
 
         echohl WarningMsg
-        echo 'Not found colorscheme: ' . g:colorscheme
+        echomsg 'Not found colorscheme: ' . g:colorscheme
         echohl None
     endtry
 
@@ -889,14 +959,14 @@ augroup ThemeColors
     highlight! link GitGutterChangeDeleteLineNr Underlined
 
     " Syntastic with same color of theme
-    highlight! SyntasticErrorSign guifg=#ff2222 ctermfg=1
-    highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
+    " highlight! SyntasticErrorSign guifg=#ff2222 ctermfg=1
+    " highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
 
     " Goyo
-    autocmd! User GoyoLeave nested
-        \ highlight! link SignColumn LineNr |
-        \ highlight! SpecialKey ctermfg=239 guifg=#504945 |
-        \ highlight! Normal guibg=NONE ctermbg=NONE
+    " autocmd! User GoyoLeave nested
+    "     \ highlight! link SignColumn LineNr |
+    "     \ highlight! SpecialKey ctermfg=239 guifg=#504945 |
+    "     \ highlight! Normal guibg=NONE ctermbg=NONE
 augroup END
 
 if filereadable(expand('~/.vimrc.local'))
