@@ -12,8 +12,7 @@ set secure                                                           " Security!
 set exrc                                                             " Always search config in .vimrc file
 set hidden                                                           " Allow change between buffer without save
 set wildmenu                                                         " Autocomplete in command-line with <Tab>
-set wildmode=full
-" set wildmode=list:longest,full
+set wildmode=full                                                    " Command complete as zsh"
 set wildignore+=.git,.vscode,.idea,.vimrc,                           " Ignored files in command-line autocomplete
 set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,
 set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*,
@@ -25,8 +24,9 @@ set nobackup
 set nowritebackup
 set noswapfile
 set path=.,,
+
 set sessionoptions+=globals
-" set sessionoptions-=buffers
+set sessionoptions-=buffers
 set sessionoptions-=options
 set sessionoptions-=terminal
 set viewoptions-=options
@@ -55,6 +55,7 @@ set completeopt=longest,menuone,preview
 set title
 set novisualbell
 set autoread
+set autowrite
 set backspace=indent,eol,start
 set clipboard=unnamedplus
 set splitbelow
@@ -221,14 +222,18 @@ map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!
 
 " Visual / Select and Normal Mode
+noremap <Leader>s <kDivide>
+noremap <Leader>S ?
 noremap <silent> <F10> :if expand('%:t:r') == '.vimrc'<Enter> :PlugInstall<Enter> :else<Enter> :edit ~/.vimrc<Enter> :endif<Enter><Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT _vg_
 
+
 " Normal Mode
-nnoremap <silent> <Leader>y "+y
-nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>c "_c
+nnoremap <silent> <Leader>d "_d
+nnoremap <silent> <Leader>x "_x
+nnoremap <silent> <Leader>y "+y
 
 nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>W :wall<Enter> :echo 'All saved!'<Enter>
@@ -236,15 +241,15 @@ nnoremap <silent> <Leader>W :wall<Enter> :echo 'All saved!'<Enter>
 nnoremap <silent> <Leader>n :echo 'File: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expand('%:p')<Enter>
 
-
 nnoremap <silent> <Leader>f :call <SID>find_filter('n')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('w')<Enter>
 vnoremap <silent> <Leader>f :<c-u>call <SID>find_filter(visualmode())<Enter>
 
-nnoremap <silent> <Leader>z :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter><Enter>
+nnoremap <silent> <Leader>z :if !&filetype<Enter> :bwipeout!<Enter> :else<Enter> :update<Enter> :bwipeout<Enter> :endif<Enter><Enter>
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
 nnoremap <silent> <Leader>as :call <SID>append_char()<Enter>
+nnoremap <silent> <Leader>ad :execute "normal! ma$x\e`a"<Enter>
 
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
@@ -365,11 +370,49 @@ inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
 " Tabs navigation
-noremap <silent> <Tab> <C-^>
 noremap <silent> <Leader><Leader> :Buffers<Enter>
-" noremap <silent> <Leader>j :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bnext<Enter>
-" noremap <silent> <Leader>k :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
-noremap <silent> <S-Tab> :if &modifiable && !&readonly && &modified<Enter> :update<Enter> :endif<Enter> :bprevious<Enter>
+noremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
+noremap <silent> <S-Tab> :call <SID>cycling_buffers(-1)<Enter>
+
+function! s:cycling_buffers(incr) abort
+    if a:incr == 1
+                \ && bufexists(0)
+                \ && expand('#') != ''
+                \ && getbufvar(0, '&filetype') != 'help'
+        execute "normal! \<C-^>"
+
+        return
+    endif
+
+    let l:cbuffer = bufnr('%')
+    let l:lbuffer = bufnr('$')
+    let l:nbuffer = l:cbuffer + a:incr
+
+    while 1
+        if l:nbuffer != 0
+                    \ && bufexists(l:nbuffer)
+                    \ && bufname(l:nbuffer) != ''
+                    \ && getbufvar(l:nbuffer, '&filetype') != 'help'
+            execute ':buffer ' . l:nbuffer
+
+            break
+        else
+            let l:nbuffer = nbuffer + a:incr
+
+            if l:nbuffer < 1
+                let l:nbuffer = l:lbuffer
+            elseif l:nbuffer > l:lbuffer
+                let l:nbuffer = 1
+            endif
+
+            if l:nbuffer == l:cbuffer
+                echomsg 'Only buffer'
+
+                break
+            endif
+        endif
+    endwhile
+endfunction
 
 " Better split switching
 map <C-h> <C-W>h
@@ -875,9 +918,6 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html
-
-    " Autosave
-    autocmd FocusLost * let s:confirm = &confirm | setglobal noconfirm | silent! update | let &confirm = s:confirm
 
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
