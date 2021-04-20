@@ -60,6 +60,7 @@ set clipboard=unnamedplus
 set splitbelow
 set splitright
 set signcolumn=yes
+set pumheight=15
 
 if has('mouse')
     set mouse=
@@ -233,7 +234,7 @@ nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>f :Rg<Enter>
 nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
-nnoremap <silent> <Leader>q :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
+nnoremap <silent> <Leader>z :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
 
 nnoremap <silent> <Leader>as :call <SID>append_char()<Enter>
 
@@ -248,9 +249,6 @@ nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_function_name()<Enter
 nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
 nnoremap <silent> <Leader>gc :call <SID>get_current_function(1)<Enter>
 
-nnoremap <silent> <Leader>gts :call <SID>run_test('')<Enter>
-nnoremap <silent> <Leader>gtt :call <SID>run_test(<SID>get_current_function(0))<Enter>
-
 function! s:append_char() abort
     let l:saved_unnamed_register = @@
     execute "normal! ma$vy"
@@ -262,37 +260,14 @@ function! s:append_char() abort
         execute "normal! xA;\e"
     elseif l:lastchar == ' '
         execute "normal! x$x\e"
+    elseif (index(['"', "'", ')'], l:lastchar) >= 0)
+        execute "normal! A;\e"
     else
-        echomsg 'Nothing to append with: ' . l:lastchar
+        echomsg 'Nothing to append: ' . l:lastchar
     endif
 
     execute "normal! `a"
     let @@ = l:saved_unnamed_register
-endfunction
-
-function! s:run_test(testname) abort
-    try
-        let l:error = 0
-        let l:binary = getcwd() . '/bin/phpunit'
-        let l:filter = strlen(a:testname) > 0 ? '--filter ' . a:testname : ''
-
-        if !filereadable(l:binary)
-            let l:error = 1
-            let l:binary = getcwd() . '/vendor/bin/phpunit'
-        endif
-
-        if l:error && !filereadable(l:binary)
-            throw 'Not found PHPUnit'
-        endif
-
-        execute 'AsyncRun -raw -silent ' . l:binary . ' --stop-on-failure --no-coverage ' . l:filter
-
-        echomsg 'Running ' . l:binary . '... <F9> to see'
-    catch
-        echohl WarningMsg
-        echomsg 'Not found phpunit in: ' . getcwd()
-        echohl None
-    endtry
 endfunction
 
 function! s:go_line() abort
@@ -440,7 +415,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer ins
 " Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}
-" Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}
+Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}              " Performance using emmet syntax
 Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}     " Preview html colors
 
 call plug#end()
