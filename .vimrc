@@ -218,10 +218,10 @@ nnoremap <silent> N Nzzzv
 map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
 " Sudo rescue
-cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!
 
 " Visual / Select and Normal Mode
-noremap <silent> <F10> :if expand('%:t:r') == '.vimrc'<Enter> :PlugInstall<Enter> :else<Enter> :edit ~/.vimrc<Enter> :endif<Enter>
+noremap <silent> <F10> :if expand('%:t:r') == '.vimrc'<Enter> :PlugInstall<Enter> :else<Enter> :edit ~/.vimrc<Enter> :endif<Enter><Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT _vg_
 
@@ -229,12 +229,20 @@ noremap <silent> TT _vg_
 nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>c "_c
+
 nnoremap <silent> <Leader>w :update<Enter>
-nnoremap <silent> <Leader>n :echo expand('%:p')<Enter>
+nnoremap <silent> <Leader>W :wall<Enter> :echo 'All saved!'<Enter>
+
+nnoremap <silent> <Leader>n :echo 'File: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expand('%:p')<Enter>
-nnoremap <silent> <Leader>f :Rg<Enter>
-nnoremap <silent> <Leader>F :execute 'Rg ' . expand('<cword>')<Enter>
-nnoremap <silent> <Leader>z :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter>
+
+
+nnoremap <silent> <Leader>f :call <SID>find_filter('n')<Enter>
+nnoremap <silent> <Leader>F :call <SID>find_filter('w')<Enter>
+vnoremap <silent> <Leader>f :<c-u>call <SID>find_filter(visualmode())<Enter>
+
+nnoremap <silent> <Leader>z :if !&filetype<Enter> :bd!<Enter> :else<Enter> :update<Enter> :bd<Enter> :endif<Enter><Enter>
+nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
 nnoremap <silent> <Leader>as :call <SID>append_char()<Enter>
 
@@ -249,6 +257,25 @@ nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_function_name()<Enter
 nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
 nnoremap <silent> <Leader>gc :call <SID>get_current_function(1)<Enter>
 
+function! s:find_filter(type)
+    let l:saved_unnamed_register = @@
+    let l:filter = ''
+
+    if a:type ==# 'w'
+        let l:filter = expand('<cword>')
+    elseif a:type ==# 'v'
+        normal! `<v`>y
+        let l:filter = @@
+    elseif a:type ==# 'char'
+        normal! `[v`]y
+        let l:filter = @@
+    endif
+
+    let @@ = l:saved_unnamed_register
+
+    silent execute 'Rg ' . l:filter
+endfunction
+
 function! s:append_char() abort
     let l:saved_unnamed_register = @@
     execute "normal! ma$vy"
@@ -260,10 +287,10 @@ function! s:append_char() abort
         execute "normal! xA;\e"
     elseif l:lastchar == ' '
         execute "normal! x$x\e"
-    elseif (index(['"', "'", ')'], l:lastchar) >= 0)
+    elseif (index(['"', "'", ')', ']'], l:lastchar) >= 0) || match(l:lastchar, "\a") || match(l:lastchar, "\d")
         execute "normal! A;\e"
     else
-        echomsg 'Nothing to append: ' . l:lastchar
+        echomsg 'Nothing to append to: ' . l:lastchar
     endif
 
     execute "normal! `a"
@@ -380,7 +407,6 @@ Plug 'dracula/vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'sainnhe/sonokai'
 Plug 'jacoborus/tender.vim'
-Plug 'fenetikm/falcon'
 
 Plug 'tpope/vim-commentary'                                          " gcc
 Plug 'tpope/vim-surround'                                            " cs"', viwS'
@@ -399,12 +425,12 @@ Plug 'skywind3000/asyncrun.vim'                                      " Async tas
 Plug 'airblade/vim-gitgutter'                                        " Show changes in git
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }                  " Open and find files
 Plug 'junegunn/fzf.vim'                                              " using a fuzzy finder
-" Plug 'vim-syntastic/syntastic'
 Plug 'SirVer/ultisnips'                                              " Performance using shortcuts
 Plug 'sniphpets/sniphpets'                                           " PHP snippet with namespace resolve
 " Plug 'junegunn/goyo.vim'
 
 Plug 'StanAngeloff/php.vim', {'for': 'php'}                          " Better highlight syntax for PHP: unmanteined
+Plug 'vim-syntastic/syntastic', {'for': 'php'}                       " Diagnostic code on-the-fly
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                       " Navigate: methods, vars, etc
 Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}                   " Tagbar for PHP in on-the-fly
 Plug 'vim-test/vim-test', {'for': 'php'}                             " Run test: <Leader>{tt|tf|ts|tg}
@@ -465,8 +491,6 @@ let g:nord_italic_comments = 1
 let g:sonokai_style = 'andromeda'
 let g:sonokai_enable_italic = 1
 let g:sonokai_better_performance = 1
-
-let g:one_allow_italics = 1
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -904,7 +928,7 @@ augroup ThemeColors
 
     try
         let g:weekDay = str2nr(strftime('%w'))
-        let g:colorschemes = ['tender', 'falcon', 'dracula', 'nord', 'sonokai']
+        let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai']
         let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
 
         execute 'colorscheme ' . g:colorscheme
@@ -934,8 +958,8 @@ augroup ThemeColors
     highlight! link GitGutterChangeDeleteLineNr Underlined
 
     " Syntastic with same color of theme
-    " highlight! SyntasticErrorSign guifg=#ff2222 ctermfg=1
-    " highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
+    highlight! SyntasticErrorSign guifg=#ff2222 ctermfg=1
+    highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
 
     " Goyo
     " autocmd! User GoyoLeave nested
