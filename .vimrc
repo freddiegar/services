@@ -224,6 +224,7 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!
 " Visual / Select and Normal Mode
 noremap <Leader>s <kDivide>
 noremap <Leader>S ?
+noremap <silent> <F9> :PlugUpdate<Enter>
 noremap <silent> <F10> :if expand('%:t:r') == '.vimrc'<Enter> :PlugInstall<Enter> :else<Enter> :edit ~/.vimrc<Enter> :endif<Enter><Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT _vg_
@@ -472,7 +473,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }                  " Open and 
 Plug 'junegunn/fzf.vim'                                              " using a fuzzy finder
 Plug 'SirVer/ultisnips'                                              " Performance using shortcuts
 Plug 'sniphpets/sniphpets'                                           " PHP snippet with namespace resolve
-" Plug 'junegunn/goyo.vim'
+Plug 'junegunn/goyo.vim'                                             " Zen mode
 
 Plug 'StanAngeloff/php.vim', {'for': 'php'}                          " Better highlight syntax for PHP: unmanteined
 Plug 'vim-syntastic/syntastic', {'for': 'php'}                       " Diagnostic code on-the-fly
@@ -819,7 +820,7 @@ function! s:create_list_array() abort
     let @@ = l:saved_unnamed_register
 endfunction
 
-noremap <silent> <F9> :call <SID>quickfix_toggle(0)<Enter>
+noremap <silent> <F2> :call <SID>quickfix_toggle(0)<Enter>
 function! s:quickfix_toggle(forced)
     if exists('g:qfix_win') && a:forced == 0
         cclose
@@ -1003,10 +1004,10 @@ augroup ThemeColors
     highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
 
     " Goyo
-    " autocmd! User GoyoLeave nested
-    "     \ highlight! link SignColumn LineNr |
-    "     \ highlight! SpecialKey ctermfg=239 guifg=#504945 |
-    "     \ highlight! Normal guibg=NONE ctermbg=NONE
+    autocmd! User GoyoLeave nested
+        \ highlight! link SignColumn LineNr |
+        \ highlight! SpecialKey ctermfg=239 guifg=#504945 |
+        \ highlight! Normal guibg=NONE ctermbg=NONE
 augroup END
 
 if filereadable(expand('~/.vimrc.local'))
