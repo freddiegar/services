@@ -136,16 +136,16 @@ function! ChangeStatuslineColor() abort
         if (mode() =~# '\v(n|no|ni|c)')
             execute "highlight! link StatusLine LineNr"
         elseif (mode() =~# '\v^i')
-            execute "highlight! StatusLine guifg=#84a598 guibg=#1a2528 ctermfg=109 ctermbg=237"
+            execute "highlight! StatusLine cterm=reverse guifg=#84A598 guibg=#1D2021"
         elseif (mode() =~# '\v^R')
-            execute "highlight! StatusLine guifg=#8fbf7f guibg=#1a2528 ctermfg=72 ctermbg=237"
+            execute "highlight! StatusLine cterm=reverse guifg=#8FBF7F guibg=#1D2021"
         elseif (mode() =~# '\v(v|V|t|!)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
-            execute "highlight! StatusLine guifg=#fc802d guibg=#1a2528 ctermfg=172 ctermbg=237"
+            execute "highlight! StatusLine cterm=reverse guifg=#FC802D guibg=#1D2021"
         elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
-            execute "highlight! StatusLine guifg=#d3869b guibg=#1a2528 ctermfg=175 ctermbg=237"
+            execute "highlight! StatusLine cterm=reverse guifg=#D3869B guibg=#1D2021"
         else
             echomsg 'Mode no color: ' . mode()
-            execute "highlight! StatusLine guifg=#fb4934 guibg=#1a2528 ctermfg=175 ctermbg=237"
+            execute "highlight! StatusLine cterm=reverse guifg=#FB4934 guibg=#1D2021"
         endif
 
         silent redraw
@@ -181,7 +181,6 @@ set statusline+=\ %3{&filetype}
 set statusline+=\ #:%3b
 set statusline+=\ l:%3l/%3L\ c:%3c
 set statusline+=\%<\ %{&fileencoding?&fileencoding:&encoding}
-" set statusline+=\ %<%{get_branch()}
 set statusline+=\ @\ %{strftime(\"%H:%M\")}
 
 " Maps
@@ -241,7 +240,7 @@ nnoremap <silent> <Leader>W :wall<Enter> :echo 'All saved!'<Enter>
 nnoremap <silent> <Leader>n :echo 'File: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expand('%:p')<Enter>
 
-nnoremap <silent> <Leader>f :call <SID>find_filter('n')<Enter>
+nnoremap <silent> <Leader>f :call <SID>find_filter('e')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('w')<Enter>
 vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 
@@ -373,6 +372,7 @@ function! s:get_function_name() abort
     return substitute(l:result, '(.*', '', 'g')
 endfunction
 
+" Fast <Esc>
 inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
@@ -708,6 +708,7 @@ endif
 
 " @see https://github.com/vim/vim/issues/4738
 nnoremap gx :call <SID>go_url()<Enter>
+
 function! s:go_url() abort
     let l:uri = expand('<cWORD>')
     let l:uri = substitute(l:uri, '?', '\\?', '')
@@ -772,6 +773,7 @@ let g:rainbow_active = 1
 let g:tagalong_filetypes = ['html', 'xml']
 
 nnoremap <Leader>lp :call <SID>create_list_parameters()<Enter>
+
 function! s:create_list_parameters() abort
     let l:saved_unnamed_register = @@
 
@@ -799,6 +801,7 @@ function! s:create_list_parameters() abort
 endfunction
 
 nnoremap <Leader>la :call <SID>create_list_array()<Enter>
+
 function! s:create_list_array() abort
     let l:saved_unnamed_register = @@
 
@@ -825,6 +828,7 @@ function! s:create_list_array() abort
 endfunction
 
 noremap <silent> <F2> :call <SID>quickfix_toggle(0)<Enter>
+
 function! s:quickfix_toggle(forced)
     if exists('g:qfix_win') && a:forced == 0
         cclose
@@ -961,10 +965,10 @@ augroup AutoCommands
     endfunction
 
     autocmd VimEnter * nested call <SID>sessionload()
-    autocmd InsertEnter * :set norelativenumber
-    autocmd InsertLeave * :set relativenumber
+    autocmd InsertEnter * :setlocal norelativenumber
+    autocmd InsertLeave * :setlocal relativenumber
     autocmd VimLeavePre * call <SID>sessionsave()
-    autocmd VimResized * wincmd =
+    " autocmd VimResized * wincmd =
 augroup END
 
 augroup ThemeColors
@@ -986,32 +990,38 @@ augroup ThemeColors
         echohl None
     endtry
 
-    " Transparency
-    " Use #1D2021 in Terminal
-    highlight! Normal guibg=NONE ctermbg=NONE
+    function! s:themes() abort
+        " Transparency
+        " Use #1D2021 in Terminal
+        highlight! Normal guibg=NONE ctermbg=NONE
 
-    " SignColumn with same color of theme
-    highlight! link SignColumn LineNr
-    highlight! SpecialKey ctermfg=239 guifg=#504945
+        " SignColumn with same color of theme
+        highlight! link SignColumn LineNr
+        highlight! SpecialKey ctermfg=239 guifg=#504945
 
-    " GitGutter with same color of theme
-    highlight! GitGutterAdd guifg=#009900 ctermfg=2
-    highlight! GitGutterChange guifg=#bbbb00 ctermfg=3
-    highlight! GitGutterDelete guifg=#ff2222 ctermfg=1
-    highlight! link GitGutterAddLineNr Underlined
-    highlight! link GitGutterChangeLineNr Underlined
-    highlight! link GitGutterDeleteLineNr Underlined
-    highlight! link GitGutterChangeDeleteLineNr Underlined
+        " GitGutter with same color of theme
+        highlight! GitGutterAdd guifg=#009900 ctermfg=2
+        highlight! GitGutterChange guifg=#bbbb00 ctermfg=3
+        highlight! GitGutterDelete guifg=#ff2222 ctermfg=1
+        highlight! link GitGutterAddLineNr Underlined
+        highlight! link GitGutterChangeLineNr Underlined
+        highlight! link GitGutterDeleteLineNr Underlined
+        highlight! link GitGutterChangeDeleteLineNr Underlined
 
-    " Syntastic with same color of theme
-    highlight! SyntasticErrorSign guifg=#ff2222 ctermfg=1
-    highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
+        " Syntastic with same color of theme
+        highlight! SyntasticErrorSign guifg=#ff2222 ctermfg=1
+        highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
 
-    " Goyo
-    autocmd! User GoyoLeave nested
-        \ highlight! link SignColumn LineNr |
-        \ highlight! SpecialKey ctermfg=239 guifg=#504945 |
-        \ highlight! Normal guibg=NONE ctermbg=NONE
+        " Goyo
+        autocmd! User GoyoLeave nested
+            \ highlight! link SignColumn LineNr |
+            \ highlight! SpecialKey ctermfg=239 guifg=#504945 |
+            \ highlight! Normal guibg=NONE ctermbg=NONE
+    endfunction
+
+    call <SID>themes()
+
+    autocmd ColorScheme * call <SID>themes()
 augroup END
 
 if filereadable(expand('~/.vimrc.local'))
