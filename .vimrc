@@ -248,8 +248,8 @@ vnoremap <silent> <Leader>f :<c-u>call <SID>find_filter(visualmode())<Enter>
 nnoremap <silent> <Leader>z :if !&filetype<Enter> :bwipeout!<Enter> :else<Enter> :update<Enter> :bwipeout<Enter> :endif<Enter><Enter>
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
-nnoremap <silent> <Leader>as :call <SID>append_char()<Enter>
-nnoremap <silent> <Leader>ad :execute "normal! ma$x\e`a"<Enter>
+nnoremap <silent> <Leader>as :call <SID>append_char('c')<Enter>
+nnoremap <silent> <Leader>df :call <SID>append_char('d')<Enter>
 
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
@@ -281,17 +281,19 @@ function! s:find_filter(type)
     silent execute 'Rg ' . l:filter
 endfunction
 
-function! s:append_char() abort
+function! s:append_char(type) abort
     let l:saved_unnamed_register = @@
     execute "normal! ma$vy"
     let l:lastchar = @@
 
-    if l:lastchar == ';'
+    if a:type == 'd'
+        execute "normal! $x\e"
+    elseif l:lastchar == ';'
         execute "normal! xA,\e"
     elseif l:lastchar == ','
         execute "normal! xA;\e"
     elseif l:lastchar == ' '
-        execute "normal! x$x\e"
+        execute "normal! g_lD\e"
     elseif (index(['"', "'", ')', ']'], l:lastchar) >= 0) || match(l:lastchar, "\a") || match(l:lastchar, "\d")
         execute "normal! A;\e"
     else
@@ -701,7 +703,6 @@ endif
 
 " @see https://github.com/vim/vim/issues/4738
 nnoremap gx :call <SID>go_url()<Enter>
-
 function! s:go_url() abort
     let l:uri = expand('<cWORD>')
     let l:uri = substitute(l:uri, '?', '\\?', '')
