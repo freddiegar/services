@@ -229,7 +229,6 @@ noremap <silent> <F10> :if expand('%:t:r') == '.vimrc'<Enter> :PlugInstall<Enter
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT _vg_
 
-
 " Normal Mode
 nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>d "_d
@@ -244,13 +243,16 @@ nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expa
 
 nnoremap <silent> <Leader>f :call <SID>find_filter('n')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('w')<Enter>
-vnoremap <silent> <Leader>f :<c-u>call <SID>find_filter(visualmode())<Enter>
+vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 
 nnoremap <silent> <Leader>z :if !&filetype<Enter> :bwipeout!<Enter> :else<Enter> :update<Enter> :bwipeout<Enter> :endif<Enter><Enter>
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
-nnoremap <silent> <Leader>as :call <SID>append_char('c')<Enter>
-nnoremap <silent> <Leader>df :call <SID>append_char('d')<Enter>
+nnoremap <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
+nmap <Leader>as <Plug>AppendSemicolonRepeatable
+
+nnoremap <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
+nmap <Leader>df <Plug>DeleteFinalRepeatable
 
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
@@ -303,6 +305,8 @@ function! s:append_char(type) abort
 
     execute "normal! `a"
     let @@ = l:saved_unnamed_register
+
+    silent! call repeat#set("\<Plug>" . (a:type == 'a' ? 'AppendSemicolon' : 'DeleteFinal') . 'Repeatable', a:type)
 endfunction
 
 function! s:go_line() abort
