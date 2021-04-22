@@ -252,9 +252,12 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 
+nnoremap <silent> <Leader>gt :!git diff -w<Enter><Enter>
+nnoremap <silent> <Leader>gd :!git diff -w %<Enter><Enter>
+
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
-nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
 nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter> :echo 'Docker starting...'<Enter>
+nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
 
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path: ' . getcwd()<Enter>
@@ -341,6 +344,11 @@ function! s:go_line() abort
         if filereadable(l:file) && l:line > 0
             execute 'edit +' . l:line . ' ' . l:file
         endif
+
+        if (index(['php'], &filetype) >= 0)
+            " Not use ! <Bang>, it cancel printable
+            execute "normal \<C-w>w\<Enter>"
+        endif
     catch
         echohl WarningMsg
         echomsg 'Not is a valid line.'
@@ -396,6 +404,10 @@ endfunction
 inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
+" Not <Esc> in Insert Mode on
+inoremap <C-a> <C-o>^
+inoremap <C-e> <C-o>$
+
 " Tabs navigation
 noremap <silent> <Leader><Leader> :Buffers<Enter>
 noremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
@@ -405,6 +417,7 @@ function! s:cycling_buffers(incr) abort
     if a:incr == 1
                 \ && bufexists(0)
                 \ && expand('#') != ''
+                \ && expand('#') != expand('%')
                 \ && getbufvar(0, '&filetype') != 'help'
         execute "normal! \<C-^>g`\""
 
