@@ -223,8 +223,7 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!
 " Visual / Select and Normal Mode
 noremap <Leader>s <kDivide>
 noremap <Leader>S ?
-noremap <silent> <F9> :PlugUpdate<Enter>
-noremap <silent> <F10> :if expand('%:t:r') == '.vimrc'<Enter> :PlugInstall<Enter> :else<Enter> :edit ~/.vimrc<Enter> :endif<Enter><Enter>
+noremap <silent> <F10> :if expand('%:t:r') == '.vimrc'<Enter> :PlugUpdate<Enter> :else<Enter> :edit ~/.vimrc<Enter> :endif<Enter><Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT _vg_
 
@@ -247,11 +246,11 @@ vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 nnoremap <silent> <Leader>z :if !&filetype<Enter> :bwipeout!<Enter> :else<Enter> :update<Enter> :bwipeout<Enter> :endif<Enter><Enter>
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
-nnoremap <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
-nmap <Leader>as <Plug>AppendSemicolonRepeatable
+nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
+nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 
-nnoremap <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
-nmap <Leader>df <Plug>DeleteFinalRepeatable
+nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
+nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gd :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
@@ -462,8 +461,8 @@ Plug 'tpope/vim-commentary'                                          " gcc
 Plug 'tpope/vim-surround'                                            " cs"', viwS'
 Plug 'tpope/vim-repeat'                                              " Repeat: surround and other more
 " Plug 'tpope/vim-abolish'
-Plug 'wellle/targets.vim'                                            " cia, caa, dia, daa
-" " Plug 'michaeljsmith/vim-indent-object'
+Plug 'wellle/targets.vim'                                            " {operator}ia, {operator}aa
+Plug 'michaeljsmith/vim-indent-object'                               " Indent deep as object: {operator}ii, {operator}ai
 Plug 'justinmk/vim-sneak'                                            " f, F with super powers: s{2-chars}, S{2-chars}
 Plug 'machakann/vim-swap'                                            " Swag args: g>, g<
 Plug 'Raimondi/delimitMate'                                          " Append close: ', ", ), ], etc
@@ -487,8 +486,8 @@ Plug 'vim-test/vim-test', {'for': 'php'}                             " Run test:
 " Plug 'vim-vdebug/vdebug', {'for': 'php'}
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'} " LSP and refactor tool
 
-" Plug 'vim-scripts/autotags', {'for': 'c'}
-" Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
+Plug 'vim-scripts/autotags', {'for': 'c'}
+Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}              " Performance using emmet syntax
@@ -497,15 +496,16 @@ Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}     " Preview h
 call plug#end()
 
 " Use Syntastic to diagnostics
-" PHPActor as LSP
+" PHPActor as LSP for PHP
+" CLangd as LSP for C
 " ~/.vim/coc-settings.json
 "{
-"  "_suggest.autoTrigger": "trigger",
 "  "diagnostic.enable": false,
 "  "diagnostic.enableSign": false,
 "  "diagnostic.signOffset": 9999999,
 "  "phpactor.enable": true,
-"  "phpactor.path": "~/.vim/plugged/phpactor/bin/phpactor"
+"  "phpactor.path": "~/.vim/plugged/phpactor/bin/phpactor",
+"  "clangd.path": "/usr/local/clang_9.0.0/bin/clangd"
 "}
 " ~/.config/phpactor/phpactor.json
 "{
@@ -541,6 +541,7 @@ let g:nord_italic_comments = 1
 let g:sonokai_style = 'andromeda'
 let g:sonokai_enable_italic = 1
 let g:sonokai_better_performance = 1
+let g:sonokai_transparent_background = 1
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -664,7 +665,8 @@ let g:coc_global_extensions = [
     \ 'coc-html',
     \ 'coc-json',
     \ 'coc-yaml',
-    \ 'coc-phpactor'
+    \ 'coc-phpactor',
+    \ 'coc-clangd'
     \]
 
 " Use <Ctrl-Space> to trigger completion.
@@ -924,6 +926,7 @@ augroup AutoCommands
     autocmd FileType html,css,vue EmmetInstall
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php,c setlocal matchpairs-=<:>
+    autocmd FileType json setlocal softtabstop=2 shiftwidth=2
     autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html

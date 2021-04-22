@@ -140,7 +140,20 @@ if type rg &> /dev/null; then
 fi " >> ~/.zshrc
 ```
 
-## Ctags
+## C Development
+
+### LSP
+
+[See](https://llvm.org/docs/GettingStarted.html#overview)
+
+```bash
+cd ~
+curl -SL http://releases.llvm.org/9.0.0/clang%2bllvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz | tar -xJC .
+mv clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04 clang_9.0.0
+sudo mv clang_9.0.0 /usr/local
+```
+
+### Ctags
 
 echo "--recurse=yes
 --tag-relative=yes
