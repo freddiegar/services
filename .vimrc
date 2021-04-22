@@ -263,6 +263,25 @@ nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_function_name()<Enter
 nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
 nnoremap <silent> <Leader>gc :call <SID>get_current_function(1)<Enter>
 
+nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
+nmap <silent> dm <Plug>DeleteMethodRepeatable
+
+function! s:delete_method() abort
+    let l:saved_unnamed_register = @@
+
+    execute "normal! vaB\"_d"
+
+    execute "normal! -\"zyy+$"
+
+    if match(@@, 'function ') > 0
+        execute "normal! \"_d-\"_dd"
+    endif
+
+    let @@ = l:saved_unnamed_register
+
+    silent! call repeat#set("\<Plug>DeleteMethodRepeatable")
+endfunction
+
 function! s:find_filter(type)
     let l:saved_unnamed_register = @@
     let l:filter = ''
