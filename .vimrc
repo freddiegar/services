@@ -270,10 +270,10 @@ function! s:find_filter(type)
     if a:type ==# 'w'
         let l:filter = expand('<cword>')
     elseif a:type ==# 'v'
-        normal! `<v`>y
+        execute "normal! `<v`>\"zy"
         let l:filter = @@
     elseif a:type ==# 'char'
-        normal! `[v`]y
+        execute "normal! `[v`]\"zy"
         let l:filter = @@
     endif
 
@@ -284,17 +284,18 @@ endfunction
 
 function! s:append_char(type) abort
     let l:saved_unnamed_register = @@
-    execute "normal! ma$vy"
+
+    execute "normal! ma$v\"zy"
     let l:lastchar = @@
 
     if a:type == 'd'
-        execute "normal! $x\e"
+        execute "normal! $\"_x\e"
     elseif l:lastchar == ';'
-        execute "normal! xA,\e"
+        execute "normal! \"_xA,\e"
     elseif l:lastchar == ','
-        execute "normal! xA;\e"
+        execute "normal! \"_xA;\e"
     elseif l:lastchar == ' '
-        execute "normal! g_lD\e"
+        execute "normal! g_l\"_D\e"
     elseif (index(['"', "'", ')', ']'], l:lastchar) >= 0) || match(l:lastchar, "\a") || match(l:lastchar, "\d")
         execute "normal! A;\e"
     else
@@ -302,6 +303,7 @@ function! s:append_char(type) abort
     endif
 
     execute "normal! `a"
+
     let @@ = l:saved_unnamed_register
 
     silent! call repeat#set("\<Plug>" . (a:type == 'a' ? 'AppendSemicolon' : 'DeleteFinal') . 'Repeatable', a:type)
@@ -385,7 +387,7 @@ function! s:cycling_buffers(incr) abort
                 \ && bufexists(0)
                 \ && expand('#') != ''
                 \ && getbufvar(0, '&filetype') != 'help'
-        execute "normal! \<C-^>"
+        execute "normal! \<C-^>g`\""
 
         return
     endif
@@ -780,7 +782,7 @@ function! s:create_list_parameters() abort
     let l:saved_unnamed_register = @@
 
     if match(getline('.'), '(') > 0 && match(getline('.'), ')') > 0 && match(getline('.'), ',') > 0
-        execute 'normal! _f(vi(y'
+        execute 'normal! _f(vi("zy'
 
         let l:command_string = ''
         let l:arguments_list = split(@@, ',')
@@ -808,7 +810,7 @@ function! s:create_list_array() abort
     let l:saved_unnamed_register = @@
 
     if match(getline('.'), '[') > 0 && match(getline('.'), ']') > 0 && match(getline('.'), ',') > 0
-        execute 'normal! _f[vi[y'
+        execute 'normal! _f[vi["zy'
 
         let l:command_string = ''
         let l:arguments_list = split(@@, ',')
