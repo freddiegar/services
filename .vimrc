@@ -782,15 +782,37 @@ let g:rainbow_active = 1
 " @see https://github.com/AndrewRadev/tagalong.vim
 let g:tagalong_filetypes = ['html', 'xml']
 
-nnoremap <Leader>lp :call <SID>create_list_parameters()<Enter>
+nnoremap <silent> <Plug>SplitRepeatable :call <SID>split()<Enter>
+nmap <silent> gS <Plug>SplitRepeatable
 
-function! s:create_list_parameters() abort
+function! s:split() abort
+    let l:saved_search_register = @/
     let l:saved_unnamed_register = @@
+    let l:command_string = ''
 
-    if match(getline('.'), '(') > 0 && match(getline('.'), ')') > 0 && match(getline('.'), ',') > 0
+    if match(getline('.'), '= ') > 0
+                \ && match(getline('.'), ' ? ') > 0
+                \ && match(getline('.'), ' : ') > 0
+                \ && match(getline('.'), ';') > 0
+        execute "normal! _/ ? \ri\r\e/ : \r\"_xi\r\e"
+    elseif match(getline('.'), '[') > 0
+                \ && match(getline('.'), ',') > 0
+                \ && match(getline('.'), ']') > 0
+                \ && match(getline('.'), ';') > 0
+        execute 'normal! _f[vi["zy'
+
+        let l:arguments_list = split(@@, ',')
+
+        for l:argument in l:arguments_list
+            let l:command_string .= "\t" . trim(l:argument) . ",\r"
+        endfor
+
+        execute "normal! \"_di[i\r" . l:command_string . "\e"
+    elseif match(getline('.'), '(') > 0
+                \ && match(getline('.'), ',') > 0
+                \ && match(getline('.'), ')') > 0
         execute 'normal! _f(vi("zy'
 
-        let l:command_string = ''
         let l:arguments_list = split(@@, ',')
 
         for l:argument in l:arguments_list
@@ -800,41 +822,21 @@ function! s:create_list_parameters() abort
 
         execute "normal! \"_di(i\r" . l:command_string . "\e"
 
-        echomsg 'Parameter list created'
+        execute 'normal! jlv"zy'
+
+        if @@ == '{'
+            execute 'normal! kJ'
+        endif
     else
         echohl WarningMsg
-        echomsg 'Not is a parameter list'
+        echomsg 'Nothing splited'
         echohl None
     endif
 
     let @@ = l:saved_unnamed_register
-endfunction
+    let @/ = l:saved_search_register
 
-nnoremap <Leader>la :call <SID>create_list_array()<Enter>
-
-function! s:create_list_array() abort
-    let l:saved_unnamed_register = @@
-
-    if match(getline('.'), '[') > 0 && match(getline('.'), ']') > 0 && match(getline('.'), ',') > 0
-        execute 'normal! _f[vi["zy'
-
-        let l:command_string = ''
-        let l:arguments_list = split(@@, ',')
-
-        for l:argument in l:arguments_list
-            let l:command_string .= "\t" . trim(l:argument) . ",\r"
-        endfor
-
-        execute "normal! \"_di[i\r" . l:command_string . "\e"
-
-        echomsg 'Array list created'
-    else
-        echohl WarningMsg
-        echomsg 'Not is an array list'
-        echohl None
-    endif
-
-    let @@ = l:saved_unnamed_register
+    silent! call repeat#set("\<Plug>SplitRepeatable")
 endfunction
 
 noremap <silent> <F2> :call <SID>quickfix_toggle(0)<Enter>
