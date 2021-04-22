@@ -458,11 +458,12 @@ Plug 'dracula/vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'sainnhe/sonokai'
 Plug 'jacoborus/tender.vim'
+Plug 'kaicataldo/material.vim', { 'branch': 'main' }
 
 Plug 'tpope/vim-commentary'                                          " gcc
 Plug 'tpope/vim-surround'                                            " cs"', viwS'
 Plug 'tpope/vim-repeat'                                              " Repeat: surround and other more
-" Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-abolish'                                             " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
 Plug 'wellle/targets.vim'                                            " {operator}ia, {operator}aa
 Plug 'michaeljsmith/vim-indent-object'                               " Indent deep as object: {operator}ii, {operator}ai
 Plug 'justinmk/vim-sneak'                                            " f, F with super powers: s{2-chars}, S{2-chars}
@@ -540,10 +541,15 @@ let g:dracula_inverse = 0
 let g:nord_italic = 1
 let g:nord_italic_comments = 1
 
-let g:sonokai_style = 'andromeda'
 let g:sonokai_enable_italic = 1
 let g:sonokai_better_performance = 1
 let g:sonokai_transparent_background = 1
+let g:sonokai_styles = ['default', 'atlantis', 'shusia', 'maia']
+let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles), 'andromeda')
+
+let g:material_terminal_italics = 1
+let g:material_styles = ['palenight', 'ocean']
+let g:material_theme_style = get(g:material_styles, rand(srand()) % len(g:material_styles), 'default')
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -983,7 +989,7 @@ augroup ThemeColors
 
     try
         let g:weekDay = str2nr(strftime('%w'))
-        let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai']
+        let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai', 'material']
         let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
 
         execute 'colorscheme ' . g:colorscheme
