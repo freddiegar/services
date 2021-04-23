@@ -247,7 +247,7 @@ nnoremap <silent> <Leader>f :call <SID>find_filter('e')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('w')<Enter>
 vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 
-nnoremap <silent> <Leader>z :if !&filetype<Enter> :bwipeout!<Enter> :else<Enter> :update<Enter> :bwipeout<Enter> :endif<Enter><Enter>
+nnoremap <silent> <Leader>z :if !&filetype<Enter> :bdelete!<Enter> :else<Enter> :update<Enter> :bdelete<Enter> :endif<Enter><Enter>
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
 nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
@@ -418,12 +418,15 @@ noremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
 noremap <silent> <S-Tab> :call <SID>cycling_buffers(-1)<Enter>
 
 function! s:cycling_buffers(incr) abort
+    let l:abuffer = bufnr('#')
+
     if a:incr == 1
-                \ && bufexists(0)
-                \ && expand('#') != ''
-                \ && expand('#') != expand('%')
-                \ && getbufvar(0, '&filetype') != 'help'
-        execute "normal! \<C-^>g`\""
+                \ && buflisted(l:abuffer) == 1
+                \ && getbufvar(l:abuffer, '&filetype') != 'help'
+        try
+            execute "normal! \<C-^>g`\""
+        catch /^Vim\%((\a\+)\)\=:E20/
+        endtry
 
         return
     endif
@@ -434,8 +437,7 @@ function! s:cycling_buffers(incr) abort
 
     while 1
         if l:nbuffer != 0
-                    \ && bufexists(l:nbuffer)
-                    \ && bufname(l:nbuffer) != ''
+                    \ && buflisted(l:nbuffer) == 1
                     \ && getbufvar(l:nbuffer, '&filetype') != 'help'
             execute ':buffer ' . l:nbuffer
 
@@ -450,7 +452,11 @@ function! s:cycling_buffers(incr) abort
             endif
 
             if l:nbuffer == l:cbuffer
-                echomsg 'Only buffer'
+                if isdirectory('.git')
+                    GFiles
+                else
+                    Files
+                endif
 
                 break
             endif
@@ -748,8 +754,8 @@ endfunction
 
 " Remap <C-f> and <C-b> for scroll float windows/popups. (Used in long file definitions)
 if has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+    nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+    nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
 
 " @see https://github.com/vim/vim/issues/4738
