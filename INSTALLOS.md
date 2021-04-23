@@ -245,6 +245,13 @@ if [ -f ~/.bash_aliases ]; then
 fi' >> ~/.zshrc
 ```
 
+# Enable alias in Vim
+echo '
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi' >> ~/.zshenv
+```
+
 # PHP 7.4
 
 ```bash
