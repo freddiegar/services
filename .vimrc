@@ -212,14 +212,17 @@ nnoremap <Left> :vertical resize -10<Enter>
 nnoremap <Right> :vertical resize +10<Enter>
 
 " Utility
-nnoremap j gj
-nnoremap k gk
 nnoremap Q @@
 nnoremap Y y$
 nnoremap gl '.
+
+" Center screen after search
 nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
-map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
+
+" Save previous position in mark ', (<C-o> not works)
+nnoremap <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
+nnoremap <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
 
 " Sudo rescue
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!
@@ -256,19 +259,17 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 
-nnoremap <silent> <Leader>gt :!git diff -w<Enter><Enter>
-nnoremap <silent> <Leader>gd :!git diff -w %<Enter><Enter>
-
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter> :echo 'Docker starting...'<Enter>
+nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter> :edit!<Enter> :echo 'Checkout: ' . expand('%')<Enter>
 nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
 
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path: ' . getcwd()<Enter>
 
-nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_function_name()<Enter>
+nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
 nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
-nnoremap <silent> <Leader>gc :call <SID>get_current_function(1)<Enter>
+nnoremap <silent> <Leader>gn :call <SID>get_current_function(1)<Enter>
 
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
@@ -405,10 +406,14 @@ function! s:get_function_name() abort
 endfunction
 
 " Fast <Esc>
+inoremap <silent> kk <Esc>
 inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
 " Not <Esc> in Insert Mode on
+inoremap II <Esc>I
+inoremap AA <Esc>A
+inoremap OO <Esc>O
 inoremap <C-a> <C-o>^
 inoremap <C-e> <C-o>$
 
