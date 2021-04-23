@@ -43,12 +43,13 @@ endif
 
 " Tell vim to remember certain things when we exit
 " @see https://vimhelp.org/options.txt.html#%27viminfo%27
-" set viminfo=!,'20,<50,s10,h                                          " TODO: Session not works
+" set viminfo=!,'20,<50,s10,h                                        " TODO: Session not works
 
 " Better Completion
 " @see :h 'complete'
-set complete-=i
-set complete=.,w,b
+set complete=.                                                       " Current buffer
+set complete+=w                                                      " Buffers in other [w]indows
+set complete+=b                                                      " Buffers in [b]uffers List
 set completeopt=longest,menuone,preview
 
 " Custom Interface
@@ -62,6 +63,7 @@ set splitbelow
 set splitright
 set signcolumn=yes
 set pumheight=15
+set showbreak=↪ 
 
 if has('mouse')
     set mouse=
@@ -76,6 +78,7 @@ set linebreak
 set scrolloff=1
 set sidescrolloff=5
 set nojoinspaces
+set antialias
 
 " Custom View
 set number
@@ -92,6 +95,8 @@ set synmaxcol=200
 set winminheight=0
 set winheight=999
 set updatetime=300
+set formatoptions+=j                                                 " Remove comment string in joining comments
+set formatoptions+=o                                                 " No append comment in o/O from Normal Mode
 
 " Custom identation
 " set autoindent
@@ -165,8 +170,7 @@ endfunction
 set showcmd
 set noruler
 set noshowmode
-set shortmess+=WFAIcat
-set shortmess-=S
+set shortmess=WFAIcat
 set laststatus=2
 
 set statusline=
@@ -978,7 +982,7 @@ augroup AutoCommands
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
 
     function! s:rgfzf(query, fullscreen) abort
-        let l:command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+        let l:command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --fixed-strings -- %s || true'
         let l:initial_command = printf(l:command_fmt, shellescape(a:query))
         let l:reload_command = printf(l:command_fmt, '{q}')
         let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
