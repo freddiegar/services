@@ -20,15 +20,16 @@ set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
 set wildignore+=node_modules,vendor,*/coverage/*,
 set lazyredraw                                                       " No redraw when macro is running
 set redrawtime=3000                                                  " Time for highlighting: +size need +time
+
 set nobackup
 set nowritebackup
 set noswapfile
 set path=.,,
 
-set sessionoptions+=globals
-set sessionoptions-=buffers
-set sessionoptions-=options
-set sessionoptions-=terminal
+set sessionoptions-=globals                                          " No save global vars (g:), error after changes
+set sessionoptions-=buffers                                          " No save hidden or unload buffers
+set sessionoptions-=options                                          " No save mappings
+set sessionoptions-=terminal                                         " No save terminal buffers
 set viewoptions-=options
 
 " Better Search
@@ -210,30 +211,32 @@ noremap <Left> <Nop>
 noremap <Right> <Nop>
 
 " Arrow keys resize windows
-nnoremap <Up> :resize -10<Enter>
-nnoremap <Down> :resize +10<Enter>
-nnoremap <Left> :vertical resize -10<Enter>
-nnoremap <Right> :vertical resize +10<Enter>
+nnoremap <silent> <Up> :resize -10<Enter>
+nnoremap <silent> <Down> :resize +10<Enter>
+nnoremap <silent> <Left> :vertical resize -10<Enter>
+nnoremap <silent> <Right> :vertical resize +10<Enter>
 
 " Utility
-nnoremap Q @@
-nnoremap Y y$
-nnoremap gl '.
+nnoremap <silent> Q @@
+nnoremap <silent> Y y$
+nnoremap <silent> gl '.
 
 " Center screen after search
 nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
 
 " Save previous position in mark ', (<C-o> not works)
-nnoremap <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
-nnoremap <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
+nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
+nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
 
 " Sudo rescue
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!
 
-" Visual / Select and Normal Mode
+" / and ? Search alternatives
 noremap <Leader>s <kDivide>
 noremap <Leader>S ?
+
+" Visual / Select and Normal Mode
 noremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
             \ :PlugUpdate<Enter>
             \ :elseif getbufvar(bufnr('%'), '&filetype') ==# 'vim-plug'<Enter>
@@ -268,6 +271,7 @@ nnoremap <silent> <Leader>z :if !&filetype<Enter>
             \ :update<Enter>
             \ :bdelete<Enter>
             \ :endif<Enter><Enter>
+
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
 nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
@@ -279,11 +283,14 @@ nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> 
             \ :edit!<Enter> 
             \ :echo 'Added: ' . expand('%')<Enter>
+
 nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter>
             \ :echo 'Docker starting...'<Enter>
+
 nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter>
             \ :edit!<Enter>
             \ :echo 'Checkout: ' . expand('%')<Enter>
+
 nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
             \ :echo 'Dumped: ' . getcwd()<Enter>
 
@@ -429,11 +436,11 @@ inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
 " Not <Esc> in Insert Mode on
-inoremap II <Esc>I
-inoremap AA <Esc>A
-inoremap OO <Esc>O
-inoremap <C-a> <C-o>^
-inoremap <C-e> <C-o>$
+inoremap <silent> II <Esc>I
+inoremap <silent> AA <Esc>A
+inoremap <silent> OO <Esc>O
+inoremap <silent> <C-a> <C-o>^
+inoremap <silent> <C-e> <C-o>$
 
 " Tabs navigation
 noremap <silent> <Leader><Leader> :Buffers<Enter>
@@ -691,7 +698,7 @@ if exists('g:loaded_syntastic_plugin')
     set statusline+=%*
 endif
 
-let g:syntastic_stl_format = '%fe!'
+let g:syntastic_stl_format = "[%E{    %fe! #%e     }]"
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_enable_balloons = 0
