@@ -7,29 +7,36 @@
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
 " @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
 " @See :h quickref
-set nomodeline                                                       " Security!
-set secure                                                           " Security!: Not autocmd in .vimrc file
-set exrc                                                             " Always search config in .vimrc file
-set hidden                                                           " Allow change between buffer without save
-set wildmenu                                                         " Autocomplete in command-line with <Tab>
-set wildmode=full                                                    " Command complete as zsh"
-set wildignore+=.git,.vscode,.idea,.vimrc,                           " Ignored files in command-line autocomplete
+set nomodeline                                                  " Security!
+set secure                                                      " Security!: Not autocmd in .vimrc file
+set exrc                                                        " Always search config in .vimrc file
+set hidden                                                      " Allow change between buffer without save
+set omnifunc=syntaxcomplete#Complete                            " Default complete function
+set cpoptions+=J                                                " <Tab> not are spaces
+
+" ALL in one BIG autocmd
+execute 'augroup ALL1BIG'
+autocmd!
+
+set wildmenu                                                    " Autocomplete in command-line with <Tab>
+set wildmode=full                                               " Command complete as zsh"
+set wildignore+=.git,.vscode,.idea,.vimrc,                      " Ignored files in command-line autocomplete
 set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,
 set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*,
 set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
 set wildignore+=node_modules,vendor,*/coverage/*,
-set lazyredraw                                                       " No redraw when macro is running
-set redrawtime=3000                                                  " Time for highlighting: +size need +time
+set lazyredraw                                                  " No redraw when macro is running
+set redrawtime=3000                                             " Time for highlighting: +size need +time
 
 set nobackup
 set nowritebackup
 set noswapfile
 set path=.,,
 
-set sessionoptions-=globals                                          " No save global vars (g:), error after changes
-set sessionoptions-=buffers                                          " No save hidden or unload buffers
-set sessionoptions-=options                                          " No save mappings
-set sessionoptions-=terminal                                         " No save terminal buffers
+set sessionoptions+=globals                                     " No save global vars (g:), error after changes
+set sessionoptions-=buffers                                     " No save hidden or unload buffers
+set sessionoptions-=options                                     " No save mappings
+set sessionoptions-=terminal                                    " No save terminal buffers
 set viewoptions-=options
 
 " Better Search
@@ -44,13 +51,13 @@ endif
 
 " Tell vim to remember certain things when we exit
 " @see https://vimhelp.org/options.txt.html#%27viminfo%27
-" set viminfo=!,'20,<50,s10,h                                        " TODO: Session not works
+" set viminfo=!,'20,<50,s10,h                                     " TODO: Session not works
 
 " Better Completion
 " @see :h 'complete'
-set complete=.                                                       " Current buffer
-set complete+=w                                                      " Buffers in other [w]indows
-set complete+=b                                                      " Buffers in [b]uffers List
+set complete=.                                                  " Current buffer
+set complete+=w                                                 " Buffers in other [w]indows
+set complete+=b                                                 " Buffers in [b]uffers List
 set completeopt=longest,menuone,preview
 
 " Custom Interface
@@ -65,7 +72,7 @@ set splitright
 set signcolumn=yes
 set pumheight=15
 set showbreak=↪
-set cmdheight=2                                                      " More space, minus: Press enter to ..
+set cmdheight=2                                                 " More space, minus: Press enter to ..
 
 if has('mouse')
     set mouse=
@@ -96,8 +103,6 @@ set synmaxcol=200
 set winminheight=0
 set winheight=999
 set updatetime=300
-set formatoptions+=j                                                 " Remove comment string in joining comments
-set formatoptions-=o                                                 " No append auto comment in o/O from Normal Mode
 
 " Custom identation
 " set autoindent
@@ -111,10 +116,6 @@ set nofoldenable
 set foldmethod=indent
 set foldnestmax=10
 set foldlevel=99
-
-" ALL in one BIG autocmd
-execute 'augroup Freddie'
-autocmd!
 
 " Statusline
 let g:currentmode={
@@ -176,19 +177,19 @@ set noshowmode
 set shortmess=WFAIcat
 set laststatus=2
 
-set statusline=                                                      " Empty
-set statusline+=%{ChangeStatuslineColor()}                           " Color by Mode
-set statusline+=\ %n                                                 " [N]umber buffer
-set statusline+=\ %{g:currentmode[mode()]}                           " Translate of Mode
-set statusline+=\ %f                                                 " Relative filename
-set statusline+=%=                                                   " New group
-set statusline+=\%m                                                  " Modified flag
-set statusline+=\%r                                                  " Readonly flag
+set statusline=                                                 " Empty
+set statusline+=%{ChangeStatuslineColor()}                      " Color by Mode
+set statusline+=\ %n                                            " [N]umber buffer
+set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
+set statusline+=\ %f                                            " Relative filename
+set statusline+=%=                                              " New group
+set statusline+=\%m                                             " Modified flag
+set statusline+=\%r                                             " Readonly flag
 set statusline+=\ %3{&filetype}
-set statusline+=\ #:%3b                                              " ASCII representation
-set statusline+=\ l:%3l/%3L\ c:%3c                                   " Line of Lines and Column
+set statusline+=\ #:%3b                                         " ASCII representation
+set statusline+=\ l:%3l/%3L\ c:%3c                              " Line of Lines and Column
 set statusline+=\%<\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\ @\ %{strftime(\"%H:%M\")}                          " Date: HH:MM
+set statusline+=\ @\ %{strftime(\"%H:%M\")}                     " Date: HH:MM
 
 " RAW Modes Fixed
 let &t_TI = ''
@@ -230,7 +231,7 @@ nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
 nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
 
 " Sudo rescue
-cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 
 " / and ? Search alternatives
 noremap <Leader>s <kDivide>
@@ -250,6 +251,7 @@ noremap <silent> TT _vg_
 " Normal Mode
 nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>d "_d
+nnoremap <silent> <Leader>D "_D
 nnoremap <silent> <Leader>x "_x
 nnoremap <silent> <Leader>y "+y
 
@@ -532,32 +534,32 @@ Plug 'sainnhe/sonokai'
 Plug 'jacoborus/tender.vim'
 Plug 'kaicataldo/material.vim', { 'branch': 'main' }
 
-Plug 'tpope/vim-commentary'                                          " gcc
-Plug 'tpope/vim-surround'                                            " cs"', viwS'
-Plug 'tpope/vim-repeat'                                              " Repeat: surround and other more
-Plug 'tpope/vim-abolish'                                             " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
-Plug 'wellle/targets.vim'                                            " {operator}ia, {operator}aa
-Plug 'michaeljsmith/vim-indent-object'                               " Indent deep as object: {operator}ii, {operator}ai
-Plug 'justinmk/vim-sneak'                                            " f, F with super powers: s{2-chars}, S{2-chars}
-Plug 'machakann/vim-swap'                                            " Swag args: g>, g<
-Plug 'Raimondi/delimitMate'                                          " Append close: ', ", ), ], etc
+Plug 'tpope/vim-commentary'                                     " gcc
+Plug 'tpope/vim-surround'                                       " cs"', viwS'
+Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
+Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
+Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa
+Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as object: {operator}ii, {operator}ai
+Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
+Plug 'machakann/vim-swap'                                       " Swag args: g>, g<
+Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 " " Plug 'luochen1990/rainbow'
-Plug 'mg979/vim-visual-multi'                                        " <C-n>, <C-s>
+Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}                      " Autocomplete
-Plug 'skywind3000/asyncrun.vim'                                      " Async tasks from vim: git add, docker start, etc
-Plug 'airblade/vim-gitgutter'                                        " Show changes in git
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }                  " Open and find files
-Plug 'junegunn/fzf.vim'                                              " using a fuzzy finder
-Plug 'SirVer/ultisnips'                                              " Performance using shortcuts
-Plug 'sniphpets/sniphpets'                                           " PHP snippet with namespace resolve
-Plug 'junegunn/goyo.vim'                                             " Zen mode
+Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete
+Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from vim: git add, docker start, etc
+Plug 'airblade/vim-gitgutter'                                   " Show changes in git
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
+Plug 'junegunn/fzf.vim'                                         " using a fuzzy finder
+Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
+Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
+Plug 'junegunn/goyo.vim'                                        " Zen mode
 
-Plug 'StanAngeloff/php.vim', {'for': 'php'}                          " Better highlight syntax for PHP: unmanteined
-Plug 'vim-syntastic/syntastic', {'for': 'php'}                       " Diagnostic code on-the-fly
-Plug 'preservim/tagbar', {'for': ['php', 'c']}                       " Navigate: methods, vars, etc
-Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}                   " Tagbar for PHP in on-the-fly
-Plug 'vim-test/vim-test', {'for': 'php'}                             " Run test: <Leader>{tt|tf|ts|tg}
+Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
+Plug 'vim-syntastic/syntastic', {'for': 'php'}                  " Diagnostic code on-the-fly
+Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
+Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar for PHP in on-the-fly
+Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
 " Plug 'vim-vdebug/vdebug', {'for': 'php'}
 Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'} " LSP and refactor tool
 
@@ -565,8 +567,8 @@ Plug 'vim-scripts/autotags', {'for': 'c'}
 Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}
-Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}              " Performance using emmet syntax
-Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}     " Preview html colors
+Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}         " Performance using emmet syntax
+Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
 
 call plug#end()
 
@@ -1021,6 +1023,8 @@ augroup AutoCommands
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType json setlocal softtabstop=2 shiftwidth=2
+    autocmd FileType c,cpp setlocal path+=/usr/include include&
+    autocmd FileType vim setlocal keywordprg=:help
 
     autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
@@ -1060,7 +1064,16 @@ augroup AutoCommands
         endif
     endfunction
 
+    function! s:poststart() abort
+        " @see https://stackoverflow.com/questions/6076592/vim-set-formatoptions-being-lost#8748154
+        set formatoptions+=j                                            " Remove comment string in joining comments
+        set formatoptions-=o                                            " No append auto comment in o/O from Normal Mode
+    endfunction
+
     autocmd VimEnter * nested call <SID>sessionload()
+    autocmd BufEnter * call <SID>poststart()
+    " Fix <Tab> in popup menu
+    " autocmd CompleteDone * call <SID>completionkeys()
     autocmd InsertEnter * :setlocal norelativenumber
     autocmd InsertLeave * :setlocal relativenumber
     autocmd VimLeavePre * call <SID>sessionsave()
