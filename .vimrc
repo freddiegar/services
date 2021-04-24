@@ -63,7 +63,8 @@ set splitbelow
 set splitright
 set signcolumn=yes
 set pumheight=15
-set showbreak=↪ 
+set showbreak=↪
+set cmdheight=2                                                      " More space, minus: Press enter to ..
 
 if has('mouse')
     set mouse=
@@ -78,7 +79,6 @@ set linebreak
 set scrolloff=1
 set sidescrolloff=5
 set nojoinspaces
-set antialias
 
 " Custom View
 set number
@@ -96,7 +96,7 @@ set winminheight=0
 set winheight=999
 set updatetime=300
 set formatoptions+=j                                                 " Remove comment string in joining comments
-set formatoptions+=o                                                 " No append comment in o/O from Normal Mode
+set formatoptions-=o                                                 " No append auto comment in o/O from Normal Mode
 
 " Custom identation
 " set autoindent
@@ -111,6 +111,7 @@ set foldmethod=indent
 set foldnestmax=10
 set foldlevel=99
 
+" ALL in one BIG autocmd
 execute 'augroup Freddie'
 autocmd!
 
@@ -149,10 +150,11 @@ function! ChangeStatuslineColor() abort
         elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
             execute "highlight! StatusLine cterm=reverse guifg=#D3869B guibg=#1D2021"
         else
-            echomsg 'Mode no color: ' . mode()
+            echomsg 'Mode no color: ' . mode() . '.'
             execute "highlight! StatusLine cterm=reverse guifg=#FB4934 guibg=#1D2021"
         endif
 
+        " Apply changes quikly
         silent redraw
     catch
         let &readonly = &readonly
@@ -173,28 +175,30 @@ set noshowmode
 set shortmess=WFAIcat
 set laststatus=2
 
-set statusline=
-set statusline+=%{ChangeStatuslineColor()}
-set statusline+=\ %n
-set statusline+=\ %{g:currentmode[mode()]}
-set statusline+=\ %f
-set statusline+=%=
-set statusline+=\%m
-set statusline+=\%r
+set statusline=                                                      " Empty
+set statusline+=%{ChangeStatuslineColor()}                           " Color by Mode
+set statusline+=\ %n                                                 " [N]umber buffer
+set statusline+=\ %{g:currentmode[mode()]}                           " Translate of Mode
+set statusline+=\ %f                                                 " Relative filename
+set statusline+=%=                                                   " New group
+set statusline+=\%m                                                  " Modified flag
+set statusline+=\%r                                                  " Readonly flag
 set statusline+=\ %3{&filetype}
-set statusline+=\ #:%3b
-set statusline+=\ l:%3l/%3L\ c:%3c
+set statusline+=\ #:%3b                                              " ASCII representation
+set statusline+=\ l:%3l/%3L\ c:%3c                                   " Line of Lines and Column
 set statusline+=\%<\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\ @\ %{strftime(\"%H:%M\")}
+set statusline+=\ @\ %{strftime(\"%H:%M\")}                          " Date: HH:MM
 
-" Maps
+" RAW Modes Fixed
 let &t_TI = ''
 let &t_TE = ''
+
+" Maps
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 noremap <Space> <Nop>
 
-" Indent without kill the selection in visual mode
+" Indent without kill the selection in Visual Mode
 vmap < <gv
 vmap > >gv
 vmap . :normal! .<Enter>
@@ -230,7 +234,13 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!
 " Visual / Select and Normal Mode
 noremap <Leader>s <kDivide>
 noremap <Leader>S ?
-noremap <silent> <F10> :if expand('%:t:r') == '.vimrc'<Enter> :PlugUpdate<Enter> :else<Enter> :edit ~/.vimrc<Enter> :endif<Enter><Enter>
+noremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
+            \ :PlugUpdate<Enter>
+            \ :elseif getbufvar(bufnr('%'), '&filetype') ==# 'vim-plug'<Enter>
+            \ :silent execute "normal! :q!\r"<Enter>
+            \ :else<Enter>
+            \ :edit ~/.vimrc<Enter>
+            \ :endif<Enter><Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT _vg_
 
@@ -241,16 +251,23 @@ nnoremap <silent> <Leader>x "_x
 nnoremap <silent> <Leader>y "+y
 
 nnoremap <silent> <Leader>w :update<Enter>
-nnoremap <silent> <Leader>W :wall<Enter> :echo 'All saved!'<Enter>
+nnoremap <silent> <Leader>W :wall<Enter>
+            \ :echo 'All saved!'<Enter>
 
 nnoremap <silent> <Leader>n :echo 'File: ' . expand('%:p')<Enter>
-nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> :echo 'Copied: ' . expand('%:p')<Enter>
+nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> 
+            \ :echo 'Copied: ' . expand('%:p')<Enter>
 
 nnoremap <silent> <Leader>f :call <SID>find_filter('e')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('w')<Enter>
 vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 
-nnoremap <silent> <Leader>z :if !&filetype<Enter> :bdelete!<Enter> :else<Enter> :update<Enter> :bdelete<Enter> :endif<Enter><Enter>
+nnoremap <silent> <Leader>z :if !&filetype<Enter>
+            \ :bdelete!<Enter>
+            \ :else<Enter>
+            \ :update<Enter>
+            \ :bdelete<Enter>
+            \ :endif<Enter><Enter>
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
 nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
@@ -259,17 +276,23 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 
-nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> :edit!<Enter> :echo 'Added: ' . expand('%')<Enter>
-nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter> :echo 'Docker starting...'<Enter>
-nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter> :edit!<Enter> :echo 'Checkout: ' . expand('%')<Enter>
-nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter> :echo 'Dumped: ' . getcwd()<Enter>
+nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> 
+            \ :edit!<Enter> 
+            \ :echo 'Added: ' . expand('%')<Enter>
+nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter>
+            \ :echo 'Docker starting...'<Enter>
+nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter>
+            \ :edit!<Enter>
+            \ :echo 'Checkout: ' . expand('%')<Enter>
+nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
+            \ :echo 'Dumped: ' . getcwd()<Enter>
 
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path: ' . getcwd()<Enter>
 
-nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
 nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
-nnoremap <silent> <Leader>gn :call <SID>get_current_function(1)<Enter>
+nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
+nnoremap <silent> <Leader>gF :echo 'Copied: ' . <SID>get_current_function(1)<Enter>
 
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
@@ -326,7 +349,7 @@ function! s:append_char(type) abort
     elseif (index(['"', "'", ')', ']'], l:lastchar) >= 0) || match(l:lastchar, "\a") || match(l:lastchar, "\d")
         execute "normal! A;\e"
     else
-        echomsg 'Nothing to append to: ' . l:lastchar
+        echomsg 'Nothing to append to: ' . l:lastchar . '.'
     endif
 
     execute "normal! `a"
@@ -364,6 +387,8 @@ function! s:go_line() abort
 endfunction
 
 function! s:get_current_function(copy) abort
+    let l:namespace = ''
+
     if (index(['php'], &filetype) >= 0)
         let l:filename = expand('%:t:r')
         let l:functionname = <SID>get_function_name()
@@ -372,20 +397,13 @@ function! s:get_current_function(copy) abort
         if len(l:functionname) > 0
             let l:namespace .= '::' . l:functionname
         endif
-
-        if a:copy == 1
-            let @+=l:namespace
-            echomsg 'Copied: ' . l:namespace
-        endif
-
-        return l:namespace
-    elseif a:copy == 1
-        echohl WarningMsg
-        echomsg 'Not is a php file.'
-        echohl None
     endif
 
-    return ''
+    if a:copy == 1 && l:namespace != ''
+        let @+=l:namespace
+    endif
+
+    return l:namespace
 endfunction
 
 function! s:get_function_name() abort
@@ -747,7 +765,7 @@ function! s:show_documentation() abort
             execute 'help ' . l:word
         catch
             echohl WarningMsg
-            echomsg 'Not found: ' . l:word
+            echomsg 'Not found: ' . l:word . '.'
             echohl None
         endtry
     elseif (coc#rpc#ready())
@@ -829,7 +847,7 @@ let g:rainbow_active = 1
 " @see https://github.com/AndrewRadev/tagalong.vim
 let g:tagalong_filetypes = ['html', 'xml']
 
-nnoremap <silent> <Plug>SplitRepeatable :call <SID>split()<Enter>
+nnoremap <silent> <Plug>SplitRepeatable :<C-u>call <SID>split()<Enter>
 nmap <silent> gS <Plug>SplitRepeatable
 
 function! s:split() abort
@@ -837,11 +855,12 @@ function! s:split() abort
     let l:saved_unnamed_register = @@
     let l:command_string = ''
 
-    if match(getline('.'), '= ') > 0
-                \ && match(getline('.'), ' ? ') > 0
+    " Is ternary?
+    if match(getline('.'), ' ? ') > 0
                 \ && match(getline('.'), ' : ') > 0
                 \ && match(getline('.'), ';') > 0
         execute "normal! _/ ? \ri\r\e/ : \r\"_xi\r\e"
+    " Is array?
     elseif match(getline('.'), '[') > 0
                 \ && match(getline('.'), ',') > 0
                 \ && match(getline('.'), ']') > 0
@@ -855,6 +874,7 @@ function! s:split() abort
         endfor
 
         execute "normal! \"_di[i\r" . l:command_string . "\e"
+    " Are arguments?
     elseif match(getline('.'), '(') > 0
                 \ && match(getline('.'), ',') > 0
                 \ && match(getline('.'), ')') > 0
@@ -874,9 +894,19 @@ function! s:split() abort
         if @@ == '{'
             execute 'normal! kJ'
         endif
+    " Is comma list?
+    elseif match(getline('.'), ',') > 0
+        let l:arguments_list = split(getline('.'), ',')
+
+        for l:argument in l:arguments_list
+            let l:command_string .= trim(l:argument) . (len(l:arguments_list) > 1 ? ',' : '') . "\r"
+            call remove(l:arguments_list, 0)
+        endfor
+
+        execute "normal! \"_ddi" . l:command_string . "\e"
     else
         echohl WarningMsg
-        echomsg 'Nothing splited'
+        echomsg 'Nothing to do.'
         echohl None
     endif
 
@@ -886,10 +916,10 @@ function! s:split() abort
     silent! call repeat#set("\<Plug>SplitRepeatable")
 endfunction
 
-noremap <silent> <F2> :call <SID>quickfix_toggle(0)<Enter>
+noremap <silent> <F2> :call <SID>quickfix_toggle()<Enter>
 
-function! s:quickfix_toggle(forced)
-    if exists('g:qfix_win') && a:forced == 0
+function! s:quickfix_toggle()
+    if exists('g:qfix_win')
         cclose
         unlet g:qfix_win
     else
@@ -957,7 +987,7 @@ augroup AutoCommands
         silent edit!
     endfunction
 
-    " PHPFixer
+    " PHP Fixer
     autocmd FileType php nnoremap <silent> <buffer><F1> :call <SID>phpfixer()<Enter>
 
     function! s:phpfixer() abort
@@ -984,6 +1014,7 @@ augroup AutoCommands
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType json setlocal softtabstop=2 shiftwidth=2
+
     autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html
@@ -1007,12 +1038,10 @@ augroup AutoCommands
     function! s:sessionload() abort
         if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
             execute 'source ' . g:session_file
-            execute 'highlight! link SignColumn LineNr'
-            execute 'highlight! link StatusLine LineNr'
 
-            echomsg 'Loaded ' . g:session_file . ' session'
+            echomsg 'Loaded: ' . g:session_file . ' session.'
         else
-            echomsg 'None ' . g:session_file . ' session'
+            echomsg 'None ' . g:session_file . ' session.'
         endif
     endfunction
 
@@ -1020,7 +1049,7 @@ augroup AutoCommands
         if isdirectory('.git')
             execute 'mksession! ' . g:session_file
 
-            echomsg 'Saved ' . g:session_file . ' session'
+            echomsg 'Saved: ' . g:session_file . ' session.'
         endif
     endfunction
 
@@ -1046,7 +1075,7 @@ augroup ThemeColors
         colorscheme evening
 
         echohl WarningMsg
-        echomsg 'Not found colorscheme: ' . g:colorscheme
+        echomsg 'Not found colorscheme: ' . g:colorscheme . '.'
         echohl None
     endtry
 
@@ -1055,8 +1084,11 @@ augroup ThemeColors
         " Use #1D2021 in Terminal
         highlight! Normal guibg=NONE ctermbg=NONE
 
-        " SignColumn with same color of theme
+        " SignColumn and StatusLine with same color of theme
         highlight! link SignColumn LineNr
+        highlight! link StatusLine LineNr
+
+        " Always use same color in list chars
         highlight! SpecialKey ctermfg=239 guifg=#504945
 
         " GitGutter with same color of theme
