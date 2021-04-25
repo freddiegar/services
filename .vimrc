@@ -107,7 +107,6 @@ set nojoinspaces
 
 " Custom View
 set number
-set numberwidth=1
 set relativenumber
 set cursorline
 set noshowmatch
@@ -252,7 +251,6 @@ nnoremap <silent> <Right> :vertical resize +10<Enter>
 nnoremap <silent> Q @@
 nnoremap <silent> Y y$
 nnoremap <silent> gl '.
-" map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
 " Center screen after search
 nnoremap <silent> n nzzzv
@@ -283,12 +281,8 @@ nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
 " Turn-off highlighting
 nnoremap <silent> <Enter> :nohlsearch<Enter>
 
-" Fast new line
-" nnoremap <silent> <Leader><Enter> o<Esc>
-" nnoremap <silent> g<Enter> O<Esc>
-
 " Fast Visual Line selection (as V but with trim spaces)
-noremap <silent> TT _vg_
+nnoremap <silent> TT _vg_
 
 " Preserve default register ("x) content
 nnoremap <silent> <Leader>c "_c
@@ -354,12 +348,70 @@ nnoremap <silent> <Leader>gF :echo 'Copied: ' . <SID>get_current_function(1)<Ent
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
 
+nnoremap <silent> <Plug>DeleteInnerCallRepeatable :call <SID>delete_call('vbc')<Enter>
+nmap <silent> dc <Plug>DeleteInnerCallRepeatable
+
+nnoremap <silent> <Plug>DeleteACallRepeatable :call <SID>delete_call('vb')<Enter>
+nmap <silent> dC <Plug>DeleteACallRepeatable
+
+function! s:delete_call(flags) abort
+    let l:saved_unnamed_register = @@
+    let l:type = match(a:flags, 'c') > 0 ? 'Inner' : 'A'
+
+    if l:type ==# 'A' && !<SID>check_backspaces()
+        execute "normal! b"
+    endif
+
+    silent call s:find_function(a:flags)
+
+    execute "normal! \"_dyi)\"_da)P"
+
+    if l:type ==# 'A' && !<SID>check_backspaces()
+        execute "normal! 0f("
+    else
+        execute "normal! F("
+    endif
+
+    let @@ = l:saved_unnamed_register
+
+    silent! call repeat#set("\<Plug>Delete" . l:type . "CallRepeatable")
+endfunction
+
+function! s:check_backspaces() abort
+    let l:col = col('.') - 1
+
+    return !l:col || getline('.')[l:col - 1]  =~# '\s'
+endfunction
+
+" @thanks https://github.com/romgrk/nvim/blob/master/rc/keymap.vim#L761
+function! s:find_function (flags, ...)
+    " @see :h search()
+    let l:fcursor = a:flags =~# 'c' ? 'c' : ''
+    let l:fbackward = a:flags =~# 'b' ? 'b' : ''
+    let l:fnomove = a:flags =~# 'n' ? 'n' : ''
+    let l:visual = a:flags =~# 'v' ? 1 : 0
+
+    let l:pattern = '\(\k\|\i\|\f\|<\|>\|:\|\\\)\+\s*\ze('
+
+    if (len(a:000) == 1)
+        let l:pattern = a:000[0]
+    endif
+
+    if (l:visual)
+        let l:start = searchpos(l:pattern, l:fcursor . l:fbackward, line('.'))
+        execute "normal! v"
+        let l:end = searchpos(l:pattern, 'ce', line('.'))
+
+        return [l:start, l:end]
+    else
+        return searchpos(l:pattern, l:fcursor . l:fbackward . l:fnomove)
+    end
+endfunction
+
 function! s:delete_method() abort
     let l:saved_unnamed_register = @@
 
-    execute "normal! vaB\"_d"
-
-    execute "normal! -\"zyy+$"
+    execute "normal! vaB\"_d-\"zyy+$"
 
     if match(@@, 'function ') > 0
         execute "normal! \"_d-\"_dd"
@@ -419,7 +471,7 @@ endfunction
 function! s:go_line() abort
     try
         if match(getline('.'), ':') < 0
-            throw 'Line dont has colon.'
+            throw 'Nothing to do.'
         endif
 
         let l:parts = split(expand('<cWORD>'), ':')
@@ -809,8 +861,8 @@ let g:coc_global_extensions = [
 inoremap <silent> <expr> <C-@> coc#refresh()
 
 " Make <Enter> auto-select the first completion item
-inoremap <silent> <expr> <Enter> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
+inoremap <silent> <expr> <Enter>
+            \ pumvisible() ? coc#_select_confirm() : "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
 
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
@@ -1176,16 +1228,16 @@ augroup ThemeColors
 
         " GitGutter with same color of theme
         highlight! GitGutterAdd guifg=#009900 ctermfg=2
-        highlight! GitGutterChange guifg=#bbbb00 ctermfg=3
-        highlight! GitGutterDelete guifg=#ff2222 ctermfg=1
+        highlight! GitGutterChange guifg=#BBBB00 ctermfg=3
+        highlight! GitGutterDelete guifg=#FF2222 ctermfg=1
         highlight! link GitGutterAddLineNr Underlined
         highlight! link GitGutterChangeLineNr Underlined
         highlight! link GitGutterDeleteLineNr Underlined
         highlight! link GitGutterChangeDeleteLineNr Underlined
 
         " Syntastic with same color of theme
-        highlight! SyntasticErrorSign guifg=#ff2222 ctermfg=1
-        highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
+        highlight! SyntasticErrorSign guifg=#FF2222 ctermfg=1
+        highlight! SyntasticWarningSign guifg=#BBBB00 ctermfg=3
     endfunction
 
     " Initial load colorscheme
