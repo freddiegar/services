@@ -3,6 +3,10 @@
 " Build-in improve % option (works with if statements)
 " runtime macros/matchit.vim
 
+" REGISTERS AND MARKS SPECIAL USED HERE
+" - "z  Save content yank in function, this no overwrite default register
+" - 'a  Mark used in append_char function to return original position
+
 " MAPS and MODES
 " @see https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
 " -> n  Normal mode map. Defined using ':nmap' or ':nnoremap'.
@@ -20,6 +24,24 @@
 " -> &  Only script local mappings are re-mappable in the {rhs} of the map. The map command has the <script> attribute.
 " -> @  A buffer local map command with the <buffer> attribute.
 
+" COMPARATIONS
+"              use 'ignorecase'      match case     ignore case ~
+" equal                 ==              ==#             ==?
+" not equal             !=              !=#             !=?
+" greater than          >               >#              >?
+" greater than or equal >=              >=#             >=?
+" smaller than          <               <#              <?
+" smaller than or equal <=              <=#             <=?
+" regexp matches        =~              =~#             =~?
+" regexp doesn't match  !~              !~#             !~?
+" same instance         is              is#             is?
+" different instance    isnot           isnot#          isnot?
+
+" Examples:
+" "abc" ==# "Abc"         evaluates to 0
+" "abc" ==? "Abc"         evaluates to 1
+" "abc" == "Abc"          evaluates to 1 if 'ignorecase' is set, 0 otherwise
+
 " @see https://vim.fandom.com/wiki/Example_vimrc
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
 " @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
@@ -30,6 +52,7 @@ set exrc                                                        " Always search 
 set hidden                                                      " Allow change between buffer without save
 set omnifunc=syntaxcomplete#Complete                            " Default complete function
 set cpoptions+=J                                                " <Tab> not are spaces
+set cryptmethod=blowfish2                                       " Use string encription
 
 " ALL in one BIG autocmd
 execute 'augroup ALL1BIG'
@@ -48,7 +71,7 @@ set redrawtime=3000                                             " Time for highl
 set nobackup
 set nowritebackup
 set noswapfile
-set path=.,,
+set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind
 
 set sessionoptions+=globals                                     " No save global vars (g:), error after changes
 set sessionoptions-=buffers                                     " No save hidden or unload buffers
@@ -57,12 +80,13 @@ set sessionoptions-=terminal                                    " No save termin
 set viewoptions-=options
 
 " Better Search
-set hlsearch
-set incsearch
-set smartcase
-set ignorecase
+set hlsearch                                                    " Highligth match results with /|?
+set incsearch                                                   " On TOP return BOTTOM, on BOTTOM return TOP"
+set ignorecase                                                  " Case-insensitive by default
+set smartcase                                                   " case-sensitive if keyword contains both uppercase and lowercase
+
 if executable('rg')
-    set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+    set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Preplace built-in grep's vim
     set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 endif
 
@@ -75,35 +99,36 @@ endif
 set complete=.                                                  " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
 set complete+=b                                                 " Buffers in [b]uffers List
-set completeopt=longest,menuone,preview
+set completeopt=longest,menuone,preview                         " Show usefull preview in popupmenu
 
 " Custom Interface
 set title
 set novisualbell
-set autoread
-set autowrite
-set backspace=indent,eol,start
-set clipboard=unnamedplus
-set splitbelow
-set splitright
-set signcolumn=yes
+set autoread                                                    " Auto reload after external changes
+set autowrite                                                   " Autosave on lost focus (cycling buffers)
+set backspace=indent,eol,start                                  " Allow backspace in all
+set clipboard=unnamedplus                                       " Shared SO clipboard
+set splitbelow                                                  " :split  opens window below (:belowright split)
+set splitright                                                  " :vsplit opens window right (:belowright vsplit)
+set signcolumn=yes                                              " Always show signs
 set pumheight=15
-set showbreak=↪
 set cmdheight=2                                                 " More space, minus: "Press ENTER to ..." message
 
 if has('mouse')
-    set mouse=
+    set mouse=                                                  " Mouse don't exist always
 endif
 
 " Custom Render
 syntax enable
 set nowrap
-set display+=lastline
-set encoding=utf-8
 set linebreak
-set scrolloff=1
-set sidescrolloff=5
-set nojoinspaces
+set showbreak=↪
+set display+=lastline
+set encoding=utf-8                                              " Output encoding that is shown in the terminal
+set fileencoding=utf-8                                          " Output encoding of the file that is written
+set scrolloff=1                                                 " Lines (rows) show always before current cursor line
+set sidescrolloff=5                                             " Columns (cols) show always after current cursor position
+set nojoinspaces                                                " No insert two spaces after a '.', '?' and '!'
 
 " Custom View
 set number
@@ -112,13 +137,14 @@ set cursorline
 set noshowmatch
 set matchtime=0
 set list
-set listchars=space:·,tab:»-
+set listchars=space:·,tab:»-                                    " Visible white spaces
 set colorcolumn=121
-" set textwidth=120
+set textwidth=0                                                 " No breakline in Insert Mode
 set synmaxcol=200
 set winminheight=0
 set winheight=999
-set updatetime=300
+set updatetime=300                                              " Default 4s is a lot time
+set diffopt+=iwhite                                             " Ignore white spaces in diff mode
 
 " Custom identation
 " set autoindent
@@ -132,6 +158,9 @@ set nofoldenable
 set foldmethod=indent
 set foldnestmax=10
 set foldlevel=99
+
+" Utils
+set nrformats+=alpha                                            " Allow [in|de]crement letter chars: <C-a>, <C-x>
 
 " Statusline
 let g:currentmode={
@@ -177,8 +206,6 @@ function! ChangeStatuslineColor() abort
     catch
         let &readonly = &readonly
     endtry
-
-    return ''
 endfunction
 
 function! s:get_branch() abort
@@ -199,9 +226,9 @@ set shortmess+=c                                                " don't give ins
 set shortmess+=s                                                " don't give "search hit BOTTOM, continuing at TOP"
 set shortmess+=T                                                " truncate others message [...]
 set shortmess+=t                                                " truncate file message [<]
-set laststatus=2
 
-set statusline=                                                 " Empty
+set laststatus=2                                                " Always show statusline
+set statusline=                                                 " Start from scratch
 set statusline+=%{ChangeStatuslineColor()}                      " Color by Mode
 set statusline+=\ %n                                            " [N]umber buffer
 set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
@@ -227,7 +254,6 @@ noremap <Space> <Nop>
 " Indent without kill the selection in Visual Mode
 xmap < <gv
 xmap > >gv
-" xmap . :execute "normal! .\r"<Enter>
 
 " Purify
 noremap <Up> <Nop>
@@ -252,7 +278,9 @@ nnoremap <silent> Q @@
 nnoremap <silent> Y y$
 nnoremap <silent> gl '.
 
-" Center screen after search
+" Center screen after each search
+nnoremap <silent> * *zzzv
+nnoremap <silent> # #zzzv
 nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
 
@@ -265,7 +293,7 @@ xnoremap <silent> k gk
 " Sudo rescue
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 
-" / and ? Search alternatives
+" / and ? search alternatives
 nnoremap <Leader>s <kDivide>
 nnoremap <Leader>S ?
 
@@ -362,7 +390,7 @@ function! s:delete_call(flags) abort
         execute "normal! b"
     endif
 
-    silent call s:find_function(a:flags)
+    silent call <SID>find_function(a:flags)
 
     execute "normal! \"_dyi)\"_da)P"
 
@@ -392,10 +420,6 @@ function! s:find_function (flags, ...)
     let l:visual = a:flags =~# 'v' ? 1 : 0
 
     let l:pattern = '\(\k\|\i\|\f\|<\|>\|:\|\\\)\+\s*\ze('
-
-    if (len(a:000) == 1)
-        let l:pattern = a:000[0]
-    endif
 
     if (l:visual)
         let l:start = searchpos(l:pattern, l:fcursor . l:fbackward, line('.'))
@@ -455,7 +479,9 @@ function! s:append_char(type) abort
         execute "normal! \"_xA;\e"
     elseif l:lastchar == ' '
         execute "normal! g_l\"_D\e"
-    elseif (index(['"', "'", ')', ']'], l:lastchar) >= 0) || match(l:lastchar, "\a") || match(l:lastchar, "\d")
+    elseif index(['}'], l:lastchar) >= 0 && index(['json'], &filetype) >= 0
+        execute "normal! A,\e"
+    elseif index(['"', "'", ')', ']'], l:lastchar) >= 0 || match(l:lastchar, "\a") || match(l:lastchar, "\d")
         execute "normal! A;\e"
     else
         echomsg 'Nothing to do.'
@@ -548,6 +574,10 @@ nnoremap <silent> <Leader><Leader> :Buffers<Enter>
 nnoremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
 nnoremap <silent> <S-Tab> :call <SID>cycling_buffers(-1)<Enter>
 
+vnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
+vnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
+vnoremap <silent> <S-Tab> :<C-u>call <SID>cycling_buffers(-1)<Enter>
+
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
 
@@ -636,7 +666,7 @@ Plug 'jacoborus/tender.vim'
 Plug 'kaicataldo/material.vim', { 'branch': 'main' }
 
 Plug 'tpope/vim-commentary'                                     " gcc
-Plug 'tpope/vim-surround'                                       " cs"', viwS'
+Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
 Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa
@@ -781,9 +811,13 @@ let g:tagbar_autofocus = 1
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
-nnoremap <silent> <Leader>o :GFiles<Enter>
-nnoremap <silent> <Leader>p :Files<Enter>
 nnoremap <silent> <Leader>i :execute 'Files ' . expand('%:p:h')<Enter>
+nnoremap <silent> <Leader>p :Files<Enter>
+nnoremap <silent> <Leader>o :if isdirectory('.git')<Enter>
+            \ :GFiles<Enter>
+            \ :else<Enter>
+            \ :Files<Enter>
+            \ :endif<Enter>
 
 " Vim Tests
 " https://github.com/vim-test/vim-test
@@ -953,7 +987,7 @@ let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.v
 nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zvzz
 nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zvzz
 nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
-nmap <silent> <Leader>hu <Plug>(GitGutterRevertHunk)
+nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
 nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
 let g:gitgutter_eager = 0
 let g:gitgutter_realtime = 0
