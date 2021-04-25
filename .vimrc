@@ -3,6 +3,23 @@
 " Build-in improve % option (works with if statements)
 " runtime macros/matchit.vim
 
+" MAPS and MODES
+" @see https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
+" -> n  Normal mode map. Defined using ':nmap' or ':nnoremap'.
+" -> i  Insert mode map. Defined using ':imap' or ':inoremap'.
+" -> v  Visual and select mode map. Defined using ':vmap' or ':vnoremap'.
+" -> x  Visual mode map. Defined using ':xmap' or ':xnoremap'.
+" -> s  Select mode map. Defined using ':smap' or ':snoremap'.
+" -> c  Command-line mode map. Defined using ':cmap' or ':cnoremap'.
+" -> o  Operator pending mode map. Defined using ':omap' or ':onoremap'.
+" -> !  Insert and command-line mode map. Defined using 'map!' or 'noremap!'.
+" -> <Space>  Normal, Visual and operator pending mode map. Defined using ':map' or ':noremap'.
+"
+" The following characters may be displayed before the {rhs} of the map:
+" -> *  The {rhs} of the map is not re-mappable. Defined using the ':noremap' or ':nnoremap' or ':inoremap', etc. commands.
+" -> &  Only script local mappings are re-mappable in the {rhs} of the map. The map command has the <script> attribute.
+" -> @  A buffer local map command with the <buffer> attribute.
+
 " @see https://vim.fandom.com/wiki/Example_vimrc
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
 " @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
@@ -72,7 +89,7 @@ set splitright
 set signcolumn=yes
 set pumheight=15
 set showbreak=↪
-set cmdheight=2                                                 " More space, minus: Press enter to ..
+set cmdheight=2                                                 " More space, minus: "Press ENTER to ..." message
 
 if has('mouse')
     set mouse=
@@ -174,7 +191,15 @@ endfunction
 set showcmd
 set noruler
 set noshowmode
-set shortmess=WFAIcat
+
+set shortmess=W                                                 " don't give "written" or "[w]" when writing a file
+set shortmess+=F                                                " don't give the file info when editing a file
+set shortmess+=A                                                " don't give the "ATTENTION" message when swap is found
+set shortmess+=I                                                " don't give the intro message when starting Vim
+set shortmess+=c                                                " don't give ins-completion-menu messages
+set shortmess+=s                                                " don't give "search hit BOTTOM, continuing at TOP"
+set shortmess+=T                                                " truncate others message [...]
+set shortmess+=t                                                " truncate file message [<]
 set laststatus=2
 
 set statusline=                                                 " Empty
@@ -226,7 +251,7 @@ nnoremap <silent> gl '.
 nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
 
-" Save previous position in mark ', (<C-o> not works)
+" Save previous position in mark ', (<C-o> not works) using screen rows (g option)
 nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
 nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
 
@@ -237,8 +262,8 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 noremap <Leader>s <kDivide>
 noremap <Leader>S ?
 
-" Visual / Select and Normal Mode
-noremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
+" Fast Vim configuration
+nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
             \ :PlugUpdate<Enter>
             \ :elseif getbufvar(bufnr('%'), '&filetype') ==# 'vim-plug'<Enter>
             \ :silent execute "normal! :q!\r"<Enter>
@@ -248,25 +273,29 @@ noremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
 noremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT _vg_
 
-" Normal Mode
+" Preserve default register ("x) content
 nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
 nnoremap <silent> <Leader>x "_x
 nnoremap <silent> <Leader>y "+y
 
+" Fast saving
 nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>W :wall<Enter>
             \ :echo 'All saved!'<Enter>
 
+" Show/Copied current filename
 nnoremap <silent> <Leader>n :echo 'File: ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> 
             \ :echo 'Copied: ' . expand('%:p')<Enter>
 
+" Improve search in fuzzy finder
 nnoremap <silent> <Leader>f :call <SID>find_filter('e')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('w')<Enter>
 vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 
+" Fast close buffer
 nnoremap <silent> <Leader>z :if !&filetype<Enter>
             \ :bdelete!<Enter>
             \ :else<Enter>
@@ -274,6 +303,7 @@ nnoremap <silent> <Leader>z :if !&filetype<Enter>
             \ :bdelete<Enter>
             \ :endif<Enter><Enter>
 
+" Close all but current buffer
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
 nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
@@ -287,7 +317,7 @@ nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter>
             \ :echo 'Added: ' . expand('%')<Enter>
 
 nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter>
-            \ :echo 'Docker starting...'<Enter>
+            \ :echo 'Docker... '<Enter>
 
 nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter>
             \ :edit!<Enter>
@@ -358,7 +388,7 @@ function! s:append_char(type) abort
     elseif (index(['"', "'", ')', ']'], l:lastchar) >= 0) || match(l:lastchar, "\a") || match(l:lastchar, "\d")
         execute "normal! A;\e"
     else
-        echomsg 'Nothing to append to: ' . l:lastchar . '.'
+        echomsg 'Nothing to do.'
     endif
 
     execute "normal! `a"
@@ -387,9 +417,7 @@ function! s:go_line() abort
             execute "normal \<C-w>w\<Enter>"
         endif
     catch
-        echohl WarningMsg
-        echomsg 'Not is a valid line.'
-        echohl None
+        echomsg 'Nothing to do.'
     endtry
 
     return 0
@@ -437,7 +465,7 @@ inoremap <silent> kk <Esc>
 inoremap <silent> jk <Esc>
 inoremap <silent> jj <Esc>
 
-" Not <Esc> in Insert Mode on
+" Fast moving in Insert Mode
 inoremap <silent> II <Esc>I
 inoremap <silent> AA <Esc>A
 inoremap <silent> OO <Esc>O
@@ -504,6 +532,8 @@ map <C-l> <C-W>l
 
 if has('terminal')
     " Mappings to move out from terminal to other views
+    " Broken fzf window escape
+    " tnoremap <Esc> <C-\><C-n>
     tnoremap <C-h> <C-W>h
     tnoremap <C-j> <C-W>j
     tnoremap <C-k> <C-W>k
@@ -603,24 +633,29 @@ if has('termguicolors')
     set termguicolors
 endif
 
+" @see https://github.com/gruvbox-community/gruvbox
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
 let g:gruvbox_bold = 0
 let g:gruvbox_invert_selection = 0
 
+" @see https://github.com/dracula/vim
 let g:dracula_italic = 1
 let g:dracula_bold = 0
 let g:dracula_inverse = 0
 
+" @see https://github.com/arcticicestudio/nord-vim
 let g:nord_italic = 1
 let g:nord_italic_comments = 1
 
+" @see https://github.com/sainnhe/sonokai
 let g:sonokai_enable_italic = 1
 let g:sonokai_better_performance = 1
 let g:sonokai_transparent_background = 1
 let g:sonokai_styles = ['default', 'atlantis', 'shusia', 'maia']
 let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles), 'andromeda')
 
+" @see https://github.com/kaicataldo/material.vim
 let g:material_terminal_italics = 1
 let g:material_styles = ['palenight', 'ocean']
 let g:material_theme_style = get(g:material_styles, rand(srand()) % len(g:material_styles), 'default')
@@ -769,7 +804,7 @@ nnoremap <silent> K :call <SID>show_documentation()<Enter>
 function! s:show_documentation() abort
     let l:word = expand('<cword>')
 
-    if (index(['vim','help'], &filetype) >= 0)
+    if index(['vim', 'help'], &filetype) >= 0
         try
             execute 'help ' . l:word
         catch
@@ -777,7 +812,7 @@ function! s:show_documentation() abort
             echomsg 'Not found: ' . l:word . '.'
             echohl None
         endtry
-    elseif (coc#rpc#ready())
+    elseif coc#rpc#ready()
         call CocActionAsync('doHover')
     else
         execute '!' . &keywordprg . ' ' . l:word
@@ -914,9 +949,7 @@ function! s:split() abort
 
         execute "normal! \"_ddi" . l:command_string . "\e"
     else
-        echohl WarningMsg
         echomsg 'Nothing to do.'
-        echohl None
     endif
 
     let @@ = l:saved_unnamed_register
@@ -1050,7 +1083,7 @@ augroup AutoCommands
         if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
             execute 'source ' . g:session_file
 
-            echomsg 'Loaded: ' . g:session_file . ' session.'
+            echomsg 'Loaded ' . g:session_file . ' session.'
         else
             echomsg 'None ' . g:session_file . ' session.'
         endif
@@ -1060,7 +1093,7 @@ augroup AutoCommands
         if isdirectory('.git')
             execute 'mksession! ' . g:session_file
 
-            echomsg 'Saved: ' . g:session_file . ' session.'
+            echomsg 'Saved ' . g:session_file . ' session.'
         endif
     endfunction
 
@@ -1072,12 +1105,10 @@ augroup AutoCommands
 
     autocmd VimEnter * nested call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart()
-    " Fix <Tab> in popup menu
-    " autocmd CompleteDone * call <SID>completionkeys()
     autocmd InsertEnter * :setlocal norelativenumber
     autocmd InsertLeave * :setlocal relativenumber
     autocmd VimLeavePre * call <SID>sessionsave()
-    " autocmd VimResized * wincmd =
+    autocmd VimResized * wincmd =
 augroup END
 
 augroup ThemeColors
@@ -1123,17 +1154,16 @@ augroup ThemeColors
         " Syntastic with same color of theme
         highlight! SyntasticErrorSign guifg=#ff2222 ctermfg=1
         highlight! SyntasticWarningSign guifg=#bbbb00 ctermfg=3
-
-        " Goyo
-        autocmd! User GoyoLeave nested
-            \ highlight! link SignColumn LineNr |
-            \ highlight! SpecialKey ctermfg=239 guifg=#504945 |
-            \ highlight! Normal guibg=NONE ctermbg=NONE
     endfunction
 
+    " Initial load colorscheme
     call <SID>themes()
 
+    " After change colorscheme
     autocmd ColorScheme * call <SID>themes()
+
+    " Goyo restore colorscheme
+    autocmd User GoyoLeave nested call <SID>themes()
 augroup END
 
 if filereadable(expand('~/.vimrc.local'))
