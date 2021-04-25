@@ -826,10 +826,11 @@ if has('patch-8.2.0750')
 endif
 
 " @see https://github.com/vim/vim/issues/4738
-nnoremap gx :call <SID>go_url()<Enter>
+nnoremap gx :call <SID>go_url(expand('<cWORD>'))<Enter>
 
-function! s:go_url() abort
-    let l:uri = expand('<cWORD>')
+function! s:go_url(url) abort
+    let l:uri = a:url
+
     let l:uri = substitute(l:uri, '?', '\\?', '')
     let l:uri = shellescape(l:uri, 1)
 
@@ -877,6 +878,15 @@ let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.v
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
+nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zvzz
+nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zvzz
+nmap <silent> <Leader>hm <Plug>(GitGutterStageHunk)
+nmap <silent> <Leader>hu <Plug>(GitGutterRevertHunk)
+nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
+let g:gitgutter_eager = 0
+let g:gitgutter_realtime = 0
+let g:gitgutter_map_keys = 0
+let g:gitgutter_diff_args = '-w'
 let g:gitgutter_sign_priority = 10000
 let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_set_sign_backgrounds = 1
@@ -994,6 +1004,7 @@ augroup AutoCommands
 
     " PHP Customization
     autocmd FileType php setlocal commentstring=//\ %s
+    autocmd FileType php nnoremap <silent> <buffer><Leader>gu :call <SID>go_url('https://www.php.net/' . expand('<cword>'))<Enter>
     autocmd FileType php inoremap <silent> <buffer><Leader>uu <Esc>:call phpactor#UseAdd()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
 
