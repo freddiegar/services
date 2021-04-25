@@ -122,9 +122,9 @@ set updatetime=300
 
 " Custom identation
 " set autoindent
-set softtabstop=4
-set shiftwidth=4
-set expandtab
+set softtabstop=4                                                   " tabs calculate required spaces
+set shiftwidth=4                                                    " 1 tab === 4 spaces
+set expandtab                                                       " don't use tabs please
 set fileformat=unix
 
 " Enable folding : Hit za
@@ -236,10 +236,10 @@ noremap <Left> <Nop>
 noremap <Right> <Nop>
 
 " Purify!
-noremap <Up> <Nop>
-noremap <Down> <Nop>
-noremap <Left> <Nop>
-noremap <Right> <Nop>
+inoremap <Up> <Nop>
+inoremap <Down> <Nop>
+inoremap <Left> <Nop>
+inoremap <Right> <Nop>
 
 " Arrow keys resize windows
 nnoremap <silent> <Up> :resize -10<Enter>
@@ -767,15 +767,16 @@ let g:sneak#label = 1
 
 " Goyo
 " @see https://github.com/junegunn/goyo.vim
+nnoremap <silent> <F12> :Goyo<Enter>
 let g:goyo_linenr = 1
 let g:goyo_width = 120
 let g:goyo_height = '100%'
 let g:goyo_bg = '#1D2021'
-nnoremap <silent> <F12> :Goyo<Enter>
 
 " TagBar
 " @see https://github.com/preservim/tagbar
 nnoremap <silent> <F8> :TagbarToggle<Enter>
+let g:tagbar_autofocus = 1
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
@@ -806,7 +807,7 @@ if exists('g:loaded_syntastic_plugin')
     set statusline+=%*
 endif
 
-let g:syntastic_stl_format = "[%E{    %fe! #%e     }]"
+let g:syntastic_stl_format = "[%E{=== %fe! #%e ===}]"
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_enable_balloons = 0
@@ -1009,7 +1010,7 @@ function! s:split() abort
 
         for l:argument in l:arguments_list
             let l:command_string .= "\t" . trim(l:argument) . (len(l:arguments_list) > 1 ? ',' : '') . "\r"
-            call remove(l:arguments_list, 0)
+            silent call remove(l:arguments_list, 0)
         endfor
 
         execute "normal! \"_di(i\r" . l:command_string . "\e"
@@ -1025,7 +1026,7 @@ function! s:split() abort
 
         for l:argument in l:arguments_list
             let l:command_string .= trim(l:argument) . (len(l:arguments_list) > 1 ? ',' : '') . "\r"
-            call remove(l:arguments_list, 0)
+            silent call remove(l:arguments_list, 0)
         endfor
 
         execute "normal! \"_ddi" . l:command_string . "\e"
@@ -1075,7 +1076,7 @@ augroup AutoCommands
 
     " PHP Customization
     autocmd FileType php setlocal commentstring=//\ %s
-    autocmd FileType php nnoremap <silent> <buffer><Leader>gu :call <SID>go_url('https://www.php.net/' . expand('<cword>'))<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>gd :call <SID>go_url('https://www.php.net/' . expand('<cword>'))<Enter>
     autocmd FileType php inoremap <silent> <buffer><Leader>uu <Esc>:call phpactor#UseAdd()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
 
@@ -1155,7 +1156,7 @@ augroup AutoCommands
         let l:reload_command = printf(l:command_fmt, '{q}')
         let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
 
-        call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
+        silent call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
     endfunction
 
     " Save|Load sessions
@@ -1187,10 +1188,21 @@ augroup AutoCommands
         set formatoptions-=t                                            " No auto-wrap text in Insert Mode
     endfunction
 
+    function! s:cleanspaces() abort
+        let l:ccursor = getpos('.')
+        let l:lsearch = getreg('/')
+
+        silent! %s/\s\+$//e
+
+        silent call setpos('.', l:ccursor)
+        silent call setreg('/', l:lsearch)
+    endfunction
+
     autocmd VimEnter * nested call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart()
     autocmd InsertEnter * :setlocal norelativenumber
     autocmd InsertLeave * :setlocal relativenumber
+    autocmd BufWritePre *.md,*.js,*.sh,*.php :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimResized * wincmd =
 augroup END
@@ -1241,7 +1253,7 @@ augroup ThemeColors
     endfunction
 
     " Initial load colorscheme
-    call <SID>themes()
+    silent call <SID>themes()
 
     " After change colorscheme
     autocmd ColorScheme * call <SID>themes()
