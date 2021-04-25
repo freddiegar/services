@@ -226,11 +226,17 @@ let maplocalleader = "\<Space>"
 noremap <Space> <Nop>
 
 " Indent without kill the selection in Visual Mode
-vmap < <gv
-vmap > >gv
-vmap . :normal! .<Enter>
+xmap < <gv
+xmap > >gv
+" xmap . :execute "normal! .\r"<Enter>
 
 " Purify
+noremap <Up> <Nop>
+noremap <Down> <Nop>
+noremap <Left> <Nop>
+noremap <Right> <Nop>
+
+" Purify!
 noremap <Up> <Nop>
 noremap <Down> <Nop>
 noremap <Left> <Nop>
@@ -246,6 +252,7 @@ nnoremap <silent> <Right> :vertical resize +10<Enter>
 nnoremap <silent> Q @@
 nnoremap <silent> Y y$
 nnoremap <silent> gl '.
+" map <silent> <Leader><Esc> :call popup_clear(1)<Enter>
 
 " Center screen after search
 nnoremap <silent> n nzzzv
@@ -254,13 +261,15 @@ nnoremap <silent> N Nzzzv
 " Save previous position in mark ', (<C-o> not works) using screen rows (g option)
 nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
 nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
+xnoremap <silent> j gj
+xnoremap <silent> k gk
 
 " Sudo rescue
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 
 " / and ? Search alternatives
-noremap <Leader>s <kDivide>
-noremap <Leader>S ?
+nnoremap <Leader>s <kDivide>
+nnoremap <Leader>S ?
 
 " Fast Vim configuration
 nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
@@ -270,7 +279,15 @@ nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
             \ :else<Enter>
             \ :edit ~/.vimrc<Enter>
             \ :endif<Enter><Enter>
-noremap <silent> <Enter> :nohlsearch<Enter>
+
+" Turn-off highlighting
+nnoremap <silent> <Enter> :nohlsearch<Enter>
+
+" Fast new line
+" nnoremap <silent> <Leader><Enter> o<Esc>
+" nnoremap <silent> g<Enter> O<Esc>
+
+" Fast Visual Line selection (as V but with trim spaces)
 noremap <silent> TT _vg_
 
 " Preserve default register ("x) content
@@ -326,6 +343,7 @@ nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter>
 nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
             \ :echo 'Dumped: ' . getcwd()<Enter>
 
+nnoremap <silent> <Leader>gm :messages <Enter>
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path: ' . getcwd()<Enter>
 
@@ -469,13 +487,14 @@ inoremap <silent> jj <Esc>
 inoremap <silent> II <Esc>I
 inoremap <silent> AA <Esc>A
 inoremap <silent> OO <Esc>O
+inoremap <silent> PP <Esc>pa
 inoremap <silent> <C-a> <C-o>^
 inoremap <silent> <C-e> <C-o>$
 
-" Tabs navigation
-noremap <silent> <Leader><Leader> :Buffers<Enter>
-noremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
-noremap <silent> <S-Tab> :call <SID>cycling_buffers(-1)<Enter>
+" Buffers navigation
+nnoremap <silent> <Leader><Leader> :Buffers<Enter>
+nnoremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
+nnoremap <silent> <S-Tab> :call <SID>cycling_buffers(-1)<Enter>
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
@@ -880,7 +899,7 @@ let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.v
 " @see https://github.com/airblade/vim-gitgutter
 nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zvzz
 nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zvzz
-nmap <silent> <Leader>hm <Plug>(GitGutterStageHunk)
+nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
 nmap <silent> <Leader>hu <Plug>(GitGutterRevertHunk)
 nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
 let g:gitgutter_eager = 0
@@ -1028,7 +1047,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>ree :call phpactor#ExtractExpression(v:true)<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
 
-    autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
+    autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter> :execute "normal! zz"<Enter>
 "     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
 "     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
 
@@ -1110,8 +1129,10 @@ augroup AutoCommands
 
     function! s:poststart() abort
         " @see https://stackoverflow.com/questions/6076592/vim-set-formatoptions-being-lost#8748154
-        set formatoptions+=j                                            " Remove comment string in joining comments
+        set formatoptions+=j                                            " Remove comment string in [j]oining comments
+        set formatoptions+=n                                            " Detect list of [n]umbers
         set formatoptions-=o                                            " No append auto comment in o/O from Normal Mode
+        set formatoptions-=t                                            " No auto-wrap text in Insert Mode
     endfunction
 
     autocmd VimEnter * nested call <SID>sessionload()
