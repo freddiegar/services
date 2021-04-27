@@ -245,9 +245,21 @@ set shortmess+=t                                                " truncate file 
 set laststatus=2                                                " Always show statusline
 set statusline=                                                 " Start from scratch
 set statusline+=%{ChangeStatuslineColor()}                      " Color by Mode
+
+if exists('g:loaded_syntastic_plugin')
+    set statusline+=%#WarningMsg#
+    set statusline+=%{SyntasticStatuslineFlag()}                " Diagnostic info
+    set statusline+=%*
+endif
+
 set statusline+=\ %n                                            " [N]umber buffer
 set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
 set statusline+=\ %f                                            " Relative filename
+
+if exists('g:loaded_gitgutter')
+    set statusline+=\ %{GitGutterStatuslineFlag()}              " Modifications info
+endif
+
 set statusline+=%=                                              " New group
 set statusline+=\%m                                             " Modified flag
 set statusline+=\%r                                             " Readonly flag
@@ -854,19 +866,13 @@ nnoremap <silent> <Leader>tg :TestVisit<Enter>
 
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
-if exists('g:loaded_syntastic_plugin')
-    set statusline+=%#WarningMsg#
-    set statusline+=\ %{SyntasticStatuslineFlag()}
-    set statusline+=%*
-endif
-
-let g:syntastic_stl_format = "[%E{=== %fe! #%e ===}]"
+let g:syntastic_stl_format = "%E{%fe!}"
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_enable_balloons = 0
 let g:syntastic_php_checkers = ['php']
 let g:syntastic_auto_loc_list = 0
-let g:syntastic_enable_highlighting = 0
+let g:syntastic_enable_highlighting = 1
 let g:syntastic_error_symbol = 'E'
 let g:syntastic_warning_symbol = 'W'
 let g:syntastic_style_error_symbol = 'S'
@@ -1010,20 +1016,47 @@ let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.v
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
+nmap <silent> <F3> :GitGutterQuickFix<Enter>
+            \ :call <SID>quickfix_toggle()<Enter>
 nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zvzz
 nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zvzz
 nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
 nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
 nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
-let g:gitgutter_eager = 0
+nmap <silent> <Leader>hh :GitGutterToggle<Enter>
+nmap <silent> <Leader>hs :GitGutterSignsToggle<Enter>
+
+" let g:gitgutter_enabled = 1
+" let g:gitgutter_eager = 1
 let g:gitgutter_realtime = 0
 let g:gitgutter_map_keys = 0
+let g:gitgutter_grep = 'rg'
 let g:gitgutter_diff_args = '-w'
-let g:gitgutter_sign_priority = 10000
+let g:gitgutter_sign_priority = 100000
 let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_set_sign_backgrounds = 1
 let g:gitgutter_preview_win_floating = 1
 let g:gitgutter_close_preview_on_escape = 1
+let g:gitgutter_show_msg_on_hunk_jumping = 0
+
+function! GitGutterStatuslineFlag() abort
+    let [l:nradded, l:nrmodified, l:nrremoved] = GitGutterGetHunkSummary()
+
+    if (l:nradded + l:nrmodified + l:nrremoved) == 0
+        return ''
+    endif
+
+    let l:status = []
+
+    call add(l:status, l:nradded > 0 ? '+' . l:nradded : '')
+    call add(l:status, l:nrmodified > 0 ? '~' . l:nrmodified : '')
+    call add(l:status, l:nrremoved > 0 ? '-' . l:nrremoved : '')
+    call filter(l:status, 'v:val != ""')
+
+    let l:gitstatus = join(l:status)
+
+    return len(l:gitstatus) > 0 ? printf('%s', trim(l:gitstatus)) : ''
+endfunction
 
 " Rainbow
 " @see https://github.com/luochen1990/rainbow
@@ -1303,14 +1336,13 @@ augroup ThemeColors
         highlight! GitGutterAdd guifg=#009900 ctermfg=2
         highlight! GitGutterChange guifg=#BBBB00 ctermfg=3
         highlight! GitGutterDelete guifg=#FF2222 ctermfg=1
-        highlight! link GitGutterAddLineNr Underlined
-        highlight! link GitGutterChangeLineNr Underlined
-        highlight! link GitGutterDeleteLineNr Underlined
-        highlight! link GitGutterChangeDeleteLineNr Underlined
 
-        " Syntastic with same color of theme
+        " Syntastic sign with same color of theme
         highlight! SyntasticErrorSign guifg=#FF2222 ctermfg=1
         highlight! SyntasticWarningSign guifg=#BBBB00 ctermfg=3
+        " Sintastic line highligth
+        highlight! link SyntasticError SpellBad
+        highlight! link SyntasticWarning SpellCap
     endfunction
 
     " Initial load colorscheme
