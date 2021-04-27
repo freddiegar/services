@@ -1,7 +1,17 @@
+" PHILOSOPHY
+" @see https://blog.sanctum.geek.nz/series/unix-as-ide/
+" @thanks https://markodenic.com/use-google-like-a-pro/
+
 " VIM Config
+" @see https://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118
 " @see https://blog.joren.ga/tools/vim-learning-steps
+" @see https://learnvimscriptthehardway.stevelosh.com/
+" @see https://github.com/flyingalex/Practical-Vim
+
 " Build-in improve % option (works with if statements)
 " runtime macros/matchit.vim
+
+scriptencoding utf-8
 
 " REGISTERS AND MARKS SPECIAL USED HERE
 " - "z  Save content yank in function, this no overwrite default register
@@ -45,14 +55,16 @@
 " @see https://vim.fandom.com/wiki/Example_vimrc
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
 " @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
-" @See :h quickref
+" @see :h quickref
+" @see :h motion
+
 set nomodeline                                                  " Security!
 set secure                                                      " Security!: Not autocmd in .vimrc file
 set exrc                                                        " Always search config in .vimrc file
 set hidden                                                      " Allow change between buffer without save
 set omnifunc=syntaxcomplete#Complete                            " Default complete function
 set cpoptions+=J                                                " <Tab> not are spaces
-set cryptmethod=blowfish2                                       " Use string encription
+set cryptmethod=blowfish2                                       " Use strong encription
 
 " ALL in one BIG autocmd
 execute 'augroup ALL1BIG'
@@ -106,13 +118,13 @@ set title
 set novisualbell
 set autoread                                                    " Auto reload after external changes
 set autowrite                                                   " Autosave on lost focus (cycling buffers)
-set backspace=indent,eol,start                                  " Allow backspace in all
+set backspace=indent,eol,start                                  " Allow backspacing over everything in Insert Mode
 set clipboard=unnamedplus                                       " Shared SO clipboard
 set splitbelow                                                  " :split  opens window below (:belowright split)
 set splitright                                                  " :vsplit opens window right (:belowright vsplit)
 set signcolumn=yes                                              " Always show signs
 set pumheight=15
-set cmdheight=2                                                 " More space, minus: "Press ENTER to ..." message
+set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message
 
 if has('mouse')
     set mouse=                                                  " Mouse don't exist always
@@ -206,6 +218,9 @@ function! ChangeStatuslineColor() abort
     catch
         let &readonly = &readonly
     endtry
+
+    " Don't show 0 in statusline
+    return ''
 endfunction
 
 function! s:get_branch() abort
@@ -303,7 +318,7 @@ nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
             \ :elseif getbufvar(bufnr('%'), '&filetype') ==# 'vim-plug'<Enter>
             \ :silent execute "normal! :q!\r"<Enter>
             \ :else<Enter>
-            \ :edit ~/.vimrc<Enter>
+            \ :silent execute 'edit ~/.vimrc'<Enter>
             \ :endif<Enter><Enter>
 
 " Turn-off highlighting
@@ -680,6 +695,7 @@ Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete
 Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from vim: git add, docker start, etc
 Plug 'airblade/vim-gitgutter'                                   " Show changes in git
+Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
 Plug 'junegunn/fzf.vim'                                         " using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
@@ -687,7 +703,6 @@ Plug 'sniphpets/sniphpets'                                      " PHP snippet wi
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 
 Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
-Plug 'vim-syntastic/syntastic', {'for': 'php'}                  " Diagnostic code on-the-fly
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar for PHP in on-the-fly
 Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
@@ -697,7 +712,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer ins
 Plug 'vim-scripts/autotags', {'for': 'c'}
 Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 
-" Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}
+Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easy
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}         " Performance using emmet syntax
 Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
 
@@ -738,21 +753,25 @@ endif
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
 let g:gruvbox_bold = 0
-let g:gruvbox_invert_selection = 0
+let g:gruvbox_invert_selection = 1
 
 " @see https://github.com/dracula/vim
 let g:dracula_italic = 1
 let g:dracula_bold = 0
-let g:dracula_inverse = 0
+let g:dracula_inverse = 1
 
 " @see https://github.com/arcticicestudio/nord-vim
 let g:nord_italic = 1
 let g:nord_italic_comments = 1
+let g:nord_cursor_line_number_background = 1
+let g:nord_underline = 1
 
 " @see https://github.com/sainnhe/sonokai
 let g:sonokai_enable_italic = 1
 let g:sonokai_better_performance = 1
 let g:sonokai_transparent_background = 1
+let g:sonokai_diagnostic_text_highlight = 1
+let g:sonokai_diagnostic_line_highlight = 1
 let g:sonokai_styles = ['default', 'atlantis', 'shusia', 'maia']
 let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles), 'andromeda')
 
@@ -814,9 +833,9 @@ let g:tagbar_autofocus = 1
 nnoremap <silent> <Leader>i :execute 'Files ' . expand('%:p:h')<Enter>
 nnoremap <silent> <Leader>p :Files<Enter>
 nnoremap <silent> <Leader>o :if isdirectory('.git')<Enter>
-            \ :GFiles<Enter>
+            \ :execute 'GFiles'<Enter>
             \ :else<Enter>
-            \ :Files<Enter>
+            \ :execute 'Files'<Enter>
             \ :endif<Enter>
 
 " Vim Tests
@@ -973,6 +992,13 @@ function! s:check_large_file() abort
         echohl None
     endif
 endfunction
+
+" Surround
+" @see https://github.com/tpope/vim-surround
+" b = between
+nmap <silent> <leader>b ysiw
+vmap <silent> <leader>b S
+let g:surround_indent = 1
 
 " CTags
 " @see https://github.com/vim-scripts/autotags
@@ -1236,7 +1262,7 @@ augroup AutoCommands
     autocmd BufEnter * call <SID>poststart()
     autocmd InsertEnter * :setlocal norelativenumber
     autocmd InsertLeave * :setlocal relativenumber
-    autocmd BufWritePre *.md,*.js,*.sh,*.php :call <SID>cleanspaces()
+    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimResized * wincmd =
 augroup END
@@ -1252,6 +1278,7 @@ augroup ThemeColors
         let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
 
         execute 'colorscheme ' . g:colorscheme
+        " colorscheme sonokai
     catch /^Vim\%((\a\+)\)\=:E185/
         colorscheme evening
 
@@ -1272,7 +1299,7 @@ augroup ThemeColors
         " Always use same color in list chars
         highlight! SpecialKey ctermfg=239 guifg=#504945
 
-        " GitGutter with same color of theme
+        " GitGutter sign with same color of theme
         highlight! GitGutterAdd guifg=#009900 ctermfg=2
         highlight! GitGutterChange guifg=#BBBB00 ctermfg=3
         highlight! GitGutterDelete guifg=#FF2222 ctermfg=1
