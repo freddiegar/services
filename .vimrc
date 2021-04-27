@@ -392,6 +392,8 @@ nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter>
 nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
             \ :echo 'Dumped: ' . getcwd()<Enter>
 
+nnoremap <silent> <Leader>gw :setlocal wrap!<Enter>
+
 nnoremap <silent> <Leader>gm :messages <Enter>
 nnoremap <silent> <Leader>gb :echo 'Branch: ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path: ' . getcwd()<Enter>
@@ -830,9 +832,13 @@ let g:VM_maps["Select All"] = '<C-s>'
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
 let g:UltiSnipsEditSplit = 'vertical'
-let g:UltiSnipsExpandTrigger = '<Tab>'
-let g:UltiSnipsJumpForwardTrigger = '<Tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+let g:UltiSnipsListSnippets = ''
+" IMPORTANT: Custom g:UltiSnipsExpandTrigger MUST BE DIFF to <Tab> to integration CoC
+let g:UltiSnipsExpandTrigger = '<C-Tab>'
+" IMPORTANT: Custom g:UltiSnipsJumpForwardTrigger MUST BE KEEP diferent to g:UltiSnipsExpandTrigger
+" let g:UltiSnipsJumpForwardTrigger = '<C-Tab>'
+" let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+let g:UltiSnipsRemoveSelectModeMappings = 0
 let g:UltiSnipsUsePythonVersion = 3
 
 " PHPVim
@@ -941,6 +947,32 @@ let g:coc_global_extensions = [
 
 " Use <Ctrl-Space> to trigger completion.
 inoremap <silent> <expr> <C-@> coc#refresh()
+
+" Make <Tab> for complete navigation and trigger snippets
+" @see https://github.com/SirVer/ultisnips/commit/66d81fc2c0bda30be69fffa46da0932ee8d5ddd5
+" @see :h 'UltiSnips-trigger-functions'
+if maparg('<Tab>', 's')
+    sunmap <Tab>
+endif
+
+snoremap <Enter> <Esc>
+snoremap <Tab> <Esc> :<C-u>call feedkeys('bcia', 't')<Enter>
+inoremap <silent> <expr> <Tab>
+            \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
+            \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
+            \ pumvisible() ? "\<C-n>" : "\<Tab>"
+
+" Make <S-Tab> for complete and snippet navigation
+" Konsole change shortcut <S-Tab> to <C-S-Tab>
+" @see https://vim.fandom.com/wiki/Smart_mapping_for_tab_completion
+inoremap <silent> <expr> <Esc>[Z
+            \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
+            \ pumvisible() ? "\<C-p>" : "\<C-d>"
+
+" Make <Esc> close popup menu, keep pending (Conflict with <Esc>[Z aka <S-Tab>)
+" Use <nowait> is required
+inoremap <silent> <nowait> <expr> <Esc>
+            \ pumvisible() ? "\<C-e>" : "\<Esc>"
 
 " Make <Enter> auto-select the first completion item
 inoremap <silent> <expr> <Enter>
