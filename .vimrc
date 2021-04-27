@@ -498,8 +498,24 @@ function! s:append_char(type) abort
     execute "normal! ma$v\"zy"
     let l:lastchar = @@
 
-    if a:type == 'd'
+    if a:type ==# 'd'
         execute "normal! $\"_x\e"
+    elseif a:type ==# 'o'
+        execute "normal! o\e"
+    elseif a:type ==# 'O'
+        execute "normal! O\e"
+    elseif a:type ==# '{'
+        let l:bsearch = getreg('?')
+
+        silent execute "normal! ?^    {\rkO\e"
+
+        silent call setreg('/', l:bsearch)
+    elseif a:type ==# '}'
+        let l:fsearch = getreg('/')
+
+        silent execute "normal! /^    }\ro\e"
+
+        silent call setreg('/', l:fsearch)
     elseif l:lastchar == ';'
         execute "normal! \"_xA,\e"
     elseif l:lastchar == ','
@@ -595,6 +611,12 @@ inoremap <silent> OO <Esc>O
 inoremap <silent> PP <Esc>pa
 inoremap <silent> <C-a> <C-o>^
 inoremap <silent> <C-e> <C-o>$
+
+" Fast append lines
+nnoremap <silent> <Leader><Enter> :call <SID>append_char('o')<Enter>
+nnoremap <silent> g<Enter> :call <SID>append_char('O')<Enter>
+nnoremap <silent> <<Enter> :call <SID>append_char('{')<Enter>
+nnoremap <silent> ><Enter> :call <SID>append_char('}')<Enter>
 
 " Buffers navigation
 nnoremap <silent> <Leader><Leader> :Buffers<Enter>
