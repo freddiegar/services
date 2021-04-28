@@ -408,17 +408,16 @@ nnoremap <silent> <Leader>gF :echo 'Copied: ' . <SID>get_current_function(1)<Ent
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
 
-nnoremap <silent> <Plug>DeleteInnerCallRepeatable :call <SID>delete_call('vbc')<Enter>
+nnoremap <silent> <Plug>DeleteInnerCallRepeatable :call <SID>delete_call('vbc', 'Inner')<Enter>
 nmap <silent> dc <Plug>DeleteInnerCallRepeatable
 
-nnoremap <silent> <Plug>DeleteACallRepeatable :call <SID>delete_call('vb')<Enter>
+nnoremap <silent> <Plug>DeleteACallRepeatable :call <SID>delete_call('vb', 'A')<Enter>
 nmap <silent> dC <Plug>DeleteACallRepeatable
 
-function! s:delete_call(flags) abort
+function! s:delete_call(flags, type) abort
     let l:saved_unnamed_register = @@
-    let l:type = match(a:flags, 'c') > 0 ? 'Inner' : 'A'
 
-    if l:type ==# 'A' && !<SID>check_backspaces()
+    if a:type ==# 'A' && !<SID>check_backspaces()
         execute "normal! b"
     endif
 
@@ -426,7 +425,7 @@ function! s:delete_call(flags) abort
 
     execute "normal! \"_dyi)\"_da)P"
 
-    if l:type ==# 'A' && !<SID>check_backspaces()
+    if a:type ==# 'A' && !<SID>check_backspaces()
         execute "normal! 0f("
     else
         execute "normal! F("
@@ -434,7 +433,7 @@ function! s:delete_call(flags) abort
 
     let @@ = l:saved_unnamed_register
 
-    silent! call repeat#set("\<Plug>Delete" . l:type . "CallRepeatable")
+    silent! call repeat#set("\<Plug>Delete" . a:type . 'CallRepeatable')
 endfunction
 
 function! s:check_backspaces() abort
@@ -1370,7 +1369,6 @@ augroup ThemeColors
         let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
 
         execute 'colorscheme ' . g:colorscheme
-        " colorscheme sonokai
     catch /^Vim\%((\a\+)\)\=:E185/
         colorscheme evening
 
