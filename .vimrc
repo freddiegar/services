@@ -334,7 +334,7 @@ nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
             \ :silent execute "normal! :q!\r"<Enter>
             \ :else<Enter>
             \ :silent execute 'edit ~/.vimrc'<Enter>
-            \ :endif<Enter>
+            \ :endif<Enter><Enter>
 
 " Turn-off highlighting
 nnoremap <silent> <Enter> :nohlsearch<Enter>
@@ -448,7 +448,7 @@ nnoremap <silent> <Leader>z :if !&filetype<Enter>
             \ :else<Enter>
             \ :update<Enter>
             \ :bdelete<Enter>
-            \ :endif<Enter>
+            \ :endif<Enter><Enter>
 
 " Close all but current buffer
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
@@ -977,7 +977,7 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_enable_balloons = 0
 let g:syntastic_php_checkers = ['php', 'phpmd']
-let g:syntastic_php_phpmd_post_args = 'unusedcode,naming'
+let g:syntastic_php_phpmd_post_args = 'unusedcode'
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_enable_highlighting = 1
 let g:syntastic_error_symbol = 'E'
@@ -1436,73 +1436,60 @@ augroup END
 
 nmap <silent> <F4> :call <SID>get_hlinfo()<Enter>
 
+" @thanks https://stackoverflow.com/questions/9464844/how-to-get-group-name-of-highlighting-under-cursor-in-vim#9464929
+function! s:get_hlinfo() abort
+    if !exists("*synstack")
+        return
+    endif
+
+    echo 'Highligth: ' . join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ',')
+                \ . ' -> ' . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+endfunc
+
+" @see :h syntax
+" @see :highlight <GroupName>
+" @see :verbose highlight <GroupName>
+" @see :highlight clear <GroupName>
+" @see :source $VIMRUNTIME/syntax/hitest.vim
+" @see https://commons.wikimedia.org/wiki/File:Xterm_256color_chart.svg
+" @see https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax/
+function! s:themes() abort
+    " Transparency
+    " Use #1D2021 in Terminal
+    highlight! Normal guibg=NONE ctermbg=NONE
+
+    " SignColumn and StatusLine with same color of theme
+    highlight! link SignColumn LineNr
+    highlight! link StatusLine LineNr
+    highlight! link CursorLineNr CursorLine
+
+    " Always use same color in list chars
+    highlight! SpecialKey ctermfg=239 guifg=#504945
+
+    " GitGutter sign with same color of theme
+    highlight! link GitGutterAdd SignColumn
+    highlight! link GitGutterChange SignColumn
+    highlight! link GitGutterDelete SignColumn
+
+    " Syntastic sign with same color of theme
+    highlight! link SyntasticErrorSign SignColumn
+    highlight! link SyntasticWarningSign SignColumn
+    highlight! link SyntasticStyleErrorSign SignColumn
+    highlight! link SyntasticStyleWarningSign SignColumn
+
+    " Sintastic line highligth
+    highlight! clear ErrorText
+    highlight! clear ErrorLine
+    highlight! ErrorLine guifg=NONE ctermbg=52 guibg=#55393D ctermbg=NONE
+    highlight! link SyntasticStyleErrorLine ErrorLine
+    highlight! SyntasticStyleWarningLine guifg=NONE ctermbg=236 guibg=#534C38 ctermbg=NONE
+
+    " Custom color for statusline
+    highlight! User1 guifg=#FF2222 ctermfg=1
+endfunction
+
 augroup ThemeColors
     autocmd!
-
-    set background=dark
-
-    try
-        let g:weekDay = str2nr(strftime('%w'))
-        let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai', 'material']
-        let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
-
-        execute 'colorscheme ' . g:colorscheme
-    catch /^Vim\%((\a\+)\)\=:E185/
-        colorscheme evening
-
-        echohl WarningMsg
-        echomsg 'Not found colorscheme: ' . g:colorscheme . '.'
-        echohl None
-    endtry
-
-    " @thanks https://stackoverflow.com/questions/9464844/how-to-get-group-name-of-highlighting-under-cursor-in-vim#9464929
-    function! s:get_hlinfo() abort
-        if !exists("*synstack")
-            return
-        endif
-
-        echo 'Highligth: ' . join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ',')
-                    \ . ' -> ' . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
-    endfunc
-
-    " @see :h syntax
-    " @see :highlight <GroupName>
-    " @see :verbose highlight <GroupName>
-    " @see :highlight clear <GroupName>
-    " @see :source $VIMRUNTIME/syntax/hitest.vim
-    " @see https://commons.wikimedia.org/wiki/File:Xterm_256color_chart.svg
-    " @see https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax/
-    function! s:themes() abort
-        " Transparency
-        " Use #1D2021 in Terminal
-        highlight! Normal guibg=NONE ctermbg=NONE
-
-        " SignColumn and StatusLine with same color of theme
-        highlight! link SignColumn LineNr
-        highlight! link StatusLine LineNr
-        highlight! link CursorLineNr CursorLine
-
-        " Always use same color in list chars
-        highlight! SpecialKey ctermfg=239 guifg=#504945
-
-        " GitGutter sign with same color of theme
-        highlight! link GitGutterAdd SignColumn
-        highlight! link GitGutterChange SignColumn
-        highlight! link GitGutterDelete SignColumn
-
-        " Syntastic sign with same color of theme
-        highlight! link SyntasticErrorSign SignColumn
-        highlight! link SyntasticWarningSign SignColumn
-        highlight! link SyntasticStyleErrorSign SignColumn
-        highlight! link SyntasticStyleWarningSign SignColumn
-
-        " Sintastic line highligth
-        highlight! SyntasticStyleErrorLine guifg=NONE ctermbg=52 guibg=#55393D ctermbg=NONE
-        highlight! SyntasticStyleWarningLine guifg=NONE ctermbg=236 guibg=#e5c463 ctermbg=NONE
-
-        " Custom color for statusline
-        highlight! User1 guifg=#FF2222 ctermfg=1
-    endfunction
 
     " Initial load colorscheme
     silent call <SID>themes()
@@ -1513,6 +1500,23 @@ augroup ThemeColors
     " Goyo restore colorscheme
     autocmd User GoyoLeave nested call <SID>themes()
 augroup END
+
+set background=dark
+
+try
+    let g:weekDay = str2nr(strftime('%w'))
+    let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai', 'material']
+    let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
+
+    execute 'colorscheme ' . g:colorscheme
+    " colorscheme dracula
+catch /^Vim\%((\a\+)\)\=:E185/
+    colorscheme evening
+
+    echohl WarningMsg
+    echomsg 'Not found colorscheme: ' . g:colorscheme . '.'
+    echohl None
+endtry
 
 if filereadable(expand('~/.vimrc.local'))
     source ~/.vimrc.local
