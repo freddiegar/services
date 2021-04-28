@@ -7,6 +7,7 @@
 " @see https://blog.joren.ga/tools/vim-learning-steps
 " @see https://learnvimscriptthehardway.stevelosh.com/
 " @see https://github.com/flyingalex/Practical-Vim
+" @see https://thevaluable.dev/code-quality-check-tools-php/
 
 " Build-in improve % option (works with if statements)
 " runtime macros/matchit.vim
@@ -172,7 +173,7 @@ set foldnestmax=10
 set foldlevel=99
 
 " Utils
-set nrformats+=alpha                                            " Allow [in|de]crement letter chars: <C-a>, <C-x>
+set nrformats+=alpha                                            " Allow [in/de]crement letter chars: <C-a>, <C-x>
 
 " Statusline
 let g:currentmode={
@@ -247,11 +248,12 @@ set statusline=                                                 " Start from scr
 set statusline+=%{ChangeStatuslineColor()}                      " Color by Mode
 
 if exists('g:loaded_syntastic_plugin')
-    set statusline+=%#WarningMsg#
+    set statusline+=%1*                                         " Custom color
     set statusline+=%{SyntasticStatuslineFlag()}                " Diagnostic info
     set statusline+=%*
 endif
 
+set statusline+=%*                                              " Return default colors
 set statusline+=\ %n                                            " [N]umber buffer
 set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
 set statusline+=\ %f                                            " Relative filename
@@ -266,7 +268,8 @@ set statusline+=\%r                                             " Readonly flag
 set statusline+=\ %3{&filetype}
 set statusline+=\ #:%3b                                         " ASCII representation
 set statusline+=\ l:%3l/%3L\ c:%3c                              " Line of Lines and Column
-set statusline+=\%<\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\%<                                             " Cut long statusline here
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
 set statusline+=\ @\ %{strftime(\"%H:%M\")}                     " Date: HH:MM
 
 " RAW Modes Fixed
@@ -331,7 +334,7 @@ nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
             \ :silent execute "normal! :q!\r"<Enter>
             \ :else<Enter>
             \ :silent execute 'edit ~/.vimrc'<Enter>
-            \ :endif<Enter><Enter>
+            \ :endif<Enter>
 
 " Turn-off highlighting
 nnoremap <silent> <Enter> :nohlsearch<Enter>
@@ -367,7 +370,7 @@ nnoremap <silent> <Leader>z :if !&filetype<Enter>
             \ :else<Enter>
             \ :update<Enter>
             \ :bdelete<Enter>
-            \ :endif<Enter><Enter>
+            \ :endif<Enter>
 
 " Close all but current buffer
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
@@ -806,8 +809,6 @@ let g:nord_underline = 1
 let g:sonokai_enable_italic = 1
 let g:sonokai_better_performance = 1
 let g:sonokai_transparent_background = 1
-let g:sonokai_diagnostic_text_highlight = 1
-let g:sonokai_diagnostic_line_highlight = 1
 let g:sonokai_styles = ['default', 'atlantis', 'shusia', 'maia']
 let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles), 'andromeda')
 
@@ -894,7 +895,7 @@ nnoremap <silent> <Leader>tg :TestVisit<Enter>
 
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
-let g:syntastic_stl_format = "%E{%fe!}"
+let g:syntastic_stl_format = "%E{%fe #%e !}%B{,}%W{%fw #%w ?}"
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_enable_balloons = 0
@@ -1354,6 +1355,9 @@ augroup AutoCommands
     autocmd VimResized * wincmd =
 augroup END
 
+
+nmap <silent> <F4> :call <SID>get_hlinfo()<Enter>
+
 augroup ThemeColors
     autocmd!
 
@@ -1374,6 +1378,23 @@ augroup ThemeColors
         echohl None
     endtry
 
+    " @thanks https://stackoverflow.com/questions/9464844/how-to-get-group-name-of-highlighting-under-cursor-in-vim#9464929
+    function! s:get_hlinfo() abort
+        if !exists("*synstack")
+            return
+        endif
+
+        echo 'Highligth: ' . join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ',')
+                    \ . ' -> ' . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+    endfunc
+
+    " @see :h syntax
+    " @see :highlight <GroupName>
+    " @see :verbose highlight <GroupName>
+    " @see :highlight clear <GroupName>
+    " @see :source $VIMRUNTIME/syntax/hitest.vim
+    " @see https://commons.wikimedia.org/wiki/File:Xterm_256color_chart.svg
+    " @see https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax/
     function! s:themes() abort
         " Transparency
         " Use #1D2021 in Terminal
@@ -1382,21 +1403,28 @@ augroup ThemeColors
         " SignColumn and StatusLine with same color of theme
         highlight! link SignColumn LineNr
         highlight! link StatusLine LineNr
+        highlight! link CursorLineNr CursorLine
 
         " Always use same color in list chars
         highlight! SpecialKey ctermfg=239 guifg=#504945
 
         " GitGutter sign with same color of theme
-        highlight! GitGutterAdd guifg=#009900 ctermfg=2
-        highlight! GitGutterChange guifg=#BBBB00 ctermfg=3
-        highlight! GitGutterDelete guifg=#FF2222 ctermfg=1
+        highlight! link GitGutterAdd SignColumn
+        highlight! link GitGutterChange SignColumn
+        highlight! link GitGutterDelete SignColumn
 
         " Syntastic sign with same color of theme
-        highlight! SyntasticErrorSign guifg=#FF2222 ctermfg=1
-        highlight! SyntasticWarningSign guifg=#BBBB00 ctermfg=3
+        highlight! link SyntasticErrorSign SignColumn
+        highlight! link SyntasticWarningSign SignColumn
+        highlight! link SyntasticStyleErrorSign SignColumn
+        highlight! link SyntasticStyleWarningSign SignColumn
+
         " Sintastic line highligth
-        highlight! link SyntasticError SpellBad
-        highlight! link SyntasticWarning SpellCap
+        highlight! SyntasticStyleErrorLine guifg=NONE ctermbg=52 guibg=#55393D ctermbg=NONE
+        highlight! SyntasticStyleWarningLine guifg=NONE ctermbg=236 guibg=#e5c463 ctermbg=NONE
+
+        " Custom color for statusline
+        highlight! User1 guifg=#FF2222 ctermfg=1
     endfunction
 
     " Initial load colorscheme
