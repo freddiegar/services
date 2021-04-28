@@ -161,9 +161,9 @@ set diffopt+=iwhite                                             " Ignore white s
 
 " Custom identation
 " set autoindent
-set softtabstop=4                                                   " tabs calculate required spaces
-set shiftwidth=4                                                    " 1 tab === 4 spaces
-set expandtab                                                       " don't use tabs please
+set softtabstop=4                                               " tabs calculate required spaces
+set shiftwidth=4                                                " 1 tab === 4 spaces
+set expandtab                                                   " don't use tabs please
 set fileformat=unix
 
 " Enable folding : Hit za
@@ -339,8 +339,86 @@ nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
 " Turn-off highlighting
 nnoremap <silent> <Enter> :nohlsearch<Enter>
 
-" Fast Visual Line selection (as V but with trim spaces)
-nnoremap <silent> TT _vg_
+" Fast Visual Line selection
+noremap <silent> TT :call <SID>smartselection(visualmode())<Enter>
+
+function! s:smartselection(type) abort
+    let l:vsapplied = 0
+    let l:cline = getline('.')
+    let l:cposition = getcurpos()[2]
+    let l:vcontent = <SID>get_visual_selection()
+    let l:hasparenthesis = match(l:cline, ')', l:cposition) >= 0
+    let l:hassemicolon = match(l:cline, ';', l:cposition) >= 0
+    let l:hascontent = match(l:cline, l:vcontent, 0) >= 0
+
+    " if len(l:vcontent) == 1 && l:hasparenthesis
+    if l:hasparenthesis && !l:hascontent
+        " Line has function
+        call feedkeys('vi)', 't')
+
+        let l:vsapplied = 'IP [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
+    " elseif len(l:vcontent) == 1 && l:hassemicolon
+    elseif l:hassemicolon && !l:hascontent
+        " Line has semicolon
+        call feedkeys('_vt;', 't')
+
+        let l:vsapplied = 'IS [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
+    else
+        " (as V but with trim spaces)
+        call feedkeys('_vg_', 't')
+
+        let l:vsapplied = 'D [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
+    endif
+
+    echomsg 'V-SELECT applied: ' . l:vsapplied . ' c: ' . l:vcontent
+
+    return
+
+    if l:vsapplied == ''
+        let l:funcstart = <SID>find_function('bcen')[1][1]
+
+        call feedkeys('va)', 't')
+
+        let l:vcontent = substitute(l:cline, l:vcontent, '', 'g')
+        let l:hasparenthesis = match(l:vcontent, ')') >= 0
+        let l:hassemicolon = match(l:vcontent, ';') >= 0
+    endif
+
+    if l:vsapplied == '' && l:hascontent && l:funcstart < l:cposition && l:hasparenthesis
+        " Next outer function
+        call feedkeys("\evi)", 't')
+
+        let l:vsapplied = 'FP [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ' fi: ' . l:funcstart . ']'
+    elseif l:vsapplied == '' && l:hascontent && l:hassemicolon
+        " Has semicolon
+        call feedkeys("\e_vt;", 't')
+
+        let l:vsapplied = 'FS [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ' fi: ' . l:funcstart . ']'
+    elseif l:vsapplied == ''
+        " (as V but with trim spaces)
+        call feedkeys('\e_vg_', 't')
+
+        let l:vsapplied = 'D [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
+    endif
+
+    echomsg 'V-SELECT applied: ' . l:vsapplied . ' c: ' . l:vcontent
+endfunction
+
+" @thanks https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript#6271254
+function! s:get_visual_selection()
+    let [l:linestart, l:colstart] = getpos("'<")[1:2]
+    let [l:lineend, l:colend] = getpos("'>")[1:2]
+    let l:lines = getline(l:linestart, l:lineend)
+
+    if len(l:lines) == 0
+        return ''
+    endif
+
+    let l:lines[-1] = l:lines[-1][: l:colend - (&selection == 'inclusive' ? 1 : 2)]
+    let l:lines[0] = l:lines[0][l:colstart - 1:]
+
+    return join(l:lines, "\n")
+endfunction
 
 " Preserve default register ("x) content
 nnoremap <silent> <Leader>c "_c
@@ -355,9 +433,9 @@ nnoremap <silent> <Leader>W :wall<Enter>
             \ :echo 'All saved!'<Enter>
 
 " Show/Copied current filename
-nnoremap <silent> <Leader>n :echo 'File: ' . expand('%:p')<Enter>
+nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> 
-            \ :echo 'Copied: ' . expand('%:p')<Enter>
+            \ :echo 'Copied:   ' . expand('%:p')<Enter>
 
 " Improve search in fuzzy finder
 nnoremap <silent> <Leader>f :call <SID>find_filter('e')<Enter>
@@ -383,7 +461,7 @@ nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 
 nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> 
             \ :edit!<Enter> 
-            \ :echo 'Added: ' . expand('%')<Enter>
+            \ :echo 'Added:    ' . expand('%')<Enter>
 
 nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter>
             \ :echo 'Docker... '<Enter>
@@ -393,17 +471,17 @@ nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter>
             \ :echo 'Checkout: ' . expand('%')<Enter>
 
 nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
-            \ :echo 'Dumped: ' . getcwd()<Enter>
+            \ :echo 'Dumped:   ' . getcwd()<Enter>
 
 nnoremap <silent> <Leader>gw :setlocal wrap!<Enter>
 
-nnoremap <silent> <Leader>gm :messages <Enter>
-nnoremap <silent> <Leader>gb :echo 'Branch: ' . <SID>get_branch()<Enter>
-nnoremap <silent> <Leader>gp :echo 'Path: ' . getcwd()<Enter>
+nnoremap <silent> <Leader>gm :messages<Enter>
+nnoremap <silent> <Leader>gb :echo 'Branch:   ' . <SID>get_branch()<Enter>
+nnoremap <silent> <Leader>gp :echo 'Path:     ' . getcwd()<Enter>
 
 nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
 nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
-nnoremap <silent> <Leader>gF :echo 'Copied: ' . <SID>get_current_function(1)<Enter>
+nnoremap <silent> <Leader>gF :echo 'Copied:   ' . <SID>get_current_function(1)<Enter>
 
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
@@ -467,7 +545,7 @@ function! s:delete_method() abort
     let l:saved_unnamed_register = @@
 
     execute "normal! vaB\"_d-\"zyy+$"
-
+ 
     if match(@@, 'function ') > 0
         execute "normal! \"_d-\"_dd"
     endif
@@ -1007,8 +1085,8 @@ endfunction
 
 " Remap <C-f> and <C-b> for scroll float windows/popups. (Used in long file definitions)
 if has('patch-8.2.0750')
-    nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-    nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+    nnoremap <silent> <nowait> <expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+    nnoremap <silent> <nowait> <expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
 
 " @see https://github.com/vim/vim/issues/4738
@@ -1067,7 +1145,7 @@ nnoremap <C-]> g<C-]>
 let g:autotags_no_global = 0
 let g:autotags_cscope_file_extensions = '.php .h .c'
 let g:autotags_ctags_global_include = ''
-let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=node_modules --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[ 	]*trait[ 	]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
+let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=node_modules --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[   ]*trait[        ]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
