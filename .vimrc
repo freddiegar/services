@@ -625,9 +625,9 @@ function! s:go_line() abort
             throw 'Nothing to do.'
         endif
 
-        let l:parts = split(expand('<cWORD>'), ':')
+        let l:parts = split(trim(expand('<cWORD>'), '"'), ':')
         let l:file = strlen(l:parts[0]) > 0 ? l:parts[0] : ''
-        let l:line = strlen(l:parts[1]) > 0 ? l:parts[1] : 0
+        let l:line = strlen(l:parts[1]) > 0 ? l:parts[1] : 1
 
         if filereadable(l:file) && l:line > 0
             execute 'edit +' . l:line . ' ' . l:file
@@ -637,7 +637,7 @@ function! s:go_line() abort
             " Not use ! <Bang>, it cancel printable
             execute "normal \<C-w>w\<Enter>"
         endif
-    catch
+    catch /^Nothing/
         echomsg 'Nothing to do.'
     endtry
 
@@ -718,6 +718,9 @@ function! s:cycling_buffers(incr) abort
         try
             execute "normal! \<C-^>g`\""
         catch /^Vim\%((\a\+)\)\=:E20/
+            echomsg 'Last position not found.'
+        catch /^Vim\%((\a\+)\)\=:E211/
+            echomsg 'File not found.'
         endtry
 
         return
@@ -1326,7 +1329,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>ree :call phpactor#ExtractExpression(v:true)<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
 
-    autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter> :execute "normal! zz"<Enter>
+    autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
 "     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
 "     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
 
