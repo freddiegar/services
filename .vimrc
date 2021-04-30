@@ -798,6 +798,7 @@ Plug 'arcticicestudio/nord-vim'
 Plug 'sainnhe/sonokai'
 Plug 'jacoborus/tender.vim'
 Plug 'kaicataldo/material.vim', { 'branch': 'main' }
+Plug 'sonph/onehalf', { 'rtp': 'vim' }
 
 Plug 'tpope/vim-commentary'                                     " gcc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
@@ -864,7 +865,11 @@ call plug#end()
 "}
 
 " Themes
+" Allowed 24 bit, by default only accept 8 bit
+" @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 if has('termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     set termguicolors
 endif
 
@@ -1463,11 +1468,13 @@ function! s:themes() abort
     " Transparency
     " Use #1D2021 in Terminal
     highlight! Normal guibg=NONE ctermbg=NONE
-    highlight! SignColumn guibg=NONE ctermbg=NONE
+    highlight! LineNr guibg=NONE ctermbg=NONE
 
     " SignColumn and StatusLine with same color of theme
     highlight! link SignColumn LineNr
     highlight! link StatusLine LineNr
+
+    " Extend cursorline format to cursorline number
     highlight! link CursorLineNr CursorLine
 
     " Always use same color in list chars
@@ -1512,7 +1519,7 @@ set background=dark
 
 try
     let g:weekDay = str2nr(strftime('%w'))
-    let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai', 'material']
+    let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai', 'material', 'onehalfdark']
     let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
 
     execute 'colorscheme ' . g:colorscheme
