@@ -1287,7 +1287,7 @@ augroup AutoCommands
     autocmd!
 
     " Reload after save
-    autocmd BufWritePost ~/.vimrc source ~/.vimrc
+    autocmd BufWritePost ~/.vimrc source ~/.vimrc | call <SID>themes()
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
@@ -1447,6 +1447,9 @@ function! s:get_hlinfo() abort
 
     echo 'Highligth: ' . join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ',')
                 \ . ' -> ' . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+                \ . ' -> ' . g:colors_name
+                \ . (g:colors_name ==# 'sonokai' ? '[' . g:sonokai_style . ']' : '')
+                \ . (g:colors_name ==# 'material' ? '[' . g:material_theme_style . ']' : '')
 endfunc
 
 " @see :h syntax
@@ -1460,6 +1463,7 @@ function! s:themes() abort
     " Transparency
     " Use #1D2021 in Terminal
     highlight! Normal guibg=NONE ctermbg=NONE
+    highlight! SignColumn guibg=NONE ctermbg=NONE
 
     " SignColumn and StatusLine with same color of theme
     highlight! link SignColumn LineNr
