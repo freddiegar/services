@@ -188,7 +188,7 @@ Copy all content folder local to server by ssh
 scp -r public/apidoc user@server:/var/www/html/sites/public/.
 ```
 
-Copy by SSH using password, it need 
+Copy by SSH using password, it need
 ```bash
 # sudo apt-get install -y sshpass
 sshpass -p "password" scp filename.ext user@server:/var/www/html/sites
@@ -296,7 +296,7 @@ class XYZ {
 
 Generate docs with apidocs
 ```bash
-./node_modules/apidoc/bin/apidoc -i ./resources/docs/ -o ./public/apidoc/ -f ".*\\.php$" 
+./node_modules/apidoc/bin/apidoc -i ./resources/docs/ -o ./public/apidoc/ -f ".*\\.php$"
 ```
 
 Concat files in folder, in folder
@@ -319,7 +319,7 @@ export APPLICATION_DEBUG
 
 Clear file in terminal
 ```bash
-: > storage/logs/laravel.log 
+: > storage/logs/laravel.log
 ```
 
 Permission repository Laravel
@@ -438,7 +438,7 @@ ssh-keygen
 
 ## Register SSH key
 # In Host, copy output from
-cat ~/.ssh/id_rsa.pub 
+cat ~/.ssh/id_rsa.pub
 # In server
 su - freddie
 mkdir ~/.ssh
@@ -597,7 +597,7 @@ Ignore polifyll in composer, add in composer.json
 },
 ```
 
-and run: 
+and run:
 ```bash
 composer update --lock
 ```
@@ -1241,3 +1241,14 @@ sudo chmod u+x .git/hooks/pre-commit
 sudo chmod o-r .git/hooks/pre-commit
 ```
 
+Load multiple files in MySQL
+```bash
+cat file.sql file2.sql | mysql -u database
+```
+
+Read files zipped without unzipped
+```bash
+zcat < file.sql.gz | mysql -u root -p database
+# or
+gunzip < file.sql.gz | mysql -u root -p database
+```
