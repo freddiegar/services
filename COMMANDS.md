@@ -258,6 +258,13 @@ log.php in autoload.php
 file_put_contents('/var/www/log/query.log', '');
 ```
 
+Add origin in git exists repository
+```bash
+git remote add origin git@github.com:user/name.git
+git branch -M main
+git push -u origin main
+```
+
 Add origin in git repository
 ```bash
 git remote add origin git@github.com:user/name.git
