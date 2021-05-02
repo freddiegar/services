@@ -8,11 +8,10 @@
 " @see https://learnvimscriptthehardway.stevelosh.com/
 " @see https://github.com/flyingalex/Practical-Vim
 " @see https://thevaluable.dev/code-quality-check-tools-php/
+" @see https://bestasciitable.com/
 
 " Build-in improve % option (works with if statements)
 " runtime macros/matchit.vim
-
-scriptencoding utf-8
 
 " REGISTERS AND MARKS SPECIAL USED HERE
 " - "z  Save content yank in function, this no overwrite default register
@@ -66,6 +65,10 @@ set hidden                                                      " Allow change b
 set omnifunc=syntaxcomplete#Complete                            " Default complete function
 set cpoptions+=J                                                " <Tab> not are spaces
 set cryptmethod=blowfish2                                       " Use strong encription
+set encoding=utf-8                                              " Output encoding that is shown in the terminal
+set fileencoding=utf-8                                          " Output encoding of the file that is written
+
+scriptencoding utf-8                                            " Encoding for file
 
 " ALL in one BIG autocmd
 execute 'augroup ALL1BIG'
@@ -81,13 +84,13 @@ set wildignore+=node_modules,vendor,*/coverage/*,
 set lazyredraw                                                  " No redraw when macro is running
 set redrawtime=3000                                             " Time for highlighting: +size need +time
 
-set nobackup
-set nowritebackup
-set noswapfile
+set nobackup                                                    " Not use backup before written a file
+set nowritebackup                                               " Not use backup before overwrite a file
+set noswapfile                                                  " Not sawp for new buffer
 set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind
 
 set sessionoptions+=globals                                     " No save global vars (g:), error after changes
-set sessionoptions-=buffers                                     " No save hidden or unload buffers
+" set sessionoptions-=buffers                                     " No save hidden or unload buffers
 set sessionoptions-=options                                     " No save mappings
 set sessionoptions-=terminal                                    " No save terminal buffers
 set viewoptions-=options
@@ -99,7 +102,7 @@ set ignorecase                                                  " Case-insensiti
 set smartcase                                                   " case-sensitive if keyword contains both uppercase and lowercase
 
 if executable('rg')
-    set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Preplace built-in grep's vim
+    set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Replace built-in grep's vim
     set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 endif
 
@@ -115,8 +118,8 @@ set complete+=b                                                 " Buffers in [b]
 set completeopt=longest,menuone,preview                         " Show usefull preview in popupmenu
 
 " Custom Interface
-set title
-set novisualbell
+set title                                                       " Use filename as title in console
+set novisualbell                                                " Not screen flash
 set autoread                                                    " Auto reload after external changes
 set autowrite                                                   " Autosave on lost focus (cycling buffers)
 set backspace=indent,eol,start                                  " Allow backspacing over everything in Insert Mode
@@ -124,7 +127,7 @@ set clipboard=unnamedplus                                       " Shared SO clip
 set splitbelow                                                  " :split  opens window below (:belowright split)
 set splitright                                                  " :vsplit opens window right (:belowright vsplit)
 set signcolumn=yes                                              " Always show signs
-set pumheight=15
+set pumheight=15                                                " Maximum options showed in popup menu
 set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message
 
 if has('mouse')
@@ -133,28 +136,26 @@ endif
 
 " Custom Render
 syntax enable
-set nowrap
-set linebreak
-set showbreak=↪
-set display+=lastline
-set encoding=utf-8                                              " Output encoding that is shown in the terminal
-set fileencoding=utf-8                                          " Output encoding of the file that is written
+set nowrap                                                      " No cut lines, use <Leader>gw to toggle
+set linebreak                                                   " No cut words on wrap enable
+set showbreak=↪                                                 " Visual char on wrap line
+" set display+=lastline
 set scrolloff=1                                                 " Lines (rows) show always before current cursor line
 set sidescrolloff=5                                             " Columns (cols) show always after current cursor position
 set nojoinspaces                                                " No insert two spaces after a '.', '?' and '!'
 
 " Custom View
-set number
-set relativenumber
-set cursorline
-set noshowmatch
+set number                                                      " Number in cursorline is a number line, no zero
+set relativenumber                                              " Relative number do easy select a range of lines
+set cursorline                                                  " Highligth line when cursor there is
+set noshowmatch                                                 " No jump a match never
 set matchtime=0
-set list
-set listchars=space:·,tab:»-                                    " Visible white spaces
-set colorcolumn=121
+set list                                                        " Visible white spaces
+set listchars=space:·,tab:»-                                    " Chars use for invisiblw chars
+set colorcolumn=121                                             " Colum limit for write
 set textwidth=0                                                 " No breakline in Insert Mode
-set synmaxcol=200
-set winminheight=0
+set synmaxcol=200                                               " Avoid very slow redrawing (default: 3000)
+set winminheight=0                                              " Current buffer use all screen
 set winheight=999
 set updatetime=300                                              " Default 4s is a lot time
 set diffopt+=iwhite                                             " Ignore white spaces in diff mode
@@ -202,16 +203,16 @@ function! ChangeStatuslineColor() abort
         if (mode() =~# '\v(n|no|ni|c)')
             execute "highlight! link StatusLine LineNr"
         elseif (mode() =~# '\v^i')
-            execute "highlight! StatusLine cterm=reverse guifg=#84A598 guibg=#1D2021"
+            execute "highlight! StatusLine cterm=reverse guifg=#84A598 guibg=NONE"
         elseif (mode() =~# '\v^R')
-            execute "highlight! StatusLine cterm=reverse guifg=#8FBF7F guibg=#1D2021"
+            execute "highlight! StatusLine cterm=reverse guifg=#8FBF7F guibg=NONE"
         elseif (mode() =~# '\v(v|V|t|!)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
-            execute "highlight! StatusLine cterm=reverse guifg=#FC802D guibg=#1D2021"
+            execute "highlight! StatusLine cterm=reverse guifg=#FC802D guibg=NONE"
         elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
-            execute "highlight! StatusLine cterm=reverse guifg=#D3869B guibg=#1D2021"
+            execute "highlight! StatusLine cterm=reverse guifg=#D3869B guibg=NONE"
         else
             echomsg 'Mode no color: ' . mode() . '.'
-            execute "highlight! StatusLine cterm=reverse guifg=#FB4934 guibg=#1D2021"
+            execute "highlight! StatusLine cterm=reverse guifg=#FB4934 guibg=NONE"
         endif
 
         " Apply changes quikly
@@ -230,9 +231,9 @@ function! s:get_branch() abort
     return strlen(l:branchname) > 0 ? l:branchname : ''
 endfunction
 
-set showcmd
-set noruler
-set noshowmode
+set showcmd                                                     " Use of if terminal is slow
+set noruler                                                     " Cursor position is showed in statusline
+set noshowmode                                                  " Mode is showed in statusline
 
 set shortmess=W                                                 " don't give "written" or "[w]" when writing a file
 set shortmess+=F                                                " don't give the file info when editing a file
@@ -250,7 +251,7 @@ set statusline+=%{ChangeStatuslineColor()}                      " Color by Mode
 if exists('g:loaded_syntastic_plugin')
     set statusline+=%1*                                         " Custom color
     set statusline+=%{SyntasticStatuslineFlag()}                " Diagnostic info
-    set statusline+=%*
+    set statusline+=%*                                          " Reset custom color
 endif
 
 set statusline+=%*                                              " Return default colors
@@ -800,7 +801,7 @@ Plug 'jacoborus/tender.vim'
 Plug 'kaicataldo/material.vim', { 'branch': 'main' }
 Plug 'sonph/onehalf', { 'rtp': 'vim' }
 
-Plug 'tpope/vim-commentary'                                     " gcc
+Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
 Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
@@ -809,7 +810,7 @@ Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 Plug 'machakann/vim-swap'                                       " Swag args: g>, g<
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
-" " Plug 'luochen1990/rainbow'
+Plug 'luochen1990/rainbow'                                      " Highligth parenthesis (, [, { match
 Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete
@@ -843,13 +844,27 @@ call plug#end()
 " CLangd as LSP for C
 " ~/.vim/coc-settings.json
 "{
+"  "coc.source.around.priority": 1,
+"  "coc.source.buffer.priority": 2,
+"  "coc.source.file.priority": 10,
+"  "coc.preferences.snippetStatusText":"SNIPPET  ",
+"  "coc.preferences.extensionUpdateCheck": "weekly",
+"  "suggest.languageSourcePriority": 99,
+"  "suggest.disableKind": true,
+"  "suggest.disableMenu": true,
+"  "suggest.maxCompleteItemCount": 20,
+"  "suggest.minTriggerInputLength": 1,
+"  "suggest.snippetIndicator": "",
+"  "suggest.removeDuplicateItems": true,
 "  "diagnostic.enable": false,
 "  "diagnostic.enableSign": false,
 "  "diagnostic.signOffset": 9999999,
 "  "phpactor.enable": true,
 "  "phpactor.path": "~/.vim/plugged/phpactor/bin/phpactor",
+"  "clangd.enable": true,
 "  "clangd.path": "/usr/local/clang_9.0.0/bin/clangd"
 "}
+
 " ~/.config/phpactor/phpactor.json
 "{
 "  "language_server_code_transform.import_globals": true,
@@ -865,7 +880,7 @@ call plug#end()
 "}
 
 " Themes
-" Allowed 24 bit, by default only accept 8 bit
+" Allowed 24 bit colors, by default only accept 8 bit
 " @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 if has('termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
@@ -1434,8 +1449,8 @@ augroup AutoCommands
 
     autocmd VimEnter * nested call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart()
-    autocmd InsertEnter * :setlocal norelativenumber
-    autocmd InsertLeave * :setlocal relativenumber
+    " autocmd InsertEnter * :setlocal norelativenumber
+    " autocmd InsertLeave * :setlocal relativenumber
     autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimResized * wincmd =
@@ -1466,9 +1481,9 @@ endfunc
 " @see https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax/
 function! s:themes() abort
     " Transparency
-    " Use #1D2021 in Terminal
     highlight! Normal guibg=NONE ctermbg=NONE
     highlight! LineNr guibg=NONE ctermbg=NONE
+    highlight! EndOfBuffer guibg=NONE ctermbg=NONE
 
     " SignColumn and StatusLine with same color of theme
     highlight! link SignColumn LineNr
