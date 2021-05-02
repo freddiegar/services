@@ -151,7 +151,8 @@ set cursorline                                                  " Highligth line
 set noshowmatch                                                 " No jump a match never
 set matchtime=0
 set list                                                        " Visible white spaces
-set listchars=space:·,tab:»-                                    " Chars use for invisiblw chars
+set listchars=space:·,tab:»-                                    " Chars used for invisible chars
+" set fillchars+=eob:\                                            " Hide ~ in end of buffer
 set colorcolumn=121                                             " Colum limit for write
 set textwidth=0                                                 " No breakline in Insert Mode
 set synmaxcol=200                                               " Avoid very slow redrawing (default: 3000)
@@ -165,7 +166,7 @@ set diffopt+=iwhite                                             " Ignore white s
 set softtabstop=4                                               " tabs calculate required spaces
 set shiftwidth=4                                                " 1 tab === 4 spaces
 set expandtab                                                   " don't use tabs please
-set fileformat=unix
+set fileformat=unix                                             " End of line as Unix format
 
 " Enable folding : Hit za
 set nofoldenable
@@ -1483,17 +1484,18 @@ function! s:themes() abort
     " Transparency
     highlight! Normal guibg=NONE ctermbg=NONE
     highlight! LineNr guibg=NONE ctermbg=NONE
-    highlight! EndOfBuffer guibg=NONE ctermbg=NONE
 
     " SignColumn and StatusLine with same color of theme
     highlight! link SignColumn LineNr
     highlight! link StatusLine LineNr
+    highlight! link EndOfBuffer LineNr
 
     " Extend cursorline format to cursorline number
     highlight! link CursorLineNr CursorLine
 
     " Always use same color in list chars
-    highlight! SpecialKey ctermfg=239 guifg=#504945
+    highlight! NonText ctermfg=238 guifg=#444444
+    highlight! SpecialKey ctermfg=238 guifg=#444444
 
     " GitGutter sign with same color of theme
     highlight! link GitGutterAdd SignColumn
