@@ -1259,3 +1259,31 @@ zcat < file.sql.gz | mysql -u root -p database
 # or
 gunzip < file.sql.gz | mysql -u root -p database
 ```
+
+Pre-Request in POSTMan
+```bash
+var moment = require('moment');
+var CryptoJS = require('crypto-js');
+var devRequest = pm.environment.get('devRequest', "false") == "true";
+
+var auth = {
+    'login': (devRequest ? pm.globals.get('login') : pm.collectionVariables.get('login')),
+    'tranKey': (devRequest ? pm.globals.get('trankey') : pm.collectionVariables.get('trankey'))
+}
+
+var nonce = Math.random().toString(36).substring(2);
+var seed = moment().format();
+var hashType = pm.environment.get('hashType');
+var hash = (hashType === 'SHA256')
+    ? CryptoJS.SHA256(nonce + seed + auth.tranKey)
+    : CryptoJS.SHA1(nonce + seed + auth.tranKey);
+
+auth.tranKey = hash.toString(CryptoJS.enc.Base64);
+auth.nonce = btoa(nonce);
+auth.seed = seed;
+
+pm.environment.set('auth', JSON.stringify(auth));
+pm.environment.set('expiration', moment().add(120, 'minutes').format());
+pm.environment.set('timestamp', moment().unix());
+```
+
