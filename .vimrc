@@ -345,7 +345,7 @@ nnoremap <silent> <Enter> :nohlsearch<Enter>
 noremap <silent> TT :call <SID>smartselection(visualmode())<Enter>
 
 function! s:smartselection(type) abort
-    let l:vsapplied = 0
+    let l:vsapplied = ''
     let l:cline = getline('.')
     let l:cposition = getcurpos()[2]
     let l:vcontent = <SID>get_visual_selection()
@@ -353,57 +353,24 @@ function! s:smartselection(type) abort
     let l:hassemicolon = match(l:cline, ';', l:cposition) >= 0
     let l:hascontent = match(l:cline, l:vcontent, 0) >= 0
 
-    " if len(l:vcontent) == 1 && l:hasparenthesis
     if l:hasparenthesis && !l:hascontent
-        " Line has function
+        " Line has parenthesis
         call feedkeys('vi)', 't')
 
         let l:vsapplied = 'IP [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
-    " elseif len(l:vcontent) == 1 && l:hassemicolon
-    elseif l:hassemicolon && !l:hascontent
+    elseif l:hassemicolon && l:hascontent && match(l:vcontent, ';')
         " Line has semicolon
         call feedkeys('_vt;', 't')
 
         let l:vsapplied = 'IS [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
     else
-        " (as V but with trim spaces)
+        " as V but with trim spaces
         call feedkeys('_vg_', 't')
 
         let l:vsapplied = 'D [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
     endif
 
-    echomsg 'V-SELECT applied: ' . l:vsapplied . ' c: ' . l:vcontent
-
-    return
-
-    if l:vsapplied == ''
-        let l:funcstart = <SID>find_function('bcen')[1][1]
-
-        call feedkeys('va)', 't')
-
-        let l:vcontent = substitute(l:cline, l:vcontent, '', 'g')
-        let l:hasparenthesis = match(l:vcontent, ')') >= 0
-        let l:hassemicolon = match(l:vcontent, ';') >= 0
-    endif
-
-    if l:vsapplied == '' && l:hascontent && l:funcstart < l:cposition && l:hasparenthesis
-        " Next outer function
-        call feedkeys("\evi)", 't')
-
-        let l:vsapplied = 'FP [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ' fi: ' . l:funcstart . ']'
-    elseif l:vsapplied == '' && l:hascontent && l:hassemicolon
-        " Has semicolon
-        call feedkeys("\e_vt;", 't')
-
-        let l:vsapplied = 'FS [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ' fi: ' . l:funcstart . ']'
-    elseif l:vsapplied == ''
-        " (as V but with trim spaces)
-        call feedkeys('\e_vg_', 't')
-
-        let l:vsapplied = 'D [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
-    endif
-
-    echomsg 'V-SELECT applied: ' . l:vsapplied . ' c: ' . l:vcontent
+    echomsg 'V-SELECT applied: ' . l:vsapplied
 endfunction
 
 " @thanks https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript#6271254
@@ -917,6 +884,10 @@ let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles
 let g:material_terminal_italics = 1
 let g:material_styles = ['palenight', 'ocean']
 let g:material_theme_style = get(g:material_styles, rand(srand()) % len(g:material_styles), 'default')
+
+" @see https://github.com/jacoborus/tender.vim
+
+" @see https://github.com/sonph/onehalf
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -1432,10 +1403,10 @@ augroup AutoCommands
 
     function! s:poststart() abort
         " @see https://stackoverflow.com/questions/6076592/vim-set-formatoptions-being-lost#8748154
-        set formatoptions+=j                                            " Remove comment string in [j]oining comments
-        set formatoptions+=n                                            " Detect list of [n]umbers
-        set formatoptions-=o                                            " No append auto comment in o/O from Normal Mode
-        set formatoptions-=t                                            " No auto-wrap text in Insert Mode
+        set formatoptions+=j                                    " Remove comment string in [j]oining comments
+        set formatoptions+=n                                    " Detect list of [n]umbers
+        set formatoptions-=o                                    " No append auto comment in o/O from Normal Mode
+        set formatoptions-=t                                    " No auto-wrap text in Insert Mode
     endfunction
 
     function! s:cleanspaces() abort
@@ -1489,6 +1460,10 @@ function! s:themes() abort
     highlight! link SignColumn LineNr
     highlight! link StatusLine LineNr
     highlight! link EndOfBuffer LineNr
+
+    " Goyo (write action in zen mode lost settings)
+    highlight! link VertSplit LineNr
+    highlight! StatusLineNC guibg=NONE ctermbg=NONE guifg=#1D2021
 
     " Extend cursorline format to cursorline number
     highlight! link CursorLineNr CursorLine
