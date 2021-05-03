@@ -58,48 +58,51 @@
 " @see :h quickref
 " @see :h motion
 
-set nomodeline                                                  " Security!
+" set nocompatible                                                " Vim rules, no vi (default)
+" set nomodeline                                                  " Security! (default)
 set secure                                                      " Security!: Not autocmd in .vimrc file
 set exrc                                                        " Always search config in .vimrc file
 set hidden                                                      " Allow change between buffer without save
-set omnifunc=syntaxcomplete#Complete                            " Default complete function
-set cpoptions+=J                                                " <Tab> not are spaces
-set cryptmethod=blowfish2                                       " Use strong encription
-set encoding=utf-8                                              " Output encoding that is shown in the terminal
-set fileencoding=utf-8                                          " Output encoding of the file that is written
+set omnifunc=syntaxcomplete#Complete                            " Default complete function used in buffers
+" set cpoptions+=J                                                " ¿?
+" set cryptmethod=blowfish2                                       " Use strong encription (default)
+" set encoding=utf-8                                              " Output encoding that is shown in the terminal (default)
+" set fileencoding=utf-8                                          " Output encoding of the file that is written (default)
 
-scriptencoding utf-8                                            " Encoding for file
+" scriptencoding utf-8                                            " Encoding for file (default is &encoding)
 
 " ALL in one BIG autocmd
 execute 'augroup ALL1BIG'
 autocmd!
 
 set wildmenu                                                    " Autocomplete in command-line with <Tab>
-set wildmode=full                                               " Command complete as zsh"
+" set wildmode=full                                               " Command complete as zsh (default)
 set wildignore+=.git,.vscode,.idea,.vimrc,                      " Ignored files in command-line autocomplete
 set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,
 set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*,
 set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
 set wildignore+=node_modules,vendor,*/coverage/*,
 set lazyredraw                                                  " No redraw when macro is running
-set redrawtime=3000                                             " Time for highlighting: +size need +time
+set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
 
-set nobackup                                                    " Not use backup before written a file
+" set nobackup                                                    " Not use backup before written a file (default)
 set nowritebackup                                               " Not use backup before overwrite a file
-set noswapfile                                                  " Not sawp for new buffer
-set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind
+set noswapfile                                                  " Not swap for new buffer
+set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind. Skip /usr/include
 
+" Used in mksession
 set sessionoptions+=globals                                     " No save global vars (g:), error after changes
 " set sessionoptions-=buffers                                     " No save hidden or unload buffers
 set sessionoptions-=options                                     " No save mappings
 set sessionoptions-=terminal                                    " No save terminal buffers
-set viewoptions-=options
+" Used in mkview
+" set viewoptions-=options                                        " No save mappings
 
 " Better Search
-set hlsearch                                                    " Highligth match results with /|?
+set hlsearch                                                    " Highligth match results with / and ?
 set incsearch                                                   " On TOP return BOTTOM, on BOTTOM return TOP"
-set ignorecase                                                  " Case-insensitive by default
-set smartcase                                                   " case-sensitive if keyword contains both uppercase and lowercase
+set ignorecase                                                  " Case-insensitive in search
+set smartcase                                                   " Case-sensitive if keyword contains al least one uppercasa char
 
 if executable('rg')
     set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Replace built-in grep's vim
@@ -118,28 +121,28 @@ set complete+=b                                                 " Buffers in [b]
 set completeopt=longest,menuone,preview                         " Show usefull preview in popupmenu
 
 " Custom Interface
-set title                                                       " Use filename as title in console
-set novisualbell                                                " Not screen flash
+" set title                                                       " Use filename as title in console (default)
+" set novisualbell                                                " Not screen flash (default)
 set autoread                                                    " Auto reload after external changes
 set autowrite                                                   " Autosave on lost focus (cycling buffers)
-set backspace=indent,eol,start                                  " Allow backspacing over everything in Insert Mode
+" set backspace=indent,eol,start                                  " Allow backspacing over everything in Insert Mode (default)
 set clipboard=unnamedplus                                       " Shared SO clipboard
 set splitbelow                                                  " :split  opens window below (:belowright split)
 set splitright                                                  " :vsplit opens window right (:belowright vsplit)
 set signcolumn=yes                                              " Always show signs
 set pumheight=15                                                " Maximum options showed in popup menu
-set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message
+" set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message (default)
 
 if has('mouse')
     set mouse=                                                  " Mouse don't exist always
 endif
 
 " Custom Render
-syntax enable
+" syntax enable                                                   " (default)
 set nowrap                                                      " No cut lines, use <Leader>gw to toggle
 set linebreak                                                   " No cut words on wrap enable
 set showbreak=↪                                                 " Visual char on wrap line
-" set display+=lastline
+" set display+=lastline                                           " ¿?
 set scrolloff=1                                                 " Lines (rows) show always before current cursor line
 set sidescrolloff=5                                             " Columns (cols) show always after current cursor position
 set nojoinspaces                                                " No insert two spaces after a '.', '?' and '!'
@@ -147,14 +150,14 @@ set nojoinspaces                                                " No insert two 
 " Custom View
 set number                                                      " Number in cursorline is a number line, no zero
 set relativenumber                                              " Relative number do easy select a range of lines
-set cursorline                                                  " Highligth line when cursor there is
-set noshowmatch                                                 " No jump a match never
-set matchtime=0
-set list                                                        " Visible white spaces
-set listchars=space:·,tab:»-                                    " Chars used for invisible chars
+" set cursorline                                                  " Highligth line when cursor there is
+" set noshowmatch                                                 " No jump a match never (default)
+" set matchtime=0
+set list                                                        " Visible white spaces, (tab is a white space)
+set listchars=space:·,tab:»-                                    " Chars used for invisible chars, only I want space and tabls
 " set fillchars+=eob:\                                            " Hide ~ in end of buffer
 set colorcolumn=121                                             " Colum limit for write
-set textwidth=0                                                 " No breakline in Insert Mode
+set textwidth=120                                               " Breakline in Insert Mode after this column value
 set synmaxcol=200                                               " Avoid very slow redrawing (default: 3000)
 set winminheight=0                                              " Current buffer use all screen
 set winheight=999
@@ -163,19 +166,20 @@ set diffopt+=iwhite                                             " Ignore white s
 
 " Custom identation
 " set autoindent
-set softtabstop=4                                               " tabs calculate required spaces
+set softtabstop=4                                               " Tabs calculate required spaces
 set shiftwidth=4                                                " 1 tab === 4 spaces
-set expandtab                                                   " don't use tabs please
+set expandtab                                                   " Don't use tabs please
 set fileformat=unix                                             " End of line as Unix format
 
 " Enable folding : Hit za
-set nofoldenable
-set foldmethod=indent
-set foldnestmax=10
-set foldlevel=99
+set nofoldenable                                                " Unfold lines by default in buffers
+set foldmethod=indent                                           " Use indent to fold code
+set foldnestmax=10                                              " Limit nested fold
+" set foldlevel=99                                                " ¿?
 
 " Utils
-set nrformats+=alpha                                            " Allow [in/de]crement letter chars: <C-a>, <C-x>
+set nrformats-=octal                                            " I don't use octal numbers
+" set nrformats+=alpha                                            " Allow [in/de]crement chars: <C-a>, <C-x>
 
 " Statusline
 let g:currentmode={
@@ -232,7 +236,7 @@ function! s:get_branch() abort
     return strlen(l:branchname) > 0 ? l:branchname : ''
 endfunction
 
-set showcmd                                                     " Use of if terminal is slow
+set showcmd                                                     " Use off if terminal is slow
 set noruler                                                     " Cursor position is showed in statusline
 set noshowmode                                                  " Mode is showed in statusline
 
@@ -250,12 +254,11 @@ set statusline=                                                 " Start from scr
 set statusline+=%{ChangeStatuslineColor()}                      " Color by Mode
 
 if exists('g:loaded_syntastic_plugin')
-    set statusline+=%1*                                         " Custom color
+    set statusline+=%1*                                         " Set custom color
     set statusline+=%{SyntasticStatuslineFlag()}                " Diagnostic info
-    set statusline+=%*                                          " Reset custom color
+    set statusline+=%*                                          " Reset to default colors
 endif
 
-set statusline+=%*                                              " Return default colors
 set statusline+=\ %n                                            " [N]umber buffer
 set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
 set statusline+=\ %f                                            " Relative filename
@@ -351,23 +354,23 @@ function! s:smartselection(type) abort
     let l:vcontent = <SID>get_visual_selection()
     let l:hasparenthesis = match(l:cline, ')', l:cposition) >= 0
     let l:hassemicolon = match(l:cline, ';', l:cposition) >= 0
-    let l:hascontent = match(l:cline, l:vcontent, 0) >= 0
+    let l:hascontent = match(l:cline, l:vcontent, 1) >= 0
 
     if l:hasparenthesis && !l:hascontent
         " Line has parenthesis
         call feedkeys('vi)', 't')
 
-        let l:vsapplied = 'IP [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
+        let l:vsapplied = 'Parenthesis'
     elseif l:hassemicolon && l:hascontent && match(l:vcontent, ';')
         " Line has semicolon
         call feedkeys('_vt;', 't')
 
-        let l:vsapplied = 'IS [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
+        let l:vsapplied = 'Semicolon'
     else
         " as V but with trim spaces
         call feedkeys('_vg_', 't')
 
-        let l:vsapplied = 'D [cp: ' . l:cposition . ' hp: ' . l:hasparenthesis .  ' hs: ' . l:hassemicolon . ']'
+        let l:vsapplied = 'Default'
     endif
 
     echomsg 'V-SELECT applied: ' . l:vsapplied
@@ -386,7 +389,7 @@ function! s:get_visual_selection()
     let l:lines[-1] = l:lines[-1][: l:colend - (&selection == 'inclusive' ? 1 : 2)]
     let l:lines[0] = l:lines[0][l:colstart - 1:]
 
-    return join(l:lines, "\n")
+    return l:lines[0]
 endfunction
 
 " Preserve default register ("x) content
@@ -403,7 +406,7 @@ nnoremap <silent> <Leader>W :wall<Enter>
 
 " Show/Copied current filename
 nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
-nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter> 
+nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter>
             \ :echo 'Copied:   ' . expand('%:p')<Enter>
 
 " Improve search in fuzzy finder
@@ -428,8 +431,8 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 
-nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter> 
-            \ :edit!<Enter> 
+nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter>
+            \ :edit!<Enter>
             \ :echo 'Added:    ' . expand('%')<Enter>
 
 nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter>
@@ -443,8 +446,8 @@ nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
             \ :echo 'Dumped:   ' . getcwd()<Enter>
 
 nnoremap <silent> <Leader>gw :setlocal wrap!<Enter>
-
 nnoremap <silent> <Leader>gm :messages<Enter>
+
 nnoremap <silent> <Leader>gb :echo 'Branch:   ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path:     ' . getcwd()<Enter>
 
@@ -514,7 +517,7 @@ function! s:delete_method() abort
     let l:saved_unnamed_register = @@
 
     execute "normal! vaB\"_d-\"zyy+$"
- 
+
     if match(@@, 'function ') > 0
         execute "normal! \"_d-\"_dd"
     endif
@@ -603,7 +606,7 @@ function! s:go_line() abort
         endif
 
         if (index(['php'], &filetype) >= 0)
-            " Not use ! <Bang>, it cancel printable
+            " Not use ! <Bang>, it cancel printable char
             execute "normal \<C-w>w\<Enter>"
         endif
     catch /^Nothing/
@@ -729,25 +732,25 @@ function! s:cycling_buffers(incr) abort
 endfunction
 
 " Better split switching
-map <C-h> <C-W>h
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-l> <C-W>l
+" map <C-h> <C-W>h
+" map <C-j> <C-W>j
+" map <C-k> <C-W>k
+" map <C-l> <C-W>l
 
 if has('terminal')
     " Mappings to move out from terminal to other views
     " Broken fzf window escape
     " tnoremap <Esc> <C-\><C-n>
-    tnoremap <C-h> <C-W>h
-    tnoremap <C-j> <C-W>j
-    tnoremap <C-k> <C-W>k
-    tnoremap <C-l> <C-W>l
+    " tnoremap <C-h> <C-W>h
+    " tnoremap <C-j> <C-W>j
+    " tnoremap <C-k> <C-W>k
+    " tnoremap <C-l> <C-W>l
 endif
 
 if !has('gui_running')
     set notimeout
     set ttimeout
-    set ttimeoutlen=10
+    set ttimeoutlen=10                                          " Wait 10ms after Esc for special key
 
     augroup FastEscape
         autocmd!
@@ -857,10 +860,10 @@ if has('termguicolors')
 endif
 
 " @see https://github.com/gruvbox-community/gruvbox
-let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
 let g:gruvbox_bold = 0
 let g:gruvbox_invert_selection = 1
+let g:gruvbox_contrast_dark = 'hard'
 
 " @see https://github.com/dracula/vim
 let g:dracula_italic = 1
@@ -904,19 +907,23 @@ let g:VM_maps["Select All"] = '<C-s>'
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
+" IMPORTANT: Custom g:UltiSnipsExpandTrigger MUST BE DIFF to <Tab> to integration CoC
+" IMPORTANT: Custom g:UltiSnipsJumpForwardTrigger MUST BE KEEP diferent to g:UltiSnipsExpandTrigger
 let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsListSnippets = ''
-" IMPORTANT: Custom g:UltiSnipsExpandTrigger MUST BE DIFF to <Tab> to integration CoC
 let g:UltiSnipsExpandTrigger = '<C-Tab>'
-" IMPORTANT: Custom g:UltiSnipsJumpForwardTrigger MUST BE KEEP diferent to g:UltiSnipsExpandTrigger
-" let g:UltiSnipsJumpForwardTrigger = '<C-Tab>'
-" let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
 let g:UltiSnipsRemoveSelectModeMappings = 0
 let g:UltiSnipsUsePythonVersion = 3
 
 " PHPVim
 " @see https://github.com/StanAngeloff/php.vim
 let g:php_version_id = 70400
+let g:php_html_load = 0
+let g:php_html_in_nowdoc = 0
+let g:php_html_in_heredoc = 0
+let g:php_sql_query = 0
+let g:php_sql_heredoc = 0
+let g:php_sql_nowdoc = 0
 
 " Emmet
 " @see https://github.com/mattn/emmet-vim
@@ -982,31 +989,31 @@ let g:syntastic_style_warning_symbol = 's'
 
 " Vim Debug
 " @see vim-vdebug/vdebug
-let g:vdebug_keymap = {
-\    'run' : '<F5>',
-\    'step_into' : '<F7>',
-\    'step_over' : '<F8>',
-\    'step_out' : '<S-F8>',
-\    'close' : '<S-F5>',
-\    'detach' : '<F10>',
-\    'set_breakpoint' : '<C-F8>',
-\    'eval_visual' : '<Leader>xe'
-\}
+" let g:vdebug_keymap = {
+" \    'run' : '<F5>',
+" \    'step_into' : '<F7>',
+" \    'step_over' : '<F8>',
+" \    'step_out' : '<S-F8>',
+" \    'close' : '<S-F5>',
+" \    'detach' : '<F10>',
+" \    'set_breakpoint' : '<C-F8>',
+" \    'eval_visual' : '<Leader>xe'
+" \}
 
-if !exists('g:vdebug_options')
-    let g:vdebug_options = {}
-endif
+" if !exists('g:vdebug_options')
+"     let g:vdebug_options = {}
+" endif
 
-let g:vdebug_options = {
-\    'port' : 9000,
-\    'timeout' : 10,
-\    'on_close' : 'detach',
-\    'break_on_open' : 0,
-\    'watch_window_style' : 'compact',
-\    'simplified_status' : 1,
-\    'continuous_mode' : 1,
-\    'ide_key' : 'PHPSTORM'
-\}
+" let g:vdebug_options = {
+" \    'port' : 9000,
+" \    'timeout' : 10,
+" \    'on_close' : 'detach',
+" \    'break_on_open' : 0,
+" \    'watch_window_style' : 'compact',
+" \    'simplified_status' : 1,
+" \    'continuous_mode' : 1,
+" \    'ide_key' : 'PHPSTORM'
+" \}
 
 " COC Completion
 " @see https://github.com/neoclide/coc.nvim
