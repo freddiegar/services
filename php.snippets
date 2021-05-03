@@ -240,7 +240,7 @@ foreach ($1 as $${2:key} => $${3:value}) {
 }
 endsnippet
 
-snippet "ar(f|m|r)" "Array operations" r
+snippet "ar(f|m|r)" "Array operations" br
 array_`!p snip.rv='filter' if match.group(1) == 'f' else ('map' if match.group(1) == 'm' else 'reduce')`($1)$0
 endsnippet
 
