@@ -196,7 +196,6 @@ sshpass -p "password" scp filename.ext user@server:/var/www/html/sites
 sshpass -f "/file/with/password" scp filename.ext user@server:/var/www/html/sites
 ```
 
-
 Copy from container to host in docker
 ```bash
 docker cp <containerId>:/from/container /to/host

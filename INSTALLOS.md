@@ -271,6 +271,7 @@ sudo apt-get install -y php7.4-intl
 sudo apt-get install -y php7.4-memcached
 sudo apt-get install -y php7.4-redis
 sudo apt-get install -y php7.4-bcmath
+sudo apt-get install -y php7.4-gmp
 ## sudo apt-get remove php7.4* && sudo apt-get autoremove
 ```
 
@@ -322,13 +323,13 @@ sudo chmod +x /usr/local/bin/phpmd
 ## sudo rm /usr/local/bin/phpmd
 ```
 
-# Infection AST 
+# Infection AST
 
 ```bash
 cd ~
 sudo curl -L https://github.com/infection/infection/releases/download/0.21.4/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
-## Command: 
+## Command:
 ## infection -j$(nproc) [--filter=file.php]
 ## sudo rm /usr/local/bin/infection
 ```
