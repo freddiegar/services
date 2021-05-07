@@ -39,6 +39,7 @@ RUN set -eux \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libmpc-dev \
     # Permissions
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
     && chmod 0600 /etc/crontab \
@@ -65,6 +66,9 @@ RUN set -eux \
     # Manipulation images
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ --with-freetype-dir=/usr/lib/x86_64-linux-gnu/ --with-png-dir=/usr/lib/x86_64-linux-gnu/ \
     && docker-php-ext-install -j$(nproc) gd \
+    # Best math operations
+    && docker-php-ext-install -j$(nproc) bcmath \
+    && docker-php-ext-install -j$(nproc) gmp \
     # Extra information about images: grav
     && docker-php-ext-install -j$(nproc) exif \
     # Cache
