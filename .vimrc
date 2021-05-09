@@ -10,8 +10,8 @@
 " @see https://thevaluable.dev/code-quality-check-tools-php/
 " @see https://bestasciitable.com/
 
-" Build-in improve % option (works with if statements)
-" runtime macros/matchit.vim
+" Build-in improve % option (works with if statements and tags html)
+runtime macros/matchit.vim
 
 " REGISTERS AND MARKS SPECIAL USED HERE
 " - "z  Save content yank in function, this no overwrite default register
@@ -331,6 +331,19 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 " / and ? search alternatives
 nnoremap <Leader>s <kDivide>
 nnoremap <Leader>S ?
+
+" Open explore in root and current folder (toggle)
+nnoremap <silent> <F2> :if &filetype ==# 'netrw'<Enter>
+            \ :q!<Enter>
+            \ :else<Enter>
+            \ :40Lexplore<Enter>
+            \ :endif<Enter><Enter>
+
+nnoremap <silent> <F3> :if &filetype ==# 'netrw'<Enter>
+            \ :q!<Enter>
+            \ :else<Enter>
+            \ :40Vexplore<Enter>
+            \ :endif<Enter><Enter>
 
 " Fast Vim configuration
 nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
@@ -781,7 +794,7 @@ Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 Plug 'machakann/vim-swap'                                       " Swag args: g>, g<
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
-Plug 'luochen1990/rainbow'                                      " Highligth parenthesis (, [, { match
+" Plug 'luochen1990/rainbow'                                      " Highligth parenthesis (, [, { match
 Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete
@@ -1038,6 +1051,7 @@ endif
 
 snoremap <Enter> <Esc>
 snoremap <Tab> <Esc> :<C-u>call feedkeys('bcia', 't')<Enter>
+snoremap <BS> <Esc> :<C-u>call feedkeys('da)', 't')<Enter>
 inoremap <silent> <expr> <Tab>
             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
@@ -1151,7 +1165,7 @@ let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.v
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
-nmap <silent> <F3> :GitGutterQuickFix<Enter>
+nmap <silent> <F7> :GitGutterQuickFix<Enter>
             \ :call <SID>quickfix_toggle()<Enter>
 nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zvzz
 nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zvzz
@@ -1212,13 +1226,14 @@ function! s:split() abort
     " Is ternary?
     if match(getline('.'), ' ? ') > 0
                 \ && match(getline('.'), ' : ') > 0
-                \ && match(getline('.'), ';') > 0
+                \ && (match(getline('.'), ';') > 0 || match(getline('.'), ',') > 0)
         execute "normal! _/ ? \ri\r\e/ : \r\"_xi\r\e"
     " Is array?
     elseif match(getline('.'), '[') > 0
                 \ && match(getline('.'), ',') > 0
                 \ && match(getline('.'), ']') > 0
                 \ && match(getline('.'), ';') > 0
+                \ && match(getline('.'), '[') + 1 != match(getline('.'), ']')
         execute 'normal! _f[vi["zy'
 
         let l:arguments_list = split(@@, ',')
@@ -1268,7 +1283,7 @@ function! s:split() abort
     silent! call repeat#set("\<Plug>SplitRepeatable")
 endfunction
 
-noremap <silent> <F2> :call <SID>quickfix_toggle()<Enter>
+noremap <silent> <F6> :call <SID>quickfix_toggle()<Enter>
 
 function! s:quickfix_toggle()
     if exists('g:qfix_win')
@@ -1278,6 +1293,30 @@ function! s:quickfix_toggle()
         copen 10
         let g:qfix_win = bufnr('$')
     endif
+
+    return 0
+endfunction
+
+noremap <silent> <F9> :call <SID>notes()<Enter>
+
+function! s:notes() abort
+    let l:matches = []
+    let l:header = '>> ' . strftime('%A, %d of %B %Y')
+    let l:filename = expand('~/Documents/notes_' . strftime('%Y%m') . '.md')
+
+    if bufname('%') ==# l:filename
+        silent update!
+    else
+        execute 'edit ' . l:filename
+    endif
+
+    execute ':%g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
+
+    if !filereadable(l:filename) || len(l:matches) == 0
+        execute "normal Go\r" . l:header . "\r\e"
+    endif
+
+    execute 'normal Gzto== ' . strftime('%X') . " ==\r - \e"
 
     return 0
 endfunction
