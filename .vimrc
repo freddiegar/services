@@ -9,6 +9,7 @@
 " @see https://github.com/flyingalex/Practical-Vim
 " @see https://thevaluable.dev/code-quality-check-tools-php/
 " @see https://bestasciitable.com/
+" @see https://www.arp242.net/vimlog/
 
 " Build-in improve % option (works with if statements and tags html)
 runtime macros/matchit.vim
@@ -92,7 +93,7 @@ set path=.,,                                                    " Directories se
 
 " Used in mksession
 set sessionoptions+=globals                                     " No save global vars (g:), error after changes
-" set sessionoptions-=buffers                                     " No save hidden or unload buffers
+set sessionoptions-=buffers                                     " No save hidden or unload buffers
 set sessionoptions-=options                                     " No save mappings
 set sessionoptions-=terminal                                    " No save terminal buffers
 " Used in mkview
@@ -410,6 +411,7 @@ nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
 nnoremap <silent> <Leader>x "_x
+nnoremap <silent> <Leader>X "_X
 nnoremap <silent> <Leader>y "+y
 
 " Fast saving
@@ -866,6 +868,7 @@ call plug#end()
 " Themes
 " Allowed 24 bit colors, by default only accept 8 bit
 " @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
+" @see https://github.com/vim/vim/issues/993#issuecomment-255651605
 if has('termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
@@ -1179,7 +1182,6 @@ nmap <silent> <Leader>hs :GitGutterSignsToggle<Enter>
 " let g:gitgutter_eager = 1
 let g:gitgutter_realtime = 0
 let g:gitgutter_map_keys = 0
-let g:gitgutter_grep = 'rg'
 let g:gitgutter_diff_args = '-w'
 let g:gitgutter_sign_priority = 100000
 let g:gitgutter_sign_allow_clobber = 0
@@ -1187,6 +1189,10 @@ let g:gitgutter_set_sign_backgrounds = 1
 let g:gitgutter_preview_win_floating = 1
 let g:gitgutter_close_preview_on_escape = 1
 let g:gitgutter_show_msg_on_hunk_jumping = 0
+
+if executable('rg')
+    let g:gitgutter_grep = 'rg'
+endif
 
 function! GitGutterStatuslineFlag() abort
     let [l:nradded, l:nrmodified, l:nrremoved] = GitGutterGetHunkSummary()
@@ -1316,7 +1322,7 @@ function! s:notes() abort
         execute "normal Go\r" . l:header . "\r\e"
     endif
 
-    execute 'normal Gzto== ' . strftime('%X') . " ==\r - \e"
+    execute 'normal Gzto== ' . strftime('%X') . " ==\r- \e"
 
     return 0
 endfunction
@@ -1564,10 +1570,6 @@ try
     " colorscheme dracula
 catch /^Vim\%((\a\+)\)\=:E185/
     colorscheme evening
-
-    echohl WarningMsg
-    echomsg 'Not found colorscheme: ' . g:colorscheme . '.'
-    echohl None
 endtry
 
 if filereadable(expand('~/.vimrc.local'))
