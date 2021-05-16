@@ -299,6 +299,21 @@ rm -Rf composer-setup.php
 ## rm -Rf /usr/local/bin/composer
 ```
 
+# Rector
+
+[See](https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md)
+
+```bash
+cd ~
+composer global require rector/rector --dev
+sudo ln -s ~/.composer/vendor/bin/rector /usr/local/bin/phprector
+## Command
+## phprector -c /var/www/html/freddiegar/services/rector.php process src
+## phprector -c /var/www/html/freddiegar/services/rector.php -n process src tests
+## phprector -c /var/www/html/freddiegar/services/rector.php --no-diffs process src tests
+## composer global remove rector/rector
+```
+
 # Code Sniffer Fixer
 
 ```bash
