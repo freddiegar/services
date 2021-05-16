@@ -27,7 +27,14 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $parameters->set(Option::SKIP, [
         \Rector\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector::class,
+        \Rector\CodeQuality\Rector\Catch_\ThrowWithPreviousExceptionRector::class,
+        \Rector\CodeQuality\Rector\FuncCall\CompactToVariablesRector::class,
+        \Rector\CodeQuality\Rector\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector::class,
         \Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector::class,
+        \Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector::class,
+        \Rector\CodingStyle\Rector\Switch_\BinarySwitchToIfElseRector::class,
+        \Rector\CodingStyle\Rector\Encapsed\WrapEncapsedVariableInCurlyBracesRector::class,
+        \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedConstructorParamRector::class,
         \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
     ]);
 
