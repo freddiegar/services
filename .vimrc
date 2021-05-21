@@ -413,6 +413,7 @@ nnoremap <silent> <Leader>D "_D
 nnoremap <silent> <Leader>x "_x
 nnoremap <silent> <Leader>X "_X
 nnoremap <silent> <Leader>y "+y
+nnoremap <silent> <Leader>Y "+Y
 
 " Fast saving
 nnoremap <silent> <Leader>w :update<Enter>
@@ -469,6 +470,9 @@ nnoremap <silent> <Leader>gp :echo 'Path:     ' . getcwd()<Enter>
 nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
 nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
 nnoremap <silent> <Leader>gF :echo 'Copied:   ' . <SID>get_current_function(1)<Enter>
+
+nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')<Enter>
+            \ :echo 'Copied:   ' . strftime('%Y%m%d%H%M%S')<Enter>
 
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
@@ -669,17 +673,17 @@ function! s:get_function_name() abort
 endfunction
 
 " Fast <Esc>
-inoremap <silent> kk <Esc>
+" inoremap <silent> kk <Esc>
 inoremap <silent> jk <Esc>
-inoremap <silent> jj <Esc>
+" inoremap <silent> jj <Esc>
 
 " Fast moving in Insert Mode
-inoremap <silent> II <Esc>I
-inoremap <silent> AA <Esc>A
-inoremap <silent> OO <Esc>O
+" inoremap <silent> II <Esc>I
+" inoremap <silent> AA <Esc>A
+" inoremap <silent> OO <Esc>O
 inoremap <silent> PP <Esc>pa
-inoremap <silent> <C-a> <C-o>^
-inoremap <silent> <C-e> <C-o>$
+" inoremap <silent> <C-a> <C-o>^
+" inoremap <silent> <C-e> <C-o>$
 
 " Fast append lines
 nnoremap <silent> <Leader><Enter> :call <SID>append_char('o')<Enter>
@@ -984,6 +988,9 @@ nnoremap <silent> <Leader>tf :TestFile<Enter>
 nnoremap <silent> <Leader>ts :TestSuite<Enter>
 nnoremap <silent> <Leader>tl :TestLast<Enter>
 nnoremap <silent> <Leader>tg :TestVisit<Enter>
+nnoremap <silent> <Leader>tT :TestNearest --testdox<Enter>
+nnoremap <silent> <Leader>tF :TestFile --testdox<Enter>
+nnoremap <silent> <Leader>tS :TestSuite --testdox<Enter>
 
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
@@ -1319,7 +1326,7 @@ function! s:notes() abort
         execute "normal Go\r" . l:header . "\r\e"
     endif
 
-    execute 'normal Gzto== ' . strftime('%X') . " ==\r- \e"
+    execute "normal Gzto\r== " . strftime('%X') . " ==\r- \e"
 
     return 0
 endfunction
@@ -1408,7 +1415,7 @@ augroup AutoCommands
     autocmd FileType html,css,vue EmmetInstall
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php,c setlocal matchpairs-=<:>
-    autocmd FileType json setlocal softtabstop=2 shiftwidth=2
+    autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
     autocmd FileType c,cpp setlocal path+=/usr/include include&
     autocmd FileType vim setlocal keywordprg=:help
 
