@@ -494,7 +494,7 @@ gpg --armor --export C292DDB5
 # Xdebug
 
 ```bash
-sudo pecl install -f xdebug
+sudo pecl install -f xdebug-2.9.8
 
 # Xdebug 2
 echo 'xdebug.idekey=PHPSTORM
@@ -508,7 +508,19 @@ xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=1
 zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 
+sudo pecl install -f xdebug
+
 # Xdebug 3
+## Backup v2
+sudo cp -p /etc/php/7.4/mods-available/xdebug.ini /etc/php/7.4/mods-available/xdebug.ini.v2
+echo 'xdebug.idekey=PHPSTORM
+xdebug.mode=debug
+xdebug.start_with_request=trigger
+xdebug.client_host=host.docker.internal
+xdebug.client_port=9000
+;xdebug.log=/var/www/html/xdebug/xdebug.log
+xdebug.file_link_format=vscode://file/%f:%l
+zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 echo 'xdebug.idekey=PHPSTORM
 xdebug.mode=debug
 xdebug.start_with_request=trigger
@@ -520,6 +532,32 @@ zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-ava
 
 sudo phpenmod xdebug
 ```
+
+## Upgrade
+
+```bash
+# all
+sudo pecl upgrade
+# or specific
+sudo pecl upgrade -f xdebug
+```
+
+## Throuble
+
+Maybe need run as `sudo` user! or:
+
+### No releases available for package "pecl.php.net/package"
+### Error getting channel info from pear.php.net: Connection to `ssl://pear.php.net:443' failed
+
+```bash
+# Update channel
+sudo pecl channel-update pecl.php.net
+
+# Update certificates, use default_cert_file path
+php -r "print_r(openssl_get_cert_locations());"
+sudo curl -fLo /usr/local/ssl/cert.pem http://curl.haxx.se/ca/cacert.pem
+```
+
 # Postman
 
 ```bash
