@@ -135,7 +135,7 @@ set pumheight=15                                                " Maximum option
 " set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message (default)
 
 if has('mouse')
-    set mouse=                                                  " Mouse don't exist always
+    set mouse=a                                                 " Mouse don't exist always
 endif
 
 " Custom Render
@@ -151,7 +151,7 @@ set nojoinspaces                                                " No insert two 
 " Custom View
 set number                                                      " Number in cursorline is a number line, no zero
 set relativenumber                                              " Relative number do easy select a range of lines
-" set cursorline                                                  " Highligth line when cursor there is
+set cursorline                                                  " Highligth line when cursor there is
 " set noshowmatch                                                 " No jump a match never (default)
 " set matchtime=0
 set list                                                        " Visible white spaces, (tab is a white space)
@@ -790,9 +790,9 @@ Plug 'sonph/onehalf', { 'rtp': 'vim' }
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
-Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
+" Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa
-Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as object: {operator}ii, {operator}ai
+" Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as object: {operator}ii, {operator}ai
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 Plug 'machakann/vim-swap'                                       " Swag args: g>, g<
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
@@ -814,7 +814,7 @@ Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: meth
 Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar for PHP in on-the-fly
 Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
 " Plug 'vim-vdebug/vdebug', {'for': 'php'}
-Plug 'phpactor/phpactor', {'for': 'php', 'branch': 'master', 'do': 'composer install --no-dev -o'} " LSP and refactor tool
+Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'} " LSP and refactor tool
 
 Plug 'vim-scripts/autotags', {'for': 'c'}
 Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
@@ -901,8 +901,7 @@ let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles
 
 " @see https://github.com/kaicataldo/material.vim
 let g:material_terminal_italics = 1
-let g:material_styles = ['palenight', 'ocean']
-let g:material_theme_style = get(g:material_styles, rand(srand()) % len(g:material_styles), 'default')
+let g:material_theme_style = 'ocean'
 
 " @see https://github.com/jacoborus/tender.vim
 
@@ -978,9 +977,7 @@ nnoremap <silent> <Leader>o :if isdirectory('.git')<Enter>
 " https://github.com/vim-test/vim-test
 let g:test#strategy = 'vimterminal'
 let g:test#php#phpunit#options = {
-    \ 'nearest': '--no-coverage --stop-on-failure',
-    \ 'file':    '--no-coverage --stop-on-failure',
-    \ 'suite':   '--no-coverage --stop-on-failure',
+    \ 'all': '--no-coverage --stop-on-failure',
 \}
 nnoremap <silent> <Leader>tt :TestNearest<Enter>
 nnoremap <silent> <Leader>tf :TestFile<Enter>
