@@ -538,7 +538,15 @@ function! s:delete_method() abort
     execute "normal! vaB\"_d-\"zyy+$"
 
     if match(@@, 'function ') > 0
-        execute "normal! \"_d-\"_dd"
+        execute "normal! \"_d-"
+    endif
+
+    let l:line = getline('.')
+
+    if l:line ==# '}'
+        execute "normal! -\"_dd"
+    elseif l:line ==# ''
+        execute "normal! \"_dd"
     endif
 
     let @@ = l:saved_unnamed_register
