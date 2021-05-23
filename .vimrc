@@ -810,7 +810,7 @@ Plug 'sonph/onehalf', { 'rtp': 'vim' }
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
-" Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
+Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa
 " Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as object: {operator}ii, {operator}ai
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
@@ -1340,9 +1340,11 @@ function! s:notes() abort
 
     if !filereadable(l:filename) || len(l:matches) == 0
         execute "normal Go\r" . l:header . "\r\e"
+    else
+        execute "normal Go\e"
     endif
 
-    execute "normal Gzto\r== " . strftime('%X') . " ==\r- \e"
+    execute "normal Gzto== " . strftime('%X') . " ==\r- \e"
 
     return 0
 endfunction
