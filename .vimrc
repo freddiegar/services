@@ -567,28 +567,34 @@ endfunction
 
 function! s:append_char(type) abort
     let l:saved_unnamed_register = @@
+    let l:repeatable = 'AppendSemicolon'
 
     execute "normal! ma$v\"zy"
     let l:lastchar = @@
 
     if a:type ==# 'd'
         execute "normal! $\"_x\e"
-    elseif a:type ==# 'o'
-        execute "normal! o\e"
+        let l:repeatable = 'DeleteFinal'
     elseif a:type ==# 'O'
         execute "normal! O\e"
+        let l:repeatable = 'PrependEnter'
+    elseif a:type ==# 'o'
+        execute "normal! o\e"
+        let l:repeatable = 'AppendEnter'
     elseif a:type ==# '{'
         let l:bsearch = getreg('?')
 
         silent execute "normal! ?^    {\rkO\e"
 
         silent call setreg('/', l:bsearch)
+        let l:repeatable = 'PrependSeparator'
     elseif a:type ==# '}'
         let l:fsearch = getreg('/')
 
         silent execute "normal! /^    }\ro\e"
 
         silent call setreg('/', l:fsearch)
+        let l:repeatable = 'AppendSeparator'
     elseif l:lastchar == ';'
         execute "normal! \"_xA,\e"
     elseif l:lastchar == ','
@@ -601,13 +607,16 @@ function! s:append_char(type) abort
         execute "normal! A;\e"
     else
         echomsg 'Nothing to do.'
+        let l:repeatable = ''
     endif
 
     execute "normal! `a"
 
     let @@ = l:saved_unnamed_register
 
-    silent! call repeat#set("\<Plug>" . (a:type == 'a' ? 'AppendSemicolon' : 'DeleteFinal') . 'Repeatable', a:type)
+    if len(l:repeatable) > 0
+        silent! call repeat#set("\<Plug>" . l:repeatable . 'Repeatable', a:type)
+    endif
 endfunction
 
 function! s:go_line() abort
@@ -686,10 +695,17 @@ inoremap <silent> PP <Esc>pa
 " inoremap <silent> <C-e> <C-o>$
 
 " Fast append lines
-nnoremap <silent> <Leader><Enter> :call <SID>append_char('o')<Enter>
-nnoremap <silent> g<Enter> :call <SID>append_char('O')<Enter>
-nnoremap <silent> <<Enter> :call <SID>append_char('{')<Enter>
-nnoremap <silent> ><Enter> :call <SID>append_char('}')<Enter>
+nnoremap <silent> <Plug>PrependEnterRepeatable :call <SID>append_char('O')<Enter>
+nmap <silent> g<Enter> <Plug>PrependEnterRepeatable
+
+nnoremap <silent> <Plug>AppendEnterRepeatable :call <SID>append_char('o')<Enter>
+nmap <silent> <Leader><Enter> <Plug>AppendEnterRepeatable
+
+nnoremap <silent> <Plug>PrependSeparatorRepeatable :call <SID>append_char('{')<Enter>
+nmap <silent> <<Enter> <Plug>PrependSeparatorRepeatable
+
+nnoremap <silent> <Plug>AppendSeparatorRepeatable :call <SID>append_char('}')<Enter>
+nmap <silent> ><Enter> <Plug>AppendSeparatorRepeatable
 
 " Buffers navigation
 nnoremap <silent> <Leader><Leader> :Buffers<Enter>
