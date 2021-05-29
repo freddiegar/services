@@ -243,6 +243,26 @@ services:
           cpus: $WEB_CORE
           memory: $WEB_MEMORY
 
+  supervisor:
+    container_name: supervisor
+    build:
+      context: .
+      dockerfile: ./supervisor/Dockerfile
+    volumes:
+      - $QUEUE_DOCROOT:/var/www/html
+    networks:
+      development:
+        ipv4_address: 172.20.0.50
+    ports:
+    - $QUEUE_PORT:9001
+    extra_hosts:
+      - "host.docker.internal:${HOST_DOCKER}"
+    deploy:
+      resources:
+        limits:
+          cpus: $QUEUE_CORE
+          memory: $QUEUE_MEMORY
+
   proxy:
     container_name: proxy
     build:

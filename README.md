@@ -87,6 +87,17 @@ touch /var/log/mysql/slow.log
 chmod 666 /var/log/mysql/*.log
 ```
 
+## Supervisor
+
+```bash
+supervisorctl start all
+supervisorctl status
+
+# After change conf files
+supervisorctl reread
+supervisorctl update
+```
+
 ## MySQL
 
 Edit configuration file
@@ -1010,7 +1021,7 @@ In bootstrap folder create folder called `sass` and into folder two files: _cust
 cd bootstrap
 mkdir sass
 cd sass
-touch _customVariables.scss 
+touch _customVariables.scss
 touch _customRules.scss
 ```
 
@@ -1018,12 +1029,12 @@ touch _customRules.scss
 *_customRules.scss*: Add extra rules to apply
 
 ```css
-// _customVariables.scss 
+// _customVariables.scss
 $font-family-sans-serif:        Arial, sans-serif !default;
 ```
 
 ```css
-// _customRules.scss 
+// _customRules.scss
 .btn {
     text-transform:             uppercase;
 }

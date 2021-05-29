@@ -6,5 +6,5 @@ conf/alias.conf
 conf/vhost.conf
 conf/crontab
 conf/hosts_extra
+conf/worker.conf
 *.swp
-
