@@ -1414,7 +1414,7 @@ augroup AutoCommands
 
     autocmd FileType php nnoremap <silent> <buffer><Leader>ram :call <SID>phpactor('implement_contracts')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call <SID>phpactor('add_missing_properties')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rfc :call <SID>phpactor('complete_constructor')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rcc :call <SID>phpactor('complete_constructor')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>run :call <SID>phpactor('fix_namespace_class_name')<Enter>
 
     autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
@@ -1458,6 +1458,7 @@ augroup AutoCommands
 
     " Customization
     autocmd FileType sql setlocal commentstring=--\ %s
+    autocmd FileType apache setlocal commentstring=#\ %s
     autocmd FileType html,css,vue EmmetInstall
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php,c setlocal matchpairs-=<:>
@@ -1467,7 +1468,7 @@ augroup AutoCommands
 
     autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
-    autocmd BufRead,BufNewFile *.twig setlocal filetype=html
+    autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html
 
     " Rg not find in file names
