@@ -1259,6 +1259,16 @@ zcat < file.sql.gz | mysql -u root -p database
 gunzip < file.sql.gz | mysql -u root -p database
 ```
 
+Scaped backslash (\) in MySQL
+```mysql
+-- Original string: {"required":true,"rules":"regex:\/(^[0-9]{1,14})+(\\.[0-9]{1,2})?$\/","data":null}
+-- Scaped it looks like:
+SELECT
+  REPLACE(column, 'regex:\\/(^[0-9]{1,14})+(\\\\.[0-9]{1,2})?$\\/', 'regex:\\/(^[0-9]{1,12})+(\\\\.[0-9]{1,2})?$\\/')
+FROM table
+WHERE column LIKE '%regex:\\\\/(^[0-9]{1,14})+(\\\\\\\\.%[0-9]{1,2})?$\\\\\\\/%';
+```
+
 Pre-Request in POSTMan
 ```bash
 var moment = require('moment');

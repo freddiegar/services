@@ -574,6 +574,8 @@ sudo dpkg -i vscode.deb
 curl -L https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US -o firefox.tar.bz2
 sudo tar -xvjf firefox.tar.bz2 -C /opt
 # sudo tar -xvzf firefox.tar.gz -C /opt
+rm -Rf firefox.tar.bz2
+## rm -Rf /opt/firefox
 ```
 
 ## Shortcut for ...
