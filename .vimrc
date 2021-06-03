@@ -589,6 +589,20 @@ function! s:append_char(type) abort
     elseif a:type ==# 'o'
         execute "normal! o\e"
         let l:repeatable = 'AppendEnter'
+    elseif a:type ==# 'i'
+        let l:bsearch = getreg('?')
+
+        silent execute "normal! ?^    {\ro$this->markTestIncomplete();\e"
+
+        silent call setreg('/', l:bsearch)
+        let l:repeatable = 'AddIncompleteMark'
+    elseif a:type ==# 'I'
+        let l:bsearch = getreg('?')
+
+        silent execute "normal! ?^    {\rj\"_dd"
+
+        silent call setreg('/', l:bsearch)
+        let l:repeatable = 'DropIncompleteMark'
     elseif a:type ==# '{'
         let l:bsearch = getreg('?')
 
@@ -715,6 +729,12 @@ nmap <silent> <<Enter> <Plug>PrependSeparatorRepeatable
 nnoremap <silent> <Plug>AppendSeparatorRepeatable :call <SID>append_char('}')<Enter>
 nmap <silent> ><Enter> <Plug>AppendSeparatorRepeatable
 
+nnoremap <silent> <Plug>AddIncompleteMarkRepeatable :call <SID>append_char('i')<Enter>
+nmap <silent> <i <Plug>AddIncompleteMarkRepeatable
+
+nnoremap <silent> <Plug>DropIncompleteMarkRepeatable :call <SID>append_char('I')<Enter>
+nmap <silent> >i <Plug>DropIncompleteMarkRepeatable
+
 " Buffers navigation
 nnoremap <silent> <Leader><Leader> :Buffers<Enter>
 nnoremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
@@ -822,7 +842,7 @@ Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{o
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa
 " Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as object: {operator}ii, {operator}ai
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
-Plug 'machakann/vim-swap'                                       " Swag args: g>, g<
+Plug 'machakann/vim-swap'                                       " Swag args: g>, g<, gs (interactive)
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 " Plug 'luochen1990/rainbow'                                      " Highligth parenthesis (, [, { match
 Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
