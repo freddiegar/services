@@ -1296,3 +1296,11 @@ pm.environment.set('expiration', moment().add(120, 'minutes').format());
 pm.environment.set('timestamp', moment().unix());
 ```
 
+Rename tag in GIT
+```bash
+git tag new old
+git tag -d old
+git push origin :refs/tags/old
+git push --tags
+```
+
