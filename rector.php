@@ -30,6 +30,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         \Rector\CodeQuality\Rector\Catch_\ThrowWithPreviousExceptionRector::class,
         \Rector\CodeQuality\Rector\FuncCall\CompactToVariablesRector::class,
         \Rector\CodeQuality\Rector\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector::class,
+        \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
         \Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector::class,
         \Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector::class,
         \Rector\CodingStyle\Rector\Switch_\BinarySwitchToIfElseRector::class,
