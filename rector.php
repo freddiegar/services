@@ -35,6 +35,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         \Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector::class,
         \Rector\CodingStyle\Rector\Switch_\BinarySwitchToIfElseRector::class,
         \Rector\CodingStyle\Rector\Encapsed\WrapEncapsedVariableInCurlyBracesRector::class,
+        \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector::class,
         \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedConstructorParamRector::class,
         \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
     ]);
