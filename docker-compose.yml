@@ -249,7 +249,7 @@ services:
       context: .
       dockerfile: ./supervisor/Dockerfile
     volumes:
-      - $QUEUE_DOCROOT:/var/www/html
+      - $WEB_DOCROOT:/var/www/html
     networks:
       development:
         ipv4_address: 172.20.0.50
