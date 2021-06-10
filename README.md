@@ -755,6 +755,39 @@ i=0; while [ $i -lt 10 ]; do \time -p curl -L -H "Accept-Encoding: gzip, deflate
 
 > time is reserved word (too in zsh) then use \time, more info [here](https://www.howtogeek.com/415977/how-to-use-the-time-command-on-linux/)
 
+## Logger
+
+### Sentry
+
+See [Sentry](https://github.com/getsentry/onpremise) installation from Docker
+
+```bash
+cd /var/www
+mkdir -p /var/www/logger/
+cd /var/www/logger/
+git clone --depth=1 git@github.com:getsentry/onpremise.git sentry
+cd /var/www/logger/sentry
+
+# Config file
+cp -p sentry/config.example.yml sentry/config.yml
+cp -p sentry/sentry.conf.example.py sentry/sentry.conf.py
+
+# Change default options
+sed -i 's/!!changeme!!/K!eO9PchIOGJ/g' sentry/config.yml
+
+sed -i 's/COMPOSE_PROJECT_NAME=sentry_onpremise/COMPOSE_PROJECT_NAME=logger/g' .env
+sed -i 's/SENTRY_EVENT_RETENTION_DAYS=90/SENTRY_EVENT_RETENTION_DAYS=30/g' .env
+
+# Run installation
+./install.sh
+
+# After installation
+docker-compose up -d
+
+# Go to
+http://localhost:9000
+```
+
 ## PenTesting
 
 See [Kali](https://www.kali.org/news/official-kali-linux-docker-images/) installation from Docker
