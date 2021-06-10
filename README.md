@@ -320,14 +320,14 @@ pecl install -f xdebug
 echo "xdebug.idekey=PHPSTORM
 xdebug.remote_mode=req
 xdebug.remote_host=host.docker.internal
-xdebug.remote_port=9000
+xdebug.remote_port=9003
 xdebug.remote_enable=1
 ;xdebug.remote_autostart=0; Only by explicit request, see below:
 xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=0
 xdebug.coverage_enable=0
 ;xdebug.remote_log=/var/www/html/xdebug/xdebug.log
-xdebug.file_link_format=vscode://file/%f:%l
+xdebug.file_link_format=xdebug://%f@%l
 zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
 
 # Xdebug 3
@@ -335,9 +335,9 @@ echo 'xdebug.idekey=PHPSTORM
 xdebug.mode=debug
 xdebug.start_with_request=trigger
 xdebug.client_host=host.docker.internal
-xdebug.client_port=9000
+xdebug.client_port=9003
 ;xdebug.log=/var/www/html/xdebug/xdebug.log
-xdebug.file_link_format=vscode://file/%f:%l
+xdebug.file_link_format=xdebug://%f@%l
 zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini
 
 # cat /usr/local/etc/php/conf.d/xdebug.ini
@@ -382,14 +382,14 @@ In `php.ini` file add:
 xdebug.remote_enable=1
 xdebug.remote_mode=req
 xdebug.remote_host=localhost
-xdebug.remote_port=9000
+xdebug.remote_port=9003
 xdebug.remote_enable=0
 xdebug.remote_autostart=1
 xdebug.idekey=PHPSTORM
 ; To enable profiler use XDEBUG_PROFILE=PHPSTORM in (GET|POST|COOKIE)
 xdebug.profiler_enable=0
 xdebug.profiler_enable_trigger=1
-xdebug.file_link_format=vscode://file/%f:%l
+xdebug.file_link_format=xdebug://%f@%l
 zend_extension=/usr/local/lib/php/extensions/xdebug.so
 
 ; Xdebug 3
@@ -397,8 +397,8 @@ xdebug.idekey=PHPSTORM
 xdebug.mode=debug
 xdebug.start_with_request=trigger
 xdebug.client_host=localhost
-xdebug.client_port=9000
-xdebug.file_link_format=vscode://file/%f:%l
+xdebug.client_port=9003
+xdebug.file_link_format=xdebug://%f@%l
 zend_extension=/usr/local/lib/php/extensions/xdebug.so
 
 ; Windows
@@ -430,7 +430,7 @@ launch.json example for local and remote debugging multiple root
             "name": "Listen for XDebug",
             "type": "php",
             "request": "launch",
-            "port": 9000,
+            "port": 9003,
             "pathMappings": {
                 // Remote (web)
                 "/var/www/html/flexphp/flex-generator": "${workspaceFolder:flex-generator}",
@@ -452,7 +452,7 @@ launch.json example for local and remote debugging multiple root
             "request": "launch",
             "program": "${file}",
             "cwd": "${fileDirname}",
-            "port": 9000
+            "port": 9003
         }
     ]
 }

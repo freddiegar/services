@@ -500,7 +500,7 @@ sudo pecl install -f xdebug-2.9.8
 echo 'xdebug.idekey=PHPSTORM
 xdebug.remote_mode=req
 xdebug.remote_host=localhost
-xdebug.remote_port=9000
+xdebug.remote_port=9003
 xdebug.remote_enable=1
 xdebug.remote_autostart=1
 ; To enable profiler use XDEBUG_PROFILE=PHPSTORM in (GET|POST|COOKIE)
@@ -517,17 +517,9 @@ echo 'xdebug.idekey=PHPSTORM
 xdebug.mode=debug
 xdebug.start_with_request=trigger
 xdebug.client_host=host.docker.internal
-xdebug.client_port=9000
+xdebug.client_port=9003
 ;xdebug.log=/var/www/html/xdebug/xdebug.log
-xdebug.file_link_format=vscode://file/%f:%l
-zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
-echo 'xdebug.idekey=PHPSTORM
-xdebug.mode=debug
-xdebug.start_with_request=trigger
-xdebug.client_host=host.docker.internal
-xdebug.client_port=9000
-;xdebug.log=/var/www/html/xdebug/xdebug.log
-xdebug.file_link_format=vscode://file/%f:%l
+xdebug.file_link_format=xdebug://%f@%l
 zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 
 sudo phpenmod xdebug
@@ -540,6 +532,23 @@ sudo phpenmod xdebug
 sudo pecl upgrade
 # or specific
 sudo pecl upgrade -f xdebug
+```
+
+# Linking
+
+[See](https://xdebug.org/docs/all_settings#file_link_format)
+
+```bash
+mkdir ~/bin
+echo "#! /bin/sh
+
+f=`echo $1 | cut -d @ -f 1 | sed 's/xdebug:\/\///'`
+l=`echo $1 | cut -d @ -f 2`
+vim --remote-tab +$l $f
+" > ~/bin/ff-xdebug.sh
+
+# Permissions
+sudo chmod +x ~/bin/ff-xdebug.sh
 ```
 
 ## Throuble

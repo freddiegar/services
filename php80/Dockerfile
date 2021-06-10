@@ -88,9 +88,9 @@ RUN set -eux \
         echo "xdebug.mode=debug"; \
         echo "xdebug.start_with_request=trigger"; \
         echo "xdebug.client_host=host.docker.internal"; \
-        echo "xdebug.client_port=9000"; \
+        echo "xdebug.client_port=9003"; \
         echo ";xdebug.log=/var/www/html/xdebug/xdebug.log"; \
-        echo "xdebug.file_link_format=vscode://file/%f:%l"; \
+        echo "xdebug.file_link_format=xdebug://%f@%l"; \
         echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)"; \
     } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite localhost; fi \
