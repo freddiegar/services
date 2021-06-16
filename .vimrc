@@ -298,14 +298,14 @@ noremap <Left> <Nop>
 noremap <Right> <Nop>
 
 " Purify!
-inoremap <Up> <Nop>
-inoremap <Down> <Nop>
-inoremap <Left> <Nop>
-inoremap <Right> <Nop>
+" inoremap <Up> <Nop>
+" inoremap <Down> <Nop>
+" inoremap <Left> <Nop>
+" inoremap <Right> <Nop>
 
 " Arrow keys resize windows
-nnoremap <silent> <Up> :resize -10<Enter>
-nnoremap <silent> <Down> :resize +10<Enter>
+" nnoremap <silent> <Up> :resize -10<Enter>
+" nnoremap <silent> <Down> :resize +10<Enter>
 nnoremap <silent> <Left> :vertical resize -10<Enter>
 nnoremap <silent> <Right> :vertical resize +10<Enter>
 
@@ -330,8 +330,8 @@ xnoremap <silent> k gk
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 
 " / and ? search alternatives
-nnoremap <Leader>s <kDivide>
-nnoremap <Leader>S ?
+" nnoremap <Leader>s <kDivide>
+" nnoremap <Leader>S ?
 
 " Open explore in root and current folder (toggle)
 nnoremap <silent> <F2> :if &filetype ==# 'netrw'<Enter>
@@ -345,6 +345,8 @@ nnoremap <silent> <F3> :if &filetype ==# 'netrw'<Enter>
             \ :else<Enter>
             \ :40Vexplore<Enter>
             \ :endif<Enter><Enter>
+
+nnoremap <silent> <F5> :registers<Enter>
 
 " Fast Vim configuration
 nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
@@ -1032,9 +1034,9 @@ nnoremap <silent> <Leader>tf :TestFile<Enter>
 nnoremap <silent> <Leader>ts :TestSuite<Enter>
 nnoremap <silent> <Leader>tl :TestLast<Enter>
 nnoremap <silent> <Leader>tg :TestVisit<Enter>
-nnoremap <silent> <Leader>tT :TestNearest --testdox<Enter>
-nnoremap <silent> <Leader>tF :TestFile --testdox<Enter>
-nnoremap <silent> <Leader>tS :TestSuite --testdox<Enter>
+nnoremap <silent> <Leader>tT :TestNearest --testdox -vvv<Enter>
+nnoremap <silent> <Leader>tF :TestFile --testdox -vvv<Enter>
+nnoremap <silent> <Leader>tS :TestSuite --testdox -vvv<Enter>
 
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
@@ -1586,7 +1588,12 @@ function! s:themes() abort
     highlight! link SyntasticStyleErrorSign SignColumn
     highlight! link SyntasticStyleWarningSign SignColumn
 
-    " Sintastic line highligth
+    " Popup menu readable always
+    " highlight! PmenuThumb ctermbg=188 guibg=#DCDFE4
+    " highlight! Pmenu ctermfg=238 ctermbg=188 guifg=#444444 guibg=#DCDFE4
+    " highlight! PmenuSel ctermfg=188 ctermbg=238 guifg=#DCDFE4 guibg=#444444
+
+    " Sintastic line highlight
     highlight! clear ErrorText
     highlight! clear ErrorLine
     highlight! ErrorLine guifg=NONE ctermbg=52 guibg=#55393D ctermbg=NONE
