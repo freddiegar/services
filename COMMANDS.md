@@ -20,6 +20,24 @@ flush privileges;
 Set password in MySQL (5.6 +)
 ```mysql
 set password for 'homestead'@'%' = PASSWORD('password');
+
+flush privileges;
+```
+
+Revoke permissions database mysql
+```mysql
+-- Show grants
+show grants for homestead@'%';
+
+-- Specific
+- revoke insert, update on homestead.* from homestead@'%';
+
+-- All except grant option
+- revoke all on homestead.* from homestead@'%';
+
+-- All
+- revoke all, grant option on homestead.* from homestead@'%';
+
 flush privileges;
 ```
 
