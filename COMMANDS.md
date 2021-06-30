@@ -448,6 +448,28 @@ Find in all files in path
 grep -rF pattern /folder
 ```
 
+Generate SSH Key (Default bits are 2048)
+```bash
+ssh-keygen -t rsa -b 4096
+```
+
+Autenticate using SSH Key from another ubication
+```bash
+ssh -i /home/user/.ssh/id_rsa_old user@server.com
+```
+
+Using many SSH keys
+```bash
+echo 'Host one.server.com
+IdentityFile ~/.ssh/host_one_key
+
+Host other.server.com
+IdentityFile ~/.ssh/host_two_key
+' > ~/.ssh/config
+
+chmod g-w ~/.ssh/config
+```
+
 Enable SSH Key in Droplet
 ```bash
 ### https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-16-04
