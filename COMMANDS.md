@@ -1344,3 +1344,12 @@ git push origin :refs/tags/old
 git push --tags
 ```
 
+Set [permissions](https://linuxize.com/post/chmod-command-in-linux/) in WebServer files
+```bash
+find /var/www/website -type d -exec chmod 755 {} \;
+find /var/www/website -type f -exec chmod 644 {} \;
+# or
+find /var/www/website -type d -exec chmod u=rwx,go=rx {} \;
+find /var/www/website -type f -exec chmod u=rw,go=r {} \;
+```
+
