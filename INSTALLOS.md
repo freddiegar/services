@@ -81,6 +81,7 @@ sudo apt-get install -y konsole
 sudo update-alternatives --config editor
 
 # cp -p .vimrc ~/.vimrc
+ln -s `pwd`/.vimrc ~/.vimrc
 ```
 
 ## Vim Plugins
@@ -189,13 +190,16 @@ sudo chmod +x /usr/local/bin/phpctags
 
 ```bash
 # PHP
-mkdir -f ~/.vim/UltiSnips && cp -p php.snippets ~/.vim/UltiSnips/php.snippets
+mkdir -f ~/.vim/UltiSnips
+# cp -p php.snippets ~/.vim/UltiSnips/php.snippets
+ln -s `pwd`/php.snippets ~/.vim/UltiSnips/php.snippets
 ```
 
 ## PHPStorm
 
 ```bash
 # cp -p .ideavimrc ~/.ideavimrc
+ln -s `pwd`/.ideavimrc ~/.ideavimrc
 ```
 
 # GIT
@@ -236,7 +240,8 @@ gnome-session-quit
 # Aliases
 
 ```bash
-cp -p .bash_aliases ~/.bash_aliases
+# cp -p .bash_aliases ~/.bash_aliases
+ln -s `pwd`/.bash_aliases ~/.bash_aliases
 
 # Enable alias in zsh
 echo '
