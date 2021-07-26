@@ -337,13 +337,13 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 nnoremap <silent> <F2> :if &filetype ==# 'netrw'<Enter>
             \ :q!<Enter>
             \ :else<Enter>
-            \ :40Lexplore<Enter>
+            \ :20Lexplore<Enter>
             \ :endif<Enter><Enter>
 
 nnoremap <silent> <F3> :if &filetype ==# 'netrw'<Enter>
             \ :q!<Enter>
             \ :else<Enter>
-            \ :40Vexplore<Enter>
+            \ :20Vexplore<Enter>
             \ :endif<Enter><Enter>
 
 nnoremap <silent> <F5> :registers<Enter>
@@ -834,8 +834,7 @@ Plug 'dracula/vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'sainnhe/sonokai'
 Plug 'jacoborus/tender.vim'
-Plug 'kaicataldo/material.vim', { 'branch': 'main' }
-Plug 'sonph/onehalf', { 'rtp': 'vim' }
+Plug 'srcery-colors/srcery-vim'
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
@@ -949,13 +948,12 @@ let g:sonokai_transparent_background = 1
 let g:sonokai_styles = ['default', 'atlantis', 'shusia', 'maia']
 let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles), 'andromeda')
 
-" @see https://github.com/kaicataldo/material.vim
-let g:material_terminal_italics = 1
-let g:material_theme_style = 'ocean'
-
 " @see https://github.com/jacoborus/tender.vim
 
-" @see https://github.com/sonph/onehalf
+" @see https://github.com/srcery-colors/srcery-vim
+let g:srcery_italic = 1
+let g:srcery_bold = 0
+let g:srcery_inverse = 1
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -1422,7 +1420,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rec :call phpactor#ExtractConstant()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>ree :call phpactor#ExtractExpression(v:true)<Enter>
+    autocmd FileType php xnoremap <silent> <buffer><Leader>ree :<C-u>call phpactor#ExtractExpression(v:true)<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
 
     autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
@@ -1471,7 +1469,8 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
-    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html
+    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
+    autocmd BufRead,BufNewFile *.conf setlocal filetype=apache
 
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
@@ -1546,8 +1545,7 @@ function! s:get_hlinfo() abort
                 \ . ' -> ' . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
                 \ . ' -> ' . g:colors_name
                 \ . (g:colors_name ==# 'sonokai' ? '[' . g:sonokai_style . ']' : '')
-                \ . (g:colors_name ==# 'material' ? '[' . g:material_theme_style . ']' : '')
-endfunc
+endfunction
 
 " @see :h syntax
 " @see :highlight <GroupName>
@@ -1621,11 +1619,11 @@ set background=dark
 
 try
     let g:weekDay = str2nr(strftime('%w'))
-    let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai', 'material', 'onehalfdark']
+    let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai', 'srcery']
     let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
 
     execute 'colorscheme ' . g:colorscheme
-    " colorscheme dracula
+    " colorscheme srcery
 catch /^Vim\%((\a\+)\)\=:E185/
     colorscheme evening
 endtry
