@@ -319,8 +319,9 @@ pecl install -f xdebug
 # Xdebug 2
 echo "xdebug.idekey=PHPSTORM
 xdebug.remote_mode=req
-xdebug.remote_host=host.docker.internal
-xdebug.remote_port=9003
+xdebug.remote_host=localhost
+;xdebug.remote_host=host.docker.internal
+xdebug.remote_port=9000
 xdebug.remote_enable=1
 ;xdebug.remote_autostart=0; Only by explicit request, see below:
 xdebug.profiler_enable=0
@@ -335,6 +336,7 @@ echo 'xdebug.idekey=PHPSTORM
 xdebug.mode=debug
 xdebug.start_with_request=trigger
 xdebug.client_host=host.docker.internal
+;xdebug.client_host=host.docker.internal
 xdebug.client_port=9003
 ;xdebug.log=/var/www/html/xdebug/xdebug.log
 xdebug.file_link_format=xdebug://%f@%l
@@ -354,9 +356,11 @@ service apache2 reload
 
 # CLI
 # On *nix
-# export XDEBUG_CONFIG="idekey=PHPSTORM"
+export XDEBUG_SESSION=1
+export XDEBUG_CONFIG="idekey=PHPSTORM"
 # On Windows
-# set XDEBUG_CONFIG="idekey=PHPSTORM"
+set XDEBUG_SESSION=1
+set XDEBUG_CONFIG="idekey=PHPSTORM"
 # After run
 # php -f file.php
 ```
