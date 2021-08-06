@@ -231,6 +231,10 @@ function! ChangeStatuslineColor() abort
     return ''
 endfunction
 
+function! GetNameCurrentPath() abort
+    return split(getcwd(), '/')[-1]
+endfunction
+
 function! s:get_branch() abort
     let l:branchname = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
 
@@ -262,6 +266,8 @@ endif
 
 set statusline+=\ %n                                            " [N]umber buffer
 set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
+set statusline+=%{GetNameCurrentPath()}                         " Relative folder
+set statusline+=\ >                                             " Separator
 set statusline+=\ %f                                            " Relative filename
 
 if exists('g:loaded_gitgutter')
@@ -966,7 +972,7 @@ let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 " @see https://github.com/mg979/vim-visual-multi
 let g:VM_maps = {}
 let g:VM_maps['Find Under'] = '<C-n>'
-let g:VM_maps["Select All"] = '<C-s>'
+let g:VM_maps['Select All'] = '<C-s>'
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
@@ -1623,7 +1629,7 @@ try
     let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
 
     execute 'colorscheme ' . g:colorscheme
-    " colorscheme srcery
+    " colorscheme dracula
 catch /^Vim\%((\a\+)\)\=:E185/
     colorscheme evening
 endtry
