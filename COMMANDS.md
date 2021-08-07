@@ -1196,6 +1196,19 @@ do
     # Decompress
     # gzip -d /var/mysqldump/${DBNAME}_${DATETIME}.sql.gz
 done
+
+# OR
+
+echo '#!/bin/bash
+
+databases="db1 db2 dbn"
+
+for database in $databases
+do
+mysqldump -h 172.20.0.10 --opt -uroot -p $database | gzip > ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql.gz
+echo $database done.
+done
+' > ~/mysqldump.sh
 ```
 
 Restore dump MySQL many databases
@@ -1213,6 +1226,23 @@ do
     fi
     mysql -P3306 -uroot -p ${DBNAME} < /var/mysqldump/${DBNAME}_${DATETIME}.sql
 done
+
+# OR
+
+echo '#!/bin/bash
+
+databases="db1 db2 dbn"
+
+for database in $databases
+do
+mysql -h 172.20.0.10 -uroot -p -e "drop database if exists ${database};"
+mysql -h 172.20.0.10 -uroot -p -e "create database ${database} charset utf8;"
+gzip -d ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql.gz
+mysql -h 172.20.0.10 -uroot -p $database < ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql
+gzip ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql
+echo $database restore.
+done
+' > ~/mysqlrestore.sh
 ```
 
 Install GPG v1
