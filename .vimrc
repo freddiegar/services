@@ -1462,6 +1462,15 @@ augroup AutoCommands
         silent edit!
     endfunction
 
+    " JSON Fixer
+    autocmd FileType json nnoremap <silent> <buffer><F1> :call <SID>jsonfixer()<Enter>
+
+    function! s:jsonfixer() abort
+        silent update!
+
+        execute ':%!python3 -m json.tool'
+    endfunction
+
     " Customization
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType apache setlocal commentstring=#\ %s
