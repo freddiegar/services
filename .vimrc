@@ -182,8 +182,33 @@ set foldnestmax=10                                              " Limit nested f
 set nrformats-=octal                                            " I don't use octal numbers
 " set nrformats+=alpha                                            " Allow [in/de]crement chars: <C-a>, <C-x>
 
+" Netrw
+" Key   Action
+" enter Open files/directories
+" o     Open file/directory in new horizontal split
+" v     Open file/directory in new vertical split
+" t     Open file/directory in new tab
+" x     Open the file/directory with the default system app
+" p     Preview file without (moving the cursor from netrw)
+
+" -     Go up one directory
+" u     Go back to previously visited directory (like <C-o> in vim)
+" U     Go forward to subsequently visited directory (like <C-i> in vim)
+
+" %     Create a new file
+" d     Create a new directory
+" D     Delete the file/directory under the cursor (or marked files/dirs)
+" R     Rename/move file/directory
+
+let g:netrw_banner = 0                                          " Hide help banner. Toggle: I
+let g:netrw_keepdir = 0                                         " Keep current directory and browsing directory synced
+" let g:netrw_winsize = 20                                        " Keep same size after open file
+let g:netrw_liststyle = 3                                       " Show folders and files always. Cycling: i
+let g:netrw_localcopydircmd = 'cp -r'                           " Copy recursive dirs
+let g:netrw_list_hide='^\.git\=/\=$,^\.\=/\=$'                  " Hide some extensions
+
 " Statusline
-let g:currentmode={
+let g:currentmode = {
     \ 'c'     : 'COMMAND  ',
     \ 'i'     : 'INSERT   ',
     \ 'ic'    : 'INSERT   ',
@@ -416,6 +441,7 @@ endfunction
 
 " Preserve default register ("x) content
 nnoremap <silent> <Leader>c "_c
+nnoremap <silent> <Leader>C "_C
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
 nnoremap <silent> <Leader>x "_x
@@ -423,15 +449,27 @@ nnoremap <silent> <Leader>X "_X
 nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>Y "+Y
 
+" Edit .env
+nnoremap <silent> <Leader>e :if filereadable(expand('.env'))<Enter>
+            \ :edit .env<Enter>
+            \ :else<Enter>
+            \ :echo '.env not found.'<Enter>
+            \ :endif<Enter><Enter>
+
 " Fast saving
 nnoremap <silent> <Leader>w :update<Enter>
 nnoremap <silent> <Leader>W :wall<Enter>
             \ :echo 'All saved!'<Enter>
 
-" Show/Copied current filename
+" Show/Copied current filename (full path)
 nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter>
             \ :echo 'Copied:   ' . expand('%:p')<Enter>
+
+" Show/Copied current filename (only last part)
+nnoremap <silent> <Leader>l :echo 'File:     ' . expand('%:t')<Enter>
+nnoremap <silent> <Leader>L :let @+=expand('%:t')<Enter>
+            \ :echo 'Copied:   ' . expand('%:t')<Enter>
 
 " Improve search in fuzzy finder
 nnoremap <silent> <Leader>f :call <SID>find_filter('e')<Enter>
