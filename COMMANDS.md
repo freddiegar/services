@@ -1399,3 +1399,13 @@ apk add --update --no-cache gmp gmp-dev \
     && docker-php-ext-install gmp
 ```
 
+Error sync branches. [See](https://stackoverflow.com/a/45559485/15601185)
+```bash
+git config --get remote.origin.fetch
+# Only allow master
+# +refs/heads/master:refs/remotes/origin/master
+# Allow any branch
+git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+git fetch --all
+git checkout develop
+```
