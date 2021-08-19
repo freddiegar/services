@@ -86,4 +86,3 @@ alias cdt="cd /var/www/html/atar"
 alias cdf="cd /var/www/html/freddiegar"
 alias cdx="cd /var/www/html/flexphp"
 alias cde="cd /var/www/html/evertec"
-

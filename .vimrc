@@ -829,9 +829,9 @@ function! s:cycling_buffers(incr) abort
 
             if l:nbuffer == l:cbuffer
                 if isdirectory('.git')
-                    GFiles
+                    execute ':GFiles'
                 else
-                    Files
+                    execute ':Files'
                 endif
 
                 break
@@ -1521,9 +1521,12 @@ augroup AutoCommands
 
     autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
+    autocmd BufRead,BufNewFile .php_cs* setlocal filetype=php
+    autocmd BufRead,BufNewFile *.conf setlocal filetype=apache
+    autocmd BufRead,BufNewFile *.json.* setlocal filetype=json
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
-    autocmd BufRead,BufNewFile *.conf setlocal filetype=apache
+    autocmd BufRead,BufNewFile *.vue setlocal filetype=html commentstring=<!--\ %s\ -->
 
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
@@ -1580,7 +1583,7 @@ augroup AutoCommands
     autocmd BufEnter * call <SID>poststart()
     " autocmd InsertEnter * :setlocal norelativenumber
     " autocmd InsertLeave * :setlocal relativenumber
-    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig :call <SID>cleanspaces()
+    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,*.vue :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimResized * wincmd =
 augroup END
@@ -1653,6 +1656,13 @@ function! s:themes() abort
 
     " Custom color for statusline
     highlight! User1 guifg=#FF2222 ctermfg=1
+
+    if exists('g:colorscheme') && g:colorscheme ==# 'dracula'
+        " Green vars as $user
+        highlight! link Identifier DraculaGreen
+        " Search highlight in another color
+        highlight! Search gui=bold guibg=NONE guifg=#FFB86C
+    endif
 endfunction
 
 augroup ThemeColors
@@ -1674,9 +1684,9 @@ try
     let g:weekDay = str2nr(strftime('%w'))
     let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai', 'srcery']
     let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
+    " let g:colorscheme = 'dracula'
 
     execute 'colorscheme ' . g:colorscheme
-    " colorscheme dracula
 catch /^Vim\%((\a\+)\)\=:E185/
     colorscheme evening
 endtry
