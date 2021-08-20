@@ -141,6 +141,25 @@ if type rg &> /dev/null; then
 fi " >> ~/.zshrc
 ```
 
+## GPG in terminal
+```bash
+echo "
+export GPG_TTY=$(tty)" >> ~/.zshrc
+```
+
+# Bat no Cat (Preview FZF and Console)
+
+[See](https://github.com/sharkdp/bat)
+
+```bash
+cd ~
+sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.18.2/bat_0.18.2_amd64.deb -o bat.deb
+sudo dpkg -i bat.deb
+## Command:
+## bat file.php
+## sudo apt-get remove bat
+```
+
 ## C Development
 
 ### LSP
@@ -220,6 +239,10 @@ sudo apt-get install git-flow
 ## sudo apt-get remove git-flow && sudo apt-get autoremove
 ```
 
+# GIT Rebase
+
+[See](https://youtu.be/INjj0eGhNXs)
+
 # Zsh
 
 ```bash
@@ -230,7 +253,7 @@ chsh -s `which zsh`
 
 sudo cp -p ~/.zshrc ~/.zshrc.original
 sudo sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
-sudo sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy\/mm\/dd"/g' ~/.zshrc
+sudo sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy-mm-dd"/g' ~/.zshrc
 sudo sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
 
 gnome-session-quit
@@ -582,9 +605,12 @@ sudo snap install postman
 # VSCode & Firefox (Dont use snap for this, security risk)
 
 ```bash
+# VS Code
 cd ~/Downloads
 sudo dpkg -i vscode.deb
+## sudo apt-get remove code
 
+# Firefox Dev Edition
 curl -L https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US -o firefox.tar.bz2
 sudo tar -xvjf firefox.tar.bz2 -C /opt
 # sudo tar -xvzf firefox.tar.gz -C /opt
