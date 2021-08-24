@@ -1200,13 +1200,21 @@ done
 # OR
 
 echo '#!/bin/bash
+echo "Do you want continue with dump? (y/N)"
+
+read RESPONSE
+
+if [ "$RESPONSE" != "y" ]; then
+    echo "Dump canceled!"
+    exit
+fi
 
 databases="db1 db2 dbn"
 
 for database in $databases
 do
 mysqldump -h 172.20.0.10 --opt -uroot -p $database | gzip > ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql.gz
-echo $database done.
+echo Dump $database done.
 done
 ' > ~/mysqldump.sh
 ```
@@ -1230,17 +1238,22 @@ done
 # OR
 
 echo '#!/bin/bash
+echo "WARNING: Do you want continue with restore? (y/N)"
+
+read RESPONSE
+
+if [ "$RESPONSE" != "y" ]; then
+    echo "Restore canceled!"
+    exit
+fi
 
 databases="db1 db2 dbn"
 
 for database in $databases
 do
-mysql -h 172.20.0.10 -uroot -p -e "drop database if exists ${database};"
-mysql -h 172.20.0.10 -uroot -p -e "create database ${database} charset utf8;"
-gzip -d ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql.gz
-mysql -h 172.20.0.10 -uroot -p $database < ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql
-gzip ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql
-echo $database restore.
+mysql -h 172.20.0.10 -uroot -p -e "drop database if exists ${database};create database ${database} charset utf8;" 2>/dev/null
+zcat ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql.gz | mysql -h 172.20.0.10 -uroot -p $database 2>/dev/null
+echo Restore $database done.
 done
 ' > ~/mysqlrestore.sh
 ```
@@ -1408,4 +1421,32 @@ git config --get remote.origin.fetch
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch --all
 git checkout develop
+```
+
+Updated crontab (docker)
+```bash
+cp -p crontab /etc/crontab
+/etc/init.d/cron reload
+```
+
+Generate BCRYPT password in PHP
+```bash
+echo password_hash($pass, PASSWORD_BCRYPT, ['cost' => 12]);
+```
+
+Vapor CLI commands
+```bash
+cd project
+composer require laravel/vapor-core
+vapor login
+> link cloud provider: no
+vapor team:list
+vapor team:switch
+> select id team
+
+# Crear una nueva configuración en vapor (Example: dev)
+vapor env dev
+
+# Delete database
+vapor database:delete-proxy dev-co-microsites
 ```
