@@ -504,6 +504,10 @@ nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter>
             \ :edit!<Enter>
             \ :echo 'Checkout: ' . expand('%')<Enter>
 
+nnoremap <silent> <Leader>grh :AsyncRun git reset HEAD %:p<Enter>
+            \ :edit!<Enter>
+            \ :echo 'Reset:    ' . expand('%')<Enter>
+
 nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
             \ :echo 'Dumped:   ' . getcwd()<Enter>
 
@@ -707,6 +711,10 @@ function! s:go_line() abort
         endif
     catch /^Nothing/
         echomsg 'Nothing to do.'
+    catch
+        echohl WarningMsg
+        echomsg 'Invalid go line.'
+        echohl None
     endtry
 
     return 0
