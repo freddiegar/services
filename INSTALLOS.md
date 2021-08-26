@@ -71,7 +71,15 @@ sudo apt-get install -y tree
 sudo apt-get install -y nmap
 sudo apt-get install -y htop
 sudo apt-get install -y konsole
-## sudo apt-get remove unzip curl vim tree nmap htop konsole && sudo apt-get autoremove
+sudo apt-get install -y i3
+## sudo apt-get remove unzip curl vim tree nmap htop konsole i3 && sudo apt-get autoremove
+```
+
+## i3
+
+```bash
+# cp -p config ~/config
+ln -s `pwd`/config ~/.config/i3/config
 ```
 
 ## Vim Configuration
