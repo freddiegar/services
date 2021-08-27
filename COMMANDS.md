@@ -1444,9 +1444,29 @@ vapor team:list
 vapor team:switch
 > select id team
 
-# Crear una nueva configuración en vapor (Example: dev)
+# New instance of Vapor (Example: dev)
 vapor env dev
 
+# With docker runtime
+vapor env dev --docker
+
 # Delete database
-vapor database:delete-proxy dev-co-microsites
+vapor database:delete-proxy database-name
+
+# MySQL console
+vapor database:shell database-name
+
+# Redis connection local
+vapor cache:tunnel database-name
+
+# Deploy instance
+vapor deploy dev
 ```
+
+Password Utility in i3
+```bash
+sudo apt-get install -y seahorse
+
+ll ~/.local/share/keyrings/*.keystore
+```
+

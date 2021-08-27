@@ -364,13 +364,14 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 " nnoremap <Leader>s <kDivide>
 " nnoremap <Leader>S ?
 
-" Open explore in root and current folder (toggle)
+" Open explore in root folder (toggle)
 nnoremap <silent> <F2> :if &filetype ==# 'netrw'<Enter>
             \ :q!<Enter>
             \ :else<Enter>
             \ :20Lexplore<Enter>
             \ :endif<Enter><Enter>
 
+" Open explore in current file folder (toggle)
 nnoremap <silent> <F3> :if &filetype ==# 'netrw'<Enter>
             \ :q!<Enter>
             \ :else<Enter>
@@ -1591,7 +1592,7 @@ augroup AutoCommands
     autocmd BufEnter * call <SID>poststart()
     " autocmd InsertEnter * :setlocal norelativenumber
     " autocmd InsertLeave * :setlocal relativenumber
-    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,*.vue :call <SID>cleanspaces()
+    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,*.vue,config :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimResized * wincmd =
 augroup END
