@@ -244,6 +244,14 @@ bindsym $mod+Shift+n exec --no-startup-id nautilus --no-desktop
 bindsym $mod+Shift+m exec --no-startup-id mysql-workbench
 bindsym Print exec screenshot
 
+# Freddie 20210825
+# @see https://www.reddit.com/r/i3wm/comments/2y9aj9/what_are_your_favourite_configuration_tips/
+# Move workspace between layouts
+bindsym $mod+Left focus output left
+bindsym $mod+Shift+Left move workspace to output left
+bindsym $mod+Right focus output right
+bindsym $mod+Shift+Right move workspace to output right
+
 # sticky window
 bindsym $mod+Shift+s sticky toggle
 
@@ -273,17 +281,18 @@ bindsym XF86AudioMute        exec --no-startup-id pactl set-sink-mute   0 toggle
 
 # Display selector
 set $external_output HDMI-2 --auto
-# set $internal_output eDP-1 --mode 1368x768
-set $internal_output eDP-1 --mode 1440x810_60.00
+# set $internal_mode eDP-1 --mode 1368x768
+set $internal_auto eDP-1 auto
+set $internal_mode eDP-1 --mode 1440x810_60.00
 set $mode_display Display e(x)ternal, (i)nternal, (c)lone, (r)ight or (l)eft presentation, (h)igh internal
 
 mode "$mode_display" {
-    bindsym x exec --no-startup-id xrandr --output $external_output --primary    --output eDP-1 --auto     --off,                       mode "default"
-    bindsym i exec --no-startup-id xrandr --output $external_output --off        --output $internal_output --primary,                   mode "default"
-    bindsym c exec --no-startup-id xrandr --output $internal_output --primary    --output $external_output --same-as $internal_output,  mode "default"
-    bindsym r exec --no-startup-id xrandr --output $internal_output --primary    --output $external_output --right-of $internal_output, mode "default"
-    bindsym l exec --no-startup-id xrandr --output $internal_output --primary    --output $external_output --left-of $internal_output,  mode "default"
-    bindsym h exec --no-startup-id xrandr --output $external_output --off        --output eDP-1 --auto     --primary,                   mode "default"
+    bindsym x exec --no-startup-id xrandr --output $external_output --primary    --output eDP-1 --auto     --off,                   mode "default"
+    bindsym i exec --no-startup-id xrandr --output $external_output --off        --output $internal_mode    --primary,                  mode "default"
+    bindsym c exec --no-startup-id xrandr --output $internal_auto   --primary    --output $external_output  --same-as $internal_auto,   mode "default"
+    bindsym r exec --no-startup-id xrandr --output $internal_mode   --primary    --output $external_output  --right-of $internal_auto,  mode "default"
+    bindsym l exec --no-startup-id xrandr --output $internal_mode   --primary    --output $external_output  --left-of $internal_auto,   mode "default"
+    bindsym h exec --no-startup-id xrandr --output $external_output --off        --output $internal_auto    --primary,                  mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return          mode "default"
@@ -297,7 +306,7 @@ bindsym $mod+Shift+p mode "$mode_display"
 # @see https://olinux.net/xrandr/
 # cvt 1440 810
 exec --no-startup-id xrandr --newmode  "1440x810_60.00" 95.00  1440 1520 1664 1888  810 813 818 841 -hsync +vsync; xrandr --addmode  eDP-1 1440x810_60.00; xrandr --output   eDP-1 --mode 1440x810_60.00 --primary
-exec --no-startup-id xrandr --output $internal_output --primary --output $external_output --same-as $internal_output
+exec --no-startup-id xrandr --output $internal_mode --primary --output $external_output --same-as $internal_mode
 
 # @see https://faq.i3wm.org/question/239/how-do-i-suspendlockscreen-and-logout.1.html
 # @see https://wiki.archlinux.org/title/I3#Shutdown.2C_reboot.2C_lock_screen
@@ -306,11 +315,11 @@ set $mode_system System (l)ocked, (e)xit, (s)uspend, (h)ibernate, (r)eboot, Shif
 
 mode "$mode_system" {
     bindsym l exec          --no-startup-id $locker,                              mode "default"
-    bindsym e exec          --no-startup-id i3-msg exit,                                        mode "default"
+    bindsym e exec          --no-startup-id i3-msg exit,                          mode "default"
     bindsym s exec          --no-startup-id $locker && systemctl suspend -i,      mode "default"
     # bindsym h exec          --no-startup-id $locker && systemctl hibernate -i,    mode "default"
-    bindsym r exec          --no-startup-id systemctl reboot,                                   mode "default"
-    bindsym Shift+s exec    --no-startup-id systemctl poweroff -i,                              mode "default"
+    bindsym r exec          --no-startup-id systemctl reboot,                     mode "default"
+    bindsym Shift+s exec    --no-startup-id systemctl poweroff -i,                mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return      mode "default"
