@@ -36,7 +36,7 @@ floating_modifier $mod
 
 # start a terminal
 # Freddie 20210825
-bindsym $mod+Return exec --no-startup-id konsole
+bindsym $mod+Return exec        --no-startup-id konsole
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -106,9 +106,11 @@ bindsym $mod+a focus parent
 # Freddie 20210825
 set $workspace1     "1: >__"
 set $workspace2     "2: WWW"
-set $workspace3     "3: TMS"
+set $workspace3     "3: COM"
 set $workspace4     "4: SQL"
 set $workspace5     "5: IDE"
+set $workspace6     "6: RMT"
+set $workspace7     "7: WIP"
 set $workspace9     "9: FLS"
 set $workspace10    "10: PVT"
 
@@ -118,8 +120,8 @@ bindsym $mod+2 workspace $workspace2
 bindsym $mod+3 workspace $workspace3
 bindsym $mod+4 workspace $workspace4
 bindsym $mod+5 workspace $workspace5
-bindsym $mod+6 workspace 6
-bindsym $mod+7 workspace 7
+bindsym $mod+6 workspace $workspace6
+bindsym $mod+7 workspace $workspace7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace $workspace9
 bindsym $mod+0 workspace $workspace10
@@ -130,11 +132,16 @@ bindsym $mod+Shift+2 move container to workspace $workspace2
 bindsym $mod+Shift+3 move container to workspace $workspace3
 bindsym $mod+Shift+4 move container to workspace $workspace4
 bindsym $mod+Shift+5 move container to workspace $workspace5
-bindsym $mod+Shift+6 move container to workspace 6
-bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+6 move container to workspace $workspace6
+bindsym $mod+Shift+7 move container to workspace $workspace7
 bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace $workspace9
 bindsym $mod+Shift+0 move container to workspace $workspace10
+
+# Freddie 20210831
+# @see https://i3wm.org/docs/userguide.html#_renaming_workspaces
+# Return using $mod+a by each window, after $mod+Shift+{number}
+bindsym $mod+Shift+w rename workspace to $workspace7
 
 # Freddie 20210825
 # Search WM_CLASS 2nd arg using xprop: xprop | grep WM_CLASS
@@ -144,11 +151,15 @@ assign [class="zoom"]                       $workspace3
 assign [class="Mysql-workbench-bin"]        $workspace4
 assign [class="jetbrains-phpstorm"]         $workspace5
 assign [class="Sublime_text"]               $workspace5
+assign [class="Anydesk"]                    $workspace6
 assign [class="Nautilus"]                   $workspace9
 assign [class="Opera"]                      $workspace10
 
 # Enable floating
-for_window [window_role="(?i)pop-up"] floating enable
+for_window [window_role="(?i)pop-up"]   floating enable
+for_window [class="Gnome-calculator"]   floating enable
+for_window [class="Anydesk"]            floating enable
+
 # Enable PiP as sticky
 for_window [instance="Toolkit" class="Firefox Developer Edition"] floating enable, sticky enable
 
@@ -185,7 +196,7 @@ mode "resize" {
     bindsym $mod+r mode "default"
 }
 
-bindsym $mod+r mode "resize"
+bindsym $mod+r          mode "resize"
 
 # Freddie 20210825
 # window colors
@@ -234,7 +245,7 @@ new_float pixel 1
 focus_follows_mouse no
 
 # Return a last workspace easily
-workspace_auto_back_and_forth yes
+# workspace_auto_back_and_forth yes
 
 # Freddie 20210825
 # @see https://www.youtube.com/watch?v=8-S0cWnLBKg&list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf&index=2
@@ -262,9 +273,6 @@ exec --no-startup-id konsole
 # Set default browser
 exec --no-startup-id xdg-settings set default-web-browser firefox.desktop
 
-# Enable keyring
-exec --no-startup-id /usr/bin/gnome-keyring-daemon --start --components=secrets
-
 # Disable Caps Lock
 exec_always --no-startup-id "sleep 1; setxkbmap -option caps:none"
 
@@ -287,7 +295,7 @@ set $internal_mode eDP-1 --mode 1440x810_60.00
 set $mode_display Display e(x)ternal, (i)nternal, (c)lone, (r)ight or (l)eft presentation, (h)igh internal
 
 mode "$mode_display" {
-    bindsym x exec --no-startup-id xrandr --output $external_output --primary    --output eDP-1 --auto     --off,                   mode "default"
+    bindsym x exec --no-startup-id xrandr --output $external_output --primary    --output eDP-1 --auto      --off,                      mode "default"
     bindsym i exec --no-startup-id xrandr --output $external_output --off        --output $internal_mode    --primary,                  mode "default"
     bindsym c exec --no-startup-id xrandr --output $internal_auto   --primary    --output $external_output  --same-as $internal_auto,   mode "default"
     bindsym r exec --no-startup-id xrandr --output $internal_mode   --primary    --output $external_output  --right-of $internal_auto,  mode "default"
