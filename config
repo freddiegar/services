@@ -104,15 +104,15 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 # Freddie 20210825
-set $workspace1     "1: >__"
-set $workspace2     "2: WWW"
-set $workspace3     "3: COM"
-set $workspace4     "4: SQL"
-set $workspace5     "5: IDE"
-set $workspace6     "6: RMT"
-set $workspace7     "7: WIP"
-set $workspace9     "9: FLS"
-set $workspace10    "10: PVT"
+set $workspace1     "1:>__"
+set $workspace2     "2:WWW"
+set $workspace3     "3:COM"
+set $workspace4     "4:SQL"
+set $workspace5     "5:IDE"
+set $workspace6     "6:RMT"
+set $workspace7     "7:WIP"
+set $workspace9     "9:FLS"
+set $workspace10    "10:PVT"
 
 # switch to workspace
 bindsym $mod+1 workspace $workspace1
@@ -159,6 +159,7 @@ assign [class="Opera"]                      $workspace10
 for_window [window_role="(?i)pop-up"]   floating enable
 for_window [class="Gnome-calculator"]   floating enable
 for_window [class="Anydesk"]            floating enable
+for_window [class="zoom"]               floating enable
 
 # Enable PiP as sticky
 for_window [instance="Toolkit" class="Firefox Developer Edition"] floating enable, sticky enable
@@ -275,6 +276,8 @@ exec --no-startup-id xdg-settings set default-web-browser firefox.desktop
 
 # Disable Caps Lock
 exec_always --no-startup-id "sleep 1; setxkbmap -option caps:none"
+# Disable Caps Lock to Lock
+# exec_always --no-startup-id "sleep 1; setxkbmap -option caps:escape"
 
 # Enable Multimedia Keys
 # https://faq.i3wm.org/question/3747/enabling-multimedia-keys/
