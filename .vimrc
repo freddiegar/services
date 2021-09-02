@@ -1,4 +1,5 @@
 " PHILOSOPHY
+" @see https://www.moolenaar.net/habits.html
 " @see https://blog.sanctum.geek.nz/series/unix-as-ide/
 " @thanks https://markodenic.com/use-google-like-a-pro/
 
@@ -10,6 +11,10 @@
 " @see https://thevaluable.dev/code-quality-check-tools-php/
 " @see https://bestasciitable.com/
 " @see https://www.arp242.net/vimlog/
+" @see https://github.com/mhinz/vim-galore
+
+" From Scratch to Pro
+" @thanks https://thevaluable.dev/vim-beginner/
 
 " Build-in improve % option (works with if statements and tags html)
 runtime macros/matchit.vim
@@ -523,7 +528,13 @@ nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<E
 nnoremap <silent> <Leader>gF :echo 'Copied:   ' . <SID>get_current_function(1)<Enter>
 
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')<Enter>
-            \ :echo 'Copied:   ' . strftime('%Y%m%d%H%M%S')<Enter>
+            \ :echo 'Copied:   ' . @+<Enter>
+
+nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()<Enter>
+            \ :echo 'Copied:   ' . @+<Enter>
+
+nnoremap <silent> <Leader>gh :let @+=<SID>generate_hash()<Enter>
+            \ :echo 'Copied:   ' . @+<Enter>
 
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
@@ -692,6 +703,20 @@ function! s:append_char(type) abort
     endif
 endfunction
 
+function! s:generate_password() abort
+    let l:password = system('openssl rand -base64 15')
+
+    return strlen(l:password) > 0 ? l:password : 'Retry!'
+endfunction
+
+function! s:generate_hash() abort
+    let l:password = <SID>generate_password()
+
+    let l:hash = system('echo -n "' . l:password . '" | openssl dgst -sha256 | cut -d " " -f 2')
+
+    return strlen(l:hash) > 0 && l:password !=# 'Retry!' ? l:hash : 'Retry!'
+endfunction
+
 function! s:go_line() abort
     try
         if match(getline('.'), ':') < 0
@@ -798,6 +823,8 @@ nnoremap <silent> <S-Tab> :call <SID>cycling_buffers(-1)<Enter>
 vnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
 vnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 vnoremap <silent> <S-Tab> :<C-u>call <SID>cycling_buffers(-1)<Enter>
+
+nnoremap <silent> <Leader>H :History<Enter>
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
@@ -1592,7 +1619,7 @@ augroup AutoCommands
     autocmd BufEnter * call <SID>poststart()
     " autocmd InsertEnter * :setlocal norelativenumber
     " autocmd InsertLeave * :setlocal relativenumber
-    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,*.vue,config :call <SID>cleanspaces()
+    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimResized * wincmd =
 augroup END
