@@ -30,6 +30,12 @@ sudo sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=2/g' /etc/default/grub
 sudo update-grub
 ```
 
+# English Language for All
+
+```bash
+echo 'Acquire::Languages "none";' | sudo tee -a /etc/apt/apt.conf.d/00aptitude
+```
+
 # Auto-update (on servers)
 
 ```bash
@@ -72,6 +78,7 @@ sudo apt-get install -y nmap
 sudo apt-get install -y htop
 sudo apt-get install -y konsole
 sudo apt-get install -y i3
+# sudo apt-get install preload
 ## sudo apt-get remove unzip curl vim tree nmap htop konsole i3 && sudo apt-get autoremove
 ```
 
@@ -163,9 +170,10 @@ export GPG_TTY=$(tty)" >> ~/.zshrc
 cd ~
 sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.18.2/bat_0.18.2_amd64.deb -o bat.deb
 sudo dpkg -i bat.deb
+rm bat.deb
 ## Command:
 ## bat file.php
-## sudo apt-get remove bat
+## sudo apt-get remove bat && sudo apt-get autoremove
 ```
 
 ## C Development
@@ -614,9 +622,10 @@ sudo snap install postman
 
 ```bash
 # VS Code
-cd ~/Downloads
+cd ~
 sudo dpkg -i vscode.deb
-## sudo apt-get remove code
+rm vscode.deb
+## sudo apt-get remove code && sudo apt-get autoremove
 
 # Firefox Dev Edition
 curl -L https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US -o firefox.tar.bz2
@@ -776,7 +785,7 @@ sudo apt-get install -y kcachegrind
 ```bash
 sudo add-apt-repository ppa:obsproject/obs-studio
 sudo apt-get install -y ffmpeg obs-studio
-## sudo apt-get remove obs-studio ffmpeg
+## sudo apt-get remove obs-studio ffmpeg && sudo apt-get autoremove
 ## sudo add-apt-repository -r ppa:obsproject/obs-studio
 ```
 
@@ -818,11 +827,23 @@ sudo apt-get install -y google-chrome-stable
 ## Virtual Box
 
 ```bash
+# v5.2
 cd ~
 sudo apt-get update
 sudo apt-get install virtualbox
 ## sudo apt-get remove virtualbox && sudo apt-get autoremove
+
+# v6.1
+cd ~
+sudo apt-get update
+sudo apt-get install -y libqt5opengl5
+sudo curl -L https://download.virtualbox.org/virtualbox/6.1.26/virtualbox-6.1_6.1.26-145957~Ubuntu~bionic_amd64.deb virtualbox.deb
+sudo dpkg -i virtualbox.deb
+reboot
+rm ~/virtualbox.deb
+## sudo apt-get remove virtualbox-6.1 && sudo apt-get autoremove
 ```
+> Issues: https://stegard.net/2016/10/virtualbox-secure-boot-ubuntu-fail/
 
 ## Vagrant (VM)
 
