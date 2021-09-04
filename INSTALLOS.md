@@ -16,7 +16,6 @@ sudo sysctl -p
 # Change default User Max Watches
 
 ```bash
-sudo cp -p ~/.zshrc ~/.zshrc.original
 echo '# Overwrite default: 8192 ~ 8M to ~540M
 fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 sudo sysctl -p
@@ -25,8 +24,7 @@ sudo sysctl -p
 # Change default time GRUB to 2
 
 ```bash
-sudo cp -p ~/.zshrc ~/.zshrc.original
-sudo sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=2/g' /etc/default/grub
+sudo sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=0/g' /etc/default/grub
 sudo update-grub
 ```
 
@@ -39,10 +37,10 @@ echo 'Acquire::Languages "none";' | sudo tee -a /etc/apt/apt.conf.d/00aptitude
 # Auto-update (on servers)
 
 ```bash
+sudo apt-get update
 sudo apt-get install -y unattended-upgrades update-notifier-common
-sudo cp -p ~/.zshrc ~/.zshrc.original
-sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Kernel-Packages "false";/Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
-sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Dependencies "false";/Unattended-Upgrade::Remove-Unused-Dependencies "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
+sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Kernel-Packages "[true|false]*";/Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
+sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Dependencies "[true|false]*";/Unattended-Upgrade::Remove-Unused-Dependencies "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 sudo sed -i 's/\/\/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 ```
 
@@ -56,15 +54,15 @@ sudo systemctl disable cups
 # Vim Latest :D
 
 ```bash
-sudo add-apt-repository ppa:jonathonf/vim
-## sudo apt-get remove vim && sudo add-apt-repository --remove ppa:jonathonf/vim
+echo "\n" | sudo add-apt-repository ppa:jonathonf/vim
+## sudo apt-get remove vim && echo "\n" | sudo add-apt-repository --remove ppa:jonathonf/vim
 ```
 
 # Updated repos
 
 ```bash
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get -y upgrade
 ```
 
 # Unzip, cURL, Vim and extra utils
@@ -79,15 +77,26 @@ sudo apt-get install -y htop
 sudo apt-get install -y konsole
 sudo apt-get install -y i3
 sudo apt-get install -y pavucontrol
-# sudo apt-get install preload
-## sudo apt-get remove unzip curl vim tree nmap htop konsole i3 && sudo apt-get autoremove
+sudo apt-get install -y preload
+## sudo apt-get remove unzip curl vim tree nmap htop konsole i3 pavucontrol preload && sudo apt-get autoremove
 ```
 
-## i3
+> Profiles: ~/.local/share/konsole
+
+# i3
 
 ```bash
 # cp -p config ~/config
+mkdir -p ~/.config/i3
 ln -s `pwd`/config ~/.config/i3/config
+```
+
+## Set i3 as WM
+
+```bash
+sudo update-alternatives --config x-session-manager
+# if not is available i3:
+# sudo update-alternatives --install /usr/bin/x-session-manager x-session-manager /usr/bin/i3 60
 ```
 
 ## Vim Configuration
@@ -146,21 +155,15 @@ vim --version | grep xterm
 ## RigGrep for Vim search
 
 ```bash
-sudo add-apt-repository ppa:x4121/ripgrep
+# Ubuntu < 18.10 | Rg v0.9.0-3
+echo "\n" | sudo add-apt-repository ppa:x4121/ripgrep
 sudo apt-get update
 sudo apt-get install ripgrep
+## sudo apt-get remove ripgrep && echo "\n" | sudo add-apt-repository --remove ppa:x4121/ripgrep
 
-echo "
-if type rg &> /dev/null; then
-    export FZF_DEFAULT_COMMAND='rg --files'
-    export FZF_DEFAULT_OPTS='-m --height 50% --border'
-fi " >> ~/.zshrc
-```
-
-## GPG in terminal
-```bash
-echo "
-export GPG_TTY=$(tty)" >> ~/.zshrc
+# Ubuntu 18.10+ | Rg v11.0.2+
+sudo apt-get install ripgrep
+## sudo apt-get remove ripgrep
 ```
 
 # Bat no Cat (Preview FZF and Console)
@@ -171,7 +174,7 @@ export GPG_TTY=$(tty)" >> ~/.zshrc
 cd ~
 sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.18.2/bat_0.18.2_amd64.deb -o bat.deb
 sudo dpkg -i bat.deb
-rm bat.deb
+rm -f bat.deb
 ## Command:
 ## bat file.php
 ## sudo apt-get remove bat && sudo apt-get autoremove
@@ -226,7 +229,7 @@ sudo chmod +x /usr/local/bin/phpctags
 
 ```bash
 # PHP
-mkdir -f ~/.vim/UltiSnips
+mkdir -p ~/.vim/UltiSnips
 # cp -p php.snippets ~/.vim/UltiSnips/php.snippets
 ln -s `pwd`/php.snippets ~/.vim/UltiSnips/php.snippets
 ```
@@ -256,7 +259,7 @@ sudo apt-get install git-flow
 ## sudo apt-get remove git-flow && sudo apt-get autoremove
 ```
 
-# GIT Rebase
+## GIT Rebase
 
 [See](https://youtu.be/INjj0eGhNXs)
 
@@ -266,15 +269,27 @@ sudo apt-get install git-flow
 sudo apt-get install -y zsh
 # As User NOT root
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-chsh -s `which zsh`
+echo $SHELL
+# Change shell if not is zsh
+# chsh -s `which zsh`
 
 sudo cp -p ~/.zshrc ~/.zshrc.original
 sudo sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
 sudo sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy-mm-dd"/g' ~/.zshrc
 sudo sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
 
+# In Ubuntuu
 gnome-session-quit
+# In Lubuntuu
+ lxqt-leave
 ## sudo apt-get remove zsh && sudo apt-get autoremove
+```
+
+## GPG in terminal
+
+```bash
+echo '
+export GPG_TTY=$(tty)' >> ~/.zshrc
 ```
 
 # Aliases
@@ -317,13 +332,13 @@ sudo apt-get install -y php7.4-memcached
 sudo apt-get install -y php7.4-redis
 sudo apt-get install -y php7.4-bcmath
 sudo apt-get install -y php7.4-gmp
-## sudo apt-get remove php7.4* && sudo apt-get autoremove
+## sudo apt-get remove php7.4\* && sudo apt-get autoremove
 ```
 
 # MySQL Client (Server is using Docker)
 
 ```bash
-# Ubuntu
+# Ubuntu|Lubuntu
 sudo apt-get install -y mysql-client
 ## sudo apt-get remove mysql-client && sudo apt-get autoremove
 
@@ -363,7 +378,7 @@ sudo ln -s ~/.composer/vendor/bin/rector /usr/local/bin/phprector
 
 ```bash
 cd ~
-sudo curl -L https://cs.symfony.com/download/php-cs-fixer-v2.phar -o /usr/local/bin/php-cs-fixer
+sudo curl -L https://cs.symfony.com/download/php-cs-fixer-v3.phar -o /usr/local/bin/php-cs-fixer
 sudo chmod +x /usr/local/bin/php-cs-fixer
 ## Command:
 ## php-cs-fixer
@@ -374,7 +389,7 @@ sudo chmod +x /usr/local/bin/php-cs-fixer
 
 ```bash
 cd ~
-sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.9.1/phpmd.phar -o /usr/local/bin/phpmd
+sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.10.2/phpmd.phar -o /usr/local/bin/phpmd
 sudo chmod +x /usr/local/bin/phpmd
 ## Command:
 ## phpmd source/code format ruleset
@@ -387,7 +402,7 @@ sudo chmod +x /usr/local/bin/phpmd
 
 ```bash
 cd ~
-sudo curl -L https://github.com/infection/infection/releases/download/0.21.4/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.24.0/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command:
 ## infection -j$(nproc) [--filter=file.php]
@@ -420,7 +435,7 @@ sudo chmod +x /usr/local/bin/phpcpd
 
 ```bash
 cd ~
-sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.7.3/phpmetrics.phar -o /usr/local/bin/phpmetrics
+sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.7.4/phpmetrics.phar -o /usr/local/bin/phpmetrics
 sudo chmod +x /usr/local/bin/phpmetrics
 ## Command:
 ## phpmetrics --excluded-dirs vendor --report-html=./tests/coverage/phpmetrics .
@@ -433,16 +448,20 @@ sudo chmod +x /usr/local/bin/phpmetrics
 
 [See 2](https://docs.docker.com/install/linux/linux-postinstall/)
 
-## Ubuntu 18.*, 19.*, Debian 10
+# [L]Ubuntu 18.*, 19.*, Debian 10
 
 ```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common
-curl -L https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+echo "\n" | curl -L https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/`lsb_release -is | awk '{print tolower($0)}'` `lsb_release -cs` stable"
 sudo apt-get update
 sudo apt-get install -y docker-ce
 sudo usermod -aG docker $(whoami)
+
+# In Ubuntuu
 gnome-session-quit
+# In Lubuntuu
+ lxqt-leave
 ## sudo apt-get remove docker-ce && sudo apt-get autoremove
 ```
 
@@ -463,7 +482,7 @@ sudo reboot
 
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/1.28.6/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -486,6 +505,8 @@ sudo chmod +x /usr/local/bin/git-summary
 
 # SSH Keys
 
+Clone SSH keys from Secrets or
+
 ```bash
 ssh-keygen                 # Insert passphrase (Algo ...)
 ls ~/.ssh
@@ -493,6 +514,8 @@ cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
 ```
 
 # GPG Keys
+
+Clone GPG keys from Secrets or
 
 [See](https://docs.github.com/en/enterprise-server@2.22/github/authenticating-to-github/generating-a-new-gpg-key)
 
@@ -512,8 +535,12 @@ gpg --list-secret-keys --keyid-format LONG
 >       93AA89FC183E5D2A83114F49C6F296FCC292DDB5
 > uid         [ultimate] Freddie Gar (Personal GPG Key) <freddie.gar@outlook.com>
 > ssb   rsa4096/9567702A 2021-03-30 [E] [expires: 2022-03-30]
+```
+> GPG Keys are save in: /home/$USER/.gnupg
 
-# Enable
+## Enable
+
+```bash
 git config --global commit.gpgsign true
 git config --global user.signingkey [ID]
 
@@ -624,12 +651,14 @@ sudo snap install postman
 ```bash
 # VS Code
 cd ~
+curl -L "https://az764295.vo.msecnd.net/stable/e7d7e9a9348e6a8cc8c03f877d39cb72e5dfb1ff/code_1.60.0-1630494279_amd64.deb" -o vscode.deb
 sudo dpkg -i vscode.deb
-rm vscode.deb
+rm -f vscode.deb
 ## sudo apt-get remove code && sudo apt-get autoremove
 
 # Firefox Dev Edition
-curl -L https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US -o firefox.tar.bz2
+sudo apt-get remove firefox && sudo apt-get autoremove
+curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.bz2
 sudo tar -xvjf firefox.tar.bz2 -C /opt
 # sudo tar -xvzf firefox.tar.gz -C /opt
 rm -Rf firefox.tar.bz2
@@ -674,15 +703,17 @@ cd ~
 sudo apt-get update
 sudo apt-get install -y build-essential libssl-dev
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.38.0/install.sh | bash
+
 echo '
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
+
 # Close Terminal to load changes
 # Show version available
 nvm ls-remote
-nvm install v14.16.0
-# nvm alias default v14.16.0
+nvm install v14.17.6
+# nvm alias default v14.17.6
 # nvm current
 ## Enabled to all users in Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
@@ -701,27 +732,17 @@ sudo apt-get install -y fonts-firacode
 ## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
 ```
 
-## ST3
+## Font Konsole
 
-Menu -> Preferences -> Settings -> User Settings File
-
-```json
-{
-    ...
-    "font_face": "Fira Code",
-    "font_size": 18,
-    "font_options": [
-        "gray_antialias"
-    ],
-    "show_encoding": false,
-    "show_line_endings": false,
-    "default_line_ending": "unix",
-    "draw_white_space": "all",
-    "translate_tabs_to_spaces": true,
-    "word_wrap": false
-    ...
-}
-```
+Edit Profile
+Name            Freddie
+Colorscheme     Linux Colors
+Font            Fira Code Retina
+Font size       14pt
+Smooth fonts    true
+Bold intense    false
+Scroll          Unlimited
+Scroll position Hidden
 
 # Clean installation
 sudo apt-get autoclean
@@ -741,6 +762,28 @@ echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sou
 sudo apt-get update
 sudo apt-get install -y sublime-text
 ## sudo apt-get remove sublime-text && sudo apt-get autoremove
+```
+
+#### Font ST3
+
+Menu -> Preferences -> Settings -> User Settings File
+
+```json
+{
+    ...
+    "font_face": "Fira Code",
+    "font_size": 18,
+    "font_options": [
+        "gray_antialias"
+    ],
+    "show_encoding": false,
+    "show_line_endings": false,
+    "default_line_ending": "unix",
+    "draw_white_space": "all",
+    "translate_tabs_to_spaces": true,
+    "word_wrap": false
+    ...
+}
 ```
 
 ### Vi(ntage) Mode
@@ -798,7 +841,7 @@ sudo apt-get install -y kazam
 ## sudo apt-get remove kazam && sudo apt-get autoremove
 ```
 
-## CPU Usage Bar
+## Ubuntu: CPU Usage Bar
 
 ```bash
 sudo apt-get update
@@ -894,7 +937,7 @@ sudo apt-get install -y vagrant
 ## Remove LibreOffice
 
 ```bash
-sudo apt-get remove -y --purge libreoffice* && sudo apt-get clean && sudo apt-get autoremove
+sudo apt-get remove -y --purge libreoffice\* && sudo apt-get clean && sudo apt-get autoremove
 ```
 
 # Clean installation
