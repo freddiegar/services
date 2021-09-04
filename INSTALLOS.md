@@ -78,6 +78,7 @@ sudo apt-get install -y nmap
 sudo apt-get install -y htop
 sudo apt-get install -y konsole
 sudo apt-get install -y i3
+sudo apt-get install -y pavucontrol
 # sudo apt-get install preload
 ## sudo apt-get remove unzip curl vim tree nmap htop konsole i3 && sudo apt-get autoremove
 ```
@@ -840,10 +841,48 @@ sudo apt-get install -y libqt5opengl5
 sudo curl -L https://download.virtualbox.org/virtualbox/6.1.26/virtualbox-6.1_6.1.26-145957~Ubuntu~bionic_amd64.deb virtualbox.deb
 sudo dpkg -i virtualbox.deb
 reboot
-rm ~/virtualbox.deb
+rm -f ~/virtualbox.deb
 ## sudo apt-get remove virtualbox-6.1 && sudo apt-get autoremove
+
+# Shared folders
+sudo adduser [username] vboxsf
 ```
-> Issues: https://stegard.net/2016/10/virtualbox-secure-boot-ubuntu-fail/
+
+### Virtual Box Shared Folders
+
+```bash
+# After Shared Folder in GUI in Guest
+sudo -i
+addgroup $USER vboxsf
+chgroup vboxsf /var/www
+```
+
+### Virtual Box Issues
+
+[See](https://stegard.net/2016/10/virtualbox-secure-boot-ubuntu-fail/)
+
+```bash
+# In host machine
+sudo -i
+mkdir /root/module-signing
+cd /root/module-signing
+openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/Freddie Gar/"
+chmod 600 MOK.priv
+mokutil --import /root/module-signing/MOK.der
+
+echo '#!/bin/bash
+
+for modfile in $(dirname $(modinfo -n vboxdrv))/*.ko; do
+  echo "Signing $modfile"
+  /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 \
+                                /root/module-signing/MOK.priv \
+                                /root/module-signing/MOK.der "$modfile"
+done
+' > /root/module-signing/sign-vbox-modules
+
+chmod 700 /root/module-signing/sign-vbox-modules
+```
+> After each update linux-headers: sh /root/module-signing/sign-vbox-modules && modprobe vboxdrv
 
 ## Vagrant (VM)
 

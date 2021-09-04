@@ -111,6 +111,7 @@ set $workspace4     "4:SQL"
 set $workspace5     "5:IDE"
 set $workspace6     "6:RMT"
 set $workspace7     "7:WIP"
+set $workspace8     "8:VBX"
 set $workspace9     "9:FLS"
 set $workspace10    "10:PVT"
 
@@ -122,7 +123,7 @@ bindsym $mod+4 workspace $workspace4
 bindsym $mod+5 workspace $workspace5
 bindsym $mod+6 workspace $workspace6
 bindsym $mod+7 workspace $workspace7
-bindsym $mod+8 workspace 8
+bindsym $mod+8 workspace $workspace8
 bindsym $mod+9 workspace $workspace9
 bindsym $mod+0 workspace $workspace10
 
@@ -134,7 +135,7 @@ bindsym $mod+Shift+4 move container to workspace $workspace4
 bindsym $mod+Shift+5 move container to workspace $workspace5
 bindsym $mod+Shift+6 move container to workspace $workspace6
 bindsym $mod+Shift+7 move container to workspace $workspace7
-bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+8 move container to workspace $workspace8
 bindsym $mod+Shift+9 move container to workspace $workspace9
 bindsym $mod+Shift+0 move container to workspace $workspace10
 
@@ -152,17 +153,24 @@ assign [class="Mysql-workbench-bin"]        $workspace4
 assign [class="jetbrains-phpstorm"]         $workspace5
 assign [class="Sublime_text"]               $workspace5
 assign [class="Anydesk"]                    $workspace6
+assign [class="VirtualBox Manager"]         $workspace8
+assign [class="VirtualBox Machine"]         $workspace8
 assign [class="Nautilus"]                   $workspace9
 assign [class="Opera"]                      $workspace10
 
 # Enable floating
-for_window [window_role="(?i)pop-up"]   floating enable
-for_window [class="Gnome-calculator"]   floating enable
-for_window [class="Anydesk"]            floating enable
-for_window [class="zoom"]               floating enable
+for_window [window_role="(?i)pop-up"]       floating enable
+for_window [class="Gnome-calculator"]       floating enable
+for_window [class="Anydesk"]                floating enable
+for_window [class="zoom"]                   floating enable
+for_window [class="Pavucontrol"]            floating enable
+for_window [class="Nm-connection-editor"]   floating enable
+
+# Virtual Machines
+for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]   floating enable
 
 # Enable PiP as sticky
-for_window [instance="Toolkit" class="Firefox Developer Edition"] floating enable, sticky enable
+for_window [instance="Toolkit" class="Firefox Developer Edition"]       floating enable, sticky enable
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -272,7 +280,7 @@ bindsym $mod+Shift+s sticky toggle
 exec --no-startup-id konsole
 
 # Set default browser
-exec --no-startup-id xdg-settings set default-web-browser firefox.desktop
+exec_always --no-startup-id xdg-settings set default-web-browser firefox.desktop
 
 # Disable Caps Lock
 exec_always --no-startup-id "sleep 1; setxkbmap -option caps:none"
@@ -340,3 +348,20 @@ mode "$mode_system" {
 
 bindsym $mod+Escape mode "$mode_system"
 
+# Freddie 20210902
+# Controls
+set $mode_control Control (n)etwork, (s)ound
+
+mode "$mode_control" {
+    # Control Network
+    bindsym n exec          --no-startup-id nm-connection-editor
+    # Control Volume
+    bindsym s exec          --no-startup-id pavucontrol
+
+    # back to normal: Enter or Escape
+    bindsym Return      mode "default"
+    bindsym Escape      mode "default"
+    bindsym $mod+c      mode "default"
+}
+
+bindsym $mod+c mode "$mode_control"
