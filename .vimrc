@@ -140,7 +140,7 @@ set pumheight=15                                                " Maximum option
 " set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message (default)
 
 if has('mouse')
-    set mouse=a                                                 " Mouse don't exist always
+    set mouse=a                                                 " Mouse exist always
 endif
 
 " Custom Render
@@ -536,6 +536,9 @@ nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()<Enter>
 nnoremap <silent> <Leader>gh :let @+=<SID>generate_hash()<Enter>
             \ :echo 'Copied:   ' . @+<Enter>
 
+nnoremap <silent> <Plug>ExecuteLineRepeatable :call <SID>execute_line()<Enter>
+nmap <silent> <Leader>ge <Plug>ExecuteLineRepeatable
+
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
 
@@ -592,6 +595,18 @@ function! s:find_function (flags, ...)
     else
         return searchpos(l:pattern, l:fcursor . l:fbackward . l:fnomove)
     end
+endfunction
+
+function! s:execute_line() abort
+    let l:saved_unnamed_register = @@
+
+    let l:line = getline('.')
+
+    execute ":!" .l:line
+
+    let @@ = l:saved_unnamed_register
+
+    silent! call repeat#set("\<Plug>ExecuteLineRepeatable")
 endfunction
 
 function! s:delete_method() abort
