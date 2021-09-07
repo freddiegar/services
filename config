@@ -177,7 +177,7 @@ for_window [instance="Toolkit" class="Firefox Developer Edition"]       floating
 for_window [instance="Places" class="Firefox Developer Edition"]        floating enable
 
 # reload the configuration file
-bindsym $mod+Shift+c reload
+# bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
@@ -320,10 +320,10 @@ mode "$mode_display" {
     # back to normal: Enter or Escape
     bindsym Return          mode "default"
     bindsym Escape          mode "default"
-    bindsym $mod+Shift+p    mode "default"
+    bindsym $mod+Shift+x    mode "default"
 }
 
-bindsym $mod+Shift+p mode "$mode_display"
+bindsym $mod+Shift+x mode "$mode_display"
 
 # Add new resolution (T490s)
 # @see https://olinux.net/xrandr/
@@ -365,7 +365,7 @@ mode "$mode_control" {
     # back to normal: Enter or Escape
     bindsym Return      mode "default"
     bindsym Escape      mode "default"
-    bindsym $mod+c      mode "default"
+    bindsym $mod+Shift+c      mode "default"
 }
 
-bindsym $mod+c mode "$mode_control"
+bindsym $mod+Shift+c mode "$mode_control"
