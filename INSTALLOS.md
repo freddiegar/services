@@ -1,5 +1,38 @@
-Install Software in Debian|Ubuntu OS
+Install Software in Debian|[L|X]Ubuntu OS
 ___
+
+# Vim Latest :D, of course!
+
+```bash
+echo "\n" | sudo add-apt-repository ppa:jonathonf/vim
+## sudo apt-get remove vim && echo "\n" | sudo add-apt-repository --remove ppa:jonathonf/vim
+```
+
+# Updated repositories
+
+```bash
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get install -y vim konsole
+## sudo apt-get remove vim konsole && sudo apt-get autoremove
+```
+
+## Vim Configuration
+
+```bash
+# Set as default editor
+sudo update-alternatives --config editor
+
+# cp -p .vimrc ~/.vimrc
+ln -s `pwd`/.vimrc ~/.vimrc
+```
+
+## Konsole Profile
+
+```bash
+# cp -p konsole.profile ~/.local/share/konsole/konsole.profile
+ln -s `pwd`/konsole.profile ~/.local/share/konsole/konsole.profile
+```
 
 # Performance, not use swap while RAM < 90% used
 
@@ -37,7 +70,6 @@ echo 'Acquire::Languages "none";' | sudo tee -a /etc/apt/apt.conf.d/00aptitude
 # Auto-update (on servers)
 
 ```bash
-sudo apt-get update
 sudo apt-get install -y unattended-upgrades update-notifier-common
 sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Kernel-Packages "[true|false]*";/Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Dependencies "[true|false]*";/Unattended-Upgrade::Remove-Unused-Dependencies "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
@@ -47,41 +79,15 @@ sudo sed -i 's/\/\/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/Unattended
 # Disabled IPP Service: 631 (Internet Printer Protocol)
 
 ```bash
-sudo service cups stop
-sudo systemctl disable cups
+sudo service cups stop && sudo systemctl disable cups
 ```
 
-# Vim Latest :D
+# Main and extra utils
 
 ```bash
-echo "\n" | sudo add-apt-repository ppa:jonathonf/vim
-## sudo apt-get remove vim && echo "\n" | sudo add-apt-repository --remove ppa:jonathonf/vim
+sudo apt-get install -y unzip curl tree nmap htop i3 pavucontrol preload
+## sudo apt-get remove unzip curl tree nmap htop i3 pavucontrol preload && sudo apt-get autoremove
 ```
-
-# Updated repos
-
-```bash
-sudo apt-get update
-sudo apt-get -y upgrade
-```
-
-# Unzip, cURL, Vim and extra utils
-
-```bash
-sudo apt-get install -y unzip
-sudo apt-get install -y curl
-sudo apt-get install -y vim
-sudo apt-get install -y tree
-sudo apt-get install -y nmap
-sudo apt-get install -y htop
-sudo apt-get install -y konsole
-sudo apt-get install -y i3
-sudo apt-get install -y pavucontrol
-sudo apt-get install -y preload
-## sudo apt-get remove unzip curl vim tree nmap htop konsole i3 pavucontrol preload && sudo apt-get autoremove
-```
-
-> Profiles: ~/.local/share/konsole
 
 # i3
 
@@ -99,22 +105,11 @@ sudo update-alternatives --config x-session-manager
 # sudo update-alternatives --install /usr/bin/x-session-manager x-session-manager /usr/bin/i3 60
 ```
 
-## Vim Configuration
-
-```bash
-# Set as default editor
-sudo update-alternatives --config editor
-
-# cp -p .vimrc ~/.vimrc
-ln -s `pwd`/.vimrc ~/.vimrc
-```
-
 ## Vim Plugins
 
 ```bash
 # Install
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 # Enable
 echo "\" Plugins
@@ -155,13 +150,12 @@ vim --version | grep xterm
 ## RigGrep for Vim search
 
 ```bash
-# Ubuntu < 18.10 | Rg v0.9.0-3
+# [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
 echo "\n" | sudo add-apt-repository ppa:x4121/ripgrep
-sudo apt-get update
 sudo apt-get install ripgrep
 ## sudo apt-get remove ripgrep && echo "\n" | sudo add-apt-repository --remove ppa:x4121/ripgrep
 
-# Ubuntu 18.10+ | Rg v11.0.2+
+# [L|X]Ubuntu 18.10+ | Rg v11.0.2+
 sudo apt-get install ripgrep
 ## sudo apt-get remove ripgrep
 ```
@@ -173,8 +167,7 @@ sudo apt-get install ripgrep
 ```bash
 cd ~
 sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.18.2/bat_0.18.2_amd64.deb -o bat.deb
-sudo dpkg -i bat.deb
-rm -f bat.deb
+sudo dpkg -i bat.deb && rm -f bat.deb
 ## Command:
 ## bat file.php
 ## sudo apt-get remove bat && sudo apt-get autoremove
@@ -271,16 +264,16 @@ sudo apt-get install -y zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 echo $SHELL
 # Change shell if not is zsh
-# chsh -s `which zsh`
+chsh -s `which zsh`
 
-sudo cp -p ~/.zshrc ~/.zshrc.original
-sudo sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
-sudo sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy-mm-dd"/g' ~/.zshrc
-sudo sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
+cp -p ~/.zshrc ~/.zshrc.original
+sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
+sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy-mm-dd"/g' ~/.zshrc
+sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
 
-# In Ubuntuu
+# In Ubuntu
 gnome-session-quit
-# In Lubuntuu
+# In Lubuntu
  lxqt-leave
 ## sudo apt-get remove zsh && sudo apt-get autoremove
 ```
@@ -298,14 +291,14 @@ export GPG_TTY=$(tty)' >> ~/.zshrc
 # cp -p .bash_aliases ~/.bash_aliases
 ln -s `pwd`/.bash_aliases ~/.bash_aliases
 
-# Enable alias in zsh
+## Enable alias in Zsh
 echo '
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi' >> ~/.zshrc
 ```
 
-# Enable alias in Vim
+## Enable alias in Vim
 echo '
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
@@ -316,8 +309,7 @@ fi' >> ~/.zshenv
 
 ```bash
 sudo apt-get install -y software-properties-common
-sudo add-apt-repository ppa:ondrej/php # Only Ubuntu
-sudo apt-get update
+echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only Ubuntu
 sudo apt-get install -y php7.4-cli
 sudo apt-get install -y php7.4-dev
 sudo apt-get install -y php7.4-mbstring
@@ -338,7 +330,7 @@ sudo apt-get install -y php7.4-gmp
 # MySQL Client (Server is using Docker)
 
 ```bash
-# Ubuntu|Lubuntu
+# [L|X]Ubuntu
 sudo apt-get install -y mysql-client
 ## sudo apt-get remove mysql-client && sudo apt-get autoremove
 
@@ -448,24 +440,21 @@ sudo chmod +x /usr/local/bin/phpmetrics
 
 [See 2](https://docs.docker.com/install/linux/linux-postinstall/)
 
-# [L]Ubuntu 18.*, 19.*, Debian 10
+# [L|X]Ubuntu 18.*, 19.*, Debian 10
 
 ```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common
 echo "\n" | curl -L https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/`lsb_release -is | awk '{print tolower($0)}'` `lsb_release -cs` stable"
-sudo apt-get update
 sudo apt-get install -y docker-ce
 sudo usermod -aG docker $(whoami)
 
-# In Ubuntuu
+# In Ubuntu
 gnome-session-quit
-# In Lubuntuu
+# In Lubuntu
  lxqt-leave
 ## sudo apt-get remove docker-ce && sudo apt-get autoremove
 ```
-
-## Ubuntu 16.*
 
 ```bash
 sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
@@ -700,7 +689,6 @@ Exec=/opt/firefox/firefox -private-window' > ~/.local/share/applications/firefox
 
 ```bash
 cd ~
-sudo apt-get update
 sudo apt-get install -y build-essential libssl-dev
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.38.0/install.sh | bash
 
@@ -715,7 +703,7 @@ nvm ls-remote
 nvm install v14.17.6
 # nvm alias default v14.17.6
 # nvm current
-## Enabled to all users in Ubuntu
+## Enabled to all users in [L|X]Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
 
 ## Install package: npm install express
@@ -727,7 +715,7 @@ nvm install v14.17.6
 [See](https://dev.to/josuerodriguez98/installing-firacode-on-windows-and-ubuntu-1fn1)
 
 ```bash
-# Ubuntu
+# [L|X]Ubuntu
 sudo apt-get install -y fonts-firacode
 ## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
 ```
@@ -886,18 +874,24 @@ sudo dpkg -i virtualbox.deb
 reboot
 rm -f ~/virtualbox.deb
 ## sudo apt-get remove virtualbox-6.1 && sudo apt-get autoremove
-
-# Shared folders
-sudo adduser [username] vboxsf
 ```
 
 ### Virtual Box Shared Folders
 
 ```bash
 # After Shared Folder in GUI in Guest
+# Insert Guest Additions Image
+cd /media/[username]/VBox_GAs_6.1.26
+# cd /media/freddie/VBox_GAs_6.1.26
+sudo sh VBoxLinuxAdditions.run
+sudo shutdown -r now
+
 sudo -i
-addgroup $USER vboxsf
-chgroup vboxsf /var/www
+addgroup [username] vboxsf
+# addgroup freddie vboxsf
+# require logout: shutdown -r now
+chown root:vboxsf [path]
+# chown root:vboxsf /var/www
 ```
 
 ### Virtual Box Issues
@@ -937,7 +931,7 @@ sudo apt-get install -y vagrant
 ## Remove LibreOffice
 
 ```bash
-sudo apt-get remove -y --purge libreoffice\* && sudo apt-get clean && sudo apt-get autoremove
+sudo apt-get remove -y --purge libreoffice\* && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
 
 # Clean installation
