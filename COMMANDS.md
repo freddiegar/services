@@ -1470,3 +1470,13 @@ sudo apt-get install -y seahorse
 ll ~/.local/share/keyrings/*.keystore
 ```
 
+Unlock SSH Key for i3 session
+
+[See](https://geekoverdose.wordpress.com/2019/03/05/ssh-remember-cache-key-password/)
+
+```bash
+ssh-add
+# or
+ssh-add ~/.ssh/YOUR_PRIVATE_KEY
+```
+

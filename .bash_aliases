@@ -8,6 +8,7 @@ alias h="history"
 alias d="diff"
 alias vd="vimdiff"
 alias ll="ls -lh"
+alias __="ssh-add ~/.ssh/id_rsa"
 
 alias c="composer"
 alias c1="composer_v1"
