@@ -94,7 +94,8 @@ sudo apt-get install -y unzip curl tree nmap htop i3 pavucontrol preload
 ```bash
 # cp -p config ~/config
 mkdir -p ~/.config/i3
-ln -s `pwd`/config ~/.config/i3/config
+ln -s `pwd`/i3/config ~/.config/i3/config
+ln -s `pwd`/i3/status.conf ~/.config/i3/status.conf
 ```
 
 ## Set i3 as WM

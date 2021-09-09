@@ -224,7 +224,7 @@ set $active-bg-color        #B2B2B2
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-    status_command i3status
+    status_command i3status -c ~/.config/i3/status.conf
     font pango:$font_family $font_size_status
 
     # Freddie 20210825
