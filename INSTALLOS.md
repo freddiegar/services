@@ -158,7 +158,7 @@ sudo apt-get install ripgrep
 
 # [L|X]Ubuntu 18.10+ | Rg v11.0.2+
 sudo apt-get install ripgrep
-## sudo apt-get remove ripgrep
+## sudo apt-get remove ripgrep && sudo apt-get autoremove
 ```
 
 # Bat no Cat (Preview FZF and Console)
@@ -734,8 +734,8 @@ Scroll          Unlimited
 Scroll position Hidden
 
 # Clean installation
-sudo apt-get autoclean
 sudo apt-get clean
+sudo apt-get autoclean
 sudo apt-get autoremove
 
 ## That is ALL :D !

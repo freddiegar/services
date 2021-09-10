@@ -1480,3 +1480,24 @@ ssh-add
 ssh-add ~/.ssh/YOUR_PRIVATE_KEY
 ```
 
+Install [NeoVim](https://neovim.io/)
+
+[See](https://github.com/neovim/neovim/wiki/Installing-Neovim)
+[See 2](http://vimcasts.org/episodes/meet-neovim/)
+
+:help nvim-from-vim
+
+```bash
+# Home
+mkdir -p ~/.config/nvim
+# Setup
+echo 'set runtimepath+=~/.vim,~/vim/after
+let &packpath = &runtimepath
+source ~/.vimrc' >> ~/.config/nvim/init.vim
+# Install (Latest)
+echo "\n" | sudo add-apt-repository ppa:neovim-ppa/stable
+sudo apt-get update
+sudo apt-get install -y neovim
+# sudo apt-get remove -y neovim && sudo apt-get autoremove
+```
+

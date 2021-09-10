@@ -9,6 +9,12 @@ alias d="diff"
 alias vd="vimdiff"
 alias ll="ls -lh"
 alias __="ssh-add ~/.ssh/id_rsa"
+alias vv="nvim"
+
+alias ra="source ~/.bash_aliases"
+alias sai="sudo apt-get install -y"
+alias sar="sudo apt-get remove -y"
+alias sac="sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
 
 alias c="composer"
 alias c1="composer_v1"
@@ -33,7 +39,7 @@ alias stu="bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
 alias stf="bin/phpunit --stop-on-failure --no-coverage --filter"
 
 alias ducks="du -cks * | sort -rn | head"
-alias update="sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y && sudo apt-get autoclean -y"
+alias update="sudo apt-get update && sudo apt-get upgrade -y && sac"
 alias fo="/opt/firefox/firefox --new-tab"
 
 alias dexec="docker exec -it"
