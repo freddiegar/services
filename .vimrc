@@ -350,11 +350,26 @@ nnoremap <silent> Q @@
 nnoremap <silent> Y y$
 nnoremap <silent> gl '.
 
-" Center screen after each search
+" Center screen (zz) after each search and open folds (zv)
 nnoremap <silent> * *zzzv
 nnoremap <silent> # #zzzv
 nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
+
+" Undo break points (<C-g>u = Start new change)
+inoremap <silent> , ,<C-g>u
+inoremap <silent> ; ;<C-g>u
+inoremap <silent> . .<C-g>u
+inoremap <silent> : :<C-g>u
+inoremap <silent> ! !<C-g>u
+inoremap <silent> ? ?<C-g>u
+
+" Keep cursor position after join
+nnoremap <silent> J maJ`a
+
+" Move complete lines selected (:move) and indent (gv=gv, ==)
+vnoremap <silent> J :move '>+1<Enter>gv=gv
+vnoremap <silent> K :move '<-2<Enter>gv=gv
 
 " Save previous position in mark ', (<C-o> not works) using screen rows (g option)
 nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
@@ -1016,6 +1031,8 @@ call plug#end()
 if has('termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+    set t_Co=256
     set termguicolors
 endif
 
