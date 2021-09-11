@@ -56,7 +56,7 @@ runtime macros/matchit.vim
 " Examples:
 " "abc" ==# "Abc"         evaluates to 0
 " "abc" ==? "Abc"         evaluates to 1
-" "abc" == "Abc"          evaluates to 1 if 'ignorecase' is set, 0 otherwise
+" "abc" ==  "Abc"         evaluates to 1 if 'ignorecase' is set, 0 otherwise
 
 " @see https://vim.fandom.com/wiki/Example_vimrc
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
@@ -948,13 +948,14 @@ Plug 'gruvbox-community/gruvbox'
 Plug 'dracula/vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'sainnhe/sonokai'
-Plug 'jacoborus/tender.vim'
 Plug 'srcery-colors/srcery-vim'
+Plug 'ghifarit53/tokyonight-vim'
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
 Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
+Plug 'tpope/vim-unimpaired'                                     " Extra mappings: [q :cprevious, ]q :cnext, [Q :cfirst, ]Q :clast, etc
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa
 " Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as object: {operator}ii, {operator}ai
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
@@ -1043,14 +1044,16 @@ endif
 
 " @see https://github.com/gruvbox-community/gruvbox
 let g:gruvbox_italic = 1
+let g:gruvbox_italicize_comments = 1
 let g:gruvbox_bold = 0
-let g:gruvbox_invert_selection = 1
+let g:gruvbox_invert_selection = 0
 let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_transparent_bg = 1
 
 " @see https://github.com/dracula/vim
 let g:dracula_italic = 1
 let g:dracula_bold = 0
-let g:dracula_inverse = 1
+let g:dracula_inverse = 0
 
 " @see https://github.com/arcticicestudio/nord-vim
 let g:nord_italic = 1
@@ -1060,17 +1063,24 @@ let g:nord_underline = 1
 
 " @see https://github.com/sainnhe/sonokai
 let g:sonokai_enable_italic = 1
+let g:sonokai_disable_italic_comment = 0
 let g:sonokai_better_performance = 1
 let g:sonokai_transparent_background = 1
-let g:sonokai_styles = ['default', 'atlantis', 'shusia', 'maia']
-let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles), 'andromeda')
-
-" @see https://github.com/jacoborus/tender.vim
+let g:sonokai_styles = ['default', 'atlantis', 'shusia', 'maia', 'andromeda']
+let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles))
 
 " @see https://github.com/srcery-colors/srcery-vim
 let g:srcery_italic = 1
+let g:srcery_italic_types = 1
 let g:srcery_bold = 0
-let g:srcery_inverse = 1
+let g:srcery_inverse = 0
+let g:srcery_bg_passthrough = 1
+
+" @see https://github.com/ghifarit53/tokyonight-vim
+let g:tokyonight_style = 'night'
+let g:tokyonight_enable_italic = 1
+let g:tokyonight_disable_italic_comment = 0
+let g:tokyonight_transparent_background = 1
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -1753,10 +1763,10 @@ augroup END
 set background=dark
 
 try
+    " @see https://terminal.sexy/
     let g:weekDay = str2nr(strftime('%w'))
-    let g:colorschemes = ['tender', 'dracula', 'nord', 'sonokai', 'srcery']
+    let g:colorschemes = ['gruvbox', 'dracula', 'nord', 'sonokai', 'srcery', 'tokyonight']
     let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
-    " let g:colorscheme = 'dracula'
 
     execute 'colorscheme ' . g:colorscheme
 catch /^Vim\%((\a\+)\)\=:E185/
