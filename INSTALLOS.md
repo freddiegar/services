@@ -31,6 +31,7 @@ ln -s `pwd`/.vimrc ~/.vimrc
 
 ```bash
 # cp -p konsole.profile ~/.local/share/konsole/konsole.profile
+rm -f ~/.local/share/konsole/*.profile
 ln -s `pwd`/konsole.profile ~/.local/share/konsole/konsole.profile
 ```
 

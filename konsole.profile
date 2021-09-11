@@ -3,10 +3,14 @@ AntiAliasFonts=true
 BoldIntense=false
 ColorScheme=Linux
 Font=Fira Code Retina,14,-1,5,53,0,0,0,0,0,Regular
+LineSpacing=0
 UseFontLineChararacters=false
 
+[Cursor Options]
+CursorShape=0
+
 [General]
-Icon=bash
+Icon=gvim
 LocalTabTitleFormat=%u@%h
 Name=konsole
 Parent=FALLBACK/
@@ -15,6 +19,7 @@ ShowTerminalSizeHint=false
 
 [Interaction Options]
 AutoCopySelectedText=true
+MouseWheelZoomEnabled=false
 UnderlineFilesEnabled=true
 
 [Scrolling]
