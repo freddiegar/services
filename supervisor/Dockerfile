@@ -2,7 +2,13 @@ FROM php:7.4-cli
 
 LABEL maintainer="Freddie Gar <freddie.gar@outlook.com>"
 
+ARG DEV_ENABLE=off
+ENV DEV_ENABLE="$DEV_ENABLE"
+
 COPY ./ssl/* /var/www/ssl/
+COPY ./conf/hosts_extra_supervisor /etc/hosts_extra
+
+COPY ./supervisor/entrypoint.sh /usr/local/bin/
 
 RUN set -eux \
     && apt-get update \
@@ -17,6 +23,8 @@ RUN set -eux \
     libjpeg-dev \
     libfreetype6-dev \
     libmpc-dev \
+    # Permissions
+    && chmod 0500 /usr/local/bin/entrypoint.sh \
     # PHP
     # Web services
     && docker-php-ext-install -j$(nproc) soap \
@@ -42,6 +50,8 @@ RUN set -eux \
     && docker-php-ext-enable apcu \
     && printf "\n" | pecl install -o -f redis \
     && docker-php-ext-enable redis \
+    && if [ "$DEV_ENABLE" = "on" ] ; then cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt; fi \
+    && if [ "$DEV_ENABLE" = "on" ] ; then update-ca-certificates; fi \
     # Clear
     && rm -rf /tmp/pear \
     && rm -rf /var/lib/apt/lists/* \
@@ -52,4 +62,4 @@ COPY ./php74/php.ini /usr/local/etc/php/
 COPY ./conf/supervisord.conf /etc/supervisor/
 COPY ./conf/worker*.conf /etc/supervisor/conf.d/
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

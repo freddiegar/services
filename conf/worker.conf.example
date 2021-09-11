@@ -1,6 +1,7 @@
 [program:project-queue-worker]
 process_name=%(program_name)s-%(process_num)02d
 command=/usr/local/bin/php /var/www/html/project/artisan queue:work --sleep=15 --tries=2
+#command=/usr/local/bin/php /var/www/html/project/artisan queue:work database --queue=high,default --timeout=600 --sleep=3 --tries=3
 autostart=true
 autorestart=true
 user=www-data

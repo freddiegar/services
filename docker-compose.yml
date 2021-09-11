@@ -248,6 +248,8 @@ services:
     build:
       context: .
       dockerfile: ./supervisor/Dockerfile
+      args:
+        - DEV_ENABLE=${DEV_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -255,8 +257,6 @@ services:
         ipv4_address: 172.20.0.50
     ports:
     - $QUEUE_PORT:9001
-    extra_hosts:
-      - "host.docker.internal:${HOST_DOCKER}"
     deploy:
       resources:
         limits:
