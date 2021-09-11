@@ -136,7 +136,6 @@ sudo update-alternatives --config x-session-manager
 ## Start i3 after StartX
 
 ```bash
-echo  "#\!/bin/sh\nexec startx" >> ~/.xsession
 echo 'exec i3' >> ~/.xinitrc
 ```
 
@@ -343,6 +342,22 @@ ln -s `pwd`/.bash_aliases ~/.bash_aliases
 echo '
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
+fi' >> ~/.zshrc
+```
+
+## Enable SSH Agent
+
+[See](https://yashagarwal.in/posts/2017/12/setting-up-ssh-agent-in-i3/)
+
+```bash
+echo '
+if [ -f ~/.ssh/agent.env ] ; then
+    . ~/.ssh/agent.env > /dev/null
+    if ! kill -0 $SSH_AGENT_PID > /dev/null 2>&1; then
+        eval `ssh-agent | tee ~/.ssh/agent.env`
+    fi
+else
+    eval `ssh-agent | tee ~/.ssh/agent.env`
 fi' >> ~/.zshrc
 ```
 
