@@ -135,7 +135,7 @@ set autowrite                                                   " Autosave on lo
 set clipboard=unnamedplus                                       " Shared SO clipboard
 set splitbelow                                                  " :split  opens window below (:belowright split)
 set splitright                                                  " :vsplit opens window right (:belowright vsplit)
-set signcolumn=yes                                              " Always show signs
+set signcolumn=yes                                              " Always show signs next to number
 set pumheight=15                                                " Maximum options showed in popup menu
 " set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message (default)
 
@@ -410,7 +410,12 @@ nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
             \ :endif<Enter><Enter>
 
 " Turn-off highlighting
-nnoremap <silent> <Enter> :nohlsearch<Enter>
+nnoremap <silent> <Enter> :if &filetype ==# 'qf'<Enter>
+            \ :unlet g:qfix_win<Enter>
+            \ :<Enter><Enter>
+            \ :else<Enter>
+            \ :nohlsearch<Enter>
+            \ :endif<Enter><Enter>
 
 " Fast Visual Line selection
 noremap <silent> TT :call <SID>smartselection(visualmode())<Enter>
@@ -958,7 +963,7 @@ Plug 'Raimondi/delimitMate'                                     " Append close: 
 " Plug 'luochen1990/rainbow'                                      " Highligth parenthesis (, [, { match
 Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete
+Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from vim: git add, docker start, etc
 Plug 'airblade/vim-gitgutter'                                   " Show changes in git
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
@@ -968,7 +973,7 @@ Plug 'SirVer/ultisnips'                                         " Performance us
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 
-Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
+" Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar for PHP in on-the-fly
 Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
@@ -980,7 +985,7 @@ Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 
 Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easy
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}         " Performance using emmet syntax
-Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
+" Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
 
 call plug#end()
 
@@ -1328,8 +1333,6 @@ let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.v
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
-nmap <silent> <F7> :GitGutterQuickFix<Enter>
-            \ :call <SID>quickfix_toggle()<Enter>
 nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zvzz
 nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zvzz
 nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
@@ -1449,6 +1452,7 @@ function! s:split() abort
     silent! call repeat#set("\<Plug>SplitRepeatable")
 endfunction
 
+" @see http://vimcasts.org/episodes/search-multiple-files-with-vimgrep/
 noremap <silent> <F6> :call <SID>quickfix_toggle()<Enter>
 
 function! s:quickfix_toggle()
@@ -1616,7 +1620,7 @@ augroup AutoCommands
             execute 'source ' . g:session_file
 
             echomsg 'Loaded ' . g:session_file . ' session.'
-        else
+        elseif !argc() && isdirectory('.git')
             echomsg 'None ' . g:session_file . ' session.'
         endif
     endfunction
