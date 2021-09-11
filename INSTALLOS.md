@@ -89,6 +89,8 @@ sudo systemctl set-default graphical.target
 # English Language for All
 
 ```bash
+cat /etc/default/locale
+echo "\n" | sudo update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en
 echo 'Acquire::Languages "none";' | sudo tee -a /etc/apt/apt.conf.d/00aptitude
 ```
 
@@ -134,8 +136,8 @@ sudo update-alternatives --config x-session-manager
 ## Start i3 after StartX
 
 ```bash
-echo '
-exec i3' >> ~/.xinitrc
+echo  "#\!/bin/sh\nexec startx" >> ~/.xsession
+echo 'exec i3' >> ~/.xinitrc
 ```
 
 ## Vim Plugins
@@ -696,9 +698,8 @@ rm -f vscode.deb
 # Firefox Dev Edition
 sudo apt-get remove firefox && sudo apt-get autoremove
 curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.bz2
-sudo tar -xvjf firefox.tar.bz2 -C /opt
-# sudo tar -xvzf firefox.tar.gz -C /opt
-rm -Rf firefox.tar.bz2
+sudo tar -xvjf firefox.tar.bz2 -C /opt && rm -Rf firefox.tar.bz2
+sudo ln -s /opt/firefox/firefox /usr/bin/firefox
 ## rm -Rf /opt/firefox
 ```
 
@@ -713,7 +714,7 @@ Name=Firefox Web Browser Developer Edition
 Comment=Browse the WWW
 GenericName=Web Browser
 Keywords=Internet;WWW;Browser;Web
-Exec=/opt/firefox/firefox %u
+Exec=/usr/bin/firefox %u
 Terminal=false
 X-MultipleArgs=false
 Type=Application
@@ -726,11 +727,18 @@ StartupWMClass=Firefox Developer Edition
 
 [Desktop Action new-window]
 Name=Open a New Window
-Exec=/opt/firefox/firefox -new-window
+Exec=/usr/bin/firefox -new-window
 
 [Desktop Action new-private-window]
 Name=Open a New Private Window
-Exec=/opt/firefox/firefox -private-window' > ~/.local/share/applications/firefox.desktop
+Exec=/usr/bin/firefox -private-window' > ~/.local/share/applications/firefox.desktop
+```
+
+## Enable in i3 as default browser
+
+```bash
+# see ~/.config/mimeapps.list and replace using firefox.desktop if it is necesary
+sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/firefox.desktop
 ```
 
 # Node
@@ -756,6 +764,14 @@ nvm install v14.17.6
 
 ## Install package: npm install express
 ## nvm deactivate && nvm uninstall v10.15.3
+```
+
+## Profile
+
+```bash
+echo '
+export EDITOR=vim
+export BROWSER=/usr/bin/firefox' >> ~/.profile
 ```
 
 # GPG in terminal
