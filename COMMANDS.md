@@ -1501,3 +1501,10 @@ sudo apt-get install -y neovim
 # sudo apt-get remove -y neovim && sudo apt-get autoremove
 ```
 
+Rename files using xargs
+
+[See](https://stackoverflow.com/questions/10972002/batch-renaming-files-in-command-line-and-xargs)
+
+```bash
+ll -L *.sql.gz | awk '{print $9 }' | sed 'p;s/20210909/20210910/' | xargs -n2 mv
+```

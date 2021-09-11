@@ -57,8 +57,33 @@ sudo sysctl -p
 # Change default time GRUB to 2
 
 ```bash
+sudo cp -p /etc/default/grub /etc/default/grub.backup
+```
+
+```bash
 sudo sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=0/g' /etc/default/grub
 sudo update-grub
+```
+
+# Change graphical to text GRUB
+
+```bash
+sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT/#GRUB_CMDLINE_LINUX_DEFAULT/g' /etc/default/grub
+sudo sed -i 's/GRUB_CMDLINE_LINUX="*"/GRUB_CMDLINE_LINUX="text"/g' /etc/default/grub
+sudo sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
+sudo update-grub
+
+sudo systemctl set-default multi-user.target
+```
+# Change graphical to text GRUB
+
+```bash
+sudo sed -i 's/#GRUB_CMDLINE_LINUX_DEFAULT/GRUB_CMDLINE_LINUX_DEFAULT/g' /etc/default/grub
+sudo sed -i 's/GRUB_CMDLINE_LINUX="text"/GRUB_CMDLINE_LINUX=""/g' /etc/default/grub
+sudo sed -i 's/GRUB_TERMINAL=console/#GRUB_TERMINAL=console/g' /etc/default/grub
+sudo update-grub
+
+sudo systemctl set-default graphical.target
 ```
 
 # English Language for All
@@ -85,8 +110,8 @@ sudo service cups stop && sudo systemctl disable cups
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 pavucontrol preload
-## sudo apt-get remove unzip curl tree nmap htop i3 pavucontrol preload && sudo apt-get autoremove
+sudo apt-get install -y unzip curl tree nmap htop i3 pavucontrol
+## sudo apt-get remove unzip curl tree nmap htop i3 pavucontrol && sudo apt-get autoremove
 ```
 
 # i3
@@ -105,6 +130,12 @@ ln -s `pwd`/i3/battery ~/.config/i3/battery-popup
 sudo update-alternatives --config x-session-manager
 # if not is available i3:
 # sudo update-alternatives --install /usr/bin/x-session-manager x-session-manager /usr/bin/i3 60
+```
+## Start i3 after StartX
+
+```bash
+echo '
+exec i3' >> ~/.xinitrc
 ```
 
 ## Vim Plugins
@@ -301,6 +332,8 @@ fi' >> ~/.zshrc
 ```
 
 ## Enable alias in Vim
+
+```bash
 echo '
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
@@ -710,6 +743,13 @@ nvm install v14.17.6
 
 ## Install package: npm install express
 ## nvm deactivate && nvm uninstall v10.15.3
+```
+
+# GPG in terminal
+
+```bash
+echo '
+export GPG_TTY=$(tty)' >> ~/.zshrc
 ```
 
 # Font Fira Code

@@ -288,8 +288,6 @@ bindsym $mod+Shift+s sticky toggle
 # On startup
 # Init konsole
 exec --no-startup-id konsole
-# Init network (wifi) selector
-exec --no-startup-id nm-applet
 # Init battery warning
 exec --no-startup-id ~/.config/i3/battery-popup -n -L 20 -l 10 -m "Battery is low!"
 
@@ -368,7 +366,7 @@ set $mode_control Control (n)etwork, (s)ound
 
 mode "$mode_control" {
     # Control Network
-    bindsym n exec          --no-startup-id nm-connection-editor
+    bindsym n exec          --no-startup-id nmtui
     # Control Volume
     bindsym s exec          --no-startup-id pavucontrol
 
