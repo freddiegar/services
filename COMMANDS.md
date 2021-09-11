@@ -1508,3 +1508,38 @@ Rename files using xargs
 ```bash
 ll -L *.sql.gz | awk '{print $9 }' | sed 'p;s/20210909/20210910/' | xargs -n2 mv
 ```
+
+Detect key codes and remaping
+
+[See](https://askubuntu.com/questions/24916/how-do-i-remap-certain-keys-or-devices)
+[See 2](https://dev.to/0xbf/remap-keys-in-the-keyboard-in-ubuntu-5a36)
+[See 3](https://askubuntu.com/questions/482825/using-setxkbmap-for-a-simple-remap-similar-to-xmodmap)
+
+```bash
+# Start
+xmodmap -pke > .Xmodmap.backup
+# Restore (or Restart?)
+xmodmap .Xmodmap.backup
+# Key codes
+xev | grep keycode
+# By example
+# Shift:        state 0x0, keycode 50 (keysym 0xffe1, Shift_L), same_screen YES,
+# Page Down:    state 0x1, keycode 112 (keysym 0xff55, Prior), same_screen YES,
+# Page Up:      state 0x1, keycode 117 (keysym 0xff56, Next), same_screen YES,
+
+# Remap
+# Order: # Mode_switch === AltGr ?
+    > @see https://unix.stackexchange.com/questions/55076/what-is-the-mode-switch-modifier-for
+    > The first keysym is used when no modifier key is pressed in conjunction with this key
+    > The second with Shift,
+    > The third when the Mode_switch key is used with this key
+    > The fourth when both the Mode_switch and Shift keys are used.
+    > @see https://www.in-ulm.de/~mascheck/X11/xmodmap.html#format
+
+## Remap Mode_switch + , to Prior (Page Down)
+xmodmap -e "keycode 59 = comma semicolon Next Next Next multiply Next"
+
+## Remap Mode_switch + . => Next (Page Up)
+xmodmap -e "keycode 60 = period colon Prior Prior Prior division Prior"
+```
+> Get current keycodes: xmodmap -pke
