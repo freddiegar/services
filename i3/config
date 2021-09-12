@@ -4,6 +4,10 @@
 
 # Win Key
 set $mod Mod4
+# Alt Key
+set $meta Mod1
+
+# Fonts
 set $font_family fira code retina
 set $font_size 12
 set $font_size_status 10
@@ -97,18 +101,30 @@ bindsym $mod+Shift+8 move container to workspace $workspace8
 bindsym $mod+Shift+9 move container to workspace $workspace9
 bindsym $mod+Shift+0 move container to workspace $workspace10
 
+# move focused container to workspace and focus to workspace
+bindsym $mod+$meta+1 move container to workspace $workspace1; workspace $workspace1
+bindsym $mod+$meta+2 move container to workspace $workspace2; workspace $workspace2
+bindsym $mod+$meta+3 move container to workspace $workspace3; workspace $workspace3
+bindsym $mod+$meta+4 move container to workspace $workspace4; workspace $workspace4
+bindsym $mod+$meta+5 move container to workspace $workspace5; workspace $workspace5
+bindsym $mod+$meta+6 move container to workspace $workspace6; workspace $workspace6
+bindsym $mod+$meta+7 move container to workspace $workspace7; workspace $workspace7
+bindsym $mod+$meta+8 move container to workspace $workspace8; workspace $workspace8
+bindsym $mod+$meta+9 move container to workspace $workspace9; workspace $workspace9
+bindsym $mod+$meta+0 move container to workspace $workspace10; workspace $workspace10
+
 # @see https://i3wm.org/docs/userguide.html#_renaming_workspaces
 # Return using $mod+a by each window, after $mod+Shift+{number}
-bindsym $mod+Shift+w rename workspace to $workspace7
+bindsym $mod+Shift+w rename workspace to $workspace3
 
 # Search WM_CLASS 2nd arg using xprop: xprop | grep WM_CLASS
 assign [class="Firefox Developer Edition"]  $workspace2
-assign [class="Microsoft Teams - Preview"]  $workspace3
-assign [class="zoom"]                       $workspace3
 assign [class="Mysql-workbench-bin"]        $workspace4
 assign [class="jetbrains-phpstorm"]         $workspace5
 assign [class="Sublime_text"]               $workspace5
 assign [class="Anydesk"]                    $workspace6
+assign [class="Microsoft Teams - Preview"]  $workspace7
+assign [class="zoom"]                       $workspace7
 assign [class="VirtualBox Manager"]         $workspace8
 assign [class="VirtualBox Machine"]         $workspace8
 assign [class="^VirtualBox$"]               $workspace8
