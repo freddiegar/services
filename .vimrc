@@ -315,6 +315,7 @@ set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
 set statusline+=\ @\ %{strftime(\"%H:%M\")}                     " Date: HH:MM
 
 " RAW Modes Fixed
+" @see https://github.com/vim/vim/issues/5200
 let &t_TI = ''
 let &t_TE = ''
 
@@ -327,17 +328,23 @@ noremap <Space> <Nop>
 xmap < <gv
 xmap > >gv
 
-" Purify
+" Purify!
 noremap <Up> <Nop>
 noremap <Down> <Nop>
 noremap <Left> <Nop>
 noremap <Right> <Nop>
 
-" Purify!
-" inoremap <Up> <Nop>
-" inoremap <Down> <Nop>
-" inoremap <Left> <Nop>
-" inoremap <Right> <Nop>
+" Purify!! Good
+inoremap <Up> <Nop>
+inoremap <Down> <Nop>
+inoremap <Left> <Nop>
+inoremap <Right> <Nop>
+
+" Purify!!! God
+cnoremap <Up> <Nop>
+cnoremap <Down> <Nop>
+cnoremap <Left> <Nop>
+cnoremap <Right> <Nop>
 
 " Arrow keys resize windows
 " nnoremap <silent> <Up> :resize -10<Enter>
@@ -476,7 +483,7 @@ nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>Y "+Y
 
 " Edit .env
-nnoremap <silent> <Leader>e :if filereadable(expand('.env'))<Enter>
+nnoremap <silent> <Leader>env :if filereadable(expand('.env'))<Enter>
             \ :edit .env<Enter>
             \ :else<Enter>
             \ :echo '.env not found.'<Enter>
@@ -819,17 +826,12 @@ function! s:get_function_name() abort
 endfunction
 
 " Fast <Esc>
-" inoremap <silent> kk <Esc>
 inoremap <silent> jk <Esc>
-" inoremap <silent> jj <Esc>
+cnoremap <silent> jk <Esc>
 
 " Fast moving in Insert Mode
-" inoremap <silent> II <Esc>I
-" inoremap <silent> AA <Esc>A
-" inoremap <silent> OO <Esc>O
+" Use <C-o> to use Normal mode in Insert mode, by example: <C-o>Nf0
 inoremap <silent> PP <Esc>pa
-" inoremap <silent> <C-a> <C-o>^
-" inoremap <silent> <C-e> <C-o>$
 
 " Fast append lines
 nnoremap <silent> <Plug>PrependEnterRepeatable :call <SID>append_char('O')<Enter>
@@ -860,6 +862,26 @@ vnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 vnoremap <silent> <S-Tab> :<C-u>call <SID>cycling_buffers(-1)<Enter>
 
 nnoremap <silent> <Leader>H :History<Enter>
+
+" Insert mode navigation (Forget Arrows)
+inoremap <silent> <C-a> <C-o>^
+inoremap <silent> <C-e> <C-o>$
+inoremap <silent> <C-k> <C-o>k
+inoremap <silent> <C-j> <C-o>j
+inoremap <silent> <C-h> <C-o>h
+inoremap <silent> <C-l> <C-o>l
+inoremap <silent> <C-b> <C-o>B
+inoremap <silent> <C-f> <C-o>W
+
+" Command mode navigation (Forget Arrows). Not add <silent> option
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-k> <Up>
+cnoremap <C-j> <Down>
+cnoremap <C-h> <Left>
+cnoremap <C-l> <Right>
+cnoremap <C-b> <C-Left>
+cnoremap <C-f> <C-Right>
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
@@ -1464,6 +1486,9 @@ endfunction
 
 " @see http://vimcasts.org/episodes/search-multiple-files-with-vimgrep/
 noremap <silent> <F6> :call <SID>quickfix_toggle()<Enter>
+noremap <silent> <F7> :if &filetype !=# 'qf'<Enter>
+            \ :edit %<Enter>
+            \ :endif<Enter><Enter>
 
 function! s:quickfix_toggle()
     if exists('g:qfix_win')
