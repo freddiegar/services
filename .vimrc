@@ -402,7 +402,9 @@ nnoremap <silent> <F2> :if &filetype ==# 'netrw'<Enter>
 nnoremap <silent> <F3> :if &filetype ==# 'netrw'<Enter>
             \ :q!<Enter>
             \ :else<Enter>
+            \ :let g:getcwd = getcwd()<Enter>
             \ :20Vexplore<Enter>
+            \ :silent execute 'cd '. g:getcwd<Enter>
             \ :endif<Enter><Enter>
 
 nnoremap <silent> <F5> :registers<Enter>
@@ -785,7 +787,8 @@ function! s:go_line() abort
         echohl None
     endtry
 
-    return 0
+    " Avoid weird chars in command line
+    return ''
 endfunction
 
 function! s:get_current_function(copy) abort
@@ -882,6 +885,16 @@ cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
+
+" Paste (from external sources)
+" @see https://vim.fandom.com/wiki/Toggle_auto-indenting_for_code_paste
+setglobal pastetoggle=<S-F2>
+nnoremap <S-F2> :call <SID>toggle_paste()<Enter>
+
+function! s:toggle_paste() abort
+    set invpaste
+    echomsg 'Paste is ' . (&paste ? 'enabled' : 'disabled') . '.'
+endfun
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
@@ -1625,6 +1638,8 @@ augroup AutoCommands
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
     autocmd FileType c,cpp setlocal path+=/usr/include include&
     autocmd FileType vim setlocal keywordprg=:help
+    autocmd FileType git setlocal foldmethod=syntax foldlevel=1
+    autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
 
     autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
