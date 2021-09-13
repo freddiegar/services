@@ -790,11 +790,20 @@ export EDITOR=vim
 export BROWSER=/usr/bin/firefox' >> ~/.profile
 ```
 
-# GPG in terminal
+# GPG in terminal (Use between shells instances)
 
 ```bash
 echo '
 export GPG_TTY=$(tty)' >> ~/.zshrc
+```
+
+## GPG TTL (in seconds)
+
+```bash
+echo 'default-cache-ttl 86400
+max-cache-ttl 864000
+default-cache-ttl-ssh 86400
+max-cache-ttl-ssh 864000' > ~/.gnupg/gpg-agent.conf
 ```
 
 # Font Fira Code
