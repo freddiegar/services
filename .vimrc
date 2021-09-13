@@ -1158,6 +1158,8 @@ let g:user_emmet_leader_key = ','
 " Vim Snake
 " @see https://github.com/justinmk/vim-sneak
 let g:sneak#label = 1
+" Use 's' over ';' to go a 2nd result
+let g:sneak#s_next = 1
 
 " Goyo
 " @see https://github.com/junegunn/goyo.vim
@@ -1725,10 +1727,10 @@ function! s:get_hlinfo() abort
                 \ . (g:colors_name ==# 'sonokai' ? '[' . g:sonokai_style . ']' : '')
 endfunction
 
-" @see :h syntax
+" @see :highlight syntax
 " @see :highlight <GroupName>
-" @see :verbose highlight <GroupName>
 " @see :highlight clear <GroupName>
+" @see :verbose highlight <GroupName>
 " @see :source $VIMRUNTIME/syntax/hitest.vim
 " @see https://commons.wikimedia.org/wiki/File:Xterm_256color_chart.svg
 " @see https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax/
@@ -1778,6 +1780,11 @@ function! s:themes() abort
 
     " Custom color for statusline
     highlight! User1 guifg=#FF2222 ctermfg=1
+
+    " Snake cursor highlight
+    highlight! link Sneak Cursor
+    highlight! link SneakLabel Cursor
+    highlight! link SneakScope DiffAdd
 
     if exists('g:colorscheme') && g:colorscheme ==# 'dracula'
         " Green vars as $user
