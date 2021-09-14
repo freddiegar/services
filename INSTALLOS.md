@@ -313,25 +313,45 @@ gnome-session-quit
 ## sudo apt-get remove zsh && sudo apt-get autoremove
 ```
 
-## Enable Vi Mode in terminal
-@see ~/.oh-my-zsh/plugins/
+## Enable Vi Mode in Zsh
+
+[See](https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/vi-mode/vi-mode.plugin.zsh)
+[See 2](https://github.com/tpope/tpope/blob/master/.zshrc)
+[See 3](https://zsh.sourceforge.io/Guide/zshguide04.html)
+[See 4](https://zsh.sourceforge.io/Doc/Release/Zsh-Modules.html#Menu-selection)
+[See 5](https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Zle-Builtins)
 
 ```bash
-sed -i 's/plugins=()/plugins=(vi-mode)/g' ~/.zshrc
-
 echo "
+# Vi mode
+bindkey -v
+
 autoload -U history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
+# Normal mode
 bindkey '^P' history-beginning-search-backward-end
 bindkey '^N' history-beginning-search-forward-end
 
+# Insert mode
+bindkey -M viins '^A' beginning-of-line
+bindkey -M viins '^B' backward-word
+bindkey -M viins '^F' forward-word
+bindkey -M viins '^E' end-of-line
+bindkey -M viins 'jk' vi-cmd-mode
+
+# Command mode
+bindkey -M vicmd 'vv' edit-command-line
+
+# Menuselect mode
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history" >> ~/.zshrc
 ```
+> @see ~/.oh-my-zsh/plugins/
+> man zshzle
 
 # Aliases
 
@@ -787,6 +807,7 @@ nvm install v14.17.6
 ```bash
 echo '
 export EDITOR=vim
+export VISUAL=vim
 export BROWSER=/usr/bin/firefox' >> ~/.profile
 ```
 
