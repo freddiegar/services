@@ -9,16 +9,17 @@ alias d="diff"
 alias ll="ls -lh"
 alias __="ssh-add"
 
-alias va="vim ~/.bash_aliases"
 alias vd="vimdiff"
 alias vv="nvim"
 alias vz="vim ~/.zshrc"
+alias va="vim ~/.bash_aliases"
 
-alias ra="source ~/.bash_aliases"
 alias rz="source ~/.zshrc"
+alias ra="source ~/.bash_aliases"
 
 alias sai="sudo apt-get install -y"
 alias sar="sudo apt-get remove -y"
+alias sau="sudo apt-get uninstall -y"
 alias sac="sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
 
 alias c="composer"
@@ -39,6 +40,7 @@ alias pdx="sudo phpdismod xdebug"
 alias vt="vendor/bin/phpunit --stop-on-failure --no-coverage"
 alias vtu="vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
 alias vtf="vendor/bin/phpunit --stop-on-failure --no-coverage --filter"
+
 alias st="bin/phpunit --stop-on-failure --no-coverage"
 alias stu="bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
 alias stf="bin/phpunit --stop-on-failure --no-coverage --filter"

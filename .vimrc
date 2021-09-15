@@ -70,7 +70,6 @@ set secure                                                      " Security!: Not
 set exrc                                                        " Always search config in .vimrc file
 set hidden                                                      " Allow change between buffer without save
 set omnifunc=syntaxcomplete#Complete                            " Default complete function used in buffers
-" set cpoptions+=J                                                " ¿?
 " set cryptmethod=blowfish2                                       " Use strong encription (default)
 " set encoding=utf-8                                              " Output encoding that is shown in the terminal (default)
 " set fileencoding=utf-8                                          " Output encoding of the file that is written (default)
@@ -111,7 +110,13 @@ set ignorecase                                                  " Case-insensiti
 set smartcase                                                   " Case-sensitive if keyword contains al least one uppercasa char
 
 if executable('rg')
-    set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Replace built-in grep's vim
+    " Replace built-in grep's vim, options:
+    " @see https://github.com/BurntSushi/ripgrep
+    " @see https://beyondgrep.com/feature-comparison/
+    "  --vimgrep:       Every match on its own line with line number and column
+    "  --smart-case:    Uppercase are important! (If there is)
+    "  --follow:        Follow symlinks
+    set grepprg=rg\ --vimgrep\ --smart-case\ --follow
     set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 endif
 
@@ -123,7 +128,7 @@ endif
 " @see :h 'complete'
 set complete=.                                                  " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
-set complete+=b                                                 " Buffers in [b]uffers List
+set complete+=b                                                 " Buffers in [b]uffers list
 set completeopt=longest,menuone,preview                         " Show usefull preview in popupmenu
 
 " Custom Interface
@@ -210,7 +215,7 @@ let g:netrw_keepdir = 0                                         " Keep current d
 " let g:netrw_winsize = 20                                        " Keep same size after open file
 let g:netrw_liststyle = 3                                       " Show folders and files always. Cycling: i
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy recursive dirs
-let g:netrw_list_hide='^\.git\=/\=$,^\.\=/\=$'                  " Hide some extensions
+let g:netrw_list_hide='^\.git\=/\=$,^\.\=/\=$'                  " Hide some extensions: git and dotfiles
 
 " Statusline
 let g:currentmode = {
@@ -887,6 +892,7 @@ cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
 
 " Paste (from external sources)
+" @see https://www.reddit.com/r/vim/wiki/pasting-in-vim
 " @see https://vim.fandom.com/wiki/Toggle_auto-indenting_for_code_paste
 setglobal pastetoggle=<S-F2>
 nnoremap <S-F2> :call <SID>toggle_paste()<Enter>
@@ -1794,6 +1800,7 @@ function! s:themes() abort
     endif
 endfunction
 
+" @see https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
 augroup ThemeColors
     autocmd!
 

@@ -117,16 +117,15 @@ bindsym $mod+$meta+0 move container to workspace $workspace10; workspace $worksp
 
 # @see https://i3wm.org/docs/userguide.html#_renaming_workspaces
 # Return using $mod+a by each window, after $mod+Shift+{number}
-bindsym $mod+Shift+w rename workspace to $workspace3
+# bindsym $mod+Shift+w rename workspace to $workspace7
 
 # Search WM_CLASS 2nd arg using xprop: xprop | grep WM_CLASS
 assign [class="Firefox Developer Edition"]  $workspace2
+assign [class="Microsoft Teams - Preview"]  $workspace3
 assign [class="Mysql-workbench-bin"]        $workspace4
 assign [class="jetbrains-phpstorm"]         $workspace5
 assign [class="Sublime_text"]               $workspace5
 assign [class="Anydesk"]                    $workspace6
-assign [class="Microsoft Teams - Preview"]  $workspace7
-assign [class="zoom"]                       $workspace7
 assign [class="VirtualBox Manager"]         $workspace8
 assign [class="VirtualBox Machine"]         $workspace8
 assign [class="^VirtualBox$"]               $workspace8
@@ -141,10 +140,9 @@ for_window [title="Battery Warning"]        sticky enable
 for_window [window_role="(?i)pop-up"]       floating enable
 for_window [class="Gnome-calculator"]       floating enable
 for_window [class="Anydesk"]                floating enable
-for_window [class="zoom"]                   floating enable
 for_window [class="obs"]                    floating enable
 for_window [class="Pavucontrol"]            floating enable
-for_window [title="^Event Tester$"]          floating enable
+for_window [title="^Event Tester$"]         floating enable
 
 # Virtual Machines
 for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]   floating enable
@@ -180,11 +178,10 @@ mode "resize" {
     bindsym Shift+k resize shrink height  5 px or 5 ppt
     bindsym Shift+l resize grow   width   5 px or 5 ppt
 
-    # Predefined Horizontal
     bindsym 1 resize set 667 375
     bindsym 2 resize set 375 667
 
-    # back to normal: Enter or Escape
+    # back to normal
     bindsym Return mode "default"
     bindsym Escape mode "default"
     bindsym $mod+r mode "default"
@@ -194,7 +191,6 @@ bindsym $mod+r          mode "resize"
 
 # window colors
 set $bg-color               #00000000
-# set $bg-color               #2F343F
 set $inactive-bg-color      #2F343F
 set $text-color             #F3F4F5
 set $inactive-text-color    #676E7D
@@ -238,7 +234,7 @@ new_window pixel 1
 new_float pixel 1
 focus_follows_mouse no
 
-# Return a last workspace easily
+# Return a last workspace
 # workspace_auto_back_and_forth yes
 
 # @see https://www.youtube.com/watch?v=8-S0cWnLBKg&list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf&index=2
@@ -289,7 +285,6 @@ bindsym XF86AudioMute        exec --no-startup-id pactl set-sink-mute   0 toggle
 
 # Display selector
 set $external_output HDMI-2 --auto
-# set $internal_mode eDP-1 --mode 1368x768
 set $internal_auto eDP-1 --auto
 set $internal_mode eDP-1 --mode 1440x810_60.00
 set $mode_display Display e(x)ternal, (i)nternal, (c)lone, (r)ight or (l)eft presentation, (h)igh internal
@@ -302,7 +297,7 @@ mode "$mode_display" {
     bindsym l exec --no-startup-id xrandr --output $internal_mode   --primary    --output $external_output  --left-of $internal_auto,   mode "default"
     bindsym h exec --no-startup-id xrandr --output $external_output --off        --output $internal_auto    --primary,                  mode "default"
 
-    # back to normal: Enter or Escape
+    # back to normal
     bindsym Return          mode "default"
     bindsym Escape          mode "default"
     bindsym $mod+Shift+x    mode "default"
@@ -325,11 +320,11 @@ mode "$mode_system" {
     bindsym l exec          --no-startup-id $locker,                              mode "default"
     bindsym e exec          --no-startup-id i3-msg exit,                          mode "default"
     bindsym s exec          --no-startup-id $locker && systemctl suspend -i,      mode "default"
-    # bindsym h exec          --no-startup-id $locker && systemctl hibernate -i,    mode "default"
+    bindsym h exec          --no-startup-id $locker && systemctl hibernate -i,    mode "default"
     bindsym r exec          --no-startup-id systemctl reboot,                     mode "default"
     bindsym Shift+s exec    --no-startup-id systemctl poweroff -i,                mode "default"
 
-    # back to normal: Enter or Escape
+    # back to normal
     bindsym Return      mode "default"
     bindsym Escape      mode "default"
     bindsym $mod+Escape mode "default"
@@ -346,10 +341,10 @@ mode "$mode_control" {
     # Control Volume
     bindsym s exec          --no-startup-id pavucontrol
 
-    # back to normal: Enter or Escape
-    bindsym Return      mode "default"
-    bindsym Escape      mode "default"
-    bindsym $mod+Shift+c      mode "default"
+    # back to normal
+    bindsym Return          mode "default"
+    bindsym Escape          mode "default"
+    bindsym $mod+Shift+c    mode "default"
 }
 
 bindsym $mod+Shift+c mode "$mode_control"
