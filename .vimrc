@@ -212,6 +212,8 @@ set nrformats-=octal                                            " I don't use oc
 
 let g:netrw_banner = 0                                          " Hide help banner. Toggle: I
 let g:netrw_keepdir = 0                                         " Keep current directory and browsing directory synced
+let g:netrw_preview = 1                                         " Preview in vertical mode. (default: horizontal)
+let g:netrw_browse_split = 4                                    " Open file in preview window as P. (default: 0 = same window)
 " let g:netrw_winsize = 20                                        " Keep same size after open file
 let g:netrw_liststyle = 3                                       " Show folders and files always. Cycling: i
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy recursive dirs
@@ -1758,8 +1760,8 @@ function! s:themes() abort
     highlight! link CursorLineNr CursorLine
 
     " Always use same color in list chars
-    highlight! NonText ctermfg=238 guifg=#444444
-    highlight! SpecialKey ctermfg=238 guifg=#444444
+    highlight! NonText ctermfg=238 guifg=#2E2E2E
+    highlight! SpecialKey ctermfg=238 guifg=#2E2E2E
 
     " GitGutter sign with same color of theme
     highlight! link GitGutterAdd SignColumn
