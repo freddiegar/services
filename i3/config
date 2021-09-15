@@ -6,6 +6,8 @@
 set $mod Mod4
 # Alt Key
 set $meta Mod1
+# eTerminal
+set $emulator konsole
 
 # Fonts
 set $font_family fira code retina
@@ -20,7 +22,7 @@ font pango:$font_family $font_size
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id konsole
+bindsym $mod+Return exec --no-startup-id $emulator
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -173,6 +175,15 @@ mode "resize" {
     bindsym k resize shrink height  10 px or 10 ppt
     bindsym l resize grow   width   10 px or 10 ppt
 
+    bindsym Shift+h resize shrink width   5 px or 5 ppt
+    bindsym Shift+j resize grow   height  5 px or 5 ppt
+    bindsym Shift+k resize shrink height  5 px or 5 ppt
+    bindsym Shift+l resize grow   width   5 px or 5 ppt
+
+    # Predefined Horizontal
+    bindsym 1 resize set 667 375
+    bindsym 2 resize set 375 667
+
     # back to normal: Enter or Escape
     bindsym Return mode "default"
     bindsym Escape mode "default"
@@ -182,7 +193,8 @@ mode "resize" {
 bindsym $mod+r          mode "resize"
 
 # window colors
-set $bg-color               #2F343F
+set $bg-color               #00000000
+# set $bg-color               #2F343F
 set $inactive-bg-color      #2F343F
 set $text-color             #F3F4F5
 set $inactive-text-color    #676E7D
@@ -194,6 +206,8 @@ set $active-bg-color        #B2B2B2
 bar {
     status_command i3status -c ~/.config/i3/status.conf
     font pango:$font_family $font_size_status
+    # Menu only in primary screen
+    tray_output primary
 
     # No show status bar
     mode hide
@@ -201,12 +215,12 @@ bar {
 
     colors {
         background          $bg-color
-        separator           #757575
+        separator           $bg-color
 
-        # class             border             background         text
-        focused_workspace   $bg-color          $bg-color          $text-color
-        inactive_workspace  $inactive-bg-color $inactive-bg-color $inactive-text-color
-        urgent_workspace    $urgent-bg-color   $urgent-bg-color   $text-color
+        # class             border              background          text
+        focused_workspace   $bg-color           $bg-color           $text-color
+        inactive_workspace  $bg-color           $bg-color           $inactive-text-color
+        urgent_workspace    $urgent-bg-color    $urgent-bg-color    $text-color
     }
 }
 
@@ -216,7 +230,7 @@ client.focused_inactive $inactive-bg-color  $inactive-bg-color  $inactive-text-c
 client.unfocused        $inactive-bg-color  $inactive-bg-color  $inactive-text-color    #00FF00
 client.urgent           $urgent-bg-color    $urgent-bg-color    $text-color             #00FF00
 client.placeholder      #000000             #0C0C0C             #FFFFFF                 #00FF00
-client.background       #FFFFFF
+client.background       $bg-color
 
 # Nice borders
 hide_edge_borders smart
@@ -244,10 +258,14 @@ bindsym $mod+Shift+Right move workspace to output right
 bindsym $mod+Shift+s sticky toggle
 
 # On startup
-# Init konsole
-exec --no-startup-id konsole
+# Init terminal
+exec --no-startup-id $emulator
 # Init battery warning
 exec --no-startup-id ~/.config/i3/battery-popup -n -L 20 -l 10 -m "Battery is low!"
+# Init background image
+exec --no-startup-id feh --bg-fill ~/BG/background-1.jpeg
+# Init background transparency
+exec --no-startup-id xcompmgr -c -C -o.1 &
 
 # Set default browser
 exec_always --no-startup-id xdg-settings set default-web-browser firefox.desktop

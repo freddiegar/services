@@ -33,6 +33,9 @@ ln -s `pwd`/.vimrc ~/.vimrc
 # cp -p konsole.profile ~/.local/share/konsole/konsole.profile
 rm -f ~/.local/share/konsole/*.profile
 ln -s `pwd`/konsole.profile ~/.local/share/konsole/konsole.profile
+# cp -p Linux.colorscheme ~/.local/share/konsole/Linux.colorscheme
+rm -f ~/.local/share/konsole/*.colorscheme
+ln -s `pwd`/Linux.colorscheme ~/.local/share/konsole/Linux.colorscheme
 ```
 
 # Performance, not use swap while RAM < 90% used
@@ -113,8 +116,8 @@ sudo service cups stop && sudo systemctl disable cups
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 pavucontrol
-## sudo apt-get remove unzip curl tree nmap htop i3 pavucontrol && sudo apt-get autoremove
+sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol
+## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol && sudo apt-get autoremove
 ```
 
 # i3
@@ -134,13 +137,14 @@ sudo update-alternatives --config x-session-manager
 # if not is available i3:
 # sudo update-alternatives --install /usr/bin/x-session-manager x-session-manager /usr/bin/i3 60
 ```
+
 ## Start i3 after StartX
 
 ```bash
 echo 'exec i3' >> ~/.xinitrc
 ```
 
-## Vim Plugins
+# Vim Plugins
 
 ```bash
 # Install
@@ -836,18 +840,6 @@ max-cache-ttl-ssh 864000' > ~/.gnupg/gpg-agent.conf
 sudo apt-get install -y fonts-firacode
 ## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
 ```
-
-## Font Konsole
-
-Edit Profile
-Name            Freddie
-Colorscheme     Linux Colors
-Font            Fira Code Retina
-Font size       14pt
-Smooth fonts    true
-Bold intense    false
-Scroll          Unlimited
-Scroll position Hidden
 
 # Clean installation
 sudo apt-get clean
