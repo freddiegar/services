@@ -143,6 +143,7 @@ for_window [class="Anydesk"]                floating enable
 for_window [class="obs"]                    floating enable
 for_window [class="Pavucontrol"]            floating enable
 for_window [title="^Event Tester$"]         floating enable
+for_window [window_role="browser-window"]   floating enable
 
 # Virtual Machines
 for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]   floating enable
@@ -152,6 +153,8 @@ for_window [instance="^VirtualBox$" class="^VirtualBox$"]               floating
 for_window [instance="Toolkit" class="Firefox Developer Edition"]       floating enable, sticky enable
 # Downloads
 for_window [instance="Places" class="Firefox Developer Edition"]        floating enable
+# Info certificates
+for_window [instance="Browser" class="Firefox Developer Edition"]       floating enable
 
 # reload the configuration file
 # bindsym $mod+Shift+c reload
