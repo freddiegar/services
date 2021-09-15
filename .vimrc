@@ -165,7 +165,7 @@ set relativenumber                                              " Relative numbe
 " set cursorline                                                  " Highligth line when cursor there is (slower)
 " set colorcolumn=121                                             " Colum limit for write (slower)
 " set noshowmatch                                                 " No jump a match never (default)
-" set matchtime=0
+" set matchtime=0                                                 " Default 5ms
 set list                                                        " Visible white spaces, (tab is a white space)
 set listchars=space:·,tab:»-                                    " Chars used for invisible chars, only I want space and tabls
 " set fillchars+=eob:\                                            " Hide ~ in end of buffer
@@ -1547,7 +1547,7 @@ function! s:notes() abort
         execute "normal Go\e"
     endif
 
-    execute "normal Gzto== " . strftime('%X') . " ==\r- \e"
+    execute "normal Gzto== " . strftime('%H:%M:%S') . " ==\r- \e"
 
     return 0
 endfunction
@@ -1556,7 +1556,7 @@ augroup AutoCommands
     autocmd!
 
     " Reload after save
-    autocmd BufWritePost ~/.vimrc source ~/.vimrc | call <SID>themes()
+    autocmd BufWritePost ~/.vimrc nested source ~/.vimrc
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
@@ -1743,6 +1743,19 @@ endfunction
 " @see :source $VIMRUNTIME/syntax/hitest.vim
 " @see https://commons.wikimedia.org/wiki/File:Xterm_256color_chart.svg
 " @see https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax/
+" @see https://terminal.sexy/
+function! s:current_theme() abort
+    if exists('g:colors_name')
+        return g:colors_name
+    endif
+
+    let l:weekDay = str2nr(strftime('%w'))
+    let l:colorschemes = ['gruvbox', 'dracula', 'nord', 'sonokai', 'srcery', 'tokyonight']
+    let g:colors_name = get(l:colorschemes, l:weekDay, 'gruvbox')
+
+    return g:colors_name
+endfunction
+
 function! s:themes() abort
     " Transparency
     highlight! Normal guibg=NONE ctermbg=NONE
@@ -1755,7 +1768,7 @@ function! s:themes() abort
 
     " Goyo (write action in zen mode lost settings)
     highlight! link VertSplit LineNr
-    highlight! StatusLineNC guibg=NONE ctermbg=NONE guifg=#1D2021
+    highlight! StatusLineNC guibg=NONE ctermbg=NONE
 
     " Extend cursorline format to cursorline number
     highlight! link CursorLineNr CursorLine
@@ -1795,11 +1808,9 @@ function! s:themes() abort
     highlight! link SneakLabel Cursor
     highlight! link SneakScope DiffAdd
 
-    if exists('g:colorscheme') && g:colorscheme ==# 'dracula'
-        " Green vars as $user
+    if exists('g:colors_name') && g:colors_name ==# 'dracula'
+        " Vars as $user
         highlight! link Identifier DraculaGreen
-        " Search highlight in another color
-        highlight! Search gui=bold guibg=NONE guifg=#FFB86C
     endif
 endfunction
 
@@ -1808,9 +1819,9 @@ augroup ThemeColors
     autocmd!
 
     " Initial load colorscheme
-    silent call <SID>themes()
+    autocmd ColorSchemePre * call <SID>current_theme()
 
-    " After change colorscheme
+    " After change colorscheme using command
     autocmd ColorScheme * call <SID>themes()
 
     " Goyo restore colorscheme
@@ -1820,12 +1831,7 @@ augroup END
 set background=dark
 
 try
-    " @see https://terminal.sexy/
-    let g:weekDay = str2nr(strftime('%w'))
-    let g:colorschemes = ['gruvbox', 'dracula', 'nord', 'sonokai', 'srcery', 'tokyonight']
-    let g:colorscheme = get(g:colorschemes, g:weekDay, 'gruvbox')
-
-    execute 'colorscheme ' . g:colorscheme
+    execute 'colorscheme ' . <SID>current_theme()
 catch /^Vim\%((\a\+)\)\=:E185/
     colorscheme evening
 endtry
