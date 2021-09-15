@@ -161,13 +161,14 @@ set nojoinspaces                                                " No insert two 
 " Custom View
 set number                                                      " Number in cursorline is a number line, no zero
 set relativenumber                                              " Relative number do easy select a range of lines
-set cursorline                                                  " Highligth line when cursor there is
+" @see https://eduncan911.com/software/fix-slow-scrolling-in-vim-and-neovim.html
+" set cursorline                                                  " Highligth line when cursor there is (slower)
+" set colorcolumn=121                                             " Colum limit for write (slower)
 " set noshowmatch                                                 " No jump a match never (default)
 " set matchtime=0
 set list                                                        " Visible white spaces, (tab is a white space)
 set listchars=space:·,tab:»-                                    " Chars used for invisible chars, only I want space and tabls
 " set fillchars+=eob:\                                            " Hide ~ in end of buffer
-set colorcolumn=121                                             " Colum limit for write
 set textwidth=120                                               " Breakline in Insert Mode after this column value
 set synmaxcol=200                                               " Avoid very slow redrawing (default: 3000)
 set winminheight=0                                              " Current buffer use all screen
