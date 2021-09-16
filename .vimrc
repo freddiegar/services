@@ -296,14 +296,14 @@ set showcmd                                                     " Use off if ter
 set noruler                                                     " Cursor position is showed in statusline
 set noshowmode                                                  " Mode is showed in statusline
 
-set shortmess=W                                                 " don't give "written" or "[w]" when writing a file
-set shortmess+=F                                                " don't give the file info when editing a file
-set shortmess+=A                                                " don't give the "ATTENTION" message when swap is found
-set shortmess+=I                                                " don't give the intro message when starting Vim
-set shortmess+=c                                                " don't give ins-completion-menu messages
-set shortmess+=s                                                " don't give "search hit BOTTOM, continuing at TOP"
-set shortmess+=T                                                " truncate others message [...]
-set shortmess+=t                                                " truncate file message [<]
+set shortmess=W                                                 " Don't give "written" or "[w]" when writing a file
+set shortmess+=F                                                " Don't give the file info when editing a file
+set shortmess+=A                                                " Don't give the "ATTENTION" message when swap is found
+set shortmess+=I                                                " Don't give the intro message when starting Vim
+set shortmess+=c                                                " Don't give ins-completion-menu messages
+set shortmess+=s                                                " Don't give "search hit BOTTOM, continuing at TOP"
+set shortmess+=T                                                " Truncate others message [...]
+set shortmess+=t                                                " Truncate file message [<]
 
 set laststatus=2                                                " Always show statusline
 set statusline=                                                 " Start from scratch
