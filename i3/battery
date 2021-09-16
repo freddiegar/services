@@ -19,8 +19,6 @@
 #                                                                              #
 # -m : The message to show to the User                                         #
 #                                                                              #
-# -n : Use notify-send for message.                                            #
-#                                                                              #
 # -t : The time interval the script waits before checking the battery again.   #
 #      Give this a value in seconds: 5s, 10s, or in minutes: 5m                #
 #      Default: 5m                                                             #
@@ -37,7 +35,7 @@ error () {
     exit "$2"
 }
 
-while getopts 'L:l:m:t:F:nND' opt; do
+while getopts 'L:l:m:t:F:ND' opt; do
     case $opt in
         L)
             [[ $OPTARG =~ ^[0-9]+$ ]] || error "${opt}: ${OPTARG} is not a number" 2
@@ -49,9 +47,6 @@ while getopts 'L:l:m:t:F:nND' opt; do
             ;;
         m)
             MESSAGE="${OPTARG}"
-            ;;
-        n)
-            USE_NOTIFY_SEND="y"
             ;;
         t)
             [[ $OPTARG =~ ^[0-9]+[ms]?$ ]] || error "${opt}: ${OPTARG} is not a valid period" 2
@@ -110,20 +105,8 @@ get_battery_perc() {
     awk -f <(get_awk_source) "${BATTERIES[@]}"
 }
 
-show_nagbar(){
-    i3-msg "exec i3-nagbar -m \"${1}\""
-}
-
-show_notify(){
-    notify-send -u critical "${1}"
-}
-
 show_message(){
-    if [[ -n $USE_NOTIFY_SEND ]] && which notify-send; then
-        show_notify "$1"
-    else
-        show_nagbar "$1"
-    fi
+    i3-msg "exec i3-nagbar -m \"${1}\""
 } >&2
 
 debug(){
@@ -149,6 +132,7 @@ main (){
     POPUP_CLICKED=""
 
     while true; do
+        debug $(date +"%Y-%m-%d_%H:%M:%S" -u)
         debug "Checking.. "
 
         PERC=$(get_battery_perc)
