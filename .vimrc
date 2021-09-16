@@ -1619,13 +1619,54 @@ augroup AutoCommands
             return 0
         endif
 
-        let l:configfile = !filereadable(expand('.php_cs')) ? '/var/www/html/freddiegar/services/.php_cs' : '.php_cs'
+        " Setup default
+        let l:fixertype = 'global'
+        let l:fixerpath = 'php-cs-fixer'
+        let l:fixerversion = 'unknow'
+
+        if executable('vendor/bin/php-cs-fixer')
+            let l:fixertype = 'local'
+            let l:fixerpath = 'vendor/bin/php-cs-fixer'
+        endif
+
+        if !executable(l:fixerpath)
+            echohl WarningMsg
+            echomsg 'Fixer ' . l:fixertype . ' ' . l:fixerversion . ' not found.'
+            echohl None
+
+            return ''
+        endif
+
+        let l:fixerversion = system(l:fixerpath . " --version 2>/dev/null | cut -d' ' -f4 | cut -d'.' -f1 | tr -d '\n'")
+
+        let l:configversion = l:fixerversion
+        let l:configfile = '/var/www/html/freddiegar/services/' . (l:configversion ==# '2' ? '.php_cs' : '.php-cs-fixer.php')
+
+        if filereadable(expand('.php_cs'))
+            " Setup v2
+            let l:configversion = '2'
+            let l:configfile = '.php_cs'
+        elseif filereadable(expand('.php-cs-fixer.php'))
+            " Setup v3
+            let l:configversion = '3'
+            let l:configfile = '.php-cs-fixer.php'
+        endif
+
+        if l:fixerversion !=# l:configversion
+            echohl WarningMsg
+            echomsg 'Fixer ' . l:fixertype . ' v' . l:fixerversion . ' config file not found.'
+            echohl None
+
+            return ''
+        endif
 
         silent update!
 
-        let l:result = system('php-cs-fixer fix ' . expand('%') . ' --config="' . l:configfile . '"')
+        let l:result = system(l:fixerpath . ' fix ' . expand('%') . ' --config="' . l:configfile . '"')
 
         silent edit!
+
+        echo 'Fixer ' . l:fixertype . ' v' . l:fixerversion . ' applied.'
     endfunction
 
     " JSON Fixer
