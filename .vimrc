@@ -1257,7 +1257,8 @@ let g:coc_global_extensions = [
     \ 'coc-json',
     \ 'coc-yaml',
     \ 'coc-phpactor',
-    \ 'coc-clangd'
+    \ 'coc-clangd',
+    \ 'coc-vimlsp'
     \]
 
 " Use <Ctrl-Space> to trigger completion.
