@@ -1398,7 +1398,7 @@ nmap <silent> <Leader>hs :GitGutterSignsToggle<Enter>
 " let g:gitgutter_eager = 1
 let g:gitgutter_realtime = 0
 let g:gitgutter_map_keys = 0
-let g:gitgutter_diff_args = '-w'
+let g:gitgutter_diff_args = ''
 let g:gitgutter_sign_priority = 100000
 let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_set_sign_backgrounds = 1
@@ -1710,6 +1710,10 @@ augroup AutoCommands
 
         silent call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
     endfunction
+
+    " Git blame
+    " @thanks https://gist.github.com/romainl/5b827f4aafa7ee29bdc70282ecc31640
+    command! -range GB echo join(systemlist('git -C ' . shellescape(expand('%:p:h')) . ' blame -L <line1>,<line2> ' . expand('%:t')), "\n")
 
     " Save|Load sessions
     let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . '.vim')
