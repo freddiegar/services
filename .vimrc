@@ -1108,7 +1108,7 @@ let g:sonokai_disable_italic_comment = 0
 let g:sonokai_better_performance = 1
 let g:sonokai_transparent_background = 1
 let g:sonokai_styles = ['default', 'atlantis', 'shusia', 'maia', 'andromeda']
-let g:sonokai_style = get(g:sonokai_styles, rand(srand()) % len(g:sonokai_styles))
+let g:sonokai_style = get(g:sonokai_styles, (strftime('%M') * strftime('%S')) % len(g:sonokai_styles))
 
 " @see https://github.com/srcery-colors/srcery-vim
 let g:srcery_italic = 1
@@ -1814,6 +1814,7 @@ function! s:themes() abort
 
     " Extend cursorline format to cursorline number
     highlight! link CursorLineNr CursorLine
+    highlight! CursorLineNr guibg=NONE ctermbg=NONE
 
     " Always use same color in list chars
     highlight! NonText ctermfg=238 guifg=#2E2E2E
