@@ -1490,15 +1490,21 @@ Install [NeoVim](https://neovim.io/)
 ```bash
 # Home
 mkdir -p ~/.config/nvim
+
 # Setup
 echo 'set runtimepath+=~/.vim,~/vim/after
 let &packpath = &runtimepath
 source ~/.vimrc' >> ~/.config/nvim/init.vim
+
 # Install (Latest)
 echo "\n" | sudo add-apt-repository ppa:neovim-ppa/stable
 sudo apt-get update
 sudo apt-get install -y neovim
+
 # sudo apt-get remove -y neovim && sudo apt-get autoremove
+
+## CoC Settings
+ln -s ~/.vim/coc-settings.json ~/.config/nvim/coc-settings.json
 ```
 
 Rename files using xargs
