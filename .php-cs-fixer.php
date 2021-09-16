@@ -21,7 +21,7 @@ $finder = PhpCsFixer\Finder::create()
     ->files()
     ->in(__DIR__);
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config)
     ->setFinder($finder)
     ->setRiskyAllowed(true)
     ->setRules([
@@ -30,10 +30,7 @@ return PhpCsFixer\Config::create()
         'array_indentation' => true,
         'array_syntax' => ['syntax' => 'short'],
         'binary_operator_spaces' => [
-            'operators' => [
-                // '=' => 'align',
-                // '=>' => 'align',
-            ],
+            'operators' => [],
         ],
         'blank_line_after_namespace' => true,
         'blank_line_before_statement' => [
@@ -63,15 +60,14 @@ return PhpCsFixer\Config::create()
         ],
         'class_attributes_separation' => [
             'elements' => [
-                'const',
-                'method',
-                'property',
+                'const' => 'one',
+                'method' => 'one',
+                'property' => 'one',
             ],
         ],
         'combine_consecutive_issets' => true,
         'combine_consecutive_unsets' => true,
         'compact_nullable_typehint' => true,
-        // 'concat_space' => ['spacing' => 'none'],
         'concat_space' => ['spacing' => 'one'],
         'declare_equal_normalize' => ['space' => 'none'],
         'declare_strict_types' => true,
@@ -82,17 +78,15 @@ return PhpCsFixer\Config::create()
         'function_declaration' => true,
         'header_comment' => ['header' => $header, 'separate' => 'none'],
         'indentation_type' => true,
-        // 'is_null' => true,
         'is_null' => false,
         'line_ending' => true,
         'list_syntax' => ['syntax' => 'short'],
         'logical_operators' => true,
         'lowercase_cast' => true,
-        'lowercase_constants' => true,
+        'constant_case' => true,
         'lowercase_keywords' => true,
         'lowercase_static_reference' => true,
         'magic_constant_casing' => true,
-        // 'method_argument_space' => ['ensure_fully_multiline' => true],
         'method_argument_space' => ['on_multiline' => 'ignore'],
         'modernize_types_casting' => true,
         'multiline_comment_opening_closing' => true,
@@ -119,12 +113,11 @@ return PhpCsFixer\Config::create()
         'no_null_property_initialization' => true,
         'no_php4_constructor' => true,
         'no_short_bool_cast' => true,
-        'no_short_echo_tag' => true,
+        'echo_tag_syntax' => true,
         'no_singleline_whitespace_before_semicolons' => true,
         'no_spaces_after_function_name' => true,
         'no_spaces_inside_parenthesis' => true,
         'no_superfluous_elseif' => true,
-        // 'no_superfluous_phpdoc_tags' => true,
         'no_superfluous_phpdoc_tags' => [
             'allow_mixed' => true,
         ],
@@ -170,12 +163,7 @@ return PhpCsFixer\Config::create()
             ],
         ],
         'ordered_imports' => true,
-        // 'ordered_interfaces' => [
-        //    'direction' => 'ascend',
-        //    'order' => 'alpha',
-        // ],
         'phpdoc_add_missing_param_annotation' => true,
-        // 'phpdoc_align' => true,
         'phpdoc_align' => false,
         'phpdoc_annotation_without_dot' => true,
         'phpdoc_indent' => true,
@@ -208,7 +196,11 @@ return PhpCsFixer\Config::create()
         'single_quote' => true,
         'standardize_not_equals' => true,
         'ternary_to_null_coalescing' => true,
-        'trailing_comma_in_multiline_array' => true,
+        'trailing_comma_in_multiline' => [
+            'elements' => [
+                'arrays',
+            ],
+        ],
         'trim_array_spaces' => true,
         'unary_operator_spaces' => true,
         'visibility_required' => [
