@@ -13,6 +13,9 @@
 " @see https://www.arp242.net/vimlog/
 " @see https://github.com/mhinz/vim-galore
 
+" ORIGIN
+" @see https://www.reddit.com/r/vim/wiki/why_hjkl
+
 " From Scratch to Pro
 " @thanks https://thevaluable.dev/vim-beginner/
 
@@ -57,6 +60,16 @@ runtime macros/matchit.vim
 " "abc" ==# "Abc"         evaluates to 0
 " "abc" ==? "Abc"         evaluates to 1
 " "abc" ==  "Abc"         evaluates to 1 if 'ignorecase' is set, 0 otherwise
+
+" SWITCHING WINDOWS
+" @see :h windows
+" <C-w>q    quit
+" <C-w>s    split
+" <C-w>v    vsplit
+" <C-w>h    move left
+" <C-w>j    move down
+" <C-w>k    move up
+" <C-w>l    move right
 
 " @see https://vim.fandom.com/wiki/Example_vimrc
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
@@ -171,8 +184,8 @@ set listchars=space:·,tab:»-                                    " Chars used f
 " set fillchars+=eob:\                                            " Hide ~ in end of buffer
 set textwidth=120                                               " Breakline in Insert Mode after this column value
 set synmaxcol=200                                               " Avoid very slow redrawing (default: 3000)
-set winminheight=0                                              " Current buffer use all screen
-set winheight=999
+" set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option
+" set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option
 set updatetime=300                                              " Default 4s is a lot time
 set diffopt+=iwhite                                             " Ignore white spaces in diff mode
 
@@ -355,10 +368,10 @@ cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
 " Arrow keys resize windows
-" nnoremap <silent> <Up> :resize -10<Enter>
-" nnoremap <silent> <Down> :resize +10<Enter>
-nnoremap <silent> <Left> :vertical resize -10<Enter>
-nnoremap <silent> <Right> :vertical resize +10<Enter>
+nnoremap <silent> <Up> :resize -5<Enter>
+nnoremap <silent> <Down> :resize +5<Enter>
+nnoremap <silent> <Left> :vertical resize -5<Enter>
+nnoremap <silent> <Right> :vertical resize +5<Enter>
 
 " Utility
 nnoremap <silent> Q @@
@@ -954,22 +967,6 @@ function! s:cycling_buffers(incr) abort
         endif
     endwhile
 endfunction
-
-" Better split switching
-" map <C-h> <C-W>h
-" map <C-j> <C-W>j
-" map <C-k> <C-W>k
-" map <C-l> <C-W>l
-
-if has('terminal')
-    " Mappings to move out from terminal to other views
-    " Broken fzf window escape
-    " tnoremap <Esc> <C-\><C-n>
-    " tnoremap <C-h> <C-W>h
-    " tnoremap <C-j> <C-W>j
-    " tnoremap <C-k> <C-W>k
-    " tnoremap <C-l> <C-W>l
-endif
 
 if !has('gui_running')
     set notimeout
