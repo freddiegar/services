@@ -1,5 +1,6 @@
 " PHILOSOPHY
 " @see https://www.moolenaar.net/habits.html
+" @see http://www.viemu.com/a-why-vi-vim.html
 " @see https://blog.sanctum.geek.nz/series/unix-as-ide/
 " @thanks https://markodenic.com/use-google-like-a-pro/
 
@@ -15,12 +16,14 @@
 
 " ORIGIN
 " @see https://www.reddit.com/r/vim/wiki/why_hjkl
+" @see https://www.fcodelabs.com/2018/12/08/Vim-Cheats/
+" @mailing  https://groups.google.com/g/vim_dev
 
 " From Scratch to Pro
 " @thanks https://thevaluable.dev/vim-beginner/
 
 " Build-in improve % option (works with if statements and tags html)
-runtime macros/matchit.vim
+packadd! matchit
 
 " REGISTERS AND MARKS SPECIAL USED HERE
 " - "z  Save content yank in function, this no overwrite default register
@@ -70,6 +73,8 @@ runtime macros/matchit.vim
 " <C-w>j    move down
 " <C-w>k    move up
 " <C-w>l    move right
+" <C-w>w    move next right
+" <C-w>W    move before
 
 " @see https://vim.fandom.com/wiki/Example_vimrc
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
@@ -78,11 +83,12 @@ runtime macros/matchit.vim
 " @see :h motion
 
 " set nocompatible                                                " Vim rules, no vi (default)
-" set nomodeline                                                  " Security! (default)
+" set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */ (default)
 set secure                                                      " Security!: Not autocmd in .vimrc file
 set exrc                                                        " Always search config in .vimrc file
 set hidden                                                      " Allow change between buffer without save
-set omnifunc=syntaxcomplete#Complete                            " Default complete function used in buffers
+set omnifunc=syntaxcomplete#Complete                            " Default complete function global
+set completefunc=syntaxcomplete#Complete                        " Default complete function used in buffers
 " set cryptmethod=blowfish2                                       " Use strong encription (default)
 " set encoding=utf-8                                              " Output encoding that is shown in the terminal (default)
 " set fileencoding=utf-8                                          " Output encoding of the file that is written (default)
@@ -100,12 +106,18 @@ set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,
 set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*,
 set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
 set wildignore+=node_modules,vendor,*/coverage/*,
-set lazyredraw                                                  " No redraw when macro is running
+set lazyredraw                                                  " No redraw when macro/script is running
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
 
 " set nobackup                                                    " Not use backup before written a file (default)
 set nowritebackup                                               " Not use backup before overwrite a file
 set noswapfile                                                  " Not swap for new buffer
+" Options:
+" Relative or absoluts, explode by , (comma)
+" Spaces must be escape with: \ (backslash)
+" .     Relative to the directory of current file
+" ,,    Current directory
+" **    Any where, ex: /var/**
 set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind. Skip /usr/include
 
 " Used in mksession
@@ -166,7 +178,7 @@ endif
 set nowrap                                                      " No cut lines, use <Leader>gw to toggle
 set linebreak                                                   " No cut words on wrap enable
 set showbreak=↪                                                 " Visual char on wrap line
-" set display+=lastline                                           " ¿?
+set display=lastline                                            " Show as much as possible of the last line.
 set scrolloff=1                                                 " Lines (rows) show always before current cursor line
 set sidescrolloff=5                                             " Columns (cols) show always after current cursor position
 set nojoinspaces                                                " No insert two spaces after a '.', '?' and '!'
@@ -183,7 +195,7 @@ set list                                                        " Visible white 
 set listchars=space:·,tab:»-                                    " Chars used for invisible chars, only I want space and tabls
 " set fillchars+=eob:\                                            " Hide ~ in end of buffer
 set textwidth=120                                               " Breakline in Insert Mode after this column value
-set synmaxcol=200                                               " Avoid very slow redrawing (default: 3000)
+set synmaxcol=200                                               " Only highlight the first N columns. Avoid very slow redrawing (default: 3000)
 " set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option
 " set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option
 set updatetime=300                                              " Default 4s is a lot time
@@ -376,7 +388,9 @@ nnoremap <silent> <Right> :vertical resize +5<Enter>
 " Utility
 nnoremap <silent> Q @@
 nnoremap <silent> Y y$
-nnoremap <silent> gl '.
+" 'x    Jump to the beginning of the line of mark 'x'
+" `x    Jump to the cursor position of mark 'x'
+nnoremap <silent> gl `.
 
 " Center screen (zz) after each search and open folds (zv)
 nnoremap <silent> * *zzzv
@@ -1211,6 +1225,7 @@ nnoremap <silent> <Leader>tg :TestVisit<Enter>
 nnoremap <silent> <Leader>tT :TestNearest --testdox -vvv<Enter>
 nnoremap <silent> <Leader>tF :TestFile --testdox -vvv<Enter>
 nnoremap <silent> <Leader>tS :TestSuite --testdox -vvv<Enter>
+nnoremap <silent> <Leader>tr :call <SID>quickfix_toggle()<Enter>
 
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
@@ -1763,6 +1778,10 @@ augroup AutoCommands
 
     autocmd VimEnter * nested call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart()
+    " Cursorline only in window active, no on Insert Mode
+    " autocmd InsertLeave,WinEnter * set cursorline
+    " autocmd InsertEnter,WinLeave * set nocursorline
+    " Relative numbers on Insert Mode
     " autocmd InsertEnter * :setlocal norelativenumber
     " autocmd InsertLeave * :setlocal relativenumber
     autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
