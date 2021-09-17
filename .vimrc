@@ -412,6 +412,12 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 " nnoremap <Leader>s <kDivide>
 " nnoremap <Leader>S ?
 
+nnoremap <silent> <F1> :if &filetype ==# 'help'<Enter>
+            \ :q!<Enter>
+            \ :else<Enter>
+            \ :help<Enter>
+            \ :endif<Enter><Enter>
+
 " Open explore in root folder (toggle)
 nnoremap <silent> <F2> :if &filetype ==# 'netrw'<Enter>
             \ :q!<Enter>
@@ -769,7 +775,7 @@ function! s:append_char(type) abort
 endfunction
 
 function! s:generate_password() abort
-    let l:password = system('openssl rand -base64 15')
+    let l:password = system('openssl rand -base64 15 | tr -d "\n"')
 
     return strlen(l:password) > 0 ? l:password : 'Retry!'
 endfunction
@@ -777,7 +783,7 @@ endfunction
 function! s:generate_hash() abort
     let l:password = <SID>generate_password()
 
-    let l:hash = system('echo -n "' . l:password . '" | openssl dgst -sha256 | cut -d " " -f 2')
+    let l:hash = system('echo -n "' . l:password . '" | openssl dgst -sha256 | cut -d " " -f 2 | tr -d "\n"')
 
     return strlen(l:hash) > 0 && l:password !=# 'Retry!' ? l:hash : 'Retry!'
 endfunction
