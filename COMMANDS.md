@@ -1549,3 +1549,18 @@ xmodmap -e "keycode 59 = comma semicolon Next Next Next multiply Next"
 xmodmap -e "keycode 60 = period colon Prior Prior Prior division Prior"
 ```
 > Get current keycodes: xmodmap -pke
+
+Install library npm locally
+
+[See](https://2ality.com/2016/01/locally-installed-npm-executables.html)
+
+```bash
+mkdir /var/www/html/project
+cd /var/www/html/project
+npm init
+npm install @vue/cli
+> /var/www/html/project/node_modules/.bin
+npm bin
+$(npm bin)/vue create demo
+```
+
