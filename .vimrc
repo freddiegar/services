@@ -813,12 +813,12 @@ function! s:go_line() abort
         let l:line = strlen(l:parts[1]) > 0 ? l:parts[1] : 1
 
         if filereadable(l:file) && l:line > 0
+            execute "normal \<C-w>w"
             execute 'edit +' . l:line . ' ' . l:file
         endif
 
         if (index(['php'], &filetype) >= 0)
-            " Not use ! <Bang>, it cancel printable char
-            execute "normal \<C-w>w\<Enter>"
+            execute "call <SID>quickfix_toggle()<Enter>"
         endif
     catch /^Nothing/
         echomsg 'Nothing to do.'
@@ -1213,7 +1213,7 @@ nnoremap <silent> <Leader>o :if isdirectory('.git')<Enter>
 
 " Vim Tests
 " https://github.com/vim-test/vim-test
-let g:test#strategy = 'vimterminal'
+let g:test#strategy = 'asyncrun'
 let g:test#php#phpunit#options = {
     \ 'all': '--no-coverage --stop-on-failure',
 \}
