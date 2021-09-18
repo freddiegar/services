@@ -200,6 +200,7 @@ set synmaxcol=200                                               " Only highlight
 " set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option
 set updatetime=300                                              " Default 4s is a lot time
 set diffopt+=iwhite                                             " Ignore white spaces in diff mode
+set guicursor=                                                  " Always cursor has same block: block
 
 " Custom identation
 " set autoindent
@@ -1343,7 +1344,7 @@ function! s:show_documentation() abort
 endfunction
 
 " Remap <C-f> and <C-b> for scroll float windows/popups. (Used in long file definitions)
-if has('patch-8.2.0750')
+if has('patch-8.2.0750') || has('nvim-0.4.0')
     nnoremap <silent> <nowait> <expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
     nnoremap <silent> <nowait> <expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
@@ -1738,7 +1739,7 @@ augroup AutoCommands
     command! -range GB echo join(systemlist('git -C ' . shellescape(expand('%:p:h')) . ' blame -L <line1>,<line2> ' . expand('%:t')), "\n")
 
     " Save|Load sessions
-    let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . '.vim')
+    let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . (has('nvim') ? '.nvim' : '.vim'))
 
     function! s:sessionload() abort
         if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
