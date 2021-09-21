@@ -1075,7 +1075,8 @@ call plug#end()
 "  "phpactor.enable": true,
 "  "phpactor.path": "~/.vim/plugged/phpactor/bin/phpactor",
 "  "clangd.enable": true,
-"  "clangd.path": "/usr/local/clang_9.0.0/bin/clangd"
+"  "clangd.path": "/usr/local/clang_9.0.0/bin/clangd",
+"  "vetur.ignoreProjectWarning": true
 "}
 
 " ~/.config/phpactor/phpactor.json
@@ -1091,6 +1092,9 @@ call plug#end()
 "    "\/vendor\/composer\/**\/*"
 "  ]
 "}
+
+" LSP Vue
+" npm -g install vls eslint eslint-plugin-vue -D
 
 " Themes
 " Allowed 24 bit colors, by default only accept 8 bit
@@ -1280,6 +1284,7 @@ let g:coc_global_extensions = [
     \ 'coc-yaml',
     \ 'coc-phpactor',
     \ 'coc-clangd',
+    \ 'coc-vetur',
     \ 'coc-vimlsp'
     \]
 
@@ -1720,7 +1725,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.json.* setlocal filetype=json
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
-    autocmd BufRead,BufNewFile *.vue setlocal filetype=html commentstring=<!--\ %s\ -->
+    autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
 
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)

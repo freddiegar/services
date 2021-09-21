@@ -23,17 +23,14 @@ sudo apt-get install -y vim konsole
 # Set as default editor
 sudo update-alternatives --config editor
 
-# cp -p .vimrc ~/.vimrc
 ln -s `pwd`/.vimrc ~/.vimrc
 ```
 
 ## Konsole Profile
 
 ```bash
-# cp -p konsole.profile ~/.local/share/konsole/konsole.profile
 rm -f ~/.local/share/konsole/*.profile
 ln -s `pwd`/konsole.profile ~/.local/share/konsole/konsole.profile
-# cp -p Linux.colorscheme ~/.local/share/konsole/Linux.colorscheme
 rm -f ~/.local/share/konsole/*.colorscheme
 ln -s `pwd`/Linux.colorscheme ~/.local/share/konsole/Linux.colorscheme
 ```
@@ -123,7 +120,6 @@ sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol
 # i3
 
 ```bash
-# cp -p config ~/config
 mkdir -p ~/.config/i3
 ln -s `pwd`/i3/config ~/.config/i3/config
 ln -s `pwd`/i3/status.conf ~/.config/i3/status.conf
@@ -260,16 +256,12 @@ sudo chmod +x /usr/local/bin/phpctags
 ## Snippets
 
 ```bash
-# PHP
-mkdir -p ~/.vim/UltiSnips
-# cp -p php.snippets ~/.vim/UltiSnips/php.snippets
-ln -s `pwd`/php.snippets ~/.vim/UltiSnips/php.snippets
+ln -s `pwd`/UltiSnips/ ~/.vim/UltiSnips
 ```
 
 ## PHPStorm
 
 ```bash
-# cp -p .ideavimrc ~/.ideavimrc
 ln -s `pwd`/.ideavimrc ~/.ideavimrc
 ```
 
@@ -360,7 +352,6 @@ bindkey -M menuselect 'j' vi-down-line-or-history" >> ~/.zshrc
 # Aliases
 
 ```bash
-# cp -p .bash_aliases ~/.bash_aliases
 ln -s `pwd`/.bash_aliases ~/.bash_aliases
 
 ## Enable alias in Zsh

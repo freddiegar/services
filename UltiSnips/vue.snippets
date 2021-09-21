@@ -1,0 +1,25 @@
+snippet dd "Debug Dump"
+console.log($1);
+endsnippet
+
+# Required deliMate plugin
+snippet { "Print Property"
+{ $0 
+endsnippet
+
+# Required deliMate plugin
+snippet {{ "Print Property"
+{{ $0 
+endsnippet
+
+snippet import "Import Component"
+import ${1:Name} from './$0components/$1.vue';
+endsnippet
+
+snippet data "Data Component"
+data() {
+    return {
+        ${1:key}: ${2:value}
+    };
+}
+endsnippet
