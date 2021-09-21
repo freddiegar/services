@@ -269,7 +269,7 @@ bindsym $mod+Shift+s sticky toggle
 # Init terminal
 exec --no-startup-id $emulator
 # Init battery warning
-exec --no-startup-id ~/.config/i3/battery-popup -L 20 -l 10 -t 2m -m "Battery is low\!"
+exec --no-startup-id ~/.config/i3/battery-popup -L 20 -l 10 -t 2m -m "Battery is low!"
 # Init background image
 exec --no-startup-id feh --bg-fill ~/BG/background-1.jpeg
 # Init background transparency

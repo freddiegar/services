@@ -1055,6 +1055,8 @@ call plug#end()
 " Use Syntastic to diagnostics
 " PHPActor as LSP for PHP
 " CLangd as LSP for C
+" TsServer as LSP for Typescript (javascript)
+" Vetur as LSP for Vue
 " ~/.vim/coc-settings.json
 "{
 "  "coc.source.around.priority": 1,
@@ -1285,8 +1287,13 @@ let g:coc_global_extensions = [
     \ 'coc-phpactor',
     \ 'coc-clangd',
     \ 'coc-vetur',
+    \ 'coc-eslint',
+    \ 'coc-tslint',
+    \ 'coc-tsserver',
     \ 'coc-vimlsp'
     \]
+
+" coc-tailwindcss: Change class in HTML Files (blade include)
 
 " Use <Ctrl-Space> to trigger completion.
 inoremap <silent> <expr> <C-@> coc#refresh()
@@ -1757,7 +1764,7 @@ augroup AutoCommands
     endfunction
 
     function! s:sessionsave() abort
-        if isdirectory('.git')
+        if isdirectory('.git') && expand('%:h:p') !=# '/tmp'
             execute 'mksession! ' . g:session_file
 
             echomsg 'Saved ' . g:session_file . ' session.'
@@ -1830,6 +1837,15 @@ function! s:current_theme() abort
     return g:colors_name
 endfunction
 
+" Option        Behaviour
+" term          attributes in a B&W terminal
+" cterm         attributes in a color terminal
+" ctermfg       foreground color in a color terminal
+" ctermbg       background color in a color terminal
+" gui           attributes in the GUI
+" guifg         foreground color in the GUI
+" guibg         background color in the GUI
+" > Options cterm and gui accept bold and underline
 function! s:themes() abort
     " Transparency
     highlight! Normal guibg=NONE ctermbg=NONE
