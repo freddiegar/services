@@ -462,8 +462,7 @@ nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
 
 " Turn-off highlighting
 nnoremap <silent> <Enter> :if &filetype ==# 'qf'<Enter>
-            \ :unlet g:qfix_win<Enter>
-            \ :<Enter><Enter>
+            \ :call <SID>quickfix_toggle()<Enter>
             \ :else<Enter>
             \ :nohlsearch<Enter>
             \ :endif<Enter><Enter>
@@ -597,6 +596,8 @@ nnoremap <silent> <Leader>gp :echo 'Path:     ' . getcwd()<Enter>
 nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
 nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
 nnoremap <silent> <Leader>gF :echo 'Copied:   ' . <SID>get_current_function(1)<Enter>
+
+nnoremap <silent> <Leader>gcl :call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
 
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')<Enter>
             \ :echo 'Copied:   ' . @+<Enter>
@@ -1290,7 +1291,7 @@ let g:coc_global_extensions = [
     \ 'coc-eslint',
     \ 'coc-tslint',
     \ 'coc-tsserver',
-    \ 'coc-vimlsp'
+    \ 'coc-vimlsp',
     \]
 
 " coc-tailwindcss: Change class in HTML Files (blade include)
