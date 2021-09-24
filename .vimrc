@@ -1042,7 +1042,6 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'gruvbox-community/gruvbox'
 Plug 'dracula/vim'
-Plug 'arcticicestudio/nord-vim'
 Plug 'sainnhe/sonokai'
 Plug 'srcery-colors/srcery-vim'
 Plug 'ghifarit53/tokyonight-vim'
@@ -1156,12 +1155,6 @@ let g:gruvbox_transparent_bg = 1
 let g:dracula_italic = 1
 let g:dracula_bold = 0
 let g:dracula_inverse = 0
-
-" @see https://github.com/arcticicestudio/nord-vim
-let g:nord_italic = 1
-let g:nord_italic_comments = 1
-let g:nord_cursor_line_number_background = 1
-let g:nord_underline = 1
 
 " @see https://github.com/sainnhe/sonokai
 let g:sonokai_enable_italic = 1
@@ -1871,7 +1864,7 @@ function! s:current_theme() abort
     endif
 
     let l:weekDay = str2nr(strftime('%w'))
-    let l:colorschemes = ['gruvbox', 'dracula', 'nord', 'sonokai', 'srcery', 'tokyonight']
+    let l:colorschemes = ['gruvbox', 'dracula', 'sonokai', 'srcery', 'tokyonight']
     let g:colors_name = get(l:colorschemes, l:weekDay, 'gruvbox')
 
     return g:colors_name
