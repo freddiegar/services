@@ -835,12 +835,19 @@ function! s:go_line() abort
         let l:line = strlen(l:parts[1]) > 0 ? l:parts[1] : 1
 
         if filereadable(l:file) && l:line > 0
-            execute "normal \<C-w>w"
-            execute 'edit +' . l:line . ' ' . l:file
+            " Not use normal! <Bang>, it cancel printable char
+            silent execute "normal \<C-w>w"
+            silent execute 'edit +' . l:line . ' ' . l:file
         endif
 
         if (index(['php'], &filetype) >= 0)
-            execute "call <SID>quickfix_toggle()<Enter>"
+            if has('nvim')
+                " Not use normal! <Bang>, it cancel printable char
+                silent execute "normal \<C-w>w\<C-w>q"
+            else
+                " Not use normal! <Bang>, it cancel printable char
+                silent execute "normal \<C-w>w\<Enter>"
+            endif
         endif
     catch /^Nothing/
         echomsg 'Nothing to do.'
@@ -1242,7 +1249,14 @@ nnoremap <silent> <Leader>o :if isdirectory('.git')<Enter>
 
 " Vim Tests
 " https://github.com/vim-test/vim-test
-let g:test#strategy = 'asyncrun'
+let g:test_strategy = has('nvim') ? 'neovim' : 'vimterminal'
+let g:test#echo_command = 0
+let g:test#neovim#start_normal = 1
+let g:test#strategy = {
+    \ 'nearest': g:test_strategy,
+    \ 'file':    g:test_strategy,
+    \ 'suite':   g:test_strategy,
+\}
 let g:test#php#phpunit#options = {
     \ 'all': '--no-coverage --stop-on-failure',
 \}
@@ -1254,7 +1268,6 @@ nnoremap <silent> <Leader>tg :TestVisit<Enter>
 nnoremap <silent> <Leader>tT :TestNearest --testdox -vvv<Enter>
 nnoremap <silent> <Leader>tF :TestFile --testdox -vvv<Enter>
 nnoremap <silent> <Leader>tS :TestSuite --testdox -vvv<Enter>
-nnoremap <silent> <Leader>tr :call <SID>quickfix_toggle()<Enter>
 
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
