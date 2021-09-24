@@ -684,18 +684,29 @@ endfunction
 function! s:delete_method() abort
     let l:saved_unnamed_register = @@
 
-    execute "normal! vaB\"_d-\"zyy+$"
+    silent execute "normal! vaB\"_d-\"zyy+$"
 
-    if match(@@, 'function ') > 0
-        execute "normal! \"_d-"
+    if match(@@, 'function ') >= 0
+        silent execute "normal! \"_d-"
     endif
 
-    let l:line = getline('.')
+    let l:line = trim(getline('.'))
 
     if l:line ==# '}'
-        execute "normal! -\"_dd"
+        " Last method
+        silent execute "normal! -\"_dd"
     elseif l:line ==# ''
-        execute "normal! \"_dd"
+        " Empty line
+        silent execute "normal! \"_dd"
+    endif
+
+    " Has docs
+    if trim(getline('.')) ==# '*/' || trim(getline(line('.') - 1)) ==# '*/'
+        let l:bsearch = getreg('/')
+
+        silent execute "normal! ?\\/\\*\rd/\\*\\/\r\"_dd"
+
+        silent call setreg('/', l:bsearch)
     endif
 
     let @@ = l:saved_unnamed_register
