@@ -271,18 +271,18 @@ let g:currentmode = {
 function! ChangeStatuslineColor() abort
     try
         if (mode() =~# '\v(n|no|ni|c)')
-            execute "highlight! link StatusLine LineNr"
+            silent execute "highlight! link StatusLine LineNr"
         elseif (mode() =~# '\v^i')
-            execute "highlight! StatusLine cterm=reverse guifg=#84A598 guibg=NONE"
+            silent execute "highlight! StatusLine cterm=reverse guifg=#84A598 guibg=NONE"
         elseif (mode() =~# '\v^R')
-            execute "highlight! StatusLine cterm=reverse guifg=#8FBF7F guibg=NONE"
+            silent execute "highlight! StatusLine cterm=reverse guifg=#8FBF7F guibg=NONE"
         elseif (mode() =~# '\v(v|V|t|!)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
-            execute "highlight! StatusLine cterm=reverse guifg=#FC802D guibg=NONE"
+            silent execute "highlight! StatusLine cterm=reverse guifg=#FC802D guibg=NONE"
         elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
-            execute "highlight! StatusLine cterm=reverse guifg=#D3869B guibg=NONE"
+            silent execute "highlight! StatusLine cterm=reverse guifg=#D3869B guibg=NONE"
         else
             echomsg 'Mode no color: ' . mode() . '.'
-            execute "highlight! StatusLine cterm=reverse guifg=#FB4934 guibg=NONE"
+            silent execute "highlight! StatusLine cterm=reverse guifg=#FB4934 guibg=NONE"
         endif
 
         " Apply changes quikly
@@ -624,17 +624,17 @@ function! s:delete_call(flags, type) abort
     let l:saved_unnamed_register = @@
 
     if a:type ==# 'A' && !<SID>check_backspaces()
-        execute "normal! b"
+        silent execute "normal! b"
     endif
 
     silent call <SID>find_function(a:flags)
 
-    execute "normal! \"_dyi)\"_da)P"
+    silent execute "normal! \"_dyi)\"_da)P"
 
     if a:type ==# 'A' && !<SID>check_backspaces()
-        execute "normal! 0f("
+        silent execute "normal! 0f("
     else
-        execute "normal! F("
+        silent execute "normal! F("
     endif
 
     let @@ = l:saved_unnamed_register
@@ -660,7 +660,9 @@ function! s:find_function (flags, ...)
 
     if (l:visual)
         let l:start = searchpos(l:pattern, l:fcursor . l:fbackward, line('.'))
-        execute "normal! v"
+
+        silent execute "normal! v"
+
         let l:end = searchpos(l:pattern, 'ce', line('.'))
 
         return [l:start, l:end]
@@ -722,10 +724,12 @@ function! s:find_filter(type)
     if a:type ==# 'w'
         let l:filter = expand('<cword>')
     elseif a:type ==# 'v'
-        execute "normal! `<v`>\"zy"
+        silent execute "normal! `<v`>\"zy"
+
         let l:filter = @@
     elseif a:type ==# 'char'
-        execute "normal! `[v`]\"zy"
+        silent execute "normal! `[v`]\"zy"
+
         let l:filter = @@
     endif
 
@@ -1377,7 +1381,7 @@ function! s:show_documentation() abort
 
     if index(['vim', 'help'], &filetype) >= 0
         try
-            execute 'help ' . l:word
+            silent execute 'help ' . l:word
         catch
             echohl WarningMsg
             echomsg 'Not found: ' . l:word . '.'
@@ -1386,7 +1390,7 @@ function! s:show_documentation() abort
     elseif coc#rpc#ready()
         call CocActionAsync('doHover')
     else
-        execute '!' . &keywordprg . ' ' . l:word
+        silent execute '!' . &keywordprg . ' ' . l:word
     endif
 endfunction
 
@@ -1519,14 +1523,14 @@ function! s:split() abort
     if match(getline('.'), ' ? ') > 0
                 \ && match(getline('.'), ' : ') > 0
                 \ && (match(getline('.'), ';') > 0 || match(getline('.'), ',') > 0)
-        execute "normal! _/ ? \ri\r\e/ : \r\"_xi\r\e"
+        silent execute "normal! _/ ? \ri\r\e/ : \r\"_xi\r\e"
     " Is array?
     elseif match(getline('.'), '[') > 0
                 \ && match(getline('.'), ',') > 0
                 \ && match(getline('.'), ']') > 0
                 \ && match(getline('.'), ';') > 0
                 \ && match(getline('.'), '[') + 1 != match(getline('.'), ']')
-        execute 'normal! _f[vi["zy'
+        silent execute 'normal! _f[vi["zy'
 
         let l:arguments_list = split(@@, ',')
 
@@ -1534,12 +1538,12 @@ function! s:split() abort
             let l:command_string .= "\t" . trim(l:argument) . ",\r"
         endfor
 
-        execute "normal! \"_di[i\r" . l:command_string . "\e"
+        silent execute "normal! \"_di[i\r" . l:command_string . "\e"
     " Are arguments?
     elseif match(getline('.'), '(') > 0
                 \ && match(getline('.'), ',') > 0
                 \ && match(getline('.'), ')') > 0
-        execute 'normal! _f(vi("zy'
+        silent execute 'normal! _f(vi("zy'
 
         let l:arguments_list = split(@@, ',')
 
@@ -1548,12 +1552,12 @@ function! s:split() abort
             silent call remove(l:arguments_list, 0)
         endfor
 
-        execute "normal! \"_di(i\r" . l:command_string . "\e"
+        silent execute "normal! \"_di(i\r" . l:command_string . "\e"
 
-        execute 'normal! jlv"zy'
+        silent execute 'normal! jlv"zy'
 
         if @@ == '{'
-            execute 'normal! kJ'
+            silent execute 'normal! kJ'
         endif
     " Is comma list?
     elseif match(getline('.'), ',') > 0
@@ -1564,7 +1568,7 @@ function! s:split() abort
             silent call remove(l:arguments_list, 0)
         endfor
 
-        execute "normal! \"_ddi" . l:command_string . "\e"
+        silent execute "normal! \"_ddi" . l:command_string . "\e"
     else
         echomsg 'Nothing to do.'
     endif
@@ -1603,18 +1607,18 @@ function! s:notes() abort
     if bufname('%') ==# l:filename
         silent update!
     else
-        execute 'edit ' . l:filename
+        silent execute 'edit ' . l:filename
     endif
 
-    execute ':%g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
+    silent execute ':%g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
 
     if !filereadable(l:filename) || len(l:matches) == 0
-        execute "normal Go\r" . l:header . "\r\e"
+        silent execute "normal! Go\r" . l:header . "\r\e"
     else
-        execute "normal Go\e"
+        silent execute "normal! Go\e"
     endif
 
-    execute "normal Gzto== " . strftime('%H:%M:%S') . " ==\r- \e"
+    silent execute "normal! Gzto== " . strftime('%H:%M:%S') . " ==\r- \e"
 
     return 0
 endfunction
@@ -1745,7 +1749,7 @@ augroup AutoCommands
     function! s:jsonfixer() abort
         silent update!
 
-        execute ':%!python3 -m json.tool'
+        silent execute ':%!python3 -m json.tool'
     endfunction
 
     " Customization
@@ -1790,7 +1794,7 @@ augroup AutoCommands
 
     function! s:sessionload() abort
         if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
-            execute 'source ' . g:session_file
+            silent execute 'source ' . g:session_file
 
             echomsg 'Loaded ' . g:session_file . ' session.'
         elseif !argc() && isdirectory('.git')
@@ -1800,7 +1804,7 @@ augroup AutoCommands
 
     function! s:sessionsave() abort
         if isdirectory('.git') && expand('%:h:p') !=# '/tmp'
-            execute 'mksession! ' . g:session_file
+            silent execute 'mksession! ' . g:session_file
 
             echomsg 'Saved ' . g:session_file . ' session.'
         endif
@@ -1957,7 +1961,7 @@ augroup END
 set background=dark
 
 try
-    execute 'colorscheme ' . <SID>current_theme()
+    silent execute 'colorscheme ' . <SID>current_theme()
 catch /^Vim\%((\a\+)\)\=:E185/
     colorscheme evening
 endtry
