@@ -738,34 +738,42 @@ function! s:append_char(type) abort
     let l:saved_unnamed_register = @@
     let l:repeatable = 'AppendSemicolon'
 
-    execute "normal! ma$v\"zy"
+    silent execute "normal! ma$v\"zy"
     let l:lastchar = @@
 
     if a:type ==# 'd'
-        execute "normal! $\"_x\e"
+        silent execute "normal! $\"_x\e"
         let l:repeatable = 'DeleteFinal'
     elseif a:type ==# 'O'
-        execute "normal! O\e"
+        silent execute "normal! O\e"
         let l:repeatable = 'PrependEnter'
     elseif a:type ==# 'o'
-        execute "normal! o\e"
+        silent execute "normal! o\e"
         let l:repeatable = 'AppendEnter'
     elseif a:type ==# 'i'
-        let l:bsearch = getreg('?')
+        let l:bsearch = getreg('/')
 
-        silent execute "normal! ?^    {\ro$this->markTestIncomplete();\e"
+        silent execute "normal! ?^    {\rj"
+
+        if match(getline('.'), '->mark') < 0
+            silent execute "normal! O$this->markTestIncomplete();\e"
+        endif
 
         silent call setreg('/', l:bsearch)
         let l:repeatable = 'AddIncompleteMark'
     elseif a:type ==# 'I'
-        let l:bsearch = getreg('?')
+        let l:bsearch = getreg('/')
 
-        silent execute "normal! ?^    {\rj\"_dd"
+        silent execute "normal! ?^    {\rj"
+
+        if match(getline('.'), '->mark') > 0
+            silent execute "normal! \"_dd"
+        endif
 
         silent call setreg('/', l:bsearch)
         let l:repeatable = 'DropIncompleteMark'
     elseif a:type ==# '{'
-        let l:bsearch = getreg('?')
+        let l:bsearch = getreg('/')
 
         silent execute "normal! ?^    {\rkO\e"
 
@@ -779,21 +787,21 @@ function! s:append_char(type) abort
         silent call setreg('/', l:fsearch)
         let l:repeatable = 'AppendSeparator'
     elseif l:lastchar == ';'
-        execute "normal! \"_xA,\e"
+        silent execute "normal! \"_xA,\e"
     elseif l:lastchar == ','
-        execute "normal! \"_xA;\e"
+        silent execute "normal! \"_xA;\e"
     elseif l:lastchar == ' '
-        execute "normal! g_l\"_D\e"
+        silent execute "normal! g_l\"_D\e"
     elseif index(['}'], l:lastchar) >= 0 && index(['json'], &filetype) >= 0
-        execute "normal! A,\e"
+        silent execute "normal! A,\e"
     elseif index(['"', "'", ')', ']'], l:lastchar) >= 0 || match(l:lastchar, "\a") || match(l:lastchar, "\d")
-        execute "normal! A;\e"
+        silent execute "normal! A;\e"
     else
         echomsg 'Nothing to do.'
         let l:repeatable = ''
     endif
 
-    execute "normal! `a"
+    silent execute "normal! `a"
 
     let @@ = l:saved_unnamed_register
 
