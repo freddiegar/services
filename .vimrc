@@ -674,6 +674,7 @@ function! s:execute_line() abort
 
     let l:line = getline('.')
 
+    " Not add silent option, odd behaviour
     execute ":!" .l:line
 
     let @@ = l:saved_unnamed_register
@@ -953,8 +954,10 @@ endfun
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
+    let l:cbuffer = bufnr('%')
 
     if a:incr == 1
+                \ && l:cbuffer != l:abuffer
                 \ && buflisted(l:abuffer) == 1
                 \ && getbufvar(l:abuffer, '&filetype') != 'help'
         try
@@ -968,7 +971,6 @@ function! s:cycling_buffers(incr) abort
         return
     endif
 
-    let l:cbuffer = bufnr('%')
     let l:lbuffer = bufnr('$')
     let l:nbuffer = l:cbuffer + a:incr
 
@@ -976,7 +978,7 @@ function! s:cycling_buffers(incr) abort
         if l:nbuffer != 0
                     \ && buflisted(l:nbuffer) == 1
                     \ && getbufvar(l:nbuffer, '&filetype') != 'help'
-            execute ':buffer ' . l:nbuffer
+            silent execute ':buffer ' . l:nbuffer
 
             break
         else
@@ -990,9 +992,9 @@ function! s:cycling_buffers(incr) abort
 
             if l:nbuffer == l:cbuffer
                 if isdirectory('.git')
-                    execute ':GFiles'
+                    silent execute ':GFiles'
                 else
-                    execute ':Files'
+                    silent execute ':Files'
                 endif
 
                 break
