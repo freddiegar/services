@@ -1143,32 +1143,30 @@ if has('termguicolors')
 endif
 
 " @see https://github.com/gruvbox-community/gruvbox
-let g:gruvbox_italic = 1
-let g:gruvbox_italicize_comments = 1
+let g:gruvbox_italic = 0
+let g:gruvbox_italicize_comments = 0
 let g:gruvbox_bold = 0
 let g:gruvbox_invert_selection = 0
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_transparent_bg = 1
 
 " @see https://github.com/sainnhe/sonokai
-let g:sonokai_enable_italic = 1
+let g:sonokai_enable_italic = 0
 let g:sonokai_disable_italic_comment = 0
 let g:sonokai_better_performance = 1
 let g:sonokai_transparent_background = 1
-let g:sonokai_styles = ['default', 'atlantis', 'shusia', 'maia', 'andromeda']
-let g:sonokai_style = get(g:sonokai_styles, (strftime('%M') * strftime('%S')) % len(g:sonokai_styles))
 
 " @see https://github.com/srcery-colors/srcery-vim
-let g:srcery_italic = 1
-let g:srcery_italic_types = 1
+let g:srcery_italic = 0
+let g:srcery_italic_types = 0
 let g:srcery_bold = 0
 let g:srcery_inverse = 0
 let g:srcery_bg_passthrough = 1
 
 " @see https://github.com/ghifarit53/tokyonight-vim
 let g:tokyonight_style = 'night'
-let g:tokyonight_enable_italic = 1
-let g:tokyonight_disable_italic_comment = 0
+let g:tokyonight_enable_italic = 0
+let g:tokyonight_disable_italic_comment = 1
 let g:tokyonight_transparent_background = 1
 
 " DelitMate
