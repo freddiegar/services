@@ -1041,7 +1041,6 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'gruvbox-community/gruvbox'
-Plug 'dracula/vim'
 Plug 'sainnhe/sonokai'
 Plug 'srcery-colors/srcery-vim'
 Plug 'ghifarit53/tokyonight-vim'
@@ -1150,11 +1149,6 @@ let g:gruvbox_bold = 0
 let g:gruvbox_invert_selection = 0
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_transparent_bg = 1
-
-" @see https://github.com/dracula/vim
-let g:dracula_italic = 1
-let g:dracula_bold = 0
-let g:dracula_inverse = 0
 
 " @see https://github.com/sainnhe/sonokai
 let g:sonokai_enable_italic = 1
@@ -1931,11 +1925,6 @@ function! s:themes() abort
     highlight! link Sneak Cursor
     highlight! link SneakLabel Cursor
     highlight! link SneakScope DiffAdd
-
-    if exists('g:colors_name') && g:colors_name ==# 'dracula'
-        " Vars as $user
-        highlight! link Identifier DraculaGreen
-    endif
 endfunction
 
 " @see https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
