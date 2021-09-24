@@ -198,7 +198,7 @@ set textwidth=120                                               " Breakline in I
 set synmaxcol=200                                               " Only highlight the first N columns. Avoid very slow redrawing (default: 3000)
 " set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option
 " set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option
-set updatetime=300                                              " Default 4s is a lot time
+set updatetime=50                                               " Default 4s is a lot time
 set diffopt+=iwhite                                             " Ignore white spaces in diff mode
 set guicursor=                                                  " Always cursor has same block: block
 
@@ -241,10 +241,11 @@ let g:netrw_banner = 0                                          " Hide help bann
 let g:netrw_keepdir = 0                                         " Keep current directory and browsing directory synced
 let g:netrw_preview = 1                                         " Preview in vertical mode. (default: horizontal)
 let g:netrw_browse_split = 4                                    " Open file in preview window as P. (default: 0 = same window)
-" let g:netrw_winsize = 20                                        " Keep same size after open file
+" let g:netrw_winsize = 25                                        " Keep same size after open file
 let g:netrw_liststyle = 3                                       " Show folders and files always. Cycling: i
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy recursive dirs
-let g:netrw_list_hide='^\.git\=/\=$,^\.\=/\=$'                  " Hide some extensions: git and dotfiles
+let g:netrw_localrmdir = 'rm -r'                                " Remove recursive dirs
+let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles
 
 " Statusline
 let g:currentmode = {
@@ -1631,8 +1632,8 @@ augroup AutoCommands
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
-         \ if &filetype != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
-         \   execute "normal! g`\"" |
+         \ if &filetype !=# 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
+         \   silent execute "normal! g`\"" |
          \ endif
 
     " Ominifunctions
