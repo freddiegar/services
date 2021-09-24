@@ -1858,7 +1858,7 @@ function! s:current_theme() abort
     endif
 
     let l:weekDay = str2nr(strftime('%w'))
-    let l:colorschemes = ['gruvbox', 'dracula', 'sonokai', 'srcery', 'tokyonight']
+    let l:colorschemes = ['gruvbox', 'sonokai', 'srcery', 'tokyonight']
     let g:colors_name = get(l:colorschemes, l:weekDay, 'gruvbox')
 
     return g:colors_name
