@@ -278,9 +278,9 @@ exec --no-startup-id xcompmgr -c -C -o.1 &
 # Set default browser
 exec_always --no-startup-id xdg-settings set default-web-browser firefox.desktop
 
-# Disable Caps Lock
+# Disable Caps Lock && Repeat Keys
 # @see /usr/share/X11/xkb/rules/base.lst
-exec_always --no-startup-id "sleep 1; setxkbmap -option caps:none"
+exec_always --no-startup-id "sleep 1; setxkbmap -option caps:none; xset r off"
 # Disable Caps Lock to Lock
 # exec_always --no-startup-id "sleep 1; setxkbmap -option caps:escape"
 
