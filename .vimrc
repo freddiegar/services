@@ -253,10 +253,10 @@ let g:currentmode = {
     \ 'i'     : 'INSERT   ',
     \ 'ic'    : 'INSERT   ',
     \ 'ix'    : 'INSERT   ',
-    \ 'n'     : 'NORMAL   ',
+    \ 'n'     : '         ',
     \ 'multi' : 'MULTIPLE ',
-    \ 'ni'    : 'NORMAL   ',
-    \ 'no'    : 'NORMAL   ',
+    \ 'ni'    : '         ',
+    \ 'no'    : '         ',
     \ 'R'     : 'REPLACE  ',
     \ 'Rv'    : 'R-VIRTUAL',
     \ 's'     : 'SELECT   ',
@@ -343,11 +343,11 @@ set statusline+=%=                                              " New group
 set statusline+=\%m                                             " Modified flag
 set statusline+=\%r                                             " Readonly flag
 set statusline+=\ %3{&filetype}
-set statusline+=\ #:%3b                                         " ASCII representation
-set statusline+=\ l:%3l/%3L\ c:%3c                              " Line of Lines and Column
+" set statusline+=\ #:%3b                                         " ASCII representation
+" set statusline+=\ l:%3l/%3L\ c:%3c                              " Line of Lines and Column
 set statusline+=\%<                                             " Cut long statusline here
 set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\ @\ %{strftime(\"%H:%M\")}                     " Date: HH:MM
+" set statusline+=\ @\ %{strftime(\"%H:%M\")}                     " Date: HH:MM
 
 " RAW Modes Fixed
 " @see https://github.com/vim/vim/issues/5200
@@ -1053,14 +1053,14 @@ Plug 'tpope/vim-unimpaired'                                     " Extra mappings
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa
 " Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as object: {operator}ii, {operator}ai
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
-Plug 'machakann/vim-swap'                                       " Swag args: g>, g<, gs (interactive)
+Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 " Plug 'luochen1990/rainbow'                                      " Highligth parenthesis (, [, { match
 Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from vim: git add, docker start, etc
-Plug 'airblade/vim-gitgutter'                                   " Show changes in git
+Plug 'airblade/vim-gitgutter'                                   " Show changes in git repository
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
 Plug 'junegunn/fzf.vim'                                         " using a fuzzy finder
@@ -1897,6 +1897,7 @@ function! s:themes() abort
     highlight! link GitGutterAdd SignColumn
     highlight! link GitGutterChange SignColumn
     highlight! link GitGutterDelete SignColumn
+    highlight! link GitGutterChangeDelete SignColumn
 
     " Syntastic sign with same color of theme
     highlight! link SyntasticErrorSign SignColumn
