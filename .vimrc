@@ -704,8 +704,8 @@ function! s:delete_method() abort
         silent execute "normal! \"_dd"
     endif
 
-    " Has docs
-    if trim(getline('.')) ==# '*/' || trim(getline(line('.') - 1)) ==# '*/'
+    " Has docs (inline too)
+    if trim(getline('.'))[-2:] ==# '*/' || trim(getline(line('.') - 1))[-2:] ==# '*/'
         let l:bsearch = getreg('/')
 
         silent execute "normal! ?\\/\\*\rd/\\*\\/\r\"_dd"
@@ -806,7 +806,7 @@ function! s:append_char(type) abort
         let l:repeatable = ''
     endif
 
-    silent execute "normal! `a"
+    execute "normal! g`a"
 
     let @@ = l:saved_unnamed_register
 
