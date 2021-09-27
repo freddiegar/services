@@ -253,10 +253,10 @@ let g:currentmode = {
     \ 'i'     : 'INSERT   ',
     \ 'ic'    : 'INSERT   ',
     \ 'ix'    : 'INSERT   ',
-    \ 'n'     : '         ',
+    \ 'n'     : 'NORMAL   ',
     \ 'multi' : 'MULTIPLE ',
-    \ 'ni'    : '         ',
-    \ 'no'    : '         ',
+    \ 'ni'    : 'NORMAL   ',
+    \ 'no'    : 'NORMAL   ',
     \ 'R'     : 'REPLACE  ',
     \ 'Rv'    : 'R-VIRTUAL',
     \ 's'     : 'SELECT   ',
@@ -347,6 +347,7 @@ set statusline+=\ %3{&filetype}
 " set statusline+=\ l:%3l/%3L\ c:%3c                              " Line of Lines and Column
 set statusline+=\%<                                             " Cut long statusline here
 set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\                                               " Extra space
 " set statusline+=\ @\ %{strftime(\"%H:%M\")}                     " Date: HH:MM
 
 " RAW Modes Fixed
@@ -1839,7 +1840,6 @@ function! s:get_hlinfo() abort
     echo 'Highligth: ' . join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ',')
                 \ . ' -> ' . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
                 \ . ' -> ' . g:colors_name
-                \ . (g:colors_name ==# 'sonokai' ? '[' . g:sonokai_style . ']' : '')
 endfunction
 
 " @see :highlight syntax
