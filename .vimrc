@@ -134,6 +134,10 @@ set incsearch                                                   " On TOP return 
 set ignorecase                                                  " Case-insensitive in search
 set smartcase                                                   " Case-sensitive if keyword contains al least one uppercasa char
 
+if has('nvim')
+    set inccommand=nosplit                                      " Preview substitute command
+endif
+
 if executable('rg')
     " Replace built-in grep's vim, options:
     " @see https://github.com/BurntSushi/ripgrep
