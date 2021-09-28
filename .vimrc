@@ -1050,14 +1050,10 @@ Plug 'gruvbox-community/gruvbox'
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
-Plug 'tpope/vim-abolish'                                        " CoeRcion: cr{option}: (s)nake, (c)amel, (t)itle, etc
-Plug 'tpope/vim-unimpaired'                                     " Extra mappings: [q :cprevious, ]q :cnext, [Q :cfirst, ]Q :clast, etc
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa
-" Plug 'michaeljsmith/vim-indent-object'                          " Indent deep as object: {operator}ii, {operator}ai
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
-" Plug 'luochen1990/rainbow'                                      " Highligth parenthesis (, [, { match
 Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
@@ -1070,11 +1066,10 @@ Plug 'SirVer/ultisnips'                                         " Performance us
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 
-" Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
+Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar for PHP in on-the-fly
 Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
-" Plug 'vim-vdebug/vdebug', {'for': 'php'}
 Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'} " LSP and refactor tool
 
 Plug 'vim-scripts/autotags', {'for': 'c'}
@@ -1256,34 +1251,6 @@ let g:syntastic_error_symbol = 'E'
 let g:syntastic_warning_symbol = 'W'
 let g:syntastic_style_error_symbol = 'S'
 let g:syntastic_style_warning_symbol = 's'
-
-" Vim Debug
-" @see vim-vdebug/vdebug
-" let g:vdebug_keymap = {
-" \    'run' : '<F5>',
-" \    'step_into' : '<F7>',
-" \    'step_over' : '<F8>',
-" \    'step_out' : '<S-F8>',
-" \    'close' : '<S-F5>',
-" \    'detach' : '<F10>',
-" \    'set_breakpoint' : '<C-F8>',
-" \    'eval_visual' : '<Leader>xe'
-" \}
-
-" if !exists('g:vdebug_options')
-"     let g:vdebug_options = {}
-" endif
-
-" let g:vdebug_options = {
-" \    'port' : 9000,
-" \    'timeout' : 10,
-" \    'on_close' : 'detach',
-" \    'break_on_open' : 0,
-" \    'watch_window_style' : 'compact',
-" \    'simplified_status' : 1,
-" \    'continuous_mode' : 1,
-" \    'ide_key' : 'PHPSTORM'
-" \}
 
 " COC Completion
 " @see https://github.com/neoclide/coc.nvim
@@ -1471,10 +1438,6 @@ function! GitGutterStatuslineFlag() abort
 
     return len(l:gitstatus) > 0 ? printf('%s', trim(l:gitstatus)) : ''
 endfunction
-
-" Rainbow
-" @see https://github.com/luochen1990/rainbow
-let g:rainbow_active = 1
 
 " Tagalong
 " @see https://github.com/AndrewRadev/tagalong.vim
