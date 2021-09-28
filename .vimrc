@@ -1047,7 +1047,6 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'gruvbox-community/gruvbox'
 Plug 'sainnhe/sonokai'
-Plug 'srcery-colors/srcery-vim'
 Plug 'ghifarit53/tokyonight-vim'
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
@@ -1160,13 +1159,6 @@ let g:sonokai_enable_italic = 0
 let g:sonokai_disable_italic_comment = 0
 let g:sonokai_better_performance = 1
 let g:sonokai_transparent_background = 1
-
-" @see https://github.com/srcery-colors/srcery-vim
-let g:srcery_italic = 0
-let g:srcery_italic_types = 0
-let g:srcery_bold = 0
-let g:srcery_inverse = 0
-let g:srcery_bg_passthrough = 1
 
 " @see https://github.com/ghifarit53/tokyonight-vim
 let g:tokyonight_style = 'night'
@@ -1860,7 +1852,7 @@ function! s:current_theme() abort
     endif
 
     let l:weekDay = str2nr(strftime('%w'))
-    let l:colorschemes = ['gruvbox', 'sonokai', 'srcery', 'tokyonight']
+    let l:colorschemes = ['gruvbox', 'sonokai', 'tokyonight']
     let g:colors_name = get(l:colorschemes, l:weekDay, 'gruvbox')
 
     return g:colors_name
@@ -1908,11 +1900,6 @@ function! s:themes() abort
     highlight! link SyntasticWarningSign SignColumn
     highlight! link SyntasticStyleErrorSign SignColumn
     highlight! link SyntasticStyleWarningSign SignColumn
-
-    " Popup menu readable always
-    " highlight! PmenuThumb ctermbg=188 guibg=#DCDFE4
-    " highlight! Pmenu ctermfg=238 ctermbg=188 guifg=#444444 guibg=#DCDFE4
-    " highlight! PmenuSel ctermfg=188 ctermbg=238 guifg=#DCDFE4 guibg=#444444
 
     " Sintastic line highlight
     highlight! clear ErrorText
