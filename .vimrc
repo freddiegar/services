@@ -1045,7 +1045,7 @@ endif
 " @see https://github.com/junegunn/vim-plug
 call plug#begin('~/.vim/plugged')
 
-Plug 'gruvbox-community/gruvbox'
+Plug 'freddiegar/miningbox.vim'
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
@@ -1138,14 +1138,6 @@ if has('termguicolors')
     set t_Co=256
     set termguicolors
 endif
-
-" @see https://github.com/gruvbox-community/gruvbox
-let g:gruvbox_italic = 0
-let g:gruvbox_italicize_comments = 0
-let g:gruvbox_bold = 0
-let g:gruvbox_invert_selection = 0
-let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_transparent_bg = 1
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -1787,103 +1779,10 @@ function! s:get_hlinfo() abort
                 \ . ' -> ' . g:colors_name
 endfunction
 
-" @see :highlight syntax
-" @see :highlight <GroupName>
-" @see :highlight clear <GroupName>
-" @see :verbose highlight <GroupName>
-" @see :source $VIMRUNTIME/syntax/hitest.vim
-" @see https://commons.wikimedia.org/wiki/File:Xterm_256color_chart.svg
-" @see https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax/
-" @see https://terminal.sexy/
-function! s:current_theme() abort
-    if exists('g:colors_name')
-        return g:colors_name
-    endif
-
-    let l:weekDay = str2nr(strftime('%w'))
-    let l:colorschemes = ['gruvbox']
-    let g:colors_name = get(l:colorschemes, l:weekDay, 'gruvbox')
-
-    return g:colors_name
-endfunction
-
-" Option        Behaviour
-" term          attributes in a B&W terminal
-" cterm         attributes in a color terminal
-" ctermfg       foreground color in a color terminal
-" ctermbg       background color in a color terminal
-" gui           attributes in the GUI
-" guifg         foreground color in the GUI
-" guibg         background color in the GUI
-" > Options cterm and gui accept bold and underline
-function! s:themes() abort
-    " Transparency
-    highlight! Normal guibg=NONE ctermbg=NONE
-    highlight! LineNr guibg=NONE ctermbg=NONE
-
-    " SignColumn and StatusLine with same color of theme
-    highlight! link SignColumn LineNr
-    highlight! link StatusLine LineNr
-    highlight! link EndOfBuffer LineNr
-
-    " Goyo (write action in zen mode lost settings)
-    highlight! link VertSplit LineNr
-    highlight! StatusLineNC guibg=NONE ctermbg=NONE
-
-    " Extend cursorline format to cursorline number
-    highlight! link CursorLineNr CursorLine
-    highlight! CursorLineNr guibg=NONE ctermbg=NONE
-
-    " Always use same color in list chars
-    highlight! NonText ctermfg=238 guifg=#2E2E2E
-    highlight! SpecialKey ctermfg=238 guifg=#2E2E2E
-
-    " GitGutter sign with same color of theme
-    highlight! link GitGutterAdd SignColumn
-    highlight! link GitGutterChange SignColumn
-    highlight! link GitGutterDelete SignColumn
-    highlight! link GitGutterChangeDelete SignColumn
-
-    " Syntastic sign with same color of theme
-    highlight! link SyntasticErrorSign SignColumn
-    highlight! link SyntasticWarningSign SignColumn
-    highlight! link SyntasticStyleErrorSign SignColumn
-    highlight! link SyntasticStyleWarningSign SignColumn
-
-    " Sintastic line highlight
-    highlight! clear ErrorText
-    highlight! clear ErrorLine
-    highlight! ErrorLine guifg=NONE ctermbg=52 guibg=#55393D ctermbg=NONE
-    highlight! link SyntasticStyleErrorLine ErrorLine
-    highlight! SyntasticStyleWarningLine guifg=NONE ctermbg=236 guibg=#534C38 ctermbg=NONE
-
-    " Custom color for statusline
-    highlight! User1 guifg=#FF2222 ctermfg=1
-
-    " Snake cursor highlight
-    highlight! link Sneak Cursor
-    highlight! link SneakLabel Cursor
-    highlight! link SneakScope DiffAdd
-endfunction
-
-" @see https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
-augroup ThemeColors
-    autocmd!
-
-    " Initial load colorscheme
-    autocmd ColorSchemePre * call <SID>current_theme()
-
-    " After change colorscheme using command
-    autocmd ColorScheme * call <SID>themes()
-
-    " Goyo restore colorscheme
-    autocmd User GoyoLeave nested call <SID>themes()
-augroup END
-
 set background=dark
 
 try
-    silent execute 'colorscheme ' . <SID>current_theme()
+    colorscheme miningbox
 catch /^Vim\%((\a\+)\)\=:E185/
     colorscheme evening
 endtry
