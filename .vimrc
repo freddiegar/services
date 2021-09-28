@@ -1046,7 +1046,6 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'gruvbox-community/gruvbox'
-Plug 'ghifarit53/tokyonight-vim'
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
@@ -1152,12 +1151,6 @@ let g:gruvbox_bold = 0
 let g:gruvbox_invert_selection = 0
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_transparent_bg = 1
-
-" @see https://github.com/ghifarit53/tokyonight-vim
-let g:tokyonight_style = 'night'
-let g:tokyonight_enable_italic = 0
-let g:tokyonight_disable_italic_comment = 1
-let g:tokyonight_transparent_background = 1
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -1845,7 +1838,7 @@ function! s:current_theme() abort
     endif
 
     let l:weekDay = str2nr(strftime('%w'))
-    let l:colorschemes = ['gruvbox', 'tokyonight']
+    let l:colorschemes = ['gruvbox']
     let g:colors_name = get(l:colorschemes, l:weekDay, 'gruvbox')
 
     return g:colors_name
