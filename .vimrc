@@ -1046,7 +1046,6 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'gruvbox-community/gruvbox'
-Plug 'sainnhe/sonokai'
 Plug 'ghifarit53/tokyonight-vim'
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
@@ -1153,12 +1152,6 @@ let g:gruvbox_bold = 0
 let g:gruvbox_invert_selection = 0
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_transparent_bg = 1
-
-" @see https://github.com/sainnhe/sonokai
-let g:sonokai_enable_italic = 0
-let g:sonokai_disable_italic_comment = 0
-let g:sonokai_better_performance = 1
-let g:sonokai_transparent_background = 1
 
 " @see https://github.com/ghifarit53/tokyonight-vim
 let g:tokyonight_style = 'night'
@@ -1852,7 +1845,7 @@ function! s:current_theme() abort
     endif
 
     let l:weekDay = str2nr(strftime('%w'))
-    let l:colorschemes = ['gruvbox', 'sonokai', 'tokyonight']
+    let l:colorschemes = ['gruvbox', 'tokyonight']
     let g:colors_name = get(l:colorschemes, l:weekDay, 'gruvbox')
 
     return g:colors_name
