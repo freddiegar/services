@@ -788,8 +788,19 @@ function! s:append_char(type) abort
         let l:repeatable = 'DropIncompleteMark'
     elseif a:type ==# '{'
         let l:bsearch = getreg('/')
+        let l:changerow = -(1 + &scrolloff)
 
-        silent execute "normal! ?^    {\rkO\e"
+        silent execute "normal! ?^    {\rk"
+
+        if getline(line('.') - 1)[-2:] ==# '*/'
+            " Has docs (inline too)
+            silent execute "normal! ?^    /\\*\r"
+        elseif trim(getline(line('.') - 1))[0:1] ==# '//'
+            " Has comments
+            silent execute 'normal! k'
+        endif
+
+        silent execute "normal! O\e"
 
         silent call setreg('/', l:bsearch)
         let l:repeatable = 'PrependSeparator'
@@ -999,7 +1010,7 @@ function! s:cycling_buffers(incr) abort
                 \ && buflisted(l:abuffer) == 1
                 \ && getbufvar(l:abuffer, '&filetype') != 'help'
         try
-            execute "normal! \<C-^>g`\""
+            silent execute "normal! \<C-^>g`\""
         catch /^Vim\%((\a\+)\)\=:E20/
             echomsg 'Last position not found.'
         catch /^Vim\%((\a\+)\)\=:E211/
@@ -1684,7 +1695,9 @@ augroup AutoCommands
     autocmd FileType json nnoremap <silent> <buffer><F1> :call <SID>jsonfixer()<Enter>
 
     function! s:jsonfixer() abort
-        silent update!
+        if bufname('%') !=# ''
+            silent update!
+        endif
 
         silent execute ':%!python3 -m json.tool'
     endfunction
