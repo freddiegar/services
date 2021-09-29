@@ -747,6 +747,8 @@ endfunction
 function! s:append_char(type) abort
     let l:saved_unnamed_register = @@
     let l:repeatable = 'AppendSemicolon'
+    let l:screenrow = winline()
+    let l:changerow = 0
 
     silent execute "normal! ma$v\"zy"
     let l:lastchar = @@
@@ -762,6 +764,7 @@ function! s:append_char(type) abort
         let l:repeatable = 'AppendEnter'
     elseif a:type ==# 'i'
         let l:bsearch = getreg('/')
+        let l:changerow = -(1 + &scrolloff)
 
         silent execute "normal! ?^    {\rj"
 
@@ -773,6 +776,7 @@ function! s:append_char(type) abort
         let l:repeatable = 'AddIncompleteMark'
     elseif a:type ==# 'I'
         let l:bsearch = getreg('/')
+        let l:changerow = -(1 + &scrolloff)
 
         silent execute "normal! ?^    {\rj"
 
@@ -791,6 +795,7 @@ function! s:append_char(type) abort
         let l:repeatable = 'PrependSeparator'
     elseif a:type ==# '}'
         let l:fsearch = getreg('/')
+        let l:changerow = -(1 + &scrolloff)
 
         silent execute "normal! /^    }\ro\e"
 
@@ -811,7 +816,15 @@ function! s:append_char(type) abort
         let l:repeatable = ''
     endif
 
-    execute "normal! g`a"
+    silent execute 'normal! g`a'
+
+    if l:changerow != 0
+        " Keep scroll in same position
+        " Not use normal! <Bang>, it cancel printable char
+        silent execute 'normal zt' . (l:screenrow + l:changerow) . "\<C-y>"
+
+        echomsg substitute(l:repeatable, '\(\l\|\d\)\(\u\)', '\1 \l\2', 'g') . ' applied.'
+    endif
 
     let @@ = l:saved_unnamed_register
 
