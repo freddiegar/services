@@ -554,9 +554,10 @@ nnoremap <silent> <Leader>L :let @+=expand('%:t')<Enter>
             \ :echo 'Copied:   ' . expand('%:t')<Enter>
 
 " Improve search in fuzzy finder
-nnoremap <silent> <Leader>f :call <SID>find_filter('e')<Enter>
-nnoremap <silent> <Leader>F :call <SID>find_filter('w')<Enter>
+nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
+nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
 vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
+vnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 
 " Fast close buffer
 nnoremap <silent> <Leader>z :if !&filetype<Enter>
@@ -727,7 +728,7 @@ function! s:find_filter(type)
     let l:saved_unnamed_register = @@
     let l:filter = ''
 
-    if a:type ==# 'w'
+    if a:type ==# 'word' || a:type ==# 'file'
         let l:filter = expand('<cword>')
     elseif a:type ==# 'v'
         silent execute "normal! `<v`>\"zy"
@@ -741,7 +742,11 @@ function! s:find_filter(type)
 
     let @@ = l:saved_unnamed_register
 
-    silent execute 'Rg ' . l:filter
+    if a:type ==# 'file'
+        silent call fzf#vim#files(getcwd(),  fzf#vim#with_preview({'options': ['--query', l:filter]}))
+    else
+        silent execute 'Rg ' . l:filter
+    endif
 endfunction
 
 function! s:append_char(type) abort
@@ -1041,9 +1046,9 @@ function! s:cycling_buffers(incr) abort
 
             if l:nbuffer == l:cbuffer
                 if isdirectory('.git')
-                    silent execute ':GFiles'
+                    silent execute 'GFiles'
                 else
-                    silent execute ':Files'
+                    silent execute 'Files'
                 endif
 
                 break
