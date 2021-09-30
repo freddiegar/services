@@ -334,7 +334,8 @@ if exists('g:loaded_syntastic_plugin')
 endif
 
 set statusline+=\ %n                                            " [N]umber buffer
-set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
+" set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
+set statusline+=\                                               " Extra space
 set statusline+=%{GetNameCurrentPath()}                         " Relative folder
 set statusline+=\ >                                             " Separator
 set statusline+=\ %f                                            " Relative filename
