@@ -286,7 +286,7 @@ function! ChangeStatuslineColor() abort
         elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
             silent execute "highlight! StatusLine cterm=reverse guifg=#D3869B guibg=NONE"
         else
-            echomsg 'Mode no color: ' . mode() . '.'
+            echo 'Mode no color: ' . mode() . '.'
             silent execute "highlight! StatusLine cterm=reverse guifg=#FB4934 guibg=NONE"
         endif
 
@@ -502,7 +502,7 @@ function! s:smartselection(type) abort
         let l:vsapplied = 'Default'
     endif
 
-    echomsg 'V-SELECT applied: ' . l:vsapplied
+    echo 'V-SELECT applied: ' . l:vsapplied
 endfunction
 
 " @thanks https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript#6271254
@@ -828,7 +828,7 @@ function! s:append_char(type) abort
     elseif index(['"', "'", ')', ']'], l:lastchar) >= 0 || match(l:lastchar, "\a") || match(l:lastchar, "\d")
         silent execute "normal! A;\e"
     else
-        echomsg 'Nothing to do.'
+        echo 'Nothing to do.'
         let l:repeatable = ''
     endif
 
@@ -839,7 +839,7 @@ function! s:append_char(type) abort
         " Not use normal! <Bang>, it cancel printable char
         silent execute 'normal zt' . (l:screenrow + l:changerow) . "\<C-y>"
 
-        echomsg substitute(l:repeatable, '\(\l\|\d\)\(\u\)', '\1 \l\2', 'g') . ' applied.'
+        echo substitute(l:repeatable, '\(\l\|\d\)\(\u\)', '\1 \l\2', 'g') . ' applied.'
     endif
 
     let @@ = l:saved_unnamed_register
@@ -889,10 +889,10 @@ function! s:go_line() abort
             endif
         endif
     catch /^Nothing/
-        echomsg 'Nothing to do.'
+        echo 'Nothing to do.'
     catch
         echohl WarningMsg
-        echomsg 'Invalid go line.'
+        echo 'Invalid go line.'
         echohl None
     endtry
 
@@ -1003,7 +1003,7 @@ nnoremap <S-F2> :call <SID>toggle_paste()<Enter>
 
 function! s:toggle_paste() abort
     set invpaste
-    echomsg 'Paste is ' . (&paste ? 'enabled' : 'disabled') . '.'
+    echo 'Paste is ' . (&paste ? 'enabled' : 'disabled') . '.'
 endfun
 
 function! s:cycling_buffers(incr) abort
@@ -1017,9 +1017,9 @@ function! s:cycling_buffers(incr) abort
         try
             silent execute "normal! \<C-^>g`\""
         catch /^Vim\%((\a\+)\)\=:E20/
-            echomsg 'Last position not found.'
+            echo 'Last position not found.'
         catch /^Vim\%((\a\+)\)\=:E211/
-            echomsg 'File not found.'
+            echo 'File not found.'
         endtry
 
         return
@@ -1341,7 +1341,7 @@ function! s:show_documentation() abort
             silent execute 'help ' . l:word
         catch
             echohl WarningMsg
-            echomsg 'Not found: ' . l:word . '.'
+            echo 'Not found: ' . l:word . '.'
             echohl None
         endtry
     elseif coc#rpc#ready()
@@ -1523,7 +1523,7 @@ function! s:split() abort
 
         silent execute "normal! \"_ddi" . l:command_string . "\e"
     else
-        echomsg 'Nothing to do.'
+        echo 'Nothing to do.'
     endif
 
     let @@ = l:saved_unnamed_register
@@ -1640,7 +1640,7 @@ augroup AutoCommands
     function! s:phpfixer() abort
         if bufname('%') == ''
             echohl WarningMsg
-            echomsg 'Save file first!.'
+            echo 'Save file first!.'
             echohl None
 
             return 0
@@ -1658,7 +1658,7 @@ augroup AutoCommands
 
         if !executable(l:fixerpath)
             echohl WarningMsg
-            echomsg 'Fixer ' . l:fixertype . ' ' . l:fixerversion . ' not found.'
+            echo 'Fixer ' . l:fixertype . ' ' . l:fixerversion . ' not found.'
             echohl None
 
             return ''
@@ -1681,7 +1681,7 @@ augroup AutoCommands
 
         if l:fixerversion !=# l:configversion
             echohl WarningMsg
-            echomsg 'Fixer ' . l:fixertype . ' v' . l:fixerversion . ' config file not found.'
+            echo 'Fixer ' . l:fixertype . ' v' . l:fixerversion . ' config file not found.'
             echohl None
 
             return ''
