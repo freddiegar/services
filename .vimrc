@@ -1379,25 +1379,38 @@ endfunction
 augroup LargeFile
     autocmd!
 
-    autocmd VimEnter * nested call <SID>check_large_file()
-    autocmd BufReadPre * call <SID>check_large_file()
+    autocmd BufWinEnter * call <SID>check_large_file(expand('<afile>'))
 augroup END
 
-function! s:check_large_file() abort
+function! s:check_large_file(file) abort
     let l:maxsize = 1024 * 1024 * 2
-    let l:fsize = getfsize(expand('<afile>'))
+    let l:fsize = getfsize(a:file)
+
+    echomsg a:file . ': ' . l:fsize . ' > ' . l:maxsize  . ' || ' . l:fsize . ' == -2'
 
     if l:fsize > l:maxsize || l:fsize == -2
+        syntax off
+        filetype off
         " No syntax highlighting event
-        set eventignore+=FileType
+        " set eventignore+=FileType  "Comment because on change filetype in same session is weird
+        setlocal noloadplugins
+        setlocal foldmethod=manual
+        setlocal noundofile
         setlocal noswapfile
         setlocal bufhidden=unload
         setlocal buftype=nowrite
         setlocal undolevels=-1
 
         echohl WarningMsg
-        echomsg 'The file is larger than ' . (l:maxsize / 1024 / 1024) . ' MB, so some options are changed.'
+        echomsg 'The file has ' . (l:fsize / 1024 / 1024) . ' MB (> ' . (l:maxsize / 1024 / 1024) . ' MB), so some options were changed.'
         echohl None
+    elseif !exists('g:syntax_on') && bufname('%') !=# ''
+        " First detect type
+        filetype detect
+        " After load syntax
+        syntax enable
+
+        echomsg 'The file has ' . (l:fsize / 1024 / 1024) . ' MB (<= ' . (l:maxsize / 1024 / 1024) . ' MB), options were restored.'
     endif
 endfunction
 
