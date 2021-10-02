@@ -974,6 +974,7 @@ vnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
 vnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 vnoremap <silent> <S-Tab> :<C-u>call <SID>cycling_buffers(-1)<Enter>
 
+" History files
 nnoremap <silent> <Leader>H :History<Enter>
 
 " Insert mode navigation (Forget Arrows)
@@ -1091,7 +1092,7 @@ Plug 'skywind3000/asyncrun.vim'                                 " Async tasks fr
 Plug 'airblade/vim-gitgutter'                                   " Show changes in git repository
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
-Plug 'junegunn/fzf.vim'                                         " using a fuzzy finder
+Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
 Plug 'junegunn/goyo.vim'                                        " Zen mode
@@ -1229,12 +1230,19 @@ let g:tagbar_autofocus = 1
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
-nnoremap <silent> <Leader>i :execute 'Files ' . expand('%:p:h')<Enter>
-nnoremap <silent> <Leader>p :Files<Enter>
+" Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+" String in current file dir (by default: current cursor word)
+nnoremap <silent> <Leader>I :silent call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
+" Files in current file dir
+nnoremap <silent> <Leader>i :silent execute 'Files ' . expand('%:p:h')<Enter>
+" Files in current work directory
+nnoremap <silent> <Leader>p :silent Files<Enter>
+" Files or GFiles in current work directory
 nnoremap <silent> <Leader>o :if isdirectory('.git')<Enter>
-            \ :execute 'GFiles'<Enter>
+            \ :silent execute 'GFiles'<Enter>
             \ :else<Enter>
-            \ :execute 'Files'<Enter>
+            \ :silent execute 'Files'<Enter>
             \ :endif<Enter>
 
 " Vim Tests
@@ -1386,8 +1394,6 @@ function! s:check_large_file(file) abort
     let l:maxsize = 1024 * 1024 * 2
     let l:fsize = getfsize(a:file)
 
-    echomsg a:file . ': ' . l:fsize . ' > ' . l:maxsize  . ' || ' . l:fsize . ' == -2'
-
     if l:fsize > l:maxsize || l:fsize == -2
         syntax off
         filetype off
@@ -1405,9 +1411,7 @@ function! s:check_large_file(file) abort
         echomsg 'The file has ' . (l:fsize / 1024 / 1024) . ' MB (> ' . (l:maxsize / 1024 / 1024) . ' MB), so some options were changed.'
         echohl None
     elseif !exists('g:syntax_on') && bufname('%') !=# ''
-        " First detect type
         filetype detect
-        " After load syntax
         syntax enable
 
         echomsg 'The file has ' . (l:fsize / 1024 / 1024) . ' MB (<= ' . (l:maxsize / 1024 / 1024) . ' MB), options were restored.'
@@ -1594,7 +1598,7 @@ augroup AutoCommands
     autocmd!
 
     " Reload after save
-    autocmd BufWritePost ~/.vimrc nested source ~/.vimrc
+    autocmd BufWritePost .vimrc nested source ~/.vimrc
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
@@ -1745,10 +1749,15 @@ augroup AutoCommands
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
 
-    function! s:rgfzf(query, fullscreen) abort
-        let l:command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --fixed-strings -- %s || true'
-        let l:initial_command = printf(l:command_fmt, shellescape(a:query))
-        let l:reload_command = printf(l:command_fmt, '{q}')
+    " @see :help :function
+    " @see :help function-argument
+    " @see http://www.adp-gmbh.ch/vim/user_commands.html
+    " query (string), [fullscreen (0/1), [dir (string)]
+    function! s:rgfzf(query, fullscreen, ...) abort
+        let l:dir = a:0 > 0 && isdirectory(a:1) ? a:1 : ''
+        let l:finder_command = 'rg --column --line-number --no-heading --color=always --smart-case --fixed-strings -- %s ' . l:dir . ' || true'
+        let l:initial_command = printf(l:finder_command, shellescape(a:query))
+        let l:reload_command = printf(l:finder_command, '{q}')
         let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
 
         silent call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
