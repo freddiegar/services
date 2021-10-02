@@ -122,8 +122,8 @@ set path=.,,                                                    " Directories se
 
 " Used in mksession
 set sessionoptions+=globals                                     " No save global vars (g:), error after changes
-set sessionoptions-=buffers                                     " No save hidden or unload buffers
-set sessionoptions-=options                                     " No save mappings
+" set sessionoptions-=buffers                                     " No save hidden or unload buffers, only buffers in window
+set sessionoptions-=options                                     " No save local mappings
 set sessionoptions-=terminal                                    " No save terminal buffers
 " Used in mkview
 " set viewoptions-=options                                        " No save mappings
@@ -468,9 +468,7 @@ nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
             \ :endif<Enter><Enter>
 
 " Turn-off highlighting
-nnoremap <silent> <Enter> :if &filetype ==# 'qf'<Enter>
-            \ :call <SID>quickfix_toggle()<Enter>
-            \ :else<Enter>
+nnoremap <silent> <Enter> :if &filetype !=# 'qf'<Enter>
             \ :nohlsearch<Enter>
             \ :endif<Enter><Enter>
 
