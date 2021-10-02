@@ -1075,8 +1075,6 @@ endif
 " @see https://github.com/junegunn/vim-plug
 call plug#begin('~/.vim/plugged')
 
-Plug 'freddiegar/miningbox.vim'
-
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
@@ -1094,22 +1092,25 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find 
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
-Plug 'junegunn/goyo.vim'                                        " Zen mode
 
-Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar for PHP in on-the-fly
 Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
 Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'} " LSP and refactor tool
 
 Plug 'vim-scripts/autotags', {'for': 'c'}
-Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}
 
 Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easy
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}         " Performance using emmet syntax
+
+Plug 'junegunn/goyo.vim'                                        " Zen mode
+Plug 'junegunn/limelight.vim'                                   " Zen mode ++
+Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
+Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight syntax for C
+Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " i3 Syntax
 " Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
 
-Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " i3 Syntax
+Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
 
 call plug#end()
 
