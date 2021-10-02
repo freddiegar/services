@@ -430,7 +430,7 @@ xnoremap <silent> j gj
 xnoremap <silent> k gk
 
 " Sudo rescue
-cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
+cnoremap W!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 
 " / and ? search alternatives
 " nnoremap <Leader>s <kDivide>
