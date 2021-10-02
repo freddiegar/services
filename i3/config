@@ -126,6 +126,7 @@ assign [class="Mysql-workbench-bin"]        $workspace4
 assign [class="jetbrains-phpstorm"]         $workspace5
 assign [class="Sublime_text"]               $workspace5
 assign [class="Anydesk"]                    $workspace6
+assign [class="postman"]                    $workspace7
 assign [class="VirtualBox Manager"]         $workspace8
 assign [class="VirtualBox Machine"]         $workspace8
 assign [class="^VirtualBox$"]               $workspace8
