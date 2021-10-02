@@ -109,6 +109,7 @@ set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
 set wildignore+=node_modules,vendor,*/coverage/*,
 set lazyredraw                                                  " No redraw when macro/script is running
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
+set maxmempattern=100                                           " Memory in Kbytes allowed in match patter (default: 1000)
 
 " set nobackup                                                    " Not use backup before written a file (default)
 set nowritebackup                                               " Not use backup before overwrite a file
@@ -292,7 +293,7 @@ function! ChangeStatuslineColor() abort
         endif
 
         " Apply changes quikly
-        silent redraw
+        silent redrawstatus
     catch
         let &readonly = &readonly
     endtry
@@ -1808,7 +1809,8 @@ augroup AutoCommands
         silent call setreg('/', l:lsearch)
     endfunction
 
-    autocmd VimEnter * nested call <SID>sessionload()
+    " Setting lazyredraw causes a problem on startup
+    autocmd VimEnter * nested call <SID>sessionload() | redraw
     autocmd BufEnter * call <SID>poststart()
     " Cursorline only in window active, no on Insert Mode
     " autocmd InsertLeave,WinEnter * set cursorline
