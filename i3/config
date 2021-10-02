@@ -388,3 +388,5 @@ mode "move" {
 
 # Move floating windows with keys
 bindsym $mod+m mode "move" focus floating
+
+# vim: filetype=i3config

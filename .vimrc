@@ -13,6 +13,7 @@
 " @see https://bestasciitable.com/
 " @see https://www.arp242.net/vimlog/
 " @see https://github.com/mhinz/vim-galore
+" @see https://gilesorr.com/blog/vim-variable-scope.html
 
 " ORIGIN
 " @see https://www.reddit.com/r/vim/wiki/why_hjkl
@@ -1108,6 +1109,8 @@ Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html ta
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}         " Performance using emmet syntax
 " Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
 
+Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " i3 Syntax
+
 call plug#end()
 
 " Use Syntastic to diagnostics
@@ -1814,9 +1817,9 @@ augroup AutoCommands
     " autocmd InsertLeave * :setlocal relativenumber
     autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
-    autocmd VimResized * wincmd =
+    " No resize in i3
+    " autocmd VimResized * wincmd =
 augroup END
-
 
 nmap <silent> <F4> :call <SID>get_hlinfo()<Enter>
 
