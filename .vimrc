@@ -109,7 +109,6 @@ set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
 set wildignore+=node_modules,vendor,*/coverage/*,
 set lazyredraw                                                  " No redraw when macro/script is running
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
-set maxmempattern=100                                           " Memory in Kbytes allowed in match patter (default: 1000)
 
 " set nobackup                                                    " Not use backup before written a file (default)
 set nowritebackup                                               " Not use backup before overwrite a file
@@ -127,6 +126,7 @@ set sessionoptions+=globals                                     " No save global
 " set sessionoptions-=buffers                                     " No save hidden or unload buffers, only buffers in window
 set sessionoptions-=options                                     " No save local mappings
 set sessionoptions-=terminal                                    " No save terminal buffers
+set sessionoptions-=folds                                       " No save folds create manually
 " Used in mkview
 " set viewoptions-=options                                        " No save mappings
 
@@ -205,8 +205,13 @@ set synmaxcol=200                                               " Only highlight
 " set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option
 " set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option
 set updatetime=50                                               " Default 4s is a lot time
-set diffopt+=iwhite                                             " Ignore white spaces in diff mode
 set guicursor=                                                  " Always cursor has same block: block
+
+if has('nvim')
+    set diffopt+=vertical,algorithm:histogram,indent-heuristic  " Best diff
+else
+    set diffopt+=iwhite                                         " Ignore white spaces in diff mode
+endif
 
 " Custom identation
 " set autoindent
@@ -224,6 +229,16 @@ set foldnestmax=10                                              " Limit nested f
 " Utils
 set nrformats-=octal                                            " I don't use octal numbers
 " set nrformats+=alpha                                            " Allow [in/de]crement chars: <C-a>, <C-x>
+
+" AVOID (UNUSED) PLUGINS
+let g:loaded_2html_plugin = 1
+let g:loaded_gzip = 1
+let g:loaded_logiPat = 1
+let g:loaded_rrhelper = 1
+let g:loaded_spellfile_plugin = 1
+let g:loaded_tarPlugin = 1
+let g:loaded_vimballPlugin = 1
+let g:loaded_zipPlugin = 1
 
 " Netrw
 " Key   Action
@@ -1809,8 +1824,7 @@ augroup AutoCommands
         silent call setreg('/', l:lsearch)
     endfunction
 
-    " Setting lazyredraw causes a problem on startup
-    autocmd VimEnter * nested call <SID>sessionload() | redraw
+    autocmd VimEnter * nested call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart()
     " Cursorline only in window active, no on Insert Mode
     " autocmd InsertLeave,WinEnter * set cursorline
