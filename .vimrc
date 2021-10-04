@@ -1123,7 +1123,7 @@ Plug 'junegunn/goyo.vim'                                        " Zen mode
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
 Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight syntax for C
-Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " i3 Syntax
+Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " i3 syntax
 " Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
 
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
@@ -1135,6 +1135,7 @@ call plug#end()
 " CLangd as LSP for C
 " TsServer as LSP for Typescript (javascript)
 " Vetur as LSP for Vue
+
 " ~/.vim/coc-settings.json
 "{
 "  "coc.source.around.priority": 1,
@@ -1763,6 +1764,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
     autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
+    autocmd BufRead,BufNewFile */i3/config setlocal filetype=i3config
 
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)

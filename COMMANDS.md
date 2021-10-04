@@ -1415,8 +1415,9 @@ apk add --update --no-cache gmp gmp-dev \
 Error sync branches. [See](https://stackoverflow.com/a/45559485/15601185)
 ```bash
 git config --get remote.origin.fetch
-# Only allow master
+# Only allow master|main
 # +refs/heads/master:refs/remotes/origin/master
+# +refs/heads/main:refs/remotes/origin/main
 # Allow any branch
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch --all
@@ -1563,4 +1564,8 @@ npm install @vue/cli
 npm bin
 $(npm bin)/vue create demo
 ```
+
+Shared Folder from Windows in Linux
+
+[See](https://www.howtogeek.com/176471/how-to-share-files-between-windows-and-linux/)
 
