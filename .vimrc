@@ -444,8 +444,8 @@ nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
 xnoremap <silent> j gj
 xnoremap <silent> k gk
 
-" Sudo rescue
-cnoremap W!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
+" Sudo rescue (must be w!!)
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 
 " / and ? search alternatives
 " nnoremap <Leader>s <kDivide>
@@ -1594,7 +1594,7 @@ function! s:notes() abort
     let l:header = '>> ' . strftime('%A, %d of %B %Y')
     let l:filename = expand('~/Documents/notes_' . strftime('%Y%m') . '.md')
 
-    if bufname('%') ==# l:filename
+    if split(bufname('%'), '/')[-1] ==# split(l:filename, '/')[-1]
         silent update!
     else
         silent execute 'edit ' . l:filename
@@ -1616,8 +1616,8 @@ endfunction
 augroup AutoCommands
     autocmd!
 
-    " Reload after save
-    autocmd BufWritePost .vimrc nested source ~/.vimrc
+    " Reload after save (use ~ to trigger event)
+    autocmd BufWritePost ~/.vimrc nested source ~/.vimrc
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
@@ -1765,6 +1765,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
     autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
     autocmd BufRead,BufNewFile */i3/config setlocal filetype=i3config
+    autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
 
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
