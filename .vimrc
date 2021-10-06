@@ -542,6 +542,7 @@ nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>C "_C
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
+nnoremap <silent> <Del>     "_x
 nnoremap <silent> <Leader>x "_x
 nnoremap <silent> <Leader>X "_X
 nnoremap <silent> <Leader>y "+y
@@ -1121,9 +1122,13 @@ Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}         " Performance us
 
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
-Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight syntax for PHP: unmanteined
-Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight syntax for C
-Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " i3 syntax
+
+Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight PHP syntax: unmanteined
+Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight C syntax
+Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " Better highlight i3 syntax
+" Plug 'ekalinin/dockerfile.vim'                                " Better highlight dockerfile syntax
+" Plug 'godlygeek/tabular' | Plug 'tpope/vim-markdown'          " Better highlight markdown syntax
+" Plug 'pangloss/vim-javascript'                                " Better highlight javascript syntax
 " Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
 
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
@@ -1594,7 +1599,7 @@ function! s:notes() abort
     let l:header = '>> ' . strftime('%A, %d of %B %Y')
     let l:filename = expand('~/Documents/notes_' . strftime('%Y%m') . '.md')
 
-    if split(bufname('%'), '/')[-1] ==# split(l:filename, '/')[-1]
+    if bufname('%') !=# '' && split(bufname('%'), '/')[-1] ==# split(l:filename, '/')[-1]
         silent update!
     else
         silent execute 'edit ' . l:filename
@@ -1675,7 +1680,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><F1> :call <SID>phpfixer()<Enter>
 
     function! s:phpfixer() abort
-        if bufname('%') == ''
+        if bufname('%') ==# ''
             echohl WarningMsg
             echo 'Save file first!.'
             echohl None
