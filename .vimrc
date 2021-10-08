@@ -197,7 +197,7 @@ set relativenumber                                              " Relative numbe
 " set colorcolumn=121                                             " Colum limit for write (slower)
 " set noshowmatch                                                 " No jump a match never (default)
 " set matchtime=0                                                 " Default 5ms
-set list                                                        " Visible white spaces, (tab is a white space)
+set list                                                        " Visible white spaces, easy reading (tab is a white space)
 set listchars=space:·,tab:»-                                    " Chars used for invisible chars, only I want space and tabls
 " set fillchars+=eob:\                                            " Hide ~ in end of buffer
 set textwidth=120                                               " Breakline in Insert Mode after this column value
@@ -264,8 +264,8 @@ let g:netrw_preview = 1                                         " Preview in ver
 let g:netrw_browse_split = 4                                    " Open file in preview window as P. (default: 0 = same window)
 " let g:netrw_winsize = 25                                        " Keep same size after open file
 let g:netrw_liststyle = 3                                       " Show folders and files always. Cycling: i
-let g:netrw_localcopydircmd = 'cp -r'                           " Copy recursive dirs
-let g:netrw_localrmdir = 'rm -r'                                " Remove recursive dirs
+let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive
+" let g:netrw_localrmdir = 'rm -r'                                " Remove dirs recursive (< in 7.4.1107)
 let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles
 
 " Statusline
