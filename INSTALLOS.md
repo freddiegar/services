@@ -1,11 +1,19 @@
 Install Software in Debian|[L|X]Ubuntu OS
 ___
 
+# Utils
+
+```bash
+sudo apt-get install -y software-properties-common
+## sudo apt-get remove software-properties-common && sudo apt-get autoremove
+```
+> By example: add-apt-repository
+
 # Vim Latest :D, of course!
 
 ```bash
 echo "\n" | sudo add-apt-repository ppa:jonathonf/vim
-## sudo apt-get remove vim && echo "\n" | sudo add-apt-repository --remove ppa:jonathonf/vim
+## echo "\n" | sudo add-apt-repository --remove ppa:jonathonf/vim
 ```
 
 # Updated repositories
@@ -389,7 +397,6 @@ fi' >> ~/.zshenv
 # PHP 7.4
 
 ```bash
-sudo apt-get install -y software-properties-common
 echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only Ubuntu
 sudo apt-get install -y php7.4-cli
 sudo apt-get install -y php7.4-dev
@@ -406,6 +413,7 @@ sudo apt-get install -y php7.4-redis
 sudo apt-get install -y php7.4-bcmath
 sudo apt-get install -y php7.4-gmp
 ## sudo apt-get remove php7.4\* && sudo apt-get autoremove
+## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php # Only Ubuntu
 ```
 
 # MySQL Client (Server is using Docker)
@@ -917,8 +925,7 @@ sudo apt-get install -y kcachegrind
 ```bash
 sudo add-apt-repository ppa:obsproject/obs-studio
 sudo apt-get install -y ffmpeg obs-studio
-## sudo apt-get remove obs-studio ffmpeg && sudo apt-get autoremove
-## sudo add-apt-repository -r ppa:obsproject/obs-studio
+## sudo apt-get remove obs-studio ffmpeg && sudo apt-get autoremove && echo "\n" | sudo add-apt-repository --remove ppa:obsproject/obs-studio
 ```
 
 ## Screen Recording
