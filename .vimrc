@@ -422,6 +422,8 @@ nnoremap <silent> * *zzzv
 nnoremap <silent> # #zzzv
 nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
+nnoremap <silent> <C-o> <C-o>zz
+nnoremap <silent> <C-i> <C-i>zz
 
 " Undo break points (<C-g>u = Start new change)
 inoremap <silent> , ,<C-g>u
@@ -1034,6 +1036,7 @@ function! s:cycling_buffers(incr) abort
                 \ && getbufvar(l:abuffer, '&filetype') != 'help'
         try
             silent execute "normal! \<C-^>g`\""
+        catch /^Vim\%((\a\+)\)\=:E19/
         catch /^Vim\%((\a\+)\)\=:E20/
             echo 'Last position not found.'
         catch /^Vim\%((\a\+)\)\=:E211/
