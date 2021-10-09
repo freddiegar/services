@@ -8,6 +8,7 @@ alias h="history"
 alias d="diff"
 alias ll="ls -lh"
 alias __="ssh-add"
+alias npkg="dpkg --list | wc --lines"
 
 alias vd="vimdiff"
 alias vv="nvim"
