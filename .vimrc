@@ -141,7 +141,7 @@ if has('nvim')
 endif
 
 if executable('rg')
-    " Replace built-in grep's vim, options:
+    " Replace built-in grep's Vim, options:
     " @see https://github.com/BurntSushi/ripgrep
     " @see https://beyondgrep.com/feature-comparison/
     "  --vimgrep:       Every match on its own line with line number and column
@@ -151,7 +151,7 @@ if executable('rg')
     set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 endif
 
-" Tell vim to remember certain things when we exit
+" Tell Vim to remember certain things when we exit
 " @see https://vimhelp.org/options.txt.html#%27viminfo%27
 " set viminfo=!,'20,<50,s10,h                                     " TODO: Session not works
 
@@ -250,8 +250,8 @@ let g:loaded_zipPlugin = 1
 " p     Preview file without (moving the cursor from netrw)
 
 " -     Go up one directory
-" u     Go back to previously visited directory (like <C-o> in vim)
-" U     Go forward to subsequently visited directory (like <C-i> in vim)
+" u     Go back to previously visited directory (like <C-o> in Vim)
+" U     Go forward to subsequently visited directory (like <C-i> in Vim)
 
 " %     Create a new file
 " d     Create a new directory
@@ -1105,7 +1105,7 @@ Plug 'Raimondi/delimitMate'                                     " Append close: 
 Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
-Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from vim: git add, docker start, etc
+Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from Vim: tests, git add, docker start, etc
 Plug 'airblade/vim-gitgutter'                                   " Show changes in git repository
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files

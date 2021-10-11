@@ -157,16 +157,16 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.c
 # Enable
 echo "\" Plugins
 call plug#begin('~/.vim/plugged')
-Plug 'morhetz/gruvbox'
+Plug 'freddiegar/miningbox.vim'
 call plug#end()
 
 \" Theme
-colorscheme gruvbox
-let g:gruvbox_contrast_dark = 'hard'
 set background=dark
+
+colorscheme miningbox
 " >> ~/.vimrc
 
-# Open vim and run
+# Open Vim and run
 :PlugInstall
 
 # Update all plugins
@@ -190,33 +190,7 @@ vim --version | grep xterm
 # Check again
 ```
 
-## RigGrep for Vim search
-
-```bash
-# [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
-echo "\n" | sudo add-apt-repository ppa:x4121/ripgrep
-sudo apt-get install ripgrep
-## sudo apt-get remove ripgrep && echo "\n" | sudo add-apt-repository --remove ppa:x4121/ripgrep
-
-# [L|X]Ubuntu 18.10+ | Rg v11.0.2+
-sudo apt-get install ripgrep
-## sudo apt-get remove ripgrep && sudo apt-get autoremove
-```
-
-# Bat no Cat (Preview FZF and Console)
-
-[See](https://github.com/sharkdp/bat)
-
-```bash
-cd ~
-sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.18.2/bat_0.18.2_amd64.deb -o bat.deb
-sudo dpkg -i bat.deb && rm -f bat.deb
-## Command:
-## bat file.php
-## sudo apt-get remove bat && sudo apt-get autoremove
-```
-
-## C Development
+## Vim C Development
 
 ### LSP
 
@@ -229,7 +203,7 @@ mv clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04 clang_9.0.0
 sudo mv clang_9.0.0 /usr/local
 ```
 
-### Ctags
+### C Tags
 
 echo "--recurse=yes
 --tag-relative=yes
@@ -245,12 +219,12 @@ echo "--recurse=yes
 " > ~/.ctags
 
 ```bash
-# In vim run to generate tags files
+# In Vim run to generate tags files
 # Need: Plug 'vim-scripts/autotags'
 Pulse <F4>
 ```
 
-### PHP Ctags
+### PHP Tags
 
 ```bash
 cd ~
@@ -261,13 +235,13 @@ sudo chmod +x /usr/local/bin/phpctags
 ## sudo rm /usr/local/bin/phpctags
 ```
 
-## Snippets
+## Vim Snippets
 
 ```bash
 ln -s `pwd`/UltiSnips/ ~/.vim/UltiSnips
 ```
 
-## PHPStorm
+## Vim in PHPStorm
 
 ```bash
 ln -s `pwd`/.ideavimrc ~/.ideavimrc
@@ -284,14 +258,24 @@ git config --list
 ## sudo apt-get remove git-core && sudo apt-get autoremove
 ```
 
-# GIT Flow
+## GIT Flow
 
 ```bash
 sudo apt-get install git-flow
 ## sudo apt-get remove git-flow && sudo apt-get autoremove
 ```
 
-## GIT Rebase
+## GIT Summary
+
+```bash
+cd ~
+sudo apt-get install -y gawk
+sudo curl -L https://raw.githubusercontent.com/albenik/git-summary/master/git-summary -o /usr/local/bin/git-summary
+sudo chmod +x /usr/local/bin/git-summary
+## sudo apt-get remove gawk && sudo rm /usr/local/bin/git-summary && sudo apt-get autoremove
+```
+
+### GIT Rebase
 
 [See](https://youtu.be/INjj0eGhNXs)
 
@@ -313,7 +297,7 @@ sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
 # In Ubuntu
 gnome-session-quit
 # In Lubuntu
- lxqt-leave
+lxqt-leave
 ## sudo apt-get remove zsh && sudo apt-get autoremove
 ```
 
@@ -369,22 +353,6 @@ if [ -f ~/.bash_aliases ]; then
 fi' >> ~/.zshrc
 ```
 
-## Enable SSH Agent
-
-[See](https://yashagarwal.in/posts/2017/12/setting-up-ssh-agent-in-i3/)
-
-```bash
-echo '
-if [ -f ~/.ssh/agent.env ] ; then
-    . ~/.ssh/agent.env > /dev/null
-    if ! kill -0 $SSH_AGENT_PID > /dev/null 2>&1; then
-        eval `ssh-agent | tee ~/.ssh/agent.env`
-    fi
-else
-    eval `ssh-agent | tee ~/.ssh/agent.env`
-fi' >> ~/.zshrc
-```
-
 ## Enable alias in Vim
 
 ```bash
@@ -416,19 +384,7 @@ sudo apt-get install -y php7.4-gmp
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php # Only Ubuntu
 ```
 
-# MySQL Client (Server is using Docker)
-
-```bash
-# [L|X]Ubuntu
-sudo apt-get install -y mysql-client
-## sudo apt-get remove mysql-client && sudo apt-get autoremove
-
-# Debian
-sudo apt-get install -y mariadb-client
-## sudo apt-get remove mariadb-client && sudo apt-get autoremove
-```
-
-# Composer
+## Composer for PHP
 
 ```bash
 cd ~
@@ -440,22 +396,7 @@ rm -Rf composer-setup.php
 ## rm -Rf /usr/local/bin/composer
 ```
 
-# Rector
-
-[See](https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md)
-
-```bash
-cd ~
-composer global require rector/rector --dev
-sudo ln -s ~/.composer/vendor/bin/rector /usr/local/bin/phprector
-## Command
-## phprector -c /var/www/html/freddiegar/services/rector.php process src
-## phprector -c /var/www/html/freddiegar/services/rector.php -n process src tests
-## phprector -c /var/www/html/freddiegar/services/rector.php --no-diffs process src tests
-## composer global remove rector/rector
-```
-
-# Code Sniffer Fixer
+## Code Sniffer Fixer for PHP (and Vim)
 
 ```bash
 cd ~
@@ -466,7 +407,7 @@ sudo chmod +x /usr/local/bin/php-cs-fixer
 ## sudo rm /usr/local/bin/php-cs-fixer
 ```
 
-# Mess Detector
+# Mess Detector for PHP (and Vim)
 
 ```bash
 cd ~
@@ -479,57 +420,13 @@ sudo chmod +x /usr/local/bin/phpmd
 ## sudo rm /usr/local/bin/phpmd
 ```
 
-# Infection AST
-
-```bash
-cd ~
-sudo curl -L https://github.com/infection/infection/releases/download/0.24.0/infection.phar -o /usr/local/bin/infection
-sudo chmod +x /usr/local/bin/infection
-## Command:
-## infection -j$(nproc) [--filter=file.php]
-## sudo rm /usr/local/bin/infection
-```
-
-# PHPLOC (Lines Of Code)
-
-```bash
-cd ~
-sudo curl -L https://phar.phpunit.de/phploc.phar -o /usr/local/bin/phploc
-sudo chmod +x /usr/local/bin/phploc
-## Command:
-## phploc -v --exclude=vendor --ansi .
-## sudo rm /usr/local/bin/phploc
-```
-
-# PHPCPD (Copy/Paste Dectector)
-
-```bash
-cd ~
-sudo curl -L https://phar.phpunit.de/phpcpd.phar -o /usr/local/bin/phpcpd
-sudo chmod +x /usr/local/bin/phpcpd
-## Command:
-## phpcpd -vvv --exclude=vendor --ansi --progress .
-## sudo rm /usr/local/bin/phpcpd
-```
-
-# PHPMetrics
-
-```bash
-cd ~
-sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.7.4/phpmetrics.phar -o /usr/local/bin/phpmetrics
-sudo chmod +x /usr/local/bin/phpmetrics
-## Command:
-## phpmetrics --excluded-dirs vendor --report-html=./tests/coverage/phpmetrics .
-## sudo rm /usr/local/bin/phpmetrics
-```
-
 # Docker (Container)
 
 [See 1](https://docs.docker.com/install/linux/docker-ce/ubuntu)
 
 [See 2](https://docs.docker.com/install/linux/linux-postinstall/)
 
-# [L|X]Ubuntu 18.*, 19.*, Debian 10
+## [L|X]Ubuntu 18.*, 19.*, Debian 10
 
 ```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common
@@ -541,7 +438,7 @@ sudo usermod -aG docker $(whoami)
 # In Ubuntu
 gnome-session-quit
 # In Lubuntu
- lxqt-leave
+lxqt-leave
 ## sudo apt-get remove docker-ce && sudo apt-get autoremove
 ```
 
@@ -556,7 +453,7 @@ sudo reboot
 ## sudo apt-get remove docker-engine && sudo apt-get autoremove
 ```
 
-# Docker Compose
+## Docker Compose
 
 ```bash
 cd ~
@@ -565,20 +462,22 @@ sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
 
-# Docker Network
+## Docker Network
 
 ```bash
 docker network create --driver=bridge --subnet=172.20.0.0/16 --gateway=172.20.0.1 development
 ```
 
-# GIT Summary
+# MySQL Client (Server is using Docker)
 
 ```bash
-cd ~
-sudo apt-get install -y gawk
-sudo curl -L https://raw.githubusercontent.com/albenik/git-summary/master/git-summary -o /usr/local/bin/git-summary
-sudo chmod +x /usr/local/bin/git-summary
-## sudo apt-get remove gawk && sudo rm /usr/local/bin/git-summary && sudo apt-get autoremove
+# [L|X]Ubuntu
+sudo apt-get install -y mysql-client
+## sudo apt-get remove mysql-client && sudo apt-get autoremove
+
+# Debian
+sudo apt-get install -y mariadb-client
+## sudo apt-get remove mariadb-client && sudo apt-get autoremove
 ```
 
 # SSH Keys
@@ -589,6 +488,21 @@ Clone SSH keys from Secrets or
 ssh-keygen                 # Insert passphrase (Algo ...)
 ls ~/.ssh
 cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
+```
+## Enable SSH Agent
+
+[See](https://yashagarwal.in/posts/2017/12/setting-up-ssh-agent-in-i3/)
+
+```bash
+echo '
+if [ -f ~/.ssh/agent.env ] ; then
+    . ~/.ssh/agent.env > /dev/null
+    if ! kill -0 $SSH_AGENT_PID > /dev/null 2>&1; then
+        eval `ssh-agent | tee ~/.ssh/agent.env`
+    fi
+else
+    eval `ssh-agent | tee ~/.ssh/agent.env`
+fi' >> ~/.zshrc
 ```
 
 # GPG Keys
@@ -641,7 +555,216 @@ gpg --armor --export [ID]
 gpg --armor --export C292DDB5
 ```
 
-# Xdebug
+## GPG in Terminal (Use between shells instances)
+
+```bash
+echo '
+export GPG_TTY=$(tty)' >> ~/.zshrc
+```
+
+## GPG TTL (in seconds)
+
+```bash
+echo 'default-cache-ttl 86400
+max-cache-ttl 864000
+default-cache-ttl-ssh 86400
+max-cache-ttl-ssh 864000' > ~/.gnupg/gpg-agent.conf
+```
+
+# Postman
+
+```bash
+cd ~
+sudo snap install postman
+```
+
+# Firefox (Dont use snap for this, security risk)
+
+```bash
+sudo apt-get remove firefox && sudo apt-get autoremove
+curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.bz2
+sudo tar -xvjf firefox.tar.bz2 -C /opt && rm -Rf firefox.tar.bz2
+sudo ln -s /opt/firefox/firefox /usr/bin/firefox
+## rm -Rf /opt/firefox
+```
+
+## Firefox Developer Edition Shorcut
+
+```bash
+echo '[Desktop Entry]
+Version=1.0
+Name=Firefox Web Browser Developer Edition
+Comment=Browse the WWW
+GenericName=Web Browser
+Keywords=Internet;WWW;Browser;Web
+Exec=/usr/bin/firefox %u
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=/opt/firefox/browser/chrome/icons/default/default128.png
+Categories=GNOME;GTK;Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
+StartupNotify=true
+Actions=new-window;new-private-window;
+StartupWMClass=Firefox Developer Edition
+
+[Desktop Action new-window]
+Name=Open a New Window
+Exec=/usr/bin/firefox -new-window
+
+[Desktop Action new-private-window]
+Name=Open a New Private Window
+Exec=/usr/bin/firefox -private-window' > ~/.local/share/applications/firefox.desktop
+```
+
+## Enable in i3 as default browser
+
+```bash
+# see ~/.config/mimeapps.list and replace using firefox.desktop if it is necesary
+sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/firefox.desktop
+```
+
+# Node (and Vim LSP)
+
+```bash
+cd ~
+sudo apt-get install -y build-essential libssl-dev
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.38.0/install.sh | bash
+
+echo '
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
+
+# Close Terminal to load changes
+# Show version available
+nvm ls-remote
+nvm install v14.17.6
+# nvm alias default v14.17.6
+# nvm current
+## Enabled to all users in [L|X]Ubuntu
+# n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
+
+## Install package: npm install express
+## nvm deactivate && nvm uninstall v10.15.3
+```
+
+# Profile
+
+```bash
+echo '
+export EDITOR=vim
+export VISUAL=vim
+export BROWSER=/usr/bin/firefox' >> ~/.profile
+```
+
+# Font Fira Code
+
+[See](https://dev.to/josuerodriguez98/installing-firacode-on-windows-and-ubuntu-1fn1)
+
+```bash
+# [L|X]Ubuntu
+sudo apt-get install -y fonts-firacode
+## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
+```
+
+# Clean installation
+sudo apt-get clean
+sudo apt-get autoclean
+sudo apt-get autoremove
+
+## That is ALL :D !
+
+# Performance (Optionals)
+
+## RigGrep for Vim search (Performance FZF and Terminal)
+
+```bash
+# [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
+echo "\n" | sudo add-apt-repository ppa:x4121/ripgrep
+sudo apt-get install ripgrep
+## sudo apt-get remove ripgrep && echo "\n" | sudo add-apt-repository --remove ppa:x4121/ripgrep
+
+# [L|X]Ubuntu 18.10+ | Rg v11.0.2+
+sudo apt-get install ripgrep
+## sudo apt-get remove ripgrep && sudo apt-get autoremove
+```
+
+# Bat no Cat (Preview FZF and Terminal)
+
+[See](https://github.com/sharkdp/bat)
+
+```bash
+cd ~
+sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.18.2/bat_0.18.2_amd64.deb -o bat.deb
+sudo dpkg -i bat.deb && rm -f bat.deb
+## Command:
+## bat file.php
+## sudo apt-get remove bat && sudo apt-get autoremove
+```
+
+# Coding (Optionals)
+
+# Rector
+
+[See](https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md)
+
+```bash
+cd ~
+composer global require rector/rector --dev
+sudo ln -s ~/.composer/vendor/bin/rector /usr/local/bin/phprector
+## Command
+## phprector -c /var/www/html/freddiegar/services/rector.php process src
+## phprector -c /var/www/html/freddiegar/services/rector.php -n process src tests
+## phprector -c /var/www/html/freddiegar/services/rector.php --no-diffs process src tests
+## composer global remove rector/rector
+```
+
+# Infection AST
+
+```bash
+cd ~
+sudo curl -L https://github.com/infection/infection/releases/download/0.24.0/infection.phar -o /usr/local/bin/infection
+sudo chmod +x /usr/local/bin/infection
+## Command:
+## infection -j$(nproc) [--filter=file.php]
+## sudo rm /usr/local/bin/infection
+```
+
+# PHPLOC (Lines Of Code)
+
+```bash
+cd ~
+sudo curl -L https://phar.phpunit.de/phploc.phar -o /usr/local/bin/phploc
+sudo chmod +x /usr/local/bin/phploc
+## Command:
+## phploc -v --exclude=vendor --ansi .
+## sudo rm /usr/local/bin/phploc
+```
+
+# PHPCPD (Copy/Paste Dectector)
+
+```bash
+cd ~
+sudo curl -L https://phar.phpunit.de/phpcpd.phar -o /usr/local/bin/phpcpd
+sudo chmod +x /usr/local/bin/phpcpd
+## Command:
+## phpcpd -vvv --exclude=vendor --ansi --progress .
+## sudo rm /usr/local/bin/phpcpd
+```
+
+# PHPMetrics
+
+```bash
+cd ~
+sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.7.4/phpmetrics.phar -o /usr/local/bin/phpmetrics
+sudo chmod +x /usr/local/bin/phpmetrics
+## Command:
+## phpmetrics --excluded-dirs vendor --report-html=./tests/coverage/phpmetrics .
+## sudo rm /usr/local/bin/phpmetrics
+```
+
+# Xdebug (PHP Debugger)
 
 ```bash
 sudo pecl install -f xdebug-2.9.8
@@ -684,7 +807,7 @@ sudo pecl upgrade
 sudo pecl upgrade -f xdebug
 ```
 
-# Linking
+## Linking
 
 [See](https://xdebug.org/docs/all_settings#file_link_format)
 
@@ -717,14 +840,9 @@ php -r "print_r(openssl_get_cert_locations());"
 sudo curl -fLo /usr/local/ssl/cert.pem http://curl.haxx.se/ca/cacert.pem
 ```
 
-# Postman
+# Extra (Optionals)
 
-```bash
-cd ~
-sudo snap install postman
-```
-
-# VSCode & Firefox (Dont use snap for this, security risk)
+# VSCode (Dont use snap for this, security risk)
 
 ```bash
 # VS Code
@@ -733,121 +851,7 @@ curl -L "https://az764295.vo.msecnd.net/stable/e7d7e9a9348e6a8cc8c03f877d39cb72e
 sudo dpkg -i vscode.deb
 rm -f vscode.deb
 ## sudo apt-get remove code && sudo apt-get autoremove
-
-# Firefox Dev Edition
-sudo apt-get remove firefox && sudo apt-get autoremove
-curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.bz2
-sudo tar -xvjf firefox.tar.bz2 -C /opt && rm -Rf firefox.tar.bz2
-sudo ln -s /opt/firefox/firefox /usr/bin/firefox
-## rm -Rf /opt/firefox
 ```
-
-## Shortcut for ...
-
-### Firefox Developer Edition
-
-```bash
-echo '[Desktop Entry]
-Version=1.0
-Name=Firefox Web Browser Developer Edition
-Comment=Browse the WWW
-GenericName=Web Browser
-Keywords=Internet;WWW;Browser;Web
-Exec=/usr/bin/firefox %u
-Terminal=false
-X-MultipleArgs=false
-Type=Application
-Icon=/opt/firefox/browser/chrome/icons/default/default128.png
-Categories=GNOME;GTK;Network;WebBrowser;
-MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
-StartupNotify=true
-Actions=new-window;new-private-window;
-StartupWMClass=Firefox Developer Edition
-
-[Desktop Action new-window]
-Name=Open a New Window
-Exec=/usr/bin/firefox -new-window
-
-[Desktop Action new-private-window]
-Name=Open a New Private Window
-Exec=/usr/bin/firefox -private-window' > ~/.local/share/applications/firefox.desktop
-```
-
-## Enable in i3 as default browser
-
-```bash
-# see ~/.config/mimeapps.list and replace using firefox.desktop if it is necesary
-sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/firefox.desktop
-```
-
-# Node
-
-```bash
-cd ~
-sudo apt-get install -y build-essential libssl-dev
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.38.0/install.sh | bash
-
-echo '
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
-
-# Close Terminal to load changes
-# Show version available
-nvm ls-remote
-nvm install v14.17.6
-# nvm alias default v14.17.6
-# nvm current
-## Enabled to all users in [L|X]Ubuntu
-# n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
-
-## Install package: npm install express
-## nvm deactivate && nvm uninstall v10.15.3
-```
-
-## Profile
-
-```bash
-echo '
-export EDITOR=vim
-export VISUAL=vim
-export BROWSER=/usr/bin/firefox' >> ~/.profile
-```
-
-# GPG in terminal (Use between shells instances)
-
-```bash
-echo '
-export GPG_TTY=$(tty)' >> ~/.zshrc
-```
-
-## GPG TTL (in seconds)
-
-```bash
-echo 'default-cache-ttl 86400
-max-cache-ttl 864000
-default-cache-ttl-ssh 86400
-max-cache-ttl-ssh 864000' > ~/.gnupg/gpg-agent.conf
-```
-
-# Font Fira Code
-
-[See](https://dev.to/josuerodriguez98/installing-firacode-on-windows-and-ubuntu-1fn1)
-
-```bash
-# [L|X]Ubuntu
-sudo apt-get install -y fonts-firacode
-## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
-```
-
-# Clean installation
-sudo apt-get clean
-sudo apt-get autoclean
-sudo apt-get autoremove
-
-## That is ALL :D !
-
-# Optionals
 
 ## Sublime Text
 
