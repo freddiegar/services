@@ -340,37 +340,39 @@ set shortmess+=s                                                " Don't give "se
 set shortmess+=T                                                " Truncate others message [...]
 set shortmess+=t                                                " Truncate file message [<]
 
-set laststatus=2                                                " Always show statusline
-set statusline=                                                 " Start from scratch
-set statusline+=%{ChangeStatuslineColor()}                      " Color by Mode
+function! s:statusline() abort
+    set laststatus=2                                                " Always show statusline
+    set statusline=                                                 " Start from scratch
+    set statusline+=%{ChangeStatuslineColor()}                      " Color by Mode
 
-if exists('g:loaded_syntastic_plugin')
-    set statusline+=%1*                                         " Set custom color
-    set statusline+=%{SyntasticStatuslineFlag()}                " Diagnostic info
-    set statusline+=%*                                          " Reset to default colors
-endif
+    if exists('g:loaded_syntastic_plugin')
+        set statusline+=%1*                                         " Set custom color
+        set statusline+=%{SyntasticStatuslineFlag()}                " Diagnostic info
+        set statusline+=%*                                          " Reset to default colors
+    endif
 
-set statusline+=\ %n                                            " [N]umber buffer
-" set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
-set statusline+=\                                               " Extra space
-set statusline+=%{GetNameCurrentPath()}                         " Relative folder
-set statusline+=\ >                                             " Separator
-set statusline+=\ %f                                            " Relative filename
+    set statusline+=\ %n                                            " [N]umber buffer
+    " set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
+    set statusline+=\                                               " Extra space
+    set statusline+=%{GetNameCurrentPath()}                         " Relative folder
+    set statusline+=\ >                                             " Separator
+    set statusline+=\ %f                                            " Relative filename
 
-if exists('g:loaded_gitgutter')
-    set statusline+=\ %{GitGutterStatuslineFlag()}              " Modifications info
-endif
+    if exists('g:loaded_gitgutter')
+        set statusline+=\ %{GitGutterStatuslineFlag()}              " Modifications info
+    endif
 
-set statusline+=%=                                              " New group
-set statusline+=\%m                                             " Modified flag
-set statusline+=\%r                                             " Readonly flag
-set statusline+=\ %3{&filetype}
-" set statusline+=\ #:%3b                                         " ASCII representation
-" set statusline+=\ l:%3l/%3L\ c:%3c                              " Line of Lines and Column
-set statusline+=\%<                                             " Cut long statusline here
-set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\                                               " Extra space
-" set statusline+=\ @\ %{strftime(\"%H:%M\")}                     " Date: HH:MM
+    set statusline+=%=                                              " New group
+    set statusline+=\%m                                             " Modified flag
+    set statusline+=\%r                                             " Readonly flag
+    set statusline+=\ %3{&filetype}
+    " set statusline+=\ #:%3b                                         " ASCII representation
+    " set statusline+=\ l:%3l/%3L\ c:%3c                              " Line of Lines and Column
+    set statusline+=\%<                                             " Cut long statusline here
+    set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+    set statusline+=\                                               " Extra space
+    " set statusline+=\ @\ %{strftime(\"%H:%M\")}                     " Date: HH:MM
+endfunction
 
 " RAW Modes Fixed
 " @see https://github.com/vim/vim/issues/5200
@@ -1470,8 +1472,8 @@ nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
 nmap <silent> <Leader>hh :GitGutterToggle<Enter>
 nmap <silent> <Leader>hs :GitGutterSignsToggle<Enter>
 
-" let g:gitgutter_enabled = 1
-" let g:gitgutter_eager = 1
+" let g:gitgutter_enabled = 1 (default)
+" let g:gitgutter_eager = 1 (¿?)
 let g:gitgutter_realtime = 0
 let g:gitgutter_map_keys = 0
 let g:gitgutter_diff_args = ''
@@ -1847,6 +1849,7 @@ augroup AutoCommands
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
     " autocmd VimResized * wincmd =
+    autocmd FileType * call <SID>statusline()
 augroup END
 
 nmap <silent> <F4> :call <SID>get_hlinfo()<Enter>
