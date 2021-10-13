@@ -862,6 +862,7 @@ echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sou
 sudo apt-get update
 sudo apt-get install -y sublime-text
 ## sudo apt-get remove sublime-text && sudo apt-get autoremove
+## sudo rm /etc/apt/sources.list.d/sublime-text.list
 ```
 
 #### Font ST3

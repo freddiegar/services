@@ -480,7 +480,7 @@ nnoremap <silent> <F3> :if &filetype ==# 'netrw'<Enter>
 nnoremap <silent> <F5> :registers<Enter>
 
 " Fast Vim configuration
-nnoremap <silent> <F10> :if expand('%:t:r') ==# '.vimrc'<Enter>
+nnoremap <silent> <F10> :if expand('%:t') ==# '.vimrc'<Enter>
             \ :PlugUpdate<Enter>
             \ :elseif getbufvar(bufnr('%'), '&filetype') ==# 'vim-plug'<Enter>
             \ :silent execute "normal! :q!\r"<Enter>
@@ -1845,7 +1845,7 @@ augroup AutoCommands
     " Relative numbers on Insert Mode
     " autocmd InsertEnter * :setlocal norelativenumber
     " autocmd InsertLeave * :setlocal relativenumber
-    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
+    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
     " autocmd VimResized * wincmd =
