@@ -78,7 +78,7 @@
 " @see :h motion
 
 " Build-in improve % option (works with if statements and tags html) (slower)
-packadd! matchit
+" packadd! matchit
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
@@ -332,7 +332,7 @@ function! s:get_branch() abort
     return strlen(l:branchname) > 0 ? l:branchname : ''
 endfunction
 
-set showcmd                                                     " Show current command in command-line (slower)
+" set showcmd                                                     " Show current command in command-line (slower)
 set noruler                                                     " Cursor position is showed in command-line
 set noshowmode                                                  " Mode is showed in command-line
 
@@ -1423,7 +1423,7 @@ function! s:go_url(url) abort
     let l:uri = shellescape(l:uri, 1)
 
     if l:uri != ''
-        silent execute "!/opt/firefox/firefox '" . l:uri . "'"
+        silent execute "!/usr/bin/firefox '" . l:uri . "'"
 
         silent redraw!
     endif
@@ -1729,7 +1729,7 @@ augroup AutoCommands
             return ''
         endif
 
-        let l:fixerversion = system(l:fixerpath . " --version 2>/dev/null | cut -d' ' -f4 | cut -d'.' -f1 | tr -d '\n'")
+        let l:fixerversion = system(l:fixerpath . " --version 2>/dev/null | cut -d ' ' -f 4 | cut -d '.' -f 1 | tr -d '\n'")
 
         let l:configversion = l:fixerversion
         let l:configfile = '/var/www/html/freddiegar/services/' . (l:configversion ==# '2' ? '.php_cs' : '.php-cs-fixer.php')
