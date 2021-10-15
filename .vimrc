@@ -428,9 +428,10 @@ nnoremap <silent> Y y$
 " `x    Jump to the cursor position of mark 'x'
 nnoremap <silent> gl `.
 
+" Keep search (*, #) in same position (avoid jump first ocurrence)
 " Center screen (zz) after each search and open folds (zv)
-nnoremap <silent> * *zzzv
-nnoremap <silent> # #zzzv
+nnoremap <silent> * *``zzzv
+nnoremap <silent> # #``zzzv
 nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
 nnoremap <silent> <C-o> <C-o>zz
@@ -451,11 +452,15 @@ nnoremap <silent> J maJ`a
 vnoremap <silent> J :move '>+1<Enter>gv=gv
 vnoremap <silent> K :move '<-2<Enter>gv=gv
 
-" Save previous position in mark ', (<C-o> not works) using screen rows (g option)
-nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
-nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
-xnoremap <silent> j gj
-xnoremap <silent> k gk
+" Save previous position in mark ', (<C-o> not works)
+nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'k'
+nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'j'
+" I use nowrap by default, then, I can skip this maps in nnoremap and xnoremap
+" Using screen rows (g option)
+" nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
+" nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
+" xnoremap <silent> j gj
+" xnoremap <silent> k gk
 
 " Sudo rescue (must be w!!)
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
