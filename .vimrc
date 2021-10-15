@@ -1134,8 +1134,10 @@ Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight PHP syntax: unmanteined
 Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight C syntax
 Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " Better highlight i3 syntax
-" Plug 'ekalinin/dockerfile.vim'                                " Better highlight dockerfile syntax
-" Plug 'godlygeek/tabular' | Plug 'tpope/vim-markdown'          " Better highlight markdown syntax
+Plug 'storyn26383/vim-vue', {'for': 'vue'}                      " Better highlight vue syntax
+Plug 'tpope/vim-markdown', {'for': 'markdown'}                  " Better highlight markdown syntax
+
+" Plug 'ekalinin/dockerfile.vim'                                " Better highlight dockerfile syntax (better?)
 " Plug 'pangloss/vim-javascript'                                " Better highlight javascript syntax
 " Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
 
