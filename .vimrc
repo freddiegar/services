@@ -318,7 +318,9 @@ function! ChangeStatuslineColor() abort
 endfunction
 
 function! GetNameCurrentPath() abort
-    return split(getcwd(), '/')[-1]
+    return &buftype !=# 'quickfix'
+                \ ? split(getcwd(), '/')[-1] . ' -> '
+                \ : ''
 endfunction
 
 function! s:get_branch() abort
@@ -351,16 +353,17 @@ function! s:statusline() abort
         set statusline+=%*                                          " Reset to default colors
     endif
 
-    set statusline+=\ %n                                            " [N]umber buffer
+    " set statusline+=\ %n                                            " [N]umber buffer
     " set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
     set statusline+=\                                               " Extra space
     set statusline+=%{GetNameCurrentPath()}                         " Relative folder
-    set statusline+=\ >                                             " Separator
-    set statusline+=\ %f                                            " Relative filename
+    set statusline+=%f                                            " Relative filename
+    set statusline+=\                                               " Extra space
+    " set statusline+=%#SignColumn#                                   " Other color from here
 
-    if exists('g:loaded_gitgutter')
-        set statusline+=\ %{GitGutterStatuslineFlag()}              " Modifications info
-    endif
+    " if exists('g:loaded_gitgutter')
+        " set statusline+=\ %{GitGutterStatuslineFlag()}              " Modifications info
+    " endif
 
     set statusline+=%=                                              " New group
     set statusline+=\%m                                             " Modified flag
@@ -1584,9 +1587,6 @@ endfunction
 
 " @see http://vimcasts.org/episodes/search-multiple-files-with-vimgrep/
 noremap <silent> <F6> :call <SID>quickfix_toggle()<Enter>
-noremap <silent> <F7> :if &filetype !=# 'qf'<Enter>
-            \ :edit %<Enter>
-            \ :endif<Enter><Enter>
 
 function! s:quickfix_toggle()
     if exists('g:qfix_win')
