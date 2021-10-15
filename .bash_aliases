@@ -56,6 +56,7 @@ alias dstart="docker start"
 alias dstop="docker stop"
 alias dstatus="docker ps --format \"{{.Names}}\""
 alias dstats="docker stats"
+alias dclean="docker images | grep ' <none> ' | awk '{print $3}' | xargs docker rmi {}"
 
 alias gs="git summary"
 alias gt="git tag"
