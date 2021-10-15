@@ -226,7 +226,7 @@ set fileformat=unix                                             " End of line as
 set nofoldenable                                                " Unfold lines by default in buffers
 set foldmethod=indent                                           " Use indent to fold code (default: manual)
 set foldnestmax=10                                              " Limit nested fold (default: 20)
-" set foldlevel=99                                                " Zero will close all folds.  Higher numbers will close fewer folds (default: 0)
+set foldlevel=99                                                " Zero will close all folds.  Higher numbers will close fewer folds (default: 0)
 
 " Utils
 set nrformats-=octal                                            " I don't use octal numbers
