@@ -30,7 +30,7 @@ WORKDIR /var/www/html
 RUN set -eux \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
-    vim \
+    vim-tiny \
     cron \
     libxml2-dev \
     libxslt1-dev \

@@ -13,7 +13,7 @@ COPY ./supervisor/entrypoint.sh /usr/local/bin/
 RUN set -eux \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
-    vim \
+    vim-tiny \
     supervisor \
     libxml2-dev \
     libxslt1-dev \

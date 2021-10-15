@@ -6,7 +6,7 @@ RUN set -eux \
     && chmod o-wx /var/run/mysqld
 #     apt-get update \
 #     && apt-get install --no-install-recommends -y \
-#     vim \
+#     vim-tiny \
 #     && apt-get autoremove -y
 
 CMD ["mysqld"]
