@@ -1,8 +1,6 @@
 " PHILOSOPHY
 " @see https://www.moolenaar.net/habits.html
 " @see http://www.viemu.com/a-why-vi-vim.html
-" @see https://blog.sanctum.geek.nz/series/unix-as-ide/
-" @thanks https://markodenic.com/use-google-like-a-pro/
 
 " VIM Config
 " @see https://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118
@@ -20,15 +18,10 @@
 " @see https://www.fcodelabs.com/2018/12/08/Vim-Cheats/
 " @mailing  https://groups.google.com/g/vim_dev
 
-" From Scratch to Pro
-" @thanks https://thevaluable.dev/vim-beginner/
-
-" Build-in improve % option (works with if statements and tags html)
-packadd! matchit
-
-" REGISTERS AND MARKS SPECIAL USED HERE
-" - "z  Save content yank in function, this no overwrite default register
-" - 'a  Mark used in append_char function to return original position
+" FROM SCRATCH TO PRO
+" @see https://thevaluable.dev/vim-beginner/
+" @see https://blog.sanctum.geek.nz/series/unix-as-ide/
+" @thanks https://markodenic.com/use-google-like-a-pro/
 
 " MAPS and MODES
 " @see https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
@@ -77,11 +70,19 @@ packadd! matchit
 " <C-w>w    move next right
 " <C-w>W    move before
 
+" SETUP
 " @see https://vim.fandom.com/wiki/Example_vimrc
 " @see https://vim.fandom.com/wiki/Best_Vim_Tips
 " @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
 " @see :h quickref
 " @see :h motion
+
+" Build-in improve % option (works with if statements and tags html) (slower)
+packadd! matchit
+
+" Registers and marks special used here
+" - "z  Save content yank in function, this no overwrite default register
+" - 'a  Mark used in append_char function to return original position
 
 " set nocompatible                                                " Vim rules, no vi (default)
 " set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */ (default)
@@ -158,22 +159,22 @@ endif
 
 " Better Completion
 " @see :h 'complete'
-set complete=.                                                  " Current buffer
+set complete=.                                                  " Current buffer (default: .,w,b,u,t,i)
 set complete+=w                                                 " Buffers in other [w]indows
 set complete+=b                                                 " Buffers in [b]uffers list
-set completeopt=longest,menuone,preview                         " Show usefull preview in popupmenu
+set completeopt=longest,menuone,preview                         " Show usefull preview in popup menu (default: menu,preview)
 
 " Custom Interface
 " set title                                                       " Use filename as title in console (default)
 " set novisualbell                                                " Not screen flash (default)
-set autoread                                                    " Auto reload after external changes
-set autowrite                                                   " Autosave on lost focus (cycling buffers)
+set autoread                                                    " Reload after external changes
+set autowrite                                                   " Save on lost focus (cycling buffers)
 " set backspace=indent,eol,start                                  " Allow backspacing over everything in Insert Mode (default)
-set clipboard=unnamedplus                                       " Shared SO clipboard
+set clipboard=unnamedplus                                       " Shared SO clipboard (default autoselect,exclude:cons\|linux)
 set splitbelow                                                  " :split  opens window below (:belowright split)
 set splitright                                                  " :vsplit opens window right (:belowright vsplit)
-set signcolumn=yes                                              " Always show signs next to number
-set pumheight=15                                                " Maximum options showed in popup menu
+set signcolumn=yes                                              " Always show signs next to number (default auto)
+set pumheight=15                                                " Maximum options showed in popup menu (default: 0)
 " set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message (default)
 
 if has('mouse')
@@ -182,17 +183,17 @@ endif
 
 " Custom Render
 " syntax enable                                                   " (default)
-set nowrap                                                      " No cut lines, use <Leader>gw to toggle
+set nowrap                                                      " No cut lines, use 'yow' to toggle
 set linebreak                                                   " No cut words on wrap enable
-set showbreak=↪                                                 " Visual char on wrap line
-set display=lastline                                            " Show as much as possible of the last line.
-set scrolloff=1                                                 " Lines (rows) show always before current cursor line
-set sidescrolloff=5                                             " Columns (cols) show always after current cursor position
+set showbreak=↪                                                 " Visual char on wrap line (default: empty)
+set display=lastline                                            " Show as much as possible of the last line (default: empty)
+set scrolloff=1                                                 " Lines (rows) show always before current cursor line (default: 0)
+set sidescrolloff=5                                             " Columns (cols) show always after current cursor position (default: 0)
 set nojoinspaces                                                " No insert two spaces after a '.', '?' and '!'
 
 " Custom View
-set number                                                      " Number in cursorline is a number line, no zero
-set relativenumber                                              " Relative number do easy select a range of lines
+set number                                                      " Number in cursorline is a screen line, no zero
+set relativenumber                                              " Relative number do easy select a range of lines (slower)
 " @see https://eduncan911.com/software/fix-slow-scrolling-in-vim-and-neovim.html
 " set cursorline                                                  " Highligth line when cursor there is (slower)
 " set colorcolumn=121                                             " Colum limit for write (slower)
@@ -201,12 +202,12 @@ set relativenumber                                              " Relative numbe
 set list                                                        " Visible white spaces, easy reading (tab is a white space)
 set listchars=space:·,tab:»-                                    " Chars used for invisible chars, only I want space and tabls
 " set fillchars+=eob:\                                            " Hide ~ in end of buffer
-set textwidth=120                                               " Breakline in Insert Mode after this column value
+set textwidth=120                                               " Breakline in Insert Mode after this column value (default: 0)
 set synmaxcol=200                                               " Only highlight the first N columns. Avoid very slow redrawing (default: 3000)
 " set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option
 " set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option
 set updatetime=50                                               " Default 4s is a lot time
-set guicursor=                                                  " Always cursor has same block: block
+set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
 
 if has('nvim')
     set diffopt+=vertical,algorithm:histogram,indent-heuristic  " Best diff
@@ -216,22 +217,22 @@ endif
 
 " Custom identation
 " set autoindent
-set softtabstop=4                                               " Tabs calculate required spaces
-set shiftwidth=4                                                " 1 tab === 4 spaces
+set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
+set shiftwidth=4                                                " 1 tab === 4 spaces (default: 8)
 set expandtab                                                   " Don't use tabs please
-set fileformat=unix                                             " End of line as Unix format
+set fileformat=unix                                             " End of line as Unix format. Always!
 
 " Enable folding : Hit za
 set nofoldenable                                                " Unfold lines by default in buffers
-set foldmethod=indent                                           " Use indent to fold code
-set foldnestmax=10                                              " Limit nested fold
-" set foldlevel=99                                                " ¿?
+set foldmethod=indent                                           " Use indent to fold code (default: manual)
+set foldnestmax=10                                              " Limit nested fold (default: 20)
+" set foldlevel=99                                                " Zero will close all folds.  Higher numbers will close fewer folds (default: 0)
 
 " Utils
 set nrformats-=octal                                            " I don't use octal numbers
 " set nrformats+=alpha                                            " Allow [in/de]crement chars: <C-a>, <C-x>
 
-" AVOID (UNUSED) PLUGINS
+" Avoid (unused) built-in plugins
 let g:loaded_2html_plugin = 1
 let g:loaded_gzip = 1
 let g:loaded_logiPat = 1
@@ -308,9 +309,10 @@ function! ChangeStatuslineColor() abort
             silent execute "highlight! StatusLine cterm=reverse guifg=#FB4934 guibg=NONE"
         endif
 
-        " Apply changes quikly
+        " Apply changes quickly
         silent redrawstatus
     catch
+        " Force reload on fail (hacky)
         let &readonly = &readonly
     endtry
 
@@ -330,11 +332,12 @@ function! s:get_branch() abort
     return strlen(l:branchname) > 0 ? l:branchname : ''
 endfunction
 
-set showcmd                                                     " Use off if terminal is slow
-set noruler                                                     " Cursor position is showed in statusline
-set noshowmode                                                  " Mode is showed in statusline
+set showcmd                                                     " Show current command in command-line (slower)
+set noruler                                                     " Cursor position is showed in command-line
+set noshowmode                                                  " Mode is showed in command-line
 
-set shortmess=W                                                 " Don't give "written" or "[w]" when writing a file
+set shortmess=                                                  " Reset option (default: filnxtToOS)
+set shortmess+=W                                                " Don't give "written" or "[w]" when writing a file
 set shortmess+=F                                                " Don't give the file info when editing a file
 set shortmess+=A                                                " Don't give the "ATTENTION" message when swap is found
 set shortmess+=I                                                " Don't give the intro message when starting Vim
@@ -346,7 +349,7 @@ set shortmess+=t                                                " Truncate file 
 function! s:statusline() abort
     set laststatus=2                                                " Always show statusline
     set statusline=                                                 " Start from scratch
-    set statusline+=%{ChangeStatuslineColor()}                      " Color by Mode
+    set statusline+=%{ChangeStatuslineColor()}                      " Color by mode
 
     if exists('g:loaded_syntastic_plugin')
         set statusline+=%1*                                         " Set custom color
@@ -461,6 +464,7 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 " nnoremap <Leader>s <kDivide>
 " nnoremap <Leader>S ?
 
+" Open help (toggle)
 nnoremap <silent> <F1> :if &filetype ==# 'help'<Enter>
             \ :q!<Enter>
             \ :else<Enter>
@@ -485,7 +489,7 @@ nnoremap <silent> <F3> :if &filetype ==# 'netrw'<Enter>
 
 nnoremap <silent> <F5> :registers<Enter>
 
-" Fast Vim configuration
+" Fast Vim configuration (and plugins)
 nnoremap <silent> <F10> :if expand('%:t') ==# '.vimrc'<Enter>
             \ :PlugUpdate<Enter>
             \ :elseif getbufvar(bufnr('%'), '&filetype') ==# 'vim-plug'<Enter>
@@ -585,7 +589,7 @@ nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
 vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 vnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 
-" Fast close buffer
+" Fast close buffer (saving changes)
 nnoremap <silent> <Leader>z :if !&filetype<Enter>
             \ :bdelete!<Enter>
             \ :else<Enter>
@@ -593,7 +597,7 @@ nnoremap <silent> <Leader>z :if !&filetype<Enter>
             \ :bdelete<Enter>
             \ :endif<Enter><Enter>
 
-" Close all but current buffer
+" Close all but current buffer (saving changes)
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
 
 nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
@@ -636,7 +640,7 @@ nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
 nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
 nnoremap <silent> <Leader>gF :echo 'Copied:   ' . <SID>get_current_function(1)<Enter>
 
-nnoremap <silent> <Leader>gcl :call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
+nnoremap <silent> <Leader>gC :call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
 
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')<Enter>
             \ :echo 'Copied:   ' . @+<Enter>
@@ -1426,7 +1430,7 @@ function! s:go_url(url) abort
 endfunction
 
 " @see https://vim.fandom.com/wiki/Faster_loading_of_large_files
-" file is large from 2mb
+" File is large from 2MB
 augroup LargeFile
     autocmd!
 
