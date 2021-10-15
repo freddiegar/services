@@ -102,10 +102,10 @@ autocmd!
 
 set wildmenu                                                    " Autocomplete in command-line with <Tab>
 " set wildmode=full                                               " Command complete as zsh (default)
-set wildignore+=.git,.vscode,.idea,.vimrc,                      " Ignored files in command-line autocomplete
-set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,
-set wildignore+=*.log,*/tmp/*,*.so,*.swp,*~,._*,
-set wildignore+=*.jpg,*.png,*.gif,*.jpeg,
+set wildignore+=.git,.vscode,.idea,                             " Ignored files in command-line autocomplete
+set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,                      " CAUTION: vimgrep use this configuration
+set wildignore+=*/tmp/*,*.so,*.swp,*~,._*,
+set wildignore+=*.jpg,*.png,*.gif,*.jpeg,*.svg
 set wildignore+=node_modules,vendor,*/coverage/*,
 set lazyredraw                                                  " No redraw when macro/script is running
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
@@ -144,6 +144,7 @@ if executable('rg')
     " Replace built-in grep's Vim, options:
     " @see https://github.com/BurntSushi/ripgrep
     " @see https://beyondgrep.com/feature-comparison/
+    " @see https://gist.github.com/seanh/a866462a27cb3ad7b084c8e6000a06b9
     "  --vimgrep:       Every match on its own line with line number and column
     "  --smart-case:    Uppercase are important! (If there is)
     "  --follow:        Follow symlinks
@@ -492,9 +493,8 @@ nnoremap <silent> <F10> :if expand('%:t') ==# '.vimrc'<Enter>
             \ :endif<Enter><Enter>
 
 " Turn-off highlighting
-nnoremap <silent> <Enter> :if &filetype !=# 'qf'<Enter>
-            \ :nohlsearch<Enter>
-            \ :endif<Enter><Enter>
+nnoremap <silent> <nowait> <expr> <Enter>
+            \ &buftype ==# 'quickfix' ? "\r" : ":nohlsearch<Enter>"
 
 " Fast Visual Line selection
 noremap <silent> TT :call <SID>smartselection(visualmode())<Enter>
@@ -618,7 +618,13 @@ nnoremap <silent> <Leader>grh :AsyncRun git reset HEAD %:p<Enter>
 nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
             \ :echo 'Dumped:   ' . getcwd()<Enter>
 
-nnoremap <silent> <Leader>gw :setlocal wrap!<Enter>
+" @thanks https://github.com/tpope/vim-unimpaired
+nnoremap <silent> [q :cprevious<Enter>
+nnoremap <silent> ]q :cnext<Enter>
+nnoremap <silent> [Q :cfirst<Enter>
+nnoremap <silent> ]Q :clast<Enter>
+nnoremap <silent> yow :setlocal wrap!<Enter>
+
 nnoremap <silent> <Leader>gm :messages<Enter>
 
 nnoremap <silent> <Leader>gb :echo 'Branch:   ' . <SID>get_branch()<Enter>
