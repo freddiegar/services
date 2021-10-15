@@ -631,10 +631,10 @@ nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')<Enter>
             \ :echo 'Copied:   ' . @+<Enter>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()<Enter>
-            \ :echo 'Copied:   ' . @+<Enter>
+            \ :echomsg 'Copied:   ' . @+<Enter>
 
 nnoremap <silent> <Leader>gh :let @+=<SID>generate_hash()<Enter>
-            \ :echo 'Copied:   ' . @+<Enter>
+            \ :echomsg 'Copied:   ' . @+<Enter>
 
 nnoremap <silent> <Plug>ExecuteLineRepeatable :call <SID>execute_line()<Enter>
 nmap <silent> <Leader>ge <Plug>ExecuteLineRepeatable
@@ -1429,11 +1429,14 @@ function! s:check_large_file(file) abort
         " No syntax highlighting event
         " set eventignore+=FileType  "Comment because on change filetype in same session is weird
         setlocal noloadplugins
-        setlocal foldmethod=manual
         setlocal noundofile
         setlocal noswapfile
+        setlocal nocursorline
+        setlocal nocursorcolumn
+        setlocal norelativenumber
         setlocal bufhidden=unload
         setlocal buftype=nowrite
+        setlocal foldmethod=manual
         setlocal undolevels=-1
 
         echohl WarningMsg
@@ -1626,8 +1629,8 @@ endfunction
 augroup AutoCommands
     autocmd!
 
-    " Reload after save (use ~ to trigger event)
-    autocmd BufWritePost ~/.vimrc nested source ~/.vimrc
+    " Reload after save
+    autocmd BufWritePost .vimrc nested source ~/.vimrc
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
@@ -1838,7 +1841,7 @@ augroup AutoCommands
     endfunction
 
     autocmd VimEnter * nested call <SID>sessionload()
-    autocmd BufEnter * call <SID>poststart()
+    autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
     " Cursorline only in window active, no on Insert Mode
     " autocmd InsertLeave,WinEnter * set cursorline
     " autocmd InsertEnter,WinLeave * set nocursorline
@@ -1849,7 +1852,6 @@ augroup AutoCommands
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
     " autocmd VimResized * wincmd =
-    autocmd FileType * call <SID>statusline()
 augroup END
 
 nmap <silent> <F4> :call <SID>get_hlinfo()<Enter>
