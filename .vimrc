@@ -418,6 +418,8 @@ nnoremap <silent> <Right> :vertical resize +5<Enter>
 
 " Utility
 nnoremap <silent> Q @@
+vnoremap <silent> Q :normal @@<Enter>gv
+vnoremap <silent> . :normal .<Enter>gv
 nnoremap <silent> Y y$
 " 'x    Jump to the beginning of the line of mark 'x'
 " `x    Jump to the cursor position of mark 'x'
@@ -968,8 +970,9 @@ function! s:get_function_name() abort
 endfunction
 
 " Fast <Esc>
+" inoremap <C-c> <Esc>`^
 inoremap <silent> jk <Esc>
-cnoremap <silent> jk <Esc>
+cnoremap <silent> jk <C-c>
 
 " Fast moving in Insert Mode
 " Use <C-o> to use Normal mode in Insert mode, by example: <C-o>Nf0
