@@ -185,7 +185,7 @@ endif
 
 " Custom Render
 " syntax enable                                                   " (default)
-set nowrap                                                      " No cut lines, use 'yow' to toggle
+set nowrap                                                      " No cut lines
 set linebreak                                                   " No cut words on wrap enable
 set showbreak=↪                                                 " Visual char on wrap line (default: empty)
 set display=lastline                                            " Show as much as possible of the last line (default: empty)
@@ -638,6 +638,8 @@ nnoremap <silent> [q :cprevious<Enter>
 nnoremap <silent> ]q :cnext<Enter>
 nnoremap <silent> [Q :cfirst<Enter>
 nnoremap <silent> ]Q :clast<Enter>
+nnoremap <silent> yol :set list!<Enter>
+nnoremap <silent> yoc :set cursorline!<Enter>
 nnoremap <silent> yow :setlocal wrap!<Enter>
 
 nnoremap <silent> <Leader>gm :messages<Enter>
