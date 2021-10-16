@@ -1,6 +1,7 @@
 " PHILOSOPHY
 " @see https://www.moolenaar.net/habits.html
 " @see http://www.viemu.com/a-why-vi-vim.html
+" @see https://blog.sanctum.geek.nz/vim-koans/
 
 " VIM Config
 " @see https://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118
@@ -14,6 +15,7 @@
 " @see https://gilesorr.com/blog/vim-variable-scope.html
 
 " ORIGIN
+" @see https://www.journaldev.com/44623/vim-vs-vi
 " @see https://www.reddit.com/r/vim/wiki/why_hjkl
 " @see https://www.fcodelabs.com/2018/12/08/Vim-Cheats/
 " @mailing  https://groups.google.com/g/vim_dev
@@ -85,13 +87,13 @@
 " - 'a  Mark used in append_char function to return original position
 
 " set nocompatible                                                " Vim rules, no vi (default)
-" set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */ (default)
+set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */ (default in vim) (why nvim why!)
 set secure                                                      " Security!: Not autocmd in .vimrc file
 set exrc                                                        " Always search config in .vimrc file
 set hidden                                                      " Allow change between buffer without save
 set omnifunc=syntaxcomplete#Complete                            " Default complete function global
 set completefunc=syntaxcomplete#Complete                        " Default complete function used in buffers
-" set cryptmethod=blowfish2                                       " Use strong encription (default)
+" set cryptmethod=blowfish2                                       " Use strong encription (default) (nvim removed)
 " set encoding=utf-8                                              " Output encoding that is shown in the terminal (default)
 " set fileencoding=utf-8                                          " Output encoding of the file that is written (default)
 
@@ -133,7 +135,7 @@ set sessionoptions-=folds                                       " No save folds 
 
 " Better Search
 set hlsearch                                                    " Highligth match results with / and ?
-set incsearch                                                   " On TOP return BOTTOM, on BOTTOM return TOP"
+set incsearch                                                   " Search first match. On TOP return BOTTOM, on BOTTOM return TOP
 set ignorecase                                                  " Case-insensitive in search
 set smartcase                                                   " Case-sensitive if keyword contains al least one uppercasa char
 
@@ -149,8 +151,8 @@ if executable('rg')
     "  --vimgrep:       Every match on its own line with line number and column
     "  --smart-case:    Uppercase are important! (If there is)
     "  --follow:        Follow symlinks
-    set grepprg=rg\ --vimgrep\ --smart-case\ --follow
-    set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
+    set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Default: grep -n $* /dev/null
+    set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m      " Default: %f:%l:%m,%f:%l%m,%f %l%m
 endif
 
 " Tell Vim to remember certain things when we exit
@@ -165,7 +167,7 @@ set complete+=b                                                 " Buffers in [b]
 set completeopt=longest,menuone,preview                         " Show usefull preview in popup menu (default: menu,preview)
 
 " Custom Interface
-" set title                                                       " Use filename as title in console (default)
+" set title                                                       " Use filename as title in console (default: off)
 " set novisualbell                                                " Not screen flash (default)
 set autoread                                                    " Reload after external changes
 set autowrite                                                   " Save on lost focus (cycling buffers)
@@ -173,7 +175,7 @@ set autowrite                                                   " Save on lost f
 set clipboard=unnamedplus                                       " Shared SO clipboard (default autoselect,exclude:cons\|linux)
 set splitbelow                                                  " :split  opens window below (:belowright split)
 set splitright                                                  " :vsplit opens window right (:belowright vsplit)
-set signcolumn=yes                                              " Always show signs next to number (default auto)
+set signcolumn=yes                                              " Always show signs next to number (default: auto)
 set pumheight=15                                                " Maximum options showed in popup menu (default: 0)
 " set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message (default)
 
@@ -189,6 +191,7 @@ set showbreak=↪                                                 " Visual char 
 set display=lastline                                            " Show as much as possible of the last line (default: empty)
 set scrolloff=1                                                 " Lines (rows) show always before current cursor line (default: 0)
 set sidescrolloff=5                                             " Columns (cols) show always after current cursor position (default: 0)
+set sidescroll=1                                                " Horizontally scroll one character at a time (default: 0 => half-screen)
 set nojoinspaces                                                " No insert two spaces after a '.', '?' and '!'
 
 " Custom View
@@ -219,6 +222,7 @@ endif
 " set autoindent
 set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
 set shiftwidth=4                                                " 1 tab === 4 spaces (default: 8)
+set shiftround                                                  " Round indentation to multiples of shiftwidth 3 > 4 > 8
 set expandtab                                                   " Don't use tabs please
 set fileformat=unix                                             " End of line as Unix format. Always!
 
@@ -263,7 +267,7 @@ let g:loaded_zipPlugin = 1
 let g:netrw_banner = 0                                          " Hide help banner. Toggle: I
 let g:netrw_keepdir = 0                                         " Keep current directory and browsing directory synced
 let g:netrw_preview = 1                                         " Preview in vertical mode. (default: horizontal)
-let g:netrw_browse_split = 4                                    " Open file in preview window as P. (default: 0 = same window)
+let g:netrw_browse_split = 4                                    " Open file in preview window as P. (default: 0 => same window)
 " let g:netrw_winsize = 25                                        " Keep same size after open file
 let g:netrw_liststyle = 3                                       " Show folders and files always. Cycling: i
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive
@@ -332,8 +336,8 @@ function! s:get_branch() abort
     return strlen(l:branchname) > 0 ? l:branchname : ''
 endfunction
 
-" set showcmd                                                     " Show current command in command-line (slower)
 set noruler                                                     " Cursor position is showed in command-line
+set noshowcmd                                                   " Show current command in command-line (slower) (why nvim why!)
 set noshowmode                                                  " Mode is showed in command-line
 
 set shortmess=                                                  " Reset option (default: filnxtToOS)
@@ -1277,6 +1281,7 @@ let g:goyo_bg = '#1D2021'
 " TagBar
 " @see https://github.com/preservim/tagbar
 nnoremap <silent> <F8> :TagbarToggle<Enter>
+let g:tagbar_compact = 1
 let g:tagbar_autofocus = 1
 
 " Fzf
@@ -1693,6 +1698,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
 
     autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
+    autocmd FileType php nmap <silent> <C-]> :call phpactor#GotoDefinition()<Enter>
 "     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
 "     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
 
