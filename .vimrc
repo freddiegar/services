@@ -325,7 +325,7 @@ function! ChangeStatuslineColor() abort
 endfunction
 
 function! GetNameCurrentPath() abort
-    return &buftype !=# 'quickfix'
+    return &buftype !=# 'quickfix' && &filetype !=# 'netrw'
                 \ ? split(getcwd(), '/')[-1] . ' -> '
                 \ : ''
 endfunction
@@ -446,6 +446,7 @@ inoremap <silent> , ,<C-g>u
 inoremap <silent> ; ;<C-g>u
 inoremap <silent> . .<C-g>u
 inoremap <silent> : :<C-g>u
+inoremap <silent> = =<C-g>u
 inoremap <silent> ! !<C-g>u
 inoremap <silent> ? ?<C-g>u
 
@@ -1266,7 +1267,7 @@ let g:user_emmet_leader_key = ','
 " @see https://github.com/justinmk/vim-sneak
 let g:sneak#label = 1
 " Use 's' over ';' to go a 2nd result
-let g:sneak#s_next = 1
+" let g:sneak#s_next = 1
 
 " Goyo
 " @see https://github.com/junegunn/goyo.vim
