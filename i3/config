@@ -188,10 +188,18 @@ mode "resize" {
     bindsym Shift+k resize shrink height  10 px or 10 ppt
     bindsym Shift+l resize grow   width   10 px or 10 ppt
 
-    bindsym 1 resize set 667 375
-    bindsym 2 resize set 375 667
-    bindsym 3 resize set 854 480
-    bindsym 4 resize set 480 854
+    bindsym b resize set 1280 720
+    bindsym Shift+b resize set 720 1280
+
+    bindsym m resize set 854 480
+    bindsym Shift+m resize set 480 854
+
+    bindsym s resize set 640 360
+    bindsym Shift+s resize set 360 640
+
+    bindsym x resize set 426 240
+    bindsym Shift+x resize set 240 426
+
     bindsym v resize set 854 540
 
     # back to normal
