@@ -647,7 +647,6 @@ nnoremap <silent> <Leader>gm :messages<Enter>
 nnoremap <silent> <Leader>gb :echo 'Branch:   ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path:     ' . getcwd()<Enter>
 
-nnoremap <silent> <Leader>gl :call <SID>go_line()<Enter>
 nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
 nnoremap <silent> <Leader>gF :echo 'Copied:   ' . <SID>get_current_function(1)<Enter>
 
@@ -939,7 +938,7 @@ function! s:go_line() abort
         echo 'Nothing to do.'
     catch
         echohl WarningMsg
-        echo 'Invalid go line.'
+        echo v:exception
         echohl None
     endtry
 
@@ -1048,7 +1047,7 @@ cnoremap <C-f> <C-Right>
 " @see https://www.reddit.com/r/vim/wiki/pasting-in-vim
 " @see https://vim.fandom.com/wiki/Toggle_auto-indenting_for_code_paste
 setglobal pastetoggle=<S-F2>
-nnoremap <S-F2> :call <SID>toggle_paste()<Enter>
+nnoremap <silent> <S-F2> :call <SID>toggle_paste()<Enter>
 
 function! s:toggle_paste() abort
     set invpaste
@@ -1426,7 +1425,7 @@ if has('patch-8.2.0750') || has('nvim-0.4.0')
 endif
 
 " @see https://github.com/vim/vim/issues/4738
-nnoremap gx :call <SID>go_url(expand('<cWORD>'))<Enter>
+nnoremap <silent> gx :call <SID>go_url(expand('<cWORD>'))<Enter>
 
 function! s:go_url(url) abort
     let l:uri = a:url
@@ -1439,6 +1438,43 @@ function! s:go_url(url) abort
 
         silent redraw!
     endif
+endfunction
+
+nnoremap <silent> gf :call <SID>go_file(expand('<cfile>'))<Enter>
+nnoremap <silent> gF :call <SID>go_line()<Enter>
+
+function! s:go_file(ffile) abort
+    let l:cdir = getcwd()
+    let l:cext = expand('%:e')
+    let l:ffile = a:ffile
+    " Used in:     Symfony      Laravel
+    let l:paths = ['templates', 'resources/views']
+
+    try
+        " file.blade.php
+        if l:cext ==# 'php' && match(l:ffile, '\.twig$') <= 0
+            let l:ffile = substitute(l:ffile, '\.', '/', 'g') . '.blade.php'
+        endif
+
+        for l:path in l:paths
+            let l:file = join([l:cdir, l:path, l:ffile], '/')
+
+            if filereadable(l:file)
+                silent execute 'edit ' . l:file
+
+                return 0
+            endif
+        endfor
+
+        " Fallback. Use normal! <Bang>, it skip custom mappings
+        normal! gf
+    catch
+        echohl WarningMsg
+        echomsg v:exception
+        echohl None
+    endtry
+
+    return 1
 endfunction
 
 " @see https://vim.fandom.com/wiki/Faster_loading_of_large_files
