@@ -457,14 +457,11 @@ vnoremap <silent> J :move '>+1<Enter>gv=gv
 vnoremap <silent> K :move '<-2<Enter>gv=gv
 
 " Save previous position in mark ', (<C-o> not works)
-nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'k'
-nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'j'
-" I use nowrap by default, then, I can skip this maps in nnoremap and xnoremap
 " Using screen rows (g option)
-" nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
-" nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
-" xnoremap <silent> j gj
-" xnoremap <silent> k gk
+nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
+nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
+xnoremap <silent> j gj
+xnoremap <silent> k gk
 
 " Sudo rescue (must be w!!)
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
