@@ -86,16 +86,19 @@
 " - "z  Save content yank in function, this no overwrite default register
 " - 'a  Mark used in append_char function to return original position
 
-" set nocompatible                                                " Vim rules, no vi (default)
-set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */ (default in vim) (why nvim why!)
+" set runtimepath-=/etc/vim/vimrc                                 " TODO: No load vimrc default system
+" set runtimepath-=$VIMRUNTIME/debian.vim                         " TODO: No load debian.vim defaults
+
+" set nocompatible                                                " Vim rules, no vi (default: on, but only .vimrc exists: off)
+set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */ (default: Vim: on, Debian: off) (why nvim why!)
 set secure                                                      " Security!: Not autocmd in .vimrc file
 set exrc                                                        " Always search config in .vimrc file
 set hidden                                                      " Allow change between buffer without save
 set omnifunc=syntaxcomplete#Complete                            " Default complete function global
 set completefunc=syntaxcomplete#Complete                        " Default complete function used in buffers
-" set cryptmethod=blowfish2                                       " Use strong encription (default) (nvim removed)
-" set encoding=utf-8                                              " Output encoding that is shown in the terminal (default)
-" set fileencoding=utf-8                                          " Output encoding of the file that is written (default)
+" set cryptmethod=blowfish2                                       " Use strong encription (default: blowfish2) (nvim removed)
+" set encoding=utf-8                                              " Output encoding that is shown in the terminal (default: utf-8)
+set fileencoding=utf-8                                          " Output encoding of the file that is written (default: empty, but fzf.vim: utf-8)
 
 " scriptencoding utf-8                                            " Encoding for file (default is &encoding)
 
@@ -104,16 +107,20 @@ execute 'augroup ALL1BIG'
 autocmd!
 
 set wildmenu                                                    " Autocomplete in command-line with <Tab>
-" set wildmode=full                                               " Command complete as zsh (default)
-set wildignore+=.git,.vscode,.idea,                             " Ignored files in command-line autocomplete
+" set wildmode=full                                               " Command complete as zsh (default: full)
+set wildignore=.git,.vscode,.idea,                              " Ignored files in command-line autocomplete
 set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,                      " CAUTION: vimgrep use this configuration
 set wildignore+=*/tmp/*,*.so,*.swp,*~,._*,
 set wildignore+=*.jpg,*.png,*.gif,*.jpeg,*.svg
 set wildignore+=node_modules,vendor,*/coverage/*,
+
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,     " Suffixes that get lower priority when doing tab completion for filenames
+set suffixes+=.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc            " (default: .bak,~,.o,.h,.info,.swp,.obj)
+
 set lazyredraw                                                  " No redraw when macro/script is running
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
 
-" set nobackup                                                    " Not use backup before written a file (default)
+" set nobackup                                                    " Not use backup before written a file (default: off)
 set nowritebackup                                               " Not use backup before overwrite a file
 set noswapfile                                                  " Not swap for new buffer
 " Options:
@@ -168,16 +175,16 @@ set completeopt=longest,menuone,preview                         " Show usefull p
 
 " Custom Interface
 " set title                                                       " Use filename as title in console (default: off)
-" set novisualbell                                                " Not screen flash (default)
+" set novisualbell                                                " Not screen flash (default: off)
 set autoread                                                    " Reload after external changes
 set autowrite                                                   " Save on lost focus (cycling buffers)
-" set backspace=indent,eol,start                                  " Allow backspacing over everything in Insert Mode (default)
+set backspace=indent,eol,start                                  " Allow backspacing over everything in Insert Mode (default: Vim: empty, Debian: indent,eol,start)
 set clipboard=unnamedplus                                       " Shared SO clipboard (default autoselect,exclude:cons\|linux)
 set splitbelow                                                  " :split  opens window below (:belowright split)
 set splitright                                                  " :vsplit opens window right (:belowright vsplit)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
 set pumheight=15                                                " Maximum options showed in popup menu (default: 0)
-" set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message (default)
+" set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message (default: 1)
 
 if has('mouse')
     set mouse=a                                                 " Mouse exist always
@@ -187,6 +194,7 @@ endif
 " syntax enable                                                   " (default)
 set nowrap                                                      " No cut lines
 set linebreak                                                   " No cut words on wrap enable
+set breakindent                                                 " Indent wrap lines better
 set showbreak=↪                                                 " Visual char on wrap line (default: empty)
 set display=lastline                                            " Show as much as possible of the last line (default: empty)
 set scrolloff=1                                                 " Lines (rows) show always before current cursor line (default: 0)
@@ -198,17 +206,17 @@ set nojoinspaces                                                " No insert two 
 set number                                                      " Number in cursorline is a screen line, no zero
 set relativenumber                                              " Relative number do easy select a range of lines (slower)
 " @see https://eduncan911.com/software/fix-slow-scrolling-in-vim-and-neovim.html
-" set cursorline                                                  " Highligth line when cursor there is (slower)
-" set colorcolumn=121                                             " Colum limit for write (slower)
-" set noshowmatch                                                 " No jump a match never (default)
-" set matchtime=0                                                 " Default 5ms
-set list                                                        " Visible white spaces, easy reading (tab is a white space)
+set cursorline                                                  " Highligth screen line when cursor there is (slower)
+" set colorcolumn=121                                             " Column limit for write (slower)
+" set noshowmatch                                                 " No jump a match never (default: off)
+" set matchtime=0                                                 " Visible match (default: 5ms)
+" set list                                                        " Visible white spaces, easy reading (tab is a white space) (default: off)
 set listchars=space:·,tab:»-                                    " Chars used for invisible chars, only I want space and tabls
-" set fillchars+=eob:\                                            " Hide ~ in end of buffer
+" set fillchars+=eob:\                                            " Hide ~ in end of buffer (default vert:|,fold:-,eob:~)
 set textwidth=120                                               " Breakline in Insert Mode after this column value (default: 0)
 set synmaxcol=200                                               " Only highlight the first N columns. Avoid very slow redrawing (default: 3000)
-" set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option
-" set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option
+" set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option (default: 1)
+" set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option (default: 1)
 set updatetime=50                                               " Default 4s is a lot time
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
 
@@ -219,7 +227,7 @@ else
 endif
 
 " Custom identation
-" set autoindent
+" set autoindent                                                  " Calculate indent after <Enter>, o, O. This breakindent in textwidth, awful!
 set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
 set shiftwidth=4                                                " 1 tab === 4 spaces (default: 8)
 set shiftround                                                  " Round indentation to multiples of shiftwidth 3 > 4 > 8
@@ -336,8 +344,8 @@ function! s:get_branch() abort
     return strlen(l:branchname) > 0 ? l:branchname : ''
 endfunction
 
-set noruler                                                     " Cursor position is showed in command-line
-set noshowcmd                                                   " Show current command in command-line (slower) (why nvim why!)
+set noruler                                                     " Cursor position is showed in command-line (default: Vim: off, Debian: on)
+set noshowcmd                                                   " Show current pending command in command-line (default: on) (slower)
 set noshowmode                                                  " Mode is showed in command-line
 
 set shortmess=                                                  " Reset option (default: filnxtToOS)
