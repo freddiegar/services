@@ -450,8 +450,8 @@ nnoremap <silent> * *``zzzv
 nnoremap <silent> # #``zzzv
 nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
-nnoremap <silent> <C-o> <C-o>zz
-nnoremap <silent> <C-i> <C-i>zz
+nnoremap <silent> <C-o> <C-o>zzzv
+nnoremap <silent> <C-i> <C-i>zzzv
 
 " Undo break points (<C-g>u = Start new change)
 inoremap <silent> , ,<C-g>u
@@ -644,10 +644,10 @@ nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
             \ :echo 'Dumped:   ' . getcwd()<Enter>
 
 " @thanks https://github.com/tpope/vim-unimpaired
-nnoremap <silent> [q :cprevious<Enter>
-nnoremap <silent> ]q :cnext<Enter>
-nnoremap <silent> [Q :cfirst<Enter>
-nnoremap <silent> ]Q :clast<Enter>
+nnoremap <silent> [q :cprevious<Enter>zzzv<Enter>
+nnoremap <silent> ]q :cnext<Enter>zzzv<Enter>
+nnoremap <silent> [Q :cfirst<Enter>zzzv<Enter>
+nnoremap <silent> ]Q :clast<Enter>zzzv<Enter>
 nnoremap <silent> yol :set list!<Enter>
 nnoremap <silent> yoc :set cursorline!<Enter>
 nnoremap <silent> yow :setlocal wrap!<Enter>
@@ -1543,8 +1543,8 @@ let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.v
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
-nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zvzz
-nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zvzz
+nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zzzv
+nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zzzv
 nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
 nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
 nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
