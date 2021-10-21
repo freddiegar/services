@@ -358,39 +358,43 @@ set shortmess+=s                                                " Don't give "se
 set shortmess+=T                                                " Truncate others message [...]
 set shortmess+=t                                                " Truncate file message [<]
 
+set laststatus=2                                                " Always show statusline
+
 function! s:statusline() abort
-    set laststatus=2                                                " Always show statusline
-    set statusline=                                                 " Start from scratch
-    set statusline+=%{ChangeStatuslineColor()}                      " Color by mode
+    set statusline=                                             " Start from scratch (default: empty)
+    set statusline+=%{ChangeStatuslineColor()}                  " Color by mode
 
     if exists('g:loaded_syntastic_plugin')
-        set statusline+=%1*                                         " Set custom color
-        set statusline+=%{SyntasticStatuslineFlag()}                " Diagnostic info
-        set statusline+=%*                                          " Reset to default colors
+        set statusline+=%1*                                     " Set custom color
+        set statusline+=%{SyntasticStatuslineFlag()}            " Diagnostic info
+        set statusline+=%*                                      " Reset to default colors
     endif
 
-    " set statusline+=\ %n                                            " [N]umber buffer
-    " set statusline+=\ %{g:currentmode[mode()]}                      " Translate of Mode
-    set statusline+=\                                               " Extra space
-    set statusline+=%{GetNameCurrentPath()}                         " Relative folder
-    set statusline+=%f                                            " Relative filename
-    set statusline+=\                                               " Extra space
-    " set statusline+=%#SignColumn#                                   " Other color from here
+    " set statusline+=\ %n                                        " [N]umber buffer
+    " set statusline+=\ %{g:currentmode[mode()]}                  " Translate of Mode
+    set statusline+=\                                           " Extra space
+    set statusline+=%{GetNameCurrentPath()}                     " Relative folder
+    set statusline+=%f                                          " Relative filename
+    set statusline+=\                                           " Extra space
+    " set statusline+=%#SignColumn#                               " Other color from here
 
     " if exists('g:loaded_gitgutter')
-        " set statusline+=\ %{GitGutterStatuslineFlag()}              " Modifications info
+        " set statusline+=\ %{GitGutterStatuslineFlag()}          " Modifications info
     " endif
 
-    set statusline+=%=                                              " New group
-    set statusline+=\%m                                             " Modified flag
-    set statusline+=\%r                                             " Readonly flag
+    set statusline+=%=                                          " New group
+    set statusline+=\%W                                         " Preview flag
+    set statusline+=\%m                                         " Modified flag
+    set statusline+=\%r                                         " Readonly flag
     set statusline+=\ %3{&filetype}
-    " set statusline+=\ #:%3b                                         " ASCII representation
-    " set statusline+=\ l:%3l/%3L\ c:%3c                              " Line of Lines and Column
-    set statusline+=\%<                                             " Cut long statusline here
+    " set statusline+=\ #:%3b                                     " ASCII representation
+    " set statusline+=\ %P                                        " Cursor position in [P]ercentage
+    " set statusline+=\ l:%3l/%3L                                 " Cursor [l]ine in [L]ines
+    set statusline+=\ c:%3c                                     " Cursor Truncatec]olumn
+    set statusline+=\%<                                         " Truncate long statusline here
     set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-    set statusline+=\                                               " Extra space
-    " set statusline+=\ @\ %{strftime(\"%H:%M\")}                     " Date: HH:MM
+    " set statusline+=\ @\ %{strftime(\"%H:%M\")}               " Date: HH:MM
+    set statusline+=\                                           " Extra space
 endfunction
 
 " RAW Modes Fixed
