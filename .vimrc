@@ -466,6 +466,7 @@ inoremap <silent> : :<C-g>u
 inoremap <silent> = =<C-g>u
 inoremap <silent> ! !<C-g>u
 inoremap <silent> ? ?<C-g>u
+inoremap <silent> <Enter> <Enter><C-g>u
 
 " Keep cursor position after join
 nnoremap <silent> J maJ`a
@@ -481,8 +482,8 @@ nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
 xnoremap <silent> j gj
 xnoremap <silent> k gk
 
-" Sudo rescue (must be w!!)
-cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
+" Sudo rescue
+command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 
 " / and ? search alternatives
 " nnoremap <Leader>s <kDivide>
