@@ -112,10 +112,12 @@ set wildignore=                                                 " Reset option (
 set wildignore+=.git,.vscode,.idea                              " Ignored files in command-line autocomplete
 set wildignore+=*.zip,*.tar,*.tar.gz,*.gz                       " CAUTION: vimgrep use this configuration
 set wildignore+=*.jpg,*.png,*.gif,*.jpeg,*.svg
-set wildignore+=node_modules,vendor,*/coverage/*,
+set wildignore+=**/tmp/*,*.so,*.swp,*~,._*
+set wildignore+=var/*,storage/*
+set wildignore+=node_modules/*,vendor/*,**/coverage/*
 
 set suffixes=                                                   " Reset option (default: .bak,~,.o,.h,.info,.swp,.obj)
-set suffixes+=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,    " Suffixes that get lower priority when doing tab completion for filenames
+set suffixes+=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg     " Suffixes that get lower priority when doing tab completion for filenames
 set suffixes+=.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
 set lazyredraw                                                  " No redraw when macro/script is running (default: off)
@@ -138,6 +140,7 @@ set sessionoptions+=globals                                     " Save global va
 set sessionoptions-=options                                     " No save local mappings
 set sessionoptions-=terminal                                    " No save terminal buffers
 set sessionoptions-=folds                                       " No save folds create manually
+set sessionoptions-=help                                        " No save help windows
 " Used in mkview
 " set viewoptions-=options                                        " No save mappings
 
@@ -160,6 +163,11 @@ if executable('rg')
     "  --smart-case:    Uppercase are important! (If there is)
     "  --follow:        Follow symlinks
     set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Used in :grep command (default: grep -n $* /dev/null)
+
+    " %f    file name (finds a string)
+    " %l    line number (finds a number)
+    " %c    column number (finds a number)
+    " %m    error message (finds a string)
     set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m      " (default: %f:%l:%m,%f:%l%m,%f %l%m)
 endif
 
