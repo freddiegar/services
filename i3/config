@@ -172,6 +172,7 @@ bindsym $mod+Shift+r restart
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
+    bindsym Tab focus right
     # These bindings trigger as soon as you enter the resize mode
 
     # Pressing left will shrink the window’s width.
@@ -188,19 +189,15 @@ mode "resize" {
     bindsym Shift+k resize shrink height  10 px or 10 ppt
     bindsym Shift+l resize grow   width   10 px or 10 ppt
 
-    bindsym b resize set 1280 720
-    bindsym Shift+b resize set 720 1280
+    # Borders                                                           -20 -25
+    bindsym a       floating enable, resize set 1024 576, move position 876 479
+    bindsym s       floating enable, resize set 854 480, move position 1046 575
+    bindsym d       floating enable, resize set 640 360, move position 1260 695
+    bindsym f       floating enable, resize set 426 240, move position 1474 815
+    bindsym g       floating enable, resize set 256 144, move position 1644 911
 
-    bindsym m resize set 854 480
-    bindsym Shift+m resize set 480 854
-
-    bindsym s resize set 640 360
-    bindsym Shift+s resize set 360 640
-
-    bindsym x resize set 426 240
-    bindsym Shift+x resize set 240 426
-
-    bindsym v resize set 854 540
+    bindsym v       floating enable, resize set 854 540, move position 1046 515
+    bindsym t       floating enable, resize set 720 500, move position 1180 555
 
     # back to normal
     bindsym Return mode "default"
