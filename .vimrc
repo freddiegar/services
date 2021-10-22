@@ -1905,12 +1905,12 @@ augroup AutoCommands
 
     autocmd VimEnter * nested call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
-    " Cursorline only in window active, no on Insert Mode
-    " autocmd InsertLeave,WinEnter * set cursorline
-    " autocmd InsertEnter,WinLeave * set nocursorline
+    " Cursorline only in window active, not on Insert Mode
+    autocmd WinEnter * setlocal cursorline
+    autocmd WinLeave * setlocal nocursorline
     " Relative numbers on Insert Mode
-    " autocmd InsertEnter * :setlocal norelativenumber
-    " autocmd InsertLeave * :setlocal relativenumber
+    " autocmd WinEnter,InsertLeave * setlocal norelativenumber
+    " autocmd WinLeave,InsertEnter * setlocal relativenumber
     autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
