@@ -275,14 +275,17 @@ let g:loaded_zipPlugin = 1
 " R     Rename/move file/directory
 
 let g:netrw_banner = 0                                          " Hide help banner. Toggle: I
-let g:netrw_keepdir = 0                                         " Keep current directory and browsing directory synced
-let g:netrw_preview = 1                                         " Preview in vertical mode. (default: horizontal)
-let g:netrw_browse_split = 4                                    " Open file in preview window as P. (default: 0 => same window)
-" let g:netrw_winsize = 25                                        " Keep same size after open file
-let g:netrw_liststyle = 3                                       " Show folders and files always. Cycling: i
-let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive
+let g:netrw_keepdir = 1                                         " Keep current directory on preview files (p) (default: 1)
+let g:netrw_preview = 1                                         " Preview in vertical mode combined with g:netrw_alto. (default: horizontal)
+let g:netrw_alto = 1                                            " Change from above splitting to below splitting (default: depends)
+let g:netrw_altv = 1                                            " Change from left splitting to right splitting (default: depends)
+let g:netrw_browse_split = 4                                    " Open file vertically (default: 0 => same window)
+let g:netrw_winsize = 20                                        " Keep same size after open file in previews (default: 50 => 50%)
+let g:netrw_liststyle = 3                                       " Show as tree: folders and files always. Cycling: i
+let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive (default: cp)
 " let g:netrw_localrmdir = 'rm -r'                                " Remove dirs recursive (< in 7.4.1107)
 let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles
+let g:netrw_sizestyle = 'H'                                     " Human-readable (ex. 5K, 4M, 3G) uses 1024 base (default: b => bytes)
 
 " Statusline
 let g:currentmode = {
