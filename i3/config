@@ -360,9 +360,9 @@ set $mode_control Control (n)etwork, (s)ound
 
 mode "$mode_control" {
     # Control Network
-    bindsym n exec          --no-startup-id nmtui
+    bindsym n exec          $emulator --nofork --fullscreen -e 'nmtui', mode "default"
     # Control Volume
-    bindsym s exec          --no-startup-id pavucontrol
+    bindsym s exec          --no-startup-id pavucontrol, mode "default"
 
     # back to normal
     bindsym Return          mode "default"
