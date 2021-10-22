@@ -489,38 +489,24 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <Bar> edit!<Enter>
 " nnoremap <Leader>S ?
 
 " Open help (toggle)
-nnoremap <silent> <F1> :if &filetype ==# 'help'<Enter>
-            \ :q!<Enter>
-            \ :else<Enter>
-            \ :help<Enter>
-            \ :endif<Enter><Enter>
+nnoremap <silent> <expr> <F1>
+            \ &filetype ==# 'help' ? ":bdelete!<Enter>" : ":help<Enter>"
 
 " Open explore in root folder (toggle)
-nnoremap <silent> <F2> :if &filetype ==# 'netrw'<Enter>
-            \ :q!<Enter>
-            \ :else<Enter>
-            \ :20Lexplore<Enter>
-            \ :endif<Enter><Enter>
+nnoremap <silent> <expr> <F2>
+            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute ':20Vexplore ' . getcwd()<Enter>"
 
 " Open explore in current file folder (toggle)
-nnoremap <silent> <F3> :if &filetype ==# 'netrw'<Enter>
-            \ :q!<Enter>
-            \ :else<Enter>
-            \ :let g:getcwd = getcwd()<Enter>
-            \ :20Vexplore<Enter>
-            \ :silent execute 'cd '. g:getcwd<Enter>
-            \ :endif<Enter><Enter>
+nnoremap <silent> <expr> <F3>
+            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":20Vexplore<Enter>"
 
 nnoremap <silent> <F5> :registers<Enter>
 
 " Fast Vim configuration (and plugins)
-nnoremap <silent> <F10> :if expand('%:t') ==# '.vimrc'<Enter>
-            \ :PlugUpdate<Enter>
-            \ :elseif getbufvar(bufnr('%'), '&filetype') ==# 'vim-plug'<Enter>
-            \ :silent execute "normal! :q!\r"<Enter>
-            \ :else<Enter>
-            \ :silent execute 'edit ~/.vimrc'<Enter>
-            \ :endif<Enter><Enter>
+nnoremap <silent> <expr> <F10>
+            \ expand('%:t') ==# '.vimrc' ? ":PlugUpdate<Enter>" :
+            \ &filetype ==# 'vim-plug' ? ":silent execute \"normal! :bdelete!\\r\"<Enter>" :
+            \ ":silent execute 'edit ~/.vimrc'<Enter>"
 
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
@@ -586,11 +572,8 @@ nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>Y "+Y
 
 " Edit .env
-nnoremap <silent> <Leader>env :if filereadable(expand('.env'))<Enter>
-            \ :edit .env<Enter>
-            \ :else<Enter>
-            \ :echo '.env not found.'<Enter>
-            \ :endif<Enter><Enter>
+nnoremap <silent> <expr> <Leader>env
+            \ filereadable(expand('.env')) ? ":edit .env<Enter>" : ":echo '.env not found.'<Enter>"
 
 " Fast saving
 nnoremap <silent> <Leader>w :update<Enter>
@@ -613,13 +596,8 @@ nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
 vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 vnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 
-" Fast close buffer (saving changes)
-nnoremap <silent> <Leader>z :if !&filetype<Enter>
-            \ :bdelete!<Enter>
-            \ :else<Enter>
-            \ :update<Enter>
-            \ :bdelete<Enter>
-            \ :endif<Enter><Enter>
+nnoremap <silent> <expr> <Leader>z
+            \ !&filetype ? ":bdelete!<Enter>" : ":update <Bar> bdelete<Enter>"
 
 " Close all but current buffer (saving changes)
 nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
@@ -1311,12 +1289,9 @@ nnoremap <silent> <Leader>I :silent call <SID>rgfzf(expand('<cword>'), 0, expand
 nnoremap <silent> <Leader>i :silent execute 'Files ' . expand('%:p:h')<Enter>
 " Files in current work directory
 nnoremap <silent> <Leader>p :silent Files<Enter>
-" Files or GFiles in current work directory
-nnoremap <silent> <Leader>o :if isdirectory('.git')<Enter>
-            \ :silent execute 'GFiles'<Enter>
-            \ :else<Enter>
-            \ :silent execute 'Files'<Enter>
-            \ :endif<Enter>
+" GFiles or Files in current work directory
+nnoremap <silent> <expr> <Leader>o
+            \ isdirectory('.git') ? ":silent execute 'GFiles'<Enter>" : ":silent execute 'Files'<Enter>"
 
 " Vim Tests
 " https://github.com/vim-test/vim-test
