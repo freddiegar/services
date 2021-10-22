@@ -91,11 +91,11 @@
 
 " set nocompatible                                                " Vim rules, no vi (default: on, but only .vimrc exists: off)
 set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */ (default: Vim: on, Debian: off) (why nvim why!)
-set secure                                                      " Security!: Not autocmd in .vimrc file
-set exrc                                                        " Always search config in .vimrc file
-set hidden                                                      " Allow change between buffer without save
-set omnifunc=syntaxcomplete#Complete                            " Default complete function global
-set completefunc=syntaxcomplete#Complete                        " Default complete function used in buffers
+set secure                                                      " Security!: Not autocmd in .vimrc file (default: off)
+set exrc                                                        " Always search config in .vimrc file (default: off)
+set hidden                                                      " Allow change between buffer without save (default: off)
+set omnifunc=syntaxcomplete#Complete                            " Default complete function global (default: empty)
+set completefunc=syntaxcomplete#Complete                        " Default complete function used in buffers (default: empty)
 " set cryptmethod=blowfish2                                       " Use strong encription (default: blowfish2) (nvim removed)
 " set encoding=utf-8                                              " Output encoding that is shown in the terminal (default: utf-8)
 set fileencoding=utf-8                                          " Output encoding of the file that is written (default: empty, but fzf.vim: utf-8)
@@ -106,33 +106,34 @@ set fileencoding=utf-8                                          " Output encodin
 execute 'augroup ALL1BIG'
 autocmd!
 
-set wildmenu                                                    " Autocomplete in command-line with <Tab>
+set wildmenu                                                    " Autocomplete in command-line with <Tab> (default: off)
 " set wildmode=full                                               " Command complete as zsh (default: full)
-set wildignore=.git,.vscode,.idea,                              " Ignored files in command-line autocomplete
-set wildignore+=*.zip,*.tar,*.tar.gz,*.gz,                      " CAUTION: vimgrep use this configuration
-set wildignore+=*/tmp/*,*.so,*.swp,*~,._*,
+set wildignore=                                                 " Reset option (default: empty)
+set wildignore+=.git,.vscode,.idea                              " Ignored files in command-line autocomplete
+set wildignore+=*.zip,*.tar,*.tar.gz,*.gz                       " CAUTION: vimgrep use this configuration
 set wildignore+=*.jpg,*.png,*.gif,*.jpeg,*.svg
 set wildignore+=node_modules,vendor,*/coverage/*,
 
-set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,     " Suffixes that get lower priority when doing tab completion for filenames
-set suffixes+=.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc            " (default: .bak,~,.o,.h,.info,.swp,.obj)
+set suffixes=                                                   " Reset option (default: .bak,~,.o,.h,.info,.swp,.obj)
+set suffixes+=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,    " Suffixes that get lower priority when doing tab completion for filenames
+set suffixes+=.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
-set lazyredraw                                                  " No redraw when macro/script is running
+set lazyredraw                                                  " No redraw when macro/script is running (default: off)
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
 
 " set nobackup                                                    " Not use backup before written a file (default: off)
-set nowritebackup                                               " Not use backup before overwrite a file
-set noswapfile                                                  " Not swap for new buffer
+set nowritebackup                                               " Not use backup before overwrite a file (default: depends)
+set noswapfile                                                  " Not swap for new buffer (default: on)
 " Options:
 " Relative or absoluts, explode by , (comma)
 " Spaces must be escape with: \ (backslash)
 " .     Relative to the directory of current file
 " ,,    Current directory
 " **    Any where, ex: /var/**
-set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind. Skip /usr/include
+set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind. Skip /usr/include (default: .,/usr/include,,)
 
-" Used in mksession
-set sessionoptions+=globals                                     " No save global vars (g:), error after changes
+" Used in mksession                                             " Default: blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal
+set sessionoptions+=globals                                     " Save global vars (g:), error after changes
 " set sessionoptions-=buffers                                     " No save hidden or unload buffers, only buffers in window
 set sessionoptions-=options                                     " No save local mappings
 set sessionoptions-=terminal                                    " No save terminal buffers
@@ -141,10 +142,10 @@ set sessionoptions-=folds                                       " No save folds 
 " set viewoptions-=options                                        " No save mappings
 
 " Better Search
-set hlsearch                                                    " Highligth match results with / and ?
-set incsearch                                                   " Search first match. On TOP return BOTTOM, on BOTTOM return TOP
-set ignorecase                                                  " Case-insensitive in search
-set smartcase                                                   " Case-sensitive if keyword contains al least one uppercasa char
+set hlsearch                                                    " Highligth match results with / and ? (default: off)
+set incsearch                                                   " Search first match. On TOP return BOTTOM, on BOTTOM return TOP (default: off)
+set ignorecase                                                  " Case-insensitive in search (default: off)
+set smartcase                                                   " Case-sensitive if keyword contains al least one uppercasa char (default: off)
 
 if has('nvim')
     set inccommand=nosplit                                      " Preview substitute command
@@ -158,8 +159,8 @@ if executable('rg')
     "  --vimgrep:       Every match on its own line with line number and column
     "  --smart-case:    Uppercase are important! (If there is)
     "  --follow:        Follow symlinks
-    set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Default: grep -n $* /dev/null
-    set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m      " Default: %f:%l:%m,%f:%l%m,%f %l%m
+    set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Used in :grep command (default: grep -n $* /dev/null)
+    set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m      " (default: %f:%l:%m,%f:%l%m,%f %l%m)
 endif
 
 " Tell Vim to remember certain things when we exit
@@ -168,7 +169,8 @@ endif
 
 " Better Completion
 " @see :h 'complete'
-set complete=.                                                  " Current buffer (default: .,w,b,u,t,i)
+set complete=                                                   " Reset option (default: .,w,b,u,t,i)
+set complete+=.                                                 " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
 set complete+=b                                                 " Buffers in [b]uffers list
 set completeopt=longest,menuone,preview                         " Show usefull preview in popup menu (default: menu,preview)
@@ -176,38 +178,38 @@ set completeopt=longest,menuone,preview                         " Show usefull p
 " Custom Interface
 " set title                                                       " Use filename as title in console (default: off)
 " set novisualbell                                                " Not screen flash (default: off)
-set autoread                                                    " Reload after external changes
-set autowrite                                                   " Save on lost focus (cycling buffers)
+set autoread                                                    " Reload after external changes (default: off)
+set autowrite                                                   " Save on lost focus (cycling buffers) (default: off)
 set backspace=indent,eol,start                                  " Allow backspacing over everything in Insert Mode (default: Vim: empty, Debian: indent,eol,start)
 set clipboard=unnamedplus                                       " Shared SO clipboard (default autoselect,exclude:cons\|linux)
-set splitbelow                                                  " :split  opens window below (:belowright split)
-set splitright                                                  " :vsplit opens window right (:belowright vsplit)
+set splitbelow                                                  " :split  opens window below (:belowright split) (default: off)
+set splitright                                                  " :vsplit opens window right (:belowright vsplit) (default: off)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
 set pumheight=15                                                " Maximum options showed in popup menu (default: 0)
 " set cmdheight=1                                                 " More space, minus: "Press ENTER to ..." message (default: 1)
 
 if has('mouse')
-    set mouse=a                                                 " Mouse exist always
+    set mouse=a                                                 " Mouse exist always (default: "")
 endif
 
 " Custom Render
 " syntax enable                                                   " (default)
-set nowrap                                                      " No cut lines
-set linebreak                                                   " No cut words on wrap enable
-set breakindent                                                 " Indent wrap lines better
+set nowrap                                                      " No cut lines (default: on)
+set linebreak                                                   " No cut words on wrap enable (default: off)
+set breakindent                                                 " Indent wrap lines better (default: off)
 set showbreak=↪                                                 " Visual char on wrap line (default: empty)
 set display=lastline                                            " Show as much as possible of the last line (default: empty)
 set scrolloff=1                                                 " Lines (rows) show always before current cursor line (default: 0)
 set sidescrolloff=5                                             " Columns (cols) show always after current cursor position (default: 0)
 set sidescroll=1                                                " Horizontally scroll one character at a time (default: 0 => half-screen)
-set nojoinspaces                                                " No insert two spaces after a '.', '?' and '!'
+set nojoinspaces                                                " No insert two spaces after a '.', '?' and '!' (default: on)
 
 " Custom View
-set number                                                      " Number in cursorline is a screen line, no zero
-set relativenumber                                              " Relative number do easy select a range of lines (slower)
+set number                                                      " Number in cursorline is a screen line, no zero (default: off)
+set relativenumber                                              " Relative number do easy select a range of lines (slower) (default: off)
 " @see https://eduncan911.com/software/fix-slow-scrolling-in-vim-and-neovim.html
-set cursorline                                                  " Highligth screen line when cursor there is (slower)
-" set colorcolumn=121                                             " Column limit for write (slower)
+set cursorline                                                  " Highligth screen line when cursor there is (slower) (default: off)
+" set colorcolumn=121                                             " Column limit for write (slower) (default: "")
 " set noshowmatch                                                 " No jump a match never (default: off)
 " set matchtime=0                                                 " Visible match (default: 5ms)
 " set list                                                        " Visible white spaces, easy reading (tab is a white space) (default: off)
@@ -230,18 +232,18 @@ endif
 " set autoindent                                                  " Calculate indent after <Enter>, o, O. This breakindent in textwidth, awful!
 set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
 set shiftwidth=4                                                " 1 tab === 4 spaces (default: 8)
-set shiftround                                                  " Round indentation to multiples of shiftwidth 3 > 4 > 8
-set expandtab                                                   " Don't use tabs please
-set fileformat=unix                                             " End of line as Unix format. Always!
+set shiftround                                                  " Round indentation to multiples of shiftwidth 3 > 4 > 8 (default: off)
+set expandtab                                                   " Don't use tabs please (default: off)
+set fileformat=unix                                             " End of line as Unix format. Always! (default: depends)
 
 " Enable folding : Hit za
-set nofoldenable                                                " Unfold lines by default in buffers
+set nofoldenable                                                " Unfold lines by default in buffers (default: on)
 set foldmethod=indent                                           " Use indent to fold code (default: manual)
 set foldnestmax=10                                              " Limit nested fold (default: 20)
 set foldlevel=99                                                " Zero will close all folds.  Higher numbers will close fewer folds (default: 0)
 
 " Utils
-set nrformats-=octal                                            " I don't use octal numbers
+set nrformats-=octal                                            " I don't use octal numbers (default: bin,octal,hex)
 " set nrformats+=alpha                                            " Allow [in/de]crement chars: <C-a>, <C-x>
 
 " Avoid (unused) built-in plugins
@@ -346,7 +348,7 @@ endfunction
 
 set noruler                                                     " Cursor position is showed in command-line (default: Vim: off, Debian: on)
 set noshowcmd                                                   " Show current pending command in command-line (default: on) (slower)
-set noshowmode                                                  " Mode is showed in command-line
+set noshowmode                                                  " Mode is showed in command-line (default: on)
 
 set shortmess=                                                  " Reset option (default: filnxtToOS)
 set shortmess+=W                                                " Don't give "written" or "[w]" when writing a file
@@ -358,7 +360,7 @@ set shortmess+=s                                                " Don't give "se
 set shortmess+=T                                                " Truncate others message [...]
 set shortmess+=t                                                " Truncate file message [<]
 
-set laststatus=2                                                " Always show statusline
+set laststatus=2                                                " Always show statusline (default: 1 => only if there are at least two windows)
 
 function! s:statusline() abort
     set statusline=                                             " Start from scratch (default: empty)
@@ -1117,9 +1119,9 @@ function! s:cycling_buffers(incr) abort
 endfunction
 
 if !has('gui_running')
-    set notimeout
-    set ttimeout
-    set ttimeoutlen=10                                          " Wait 10ms after Esc for special key
+    set notimeout                                               " For mappings (default: on)
+    set ttimeout                                                " For key codes (default: off)
+    set ttimeoutlen=10                                          " Wait 10ms after Esc for special key (default: -1)
 
     augroup FastEscape
         autocmd!
@@ -1941,7 +1943,7 @@ function! s:get_hlinfo() abort
                 \ . ' -> ' . g:colors_name
 endfunction
 
-set background=dark
+set background=dark                                             " (default: depends)
 
 try
     colorscheme miningbox
