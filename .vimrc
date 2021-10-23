@@ -84,7 +84,6 @@
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
-" - 'a  Mark used in append_char function to return original position
 
 " set runtimepath-=/etc/vim/vimrc                                 " TODO: No load vimrc default system
 " set runtimepath-=$VIMRUNTIME/debian.vim                         " TODO: No load debian.vim defaults
@@ -561,10 +560,13 @@ function! s:smartselection(type) abort
     let l:hascontent = match(l:cline, l:vcontent, 1) >= 0
 
     if l:hassemicolon
-        " Check if semicolon is the last char
-        silent execute "normal! ma$v\"zy"
+        " Check if semicolon is the last char not empty
+        let l:ccursor = getpos('.')
+
+        silent execute "normal! g_v\"zy"
         let l:lastchar = @@
-        silent execute 'normal! g`a'
+
+        silent call setpos('.', l:ccursor)
 
         let l:hassemicolon = @@ ==# ';'
     endif
@@ -840,8 +842,9 @@ function! s:append_char(type) abort
     let l:repeatable = 'AppendSemicolon'
     let l:screenrow = winline()
     let l:changerow = 0
+    let l:ccursor = getpos('.')
 
-    silent execute "normal! ma$v\"zy"
+    silent execute "normal! $v\"zy"
     let l:lastchar = @@
 
     if a:type ==# 'd'
@@ -918,7 +921,7 @@ function! s:append_char(type) abort
         let l:repeatable = ''
     endif
 
-    silent execute 'normal! g`a'
+    silent call setpos('.', l:ccursor)
 
     if l:changerow != 0
         " Keep scroll in same position
