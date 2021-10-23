@@ -501,11 +501,11 @@ command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 nnoremap <silent> <expr> <F1>
             \ &filetype ==# 'help' ? ":bdelete!<Enter>" : ":help<Enter>"
 
-" Open explore in root folder (toggle)
+" Open explore in current work directory (toggle)
 nnoremap <silent> <expr> <F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute ':20Vexplore ' . getcwd()<Enter>"
 
-" Open explore in current file folder (toggle)
+" Open explore in current file directory (toggle)
 nnoremap <silent> <expr> <F3>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":20Vexplore<Enter>"
 
@@ -532,6 +532,15 @@ function! s:smartselection(type) abort
     let l:hasparenthesis = match(l:cline, ')', l:cposition) >= 0
     let l:hassemicolon = match(l:cline, ';', l:cposition) >= 0
     let l:hascontent = match(l:cline, l:vcontent, 1) >= 0
+
+    if l:hassemicolon
+        " Check if semicolon is the last char
+        silent execute "normal! ma$v\"zy"
+        let l:lastchar = @@
+        silent execute 'normal! g`a'
+
+        let l:hassemicolon = @@ ==# ';'
+    endif
 
     if l:hasparenthesis && !l:hascontent
         " Line has parenthesis
