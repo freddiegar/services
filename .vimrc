@@ -847,79 +847,87 @@ function! s:append_char(type) abort
     silent execute "normal! $v\"zy"
     let l:lastchar = @@
 
-    if a:type ==# 'd'
-        silent execute "normal! $\"_x\e"
-        let l:repeatable = 'DeleteFinal'
-    elseif a:type ==# 'O'
-        silent execute "normal! O\e"
-        let l:repeatable = 'PrependEnter'
-    elseif a:type ==# 'o'
-        silent execute "normal! o\e"
-        let l:repeatable = 'AppendEnter'
-    elseif a:type ==# 'i'
-        let l:bsearch = getreg('/')
-        let l:changerow = -(1 + &scrolloff)
+    try
+        if a:type ==# 'd'
+            silent execute "normal! $\"_x\e"
+            let l:repeatable = 'DeleteFinal'
+        elseif a:type ==# 'O'
+            silent execute "normal! O\e"
+            let l:repeatable = 'PrependEnter'
+        elseif a:type ==# 'o'
+            silent execute "normal! o\e"
+            let l:repeatable = 'AppendEnter'
+        elseif a:type ==# 'i'
+            let l:bsearch = getreg('/')
+            let l:changerow = -(1 + &scrolloff)
 
-        silent execute "normal! ?^    {\rj"
+            silent execute "normal! ?^    {\rj"
 
-        if match(getline('.'), '->mark') < 0
-            silent execute "normal! O$this->markTestIncomplete();\e"
+            if match(getline('.'), '->mark') < 0
+                silent execute "normal! O$this->markTestIncomplete();\e"
+            endif
+
+            silent call setreg('/', l:bsearch)
+            let l:repeatable = 'AddIncompleteMark'
+        elseif a:type ==# 'I'
+            let l:bsearch = getreg('/')
+            let l:changerow = -(1 + &scrolloff)
+
+            silent execute "normal! ?^    {\rj"
+
+            if match(getline('.'), '->mark') > 0
+                silent execute "normal! \"_dd"
+            endif
+
+            silent call setreg('/', l:bsearch)
+            let l:repeatable = 'DropIncompleteMark'
+        elseif a:type ==# '{'
+            let l:bsearch = getreg('/')
+            let l:changerow = -(1 + &scrolloff)
+
+            silent execute "normal! ?^    {\rk"
+
+            if getline(line('.') - 1)[-2:] ==# '*/'
+                " Has docs (inline too)
+                silent execute "normal! ?^    /\\*\r"
+            elseif trim(getline(line('.') - 1))[0:1] ==# '//'
+                " Has comments
+                silent execute 'normal! k'
+            endif
+
+            silent execute "normal! O\e"
+
+            silent call setreg('/', l:bsearch)
+            let l:repeatable = 'PrependSeparator'
+        elseif a:type ==# '}'
+            let l:fsearch = getreg('/')
+            let l:changerow = -(1 + &scrolloff)
+
+            silent execute "normal! /^    }\ro\e"
+
+            silent call setreg('/', l:fsearch)
+            let l:repeatable = 'AppendSeparator'
+        elseif l:lastchar == ';'
+            silent execute "normal! \"_xA,\e"
+        elseif l:lastchar == ','
+            silent execute "normal! \"_xA;\e"
+        elseif l:lastchar == ' '
+            silent execute "normal! g_l\"_D\e"
+        elseif index(['}'], l:lastchar) >= 0 && index(['json'], &filetype) >= 0
+            silent execute "normal! A,\e"
+        elseif index(['"', "'", ')', ']'], l:lastchar) >= 0 || match(l:lastchar, "\a") || match(l:lastchar, "\d")
+            silent execute "normal! A;\e"
+        else
+            echo 'Nothing to do.'
+            let l:repeatable = ''
         endif
+    catch
+        let l:changerow = 0
 
-        silent call setreg('/', l:bsearch)
-        let l:repeatable = 'AddIncompleteMark'
-    elseif a:type ==# 'I'
-        let l:bsearch = getreg('/')
-        let l:changerow = -(1 + &scrolloff)
-
-        silent execute "normal! ?^    {\rj"
-
-        if match(getline('.'), '->mark') > 0
-            silent execute "normal! \"_dd"
-        endif
-
-        silent call setreg('/', l:bsearch)
-        let l:repeatable = 'DropIncompleteMark'
-    elseif a:type ==# '{'
-        let l:bsearch = getreg('/')
-        let l:changerow = -(1 + &scrolloff)
-
-        silent execute "normal! ?^    {\rk"
-
-        if getline(line('.') - 1)[-2:] ==# '*/'
-            " Has docs (inline too)
-            silent execute "normal! ?^    /\\*\r"
-        elseif trim(getline(line('.') - 1))[0:1] ==# '//'
-            " Has comments
-            silent execute 'normal! k'
-        endif
-
-        silent execute "normal! O\e"
-
-        silent call setreg('/', l:bsearch)
-        let l:repeatable = 'PrependSeparator'
-    elseif a:type ==# '}'
-        let l:fsearch = getreg('/')
-        let l:changerow = -(1 + &scrolloff)
-
-        silent execute "normal! /^    }\ro\e"
-
-        silent call setreg('/', l:fsearch)
-        let l:repeatable = 'AppendSeparator'
-    elseif l:lastchar == ';'
-        silent execute "normal! \"_xA,\e"
-    elseif l:lastchar == ','
-        silent execute "normal! \"_xA;\e"
-    elseif l:lastchar == ' '
-        silent execute "normal! g_l\"_D\e"
-    elseif index(['}'], l:lastchar) >= 0 && index(['json'], &filetype) >= 0
-        silent execute "normal! A,\e"
-    elseif index(['"', "'", ')', ']'], l:lastchar) >= 0 || match(l:lastchar, "\a") || match(l:lastchar, "\d")
-        silent execute "normal! A;\e"
-    else
-        echo 'Nothing to do.'
-        let l:repeatable = ''
-    endif
+        echohl WarningMsg
+        echo v:exception
+        echohl None
+    endtry
 
     silent call setpos('.', l:ccursor)
 
