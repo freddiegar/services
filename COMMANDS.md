@@ -1569,3 +1569,9 @@ Shared Folder from Windows in Linux
 
 [See](https://www.howtogeek.com/176471/how-to-share-files-between-windows-and-linux/)
 
+Rename files using xargs
+
+```bash
+ll *20211022.sql.gz | awk '{print $9 " " $9}' | sed 's/22/23/' | awk '{print $2 " " $1}' | xargs -n2 mv
+```
+
