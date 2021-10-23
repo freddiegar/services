@@ -157,6 +157,7 @@ if executable('rg')
     " Replace built-in grep's Vim, options:
     " @see https://github.com/BurntSushi/ripgrep
     " @see https://beyondgrep.com/feature-comparison/
+    " @see http://vimcasts.org/episodes/search-multiple-files-with-vimgrep/
     " @see https://gist.github.com/seanh/a866462a27cb3ad7b084c8e6000a06b9
     "  --vimgrep:       Every match on its own line with line number and column
     "  --smart-case:    Uppercase are important! (If there is)
@@ -925,7 +926,7 @@ function! s:append_char(type) abort
         let l:changerow = 0
 
         echohl WarningMsg
-        echo v:exception
+        echo <SID>exception()
         echohl None
     endtry
 
@@ -989,7 +990,7 @@ function! s:go_line() abort
         echo 'Nothing to do.'
     catch
         echohl WarningMsg
-        echo v:exception
+        echo <SID>exception()
         echohl None
     endtry
 
@@ -1518,7 +1519,7 @@ function! s:go_file(ffile) abort
         normal! gf
     catch
         echohl WarningMsg
-        echomsg v:exception
+        echo <SID>exception()
         echohl None
     endtry
 
@@ -1708,7 +1709,8 @@ function! s:quickfix_toggle()
         let g:qfix_win = bufnr('$')
     endif
 
-    return 0
+function! s:exception() abort
+    return join(split(v:exception, ' ')[1:-1], ' ')
 endfunction
 
 noremap <silent> <F9> :call <SID>notes()<Enter>
