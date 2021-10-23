@@ -477,17 +477,17 @@ nnoremap <silent> <Right> :vertical resize +5<Enter>
 
 " Utility
 nnoremap <silent> Q @@
-vnoremap <silent> Q :normal @@<Enter>gv
-vnoremap <silent> . :normal .<Enter>gv
+vnoremap <silent> Q :normal! @@<Enter>gv
+vnoremap <silent> . :normal! .<Enter>gv
 nnoremap <silent> Y y$
 " 'x    Jump to the beginning of the line of mark 'x'
 " `x    Jump to the cursor position of mark 'x'
 nnoremap <silent> gl `.
 
-" Keep search (*, #) in same position (avoid jump first ocurrence)
+" Not use [*|#]``zzzv, error on 1 ocurrence
 " Center screen (zz) after each search and open folds (zv)
-nnoremap <silent> * *``zzzv
-nnoremap <silent> # #``zzzv
+nnoremap <silent> * *zzzv
+nnoremap <silent> # #zzzv
 nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
 nnoremap <silent> <C-o> <C-o>zzzv
@@ -672,13 +672,15 @@ nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
             \ :echo 'Dumped:   ' . getcwd()<Enter>
 
 " @thanks https://github.com/tpope/vim-unimpaired
-nnoremap <silent> [q :cprevious<Enter>zzzv<Enter>
-nnoremap <silent> ]q :cnext<Enter>zzzv<Enter>
-nnoremap <silent> [Q :cfirst<Enter>zzzv<Enter>
-nnoremap <silent> ]Q :clast<Enter>zzzv<Enter>
-nnoremap <silent> yol :set list!<Enter>
-nnoremap <silent> yoc :set cursorline!<Enter>
-nnoremap <silent> yow :setlocal wrap!<Enter>
+nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
+nnoremap <silent> ]q :<C-u>cnext<Enter>zzzv
+nnoremap <silent> [Q :<C-u>cfirst<Enter>zzzv
+nnoremap <silent> ]Q :<C-u>clast<Enter>zzzv
+nnoremap <silent> yol :<C-u>set list!<Enter>
+nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
+nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
+" Cursor can be positioned where there is no actual character
+nnoremap <silent> yov :<C-U>set <C-r>=(&virtualedit =~# 'all') ? 'virtualedit-=all' : 'virtualedit+=all'<Enter><Enter>
 
 nnoremap <silent> <Leader>gm :messages<Enter>
 
