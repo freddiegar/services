@@ -704,6 +704,14 @@ nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
 nnoremap <silent> <Leader>gh :let @+=<SID>generate_hash()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
 
+nnoremap <silent> <Leader>gB :let bcrypt=<SID>generate_bcrypt('word')
+            \ <Bar> let @+=bcrypt[1]
+            \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> '. @+<Enter>
+
+vnoremap <silent> <Leader>gB :<C-u>let bcrypt=<SID>generate_bcrypt(visualmode())
+            \ <Bar> let @+=bcrypt[1]
+            \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> '. @+<Enter>
+
 nnoremap <silent> <Plug>ExecuteLineRepeatable :call <SID>execute_line()<Enter>
 nmap <silent> <Leader>ge <Plug>ExecuteLineRepeatable
 
@@ -955,6 +963,27 @@ function! s:generate_hash() abort
     let l:hash = system('echo -n "' . l:password . '" | openssl dgst -sha256 | cut -d " " -f 2 | tr -d "\n"')
 
     return strlen(l:hash) > 0 && l:password !=# 'Retry!' ? l:hash : 'Retry!'
+endfunction
+
+function! s:generate_bcrypt(type) abort
+    let l:saved_unnamed_register = @@
+
+    if a:type ==# 'v' || a:type ==# 'V'
+        silent execute "normal! `<v`>\"zy"
+
+        let l:passphrase = trim(@@)
+    else
+        let l:passphrase = expand('<cword>')
+    endif
+
+    try
+        let l:bcrypt = system("php -r 'echo password_hash(\"" . shellescape(l:passphrase, 1) . "\", PASSWORD_DEFAULT);'")
+    catch
+    endtry
+
+    let @@ = l:saved_unnamed_register
+
+    return [l:passphrase, (v:shell_error == 0 && strlen(l:bcrypt) > 0 ? l:bcrypt : 'Retry!')]
 endfunction
 
 function! s:go_line() abort
