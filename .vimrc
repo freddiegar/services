@@ -625,18 +625,18 @@ nnoremap <silent> <expr> <Leader>env
 
 " Fast saving
 nnoremap <silent> <Leader>w :update<Enter>
-nnoremap <silent> <Leader>W :wall<Enter>
-            \ :echo 'All saved!'<Enter>
+nnoremap <silent> <Leader>W :wall
+            \ <Bar> echo 'All saved!'<Enter>
 
 " Show/Copied current filename (full path)
 nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
-nnoremap <silent> <Leader>N :let @+=expand('%:p')<Enter>
-            \ :echo 'Copied:   ' . expand('%:p')<Enter>
+nnoremap <silent> <Leader>N :let @+=expand('%:p')
+            \ <Bar> echo 'Copied:   ' . expand('%:p')<Enter>
 
 " Show/Copied current filename (only last part)
 nnoremap <silent> <Leader>l :echo 'File:     ' . expand('%:t')<Enter>
-nnoremap <silent> <Leader>L :let @+=expand('%:t')<Enter>
-            \ :echo 'Copied:   ' . expand('%:t')<Enter>
+nnoremap <silent> <Leader>L :let @+=expand('%:t')
+            \ <Bar> echo 'Copied:   ' . expand('%:t')<Enter>
 
 " Improve search in fuzzy finder
 nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
@@ -656,23 +656,23 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 
-nnoremap <silent> <Leader>ga :AsyncRun git add %:p<Enter>
-            \ :edit!<Enter>
-            \ :echo 'Added:    ' . expand('%')<Enter>
+nnoremap <silent> <Leader>ga :AsyncRun git add %:p
+            \ <Bar> edit!
+            \ <Bar> echo 'Added:    ' . expand('%')<Enter>
 
-nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74<Enter>
-            \ :echo 'Docker... '<Enter>
+nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74
+            \ <Bar> echo 'Docker... '<Enter>
 
-nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p<Enter>
-            \ :edit!<Enter>
-            \ :echo 'Checkout: ' . expand('%')<Enter>
+nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p
+            \ <Bar> edit!
+            \ <Bar> echo 'Checkout: ' . expand('%')<Enter>
 
-nnoremap <silent> <Leader>grh :AsyncRun git reset HEAD %:p<Enter>
-            \ :edit!<Enter>
-            \ :echo 'Reset:    ' . expand('%')<Enter>
+nnoremap <silent> <Leader>grh :AsyncRun git reset HEAD %:p
+            \ <Bar> edit!
+            \ <Bar> echo 'Reset:    ' . expand('%')<Enter>
 
-nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload<Enter>
-            \ :echo 'Dumped:   ' . getcwd()<Enter>
+nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload
+            \ <Bar> echo 'Dumped:   ' . getcwd()<Enter>
 
 " @thanks https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
@@ -695,14 +695,14 @@ nnoremap <silent> <Leader>gF :echo 'Copied:   ' . <SID>get_current_function(1)<E
 
 nnoremap <silent> <Leader>gC :call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
 
-nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')<Enter>
-            \ :echo 'Copied:   ' . @+<Enter>
+nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
+            \ <Bar> echo 'Copied:   ' . @+<Enter>
 
-nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()<Enter>
-            \ :echomsg 'Copied:   ' . @+<Enter>
+nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
+            \ <Bar> echomsg 'Copied:   ' . @+<Enter>
 
-nnoremap <silent> <Leader>gh :let @+=<SID>generate_hash()<Enter>
-            \ :echomsg 'Copied:   ' . @+<Enter>
+nnoremap <silent> <Leader>gh :let @+=<SID>generate_hash()
+            \ <Bar> echomsg 'Copied:   ' . @+<Enter>
 
 nnoremap <silent> <Plug>ExecuteLineRepeatable :call <SID>execute_line()<Enter>
 nmap <silent> <Leader>ge <Plug>ExecuteLineRepeatable
