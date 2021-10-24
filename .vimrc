@@ -819,14 +819,10 @@ function! s:find_filter(type)
 
     if a:type ==# 'word' || a:type ==# 'file'
         let l:filter = expand('<cword>')
-    elseif a:type ==# 'v'
+    elseif a:type ==# 'v' || a:type ==# 'V'
         silent execute "normal! `<v`>\"zy"
 
-        let l:filter = @@
-    elseif a:type ==# 'char'
-        silent execute "normal! `[v`]\"zy"
-
-        let l:filter = @@
+        let l:filter = trim(@@)
     endif
 
     let @@ = l:saved_unnamed_register
@@ -1036,6 +1032,7 @@ function! s:get_function_name() abort
 endfunction
 
 " Fast <Esc>
+" Ctrl-c does not trigger the InsertLeave autocommand when leaving insert mode
 " inoremap <C-c> <Esc>`^
 inoremap <silent> jk <Esc>
 cnoremap <silent> jk <C-c>
