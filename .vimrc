@@ -976,10 +976,19 @@ function! s:generate_bcrypt(type) abort
         let l:passphrase = expand('<cword>')
     endif
 
-    try
-        let l:bcrypt = system("php -r 'echo password_hash(\"" . shellescape(l:passphrase, 1) . "\", PASSWORD_DEFAULT);'")
-    catch
-    endtry
+    " Escape backslash (\)
+    let l:escaped = substitute(l:passphrase, '\', '\\\\\\\\', 'g')
+    " Escape double quotes (")
+    let l:escaped = substitute(l:escaped, '"', '\\"', 'g')
+    " Escape single quotes (')
+    let l:escaped = substitute(l:escaped, "'", "\\\\'", 'g')
+    " Escape dollar sign ($)
+    let l:escaped = substitute(l:escaped, '\$', '\\\$', 'g')
+
+    " @see https://www.php.net/manual/en/features.commandline.options.php
+    let l:command = "php --run \"echo password_hash('" . l:escaped . "', PASSWORD_DEFAULT);\""
+
+    let l:bcrypt = system(l:command)
 
     let @@ = l:saved_unnamed_register
 
