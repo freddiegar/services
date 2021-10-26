@@ -656,23 +656,13 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 
-nnoremap <silent> <Leader>ga :AsyncRun git add %:p
-            \ <Bar> edit!
-            \ <Bar> echo 'Added:    ' . expand('%')<Enter>
+nnoremap <silent> <Leader>ga  :AsyncRun -post=edit!\ <Bar>\ echo\ 'Added:\ \ \ \ '\ .\ expand('%') git add %:p<Enter>
+nnoremap <silent> <Leader>gco :AsyncRun -post=edit!\ <Bar>\ echo\ 'Checkout:\ '\ .\ expand('%') git checkout %:p<Enter>
+nnoremap <silent> <Leader>grh :AsyncRun -post=edit!\ <Bar>\ echo\ 'Reset:\ \ \ \ '\ .\ expand('%') git reset HEAD %:p<Enter>
 
-nnoremap <silent> <Leader>gk :AsyncRun docker start db cache proxy apache74
-            \ <Bar> echo 'Docker... '<Enter>
+nnoremap <silent> <Leader>gk :AsyncRun -post=echo\ 'Docker...\ ' docker start db cache proxy apache74<Enter>
 
-nnoremap <silent> <Leader>gco :AsyncRun git checkout %:p
-            \ <Bar> edit!
-            \ <Bar> echo 'Checkout: ' . expand('%')<Enter>
-
-nnoremap <silent> <Leader>grh :AsyncRun git reset HEAD %:p
-            \ <Bar> edit!
-            \ <Bar> echo 'Reset:    ' . expand('%')<Enter>
-
-nnoremap <silent> <Leader>gcda :AsyncRun composer dump-autoload
-            \ <Bar> echo 'Dumped:   ' . getcwd()<Enter>
+nnoremap <silent> <Leader>gcda :AsyncRun -post=echo\ 'Dumped:\ \ \ '\ .\ getcwd() composer dump-autoload<Enter>
 
 " @thanks https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
