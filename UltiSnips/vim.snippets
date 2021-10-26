@@ -1,0 +1,21 @@
+snippet f "Function" b
+function ${1}(${2}) abort
+    ${0}
+endfunction
+endsnippet
+
+snippet f! "Function bang"
+function! ${1}(${2}) abort
+    ${0}
+endfunction
+endsnippet
+
+snippet if "If"
+if ${1}
+    ${VISUAL}${0}
+endif
+endsnippet
+
+snippet Plug "Add new plug" b
+Plug '${1:`!v substitute(@+, '\([^\/]*\/\/[^\/]*\/\)\([^/]*\/[^/]*\)\(.*\)', '\2', '' )`}'
+endsnippet
