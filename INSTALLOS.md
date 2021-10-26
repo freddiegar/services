@@ -677,7 +677,20 @@ sudo apt-get autoremove
 
 # Performance (Optionals)
 
+# Fuzzy Finder (FZF)
+
+[See](https://github.com/junegunn/fzf)
+
+```bash
+# After :PluInstall in Vim (Last version auto update by Vim)
+sudo ln -s ~/.vim/plugged/fzf/bin/fzf /usr/bin/fzf
+# or Debian 9+/Ubuntu 19.10+
+sudo apt-get install fzf
+```
+
 ## RigGrep for Vim search (Performance FZF and Terminal)
+
+[See](https://github.com/BurntSushi/ripgrep)
 
 ```bash
 # [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
