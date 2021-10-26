@@ -110,7 +110,7 @@ set wildmenu                                                    " Autocomplete i
 set wildignore=                                                 " Reset option (default: empty)
 set wildignore+=.git,.vscode,.idea                              " Ignored files in command-line autocomplete
 set wildignore+=*.zip,*.tar,*.tar.gz,*.gz                       " CAUTION: vimgrep use this configuration
-set wildignore+=*.jpg,*.png,*.gif,*.jpeg,*.svg
+set wildignore+=*.jpg,*.jpeg,*.png,*.gif,*.svg
 set wildignore+=**/tmp/*,*.so,*.swp,*~,._*
 set wildignore+=var/*,storage/*
 set wildignore+=node_modules/*,vendor/*,**/coverage/*
@@ -1078,6 +1078,10 @@ function s:devdocs(word) abort
 
     if &filetype ==# 'php'
         let l:docsurl = 'https://www.php.net/'
+    elseif index(['vim', 'help'], &filetype) >= 0
+        call <SID>show_documentation()
+
+        return
     endif
 
     silent call <SID>go_url(l:docsurl . a:word)
@@ -1944,6 +1948,10 @@ augroup AutoCommands
 
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
+
+    " Open files with external application
+    autocmd BufEnter *.jpg,*.jpeg,*.png,*.gif,*.svg call <SID>go_url(expand('%')) | bwipeout
+    autocmd BufEnter *.pdf call <SID>go_url(expand('%')) | bwipeout
 
     " @see :help :function
     " @see :help function-argument
