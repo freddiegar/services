@@ -1071,20 +1071,23 @@ endfunction
 
 " Docs rescue
 " @thanks https://github.com/Phantas0s/.dotfiles
-nnoremap <silent> <Leader>gd :call <SID>devdocs(expand('<cword>'))<Enter>
+nnoremap <silent> <Leader>gd :call <SID>go_docs(expand('<cword>'))<Enter>
 
-function s:devdocs(word) abort
+function s:go_docs(word) abort
+    let l:word = a:word
     let l:docsurl = 'https://devdocs.io/#q='
 
     if &filetype ==# 'php'
         let l:docsurl = 'https://www.php.net/'
+    elseif expand('%:t') ==# 'composer.json'
+        let l:docsurl = 'https://github.com/'
     elseif index(['vim', 'help'], &filetype) >= 0
         call <SID>show_documentation()
 
         return
     endif
 
-    silent call <SID>go_url(l:docsurl . a:word)
+    silent call <SID>go_url(l:docsurl . l:word)
 endfunction
 
 " Fast <Esc>
@@ -1934,6 +1937,8 @@ augroup AutoCommands
     autocmd FileType vim setlocal keywordprg=:help
     autocmd FileType git setlocal foldmethod=syntax foldlevel=1
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
+
+    autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
     autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
     autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
