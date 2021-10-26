@@ -1069,6 +1069,20 @@ function! s:get_function_name() abort
     return substitute(l:result, '(.*', '', 'g')
 endfunction
 
+" Docs rescue
+" @thanks https://github.com/Phantas0s/.dotfiles
+nnoremap <silent> <Leader>gd :call <SID>devdocs(expand('<cword>'))<Enter>
+
+function s:devdocs(word) abort
+    let l:docsurl = 'https://devdocs.io/#q='
+
+    if &filetype ==# 'php'
+        let l:docsurl = 'https://www.php.net/'
+    endif
+
+    silent call <SID>go_url(l:docsurl . a:word)
+endfunction
+
 " Fast <Esc>
 " Ctrl-c does not trigger the InsertLeave autocommand when leaving insert mode
 " inoremap <C-c> <Esc>`^
@@ -1796,7 +1810,6 @@ augroup AutoCommands
 
     " PHP Customization
     autocmd FileType php setlocal commentstring=//\ %s
-    autocmd FileType php nnoremap <silent> <buffer><Leader>gd :call <SID>go_url('https://www.php.net/' . expand('<cword>'))<Enter>
     autocmd FileType php inoremap <silent> <buffer><Leader>uu <Esc>:call phpactor#UseAdd()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
 
