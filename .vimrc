@@ -85,6 +85,10 @@
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
 
+let g:isneovim = has('nvim')
+
+syntax enable
+
 " set runtimepath-=/etc/vim/vimrc                                 " TODO: No load vimrc default system
 " set runtimepath-=$VIMRUNTIME/debian.vim                         " TODO: No load debian.vim defaults
 
@@ -149,7 +153,7 @@ set incsearch                                                   " Search first m
 set ignorecase                                                  " Case-insensitive in search (default: off)
 set smartcase                                                   " Case-sensitive if keyword contains al least one uppercasa char (default: off)
 
-if has('nvim')
+if g:isneovim
     set inccommand=nosplit                                      " Preview substitute command
 endif
 
@@ -257,7 +261,7 @@ set synmaxcol=200                                               " Only highlight
 set updatetime=50                                               " Default 4s is a lot time
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
 
-if has('nvim')
+if g:isneovim
     set diffopt+=vertical,algorithm:histogram,indent-heuristic  " Best diff
 else
     set diffopt+=iwhite                                         " Ignore white spaces in diff mode
@@ -373,8 +377,14 @@ function! ChangeStatuslineColor() abort
 endfunction
 
 function! GetNameCurrentPath() abort
-    return &buftype !=# 'quickfix' && &filetype !=# 'netrw'
+    return &buftype !=# 'quickfix' && &filetype !=# 'netrw' && &buftype !=# 'terminal'
                 \ ? split(getcwd(), '/')[-1] . ' -> '
+                \ : ''
+endfunction
+
+function! GetNameCurrentFilename() abort
+    return &buftype !=# 'terminal'
+                \ ? expand('%:~')
                 \ : ''
 endfunction
 
@@ -414,7 +424,7 @@ function! s:statusline() abort
     " set statusline+=\ %{g:currentmode[mode()]}                  " Translate of Mode
     set statusline+=\                                           " Extra space
     set statusline+=%{GetNameCurrentPath()}                     " Relative folder
-    set statusline+=%f                                          " Relative filename
+    set statusline+=%{GetNameCurrentFilename()}                 " Relative filename
     set statusline+=\                                           " Extra space
     " set statusline+=%#SignColumn#                               " Other color from here
 
@@ -428,7 +438,7 @@ function! s:statusline() abort
     set statusline+=\%r                                         " Readonly flag
     set statusline+=\ %3{&filetype}
     " set statusline+=\ #:%3b                                     " ASCII representation
-    " set statusline+=\ %P                                        " Cursor position in [P]ercentage
+    " set statusline+=\ %3p%%                                     " Cursor position in [P]ercentage
     " set statusline+=\ l:%3l/%3L                                 " Cursor [l]ine in [L]ines
     set statusline+=\ c:%3c                                     " Cursor Truncatec]olumn
     set statusline+=\%<                                         " Truncate long statusline here
@@ -1002,7 +1012,7 @@ function! s:go_line() abort
         endif
 
         if (index(['php'], &filetype) >= 0)
-            if has('nvim')
+            if g:isneovim
                 " Not use normal! <Bang>, it cancel printable char
                 silent execute "normal \<C-w>w\<C-w>q"
             else
@@ -1400,7 +1410,7 @@ nnoremap <silent> <expr> <Leader>o
 
 " Vim Tests
 " https://github.com/vim-test/vim-test
-let g:test_strategy = has('nvim') ? 'neovim' : 'vimterminal'
+let g:test_strategy = g:isneovim ? 'neovim' : 'vimterminal'
 let g:test#echo_command = 0
 let g:test#neovim#start_normal = 1
 let g:test#strategy = {
@@ -1797,6 +1807,16 @@ augroup AutoCommands
          \   silent execute "normal! g`\"" |
          \ endif
 
+    " Hide signcolumn in terminal
+    if g:isneovim
+        autocmd TermOpen * setlocal signcolumn=no
+    else
+        autocmd TerminalWinOpen * if &buftype == 'terminal'
+        \ | setlocal bufhidden=hide
+        \ | setlocal signcolumn=no
+        \ | endif
+    endif
+
     " Ominifunctions
     autocmd FileType c setlocal omnifunc=ccomplete#CompleteCpp
     autocmd FileType php setlocal omnifunc=phpactor#Complete
@@ -1967,7 +1987,7 @@ augroup AutoCommands
     command! -range GB echo join(systemlist('git -C ' . shellescape(expand('%:p:h')) . ' blame -L <line1>,<line2> ' . expand('%:t')), "\n")
 
     " Save|Load sessions
-    let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . (has('nvim') ? '.nvim' : '.vim'))
+    let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . (g:isneovim ? '.nvim' : '.vim'))
 
     function! s:sessionload() abort
         if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
