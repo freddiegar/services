@@ -25,6 +25,11 @@
 " @see https://blog.sanctum.geek.nz/series/unix-as-ide/
 " @thanks https://markodenic.com/use-google-like-a-pro/
 
+" GAMES
+" @see https://vimsnake.com/
+" @see https://www.openvim.com/
+" @see http://www.vimgenius.com/
+
 " MAPS and MODES
 " @see https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
 " -> n  Normal mode map. Defined using ':nmap' or ':nnoremap'.
@@ -163,10 +168,14 @@ if executable('rg')
     " @see https://beyondgrep.com/feature-comparison/
     " @see http://vimcasts.org/episodes/search-multiple-files-with-vimgrep/
     " @see https://gist.github.com/seanh/a866462a27cb3ad7b084c8e6000a06b9
-    "  --vimgrep:       Every match on its own line with line number and column
-    "  --smart-case:    Uppercase are important! (If there is)
-    "  --follow:        Follow symlinks
-    set grepprg=rg\ --vimgrep\ --smart-case\ --follow           " Used in :grep command (default: grep -n $* /dev/null)
+    "  --no-messages:       No show warning messages ig not found nothing
+    "  --vimgrep:           Every match on its own line with line number and column
+    "  --follow:            Follow symlinks (-L)
+    "  --ignore-case:       Ignore lower and upper case (-i)
+    "  --case-sensitive:    Respect lower and upper case (-s)
+    "  --smart-case:        Uppercase are important!, if there is (-S)
+    "  --fixed-strings      No use regex symbols (-F)
+    set grepprg=rg\ --no-messages\ --vimgrep\ --follow                         " Used in :grep command (default: grep -n $* /dev/null)
 
     " %f    file name (finds a string)
     " %l    line number (finds a number)
@@ -258,7 +267,7 @@ set textwidth=120                                               " Breakline in I
 set synmaxcol=200                                               " Only highlight the first N columns. Avoid very slow redrawing (default: 3000)
 " set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option (default: 1)
 " set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option (default: 1)
-set updatetime=50                                               " Default 4s is a lot time
+set updatetime=50                                               " Default 4s is a lot time. RIP :redir command
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
 
 if g:isneovim
@@ -377,13 +386,13 @@ function! ChangeStatuslineColor() abort
 endfunction
 
 function! GetNameCurrentPath() abort
-    return &buftype !=# 'quickfix' && &filetype !=# 'netrw' && &buftype !=# 'terminal'
-                \ ? split(getcwd(), '/')[-1] . ' -> '
+    return index(['quickfix', 'terminal', 'help'], &buftype) == -1 && &filetype !=# 'netrw'
+                \ ? split(getcwd(), '/')[-1] . (&filetype !=# '' ? ' -> ' : '')
                 \ : ''
 endfunction
 
-function! GetNameCurrentFilename() abort
-    return &buftype !=# 'terminal'
+function! GetNameCurrentFile() abort
+    return &buftype !=# 'terminal' && &filetype !=# 'netrw'
                 \ ? expand('%:~')
                 \ : ''
 endfunction
@@ -424,7 +433,7 @@ function! s:statusline() abort
     " set statusline+=\ %{g:currentmode[mode()]}                  " Translate of Mode
     set statusline+=\                                           " Extra space
     set statusline+=%{GetNameCurrentPath()}                     " Relative folder
-    set statusline+=%{GetNameCurrentFilename()}                 " Relative filename
+    set statusline+=%{GetNameCurrentFile()}                 " Relative filename
     set statusline+=\                                           " Extra space
     " set statusline+=%#SignColumn#                               " Other color from here
 
@@ -436,7 +445,7 @@ function! s:statusline() abort
     set statusline+=\%W                                         " Preview flag
     set statusline+=\%m                                         " Modified flag
     set statusline+=\%r                                         " Readonly flag
-    set statusline+=\ %3{&filetype}
+    set statusline+=\ %3{&filetype}                             " Is it require description?
     " set statusline+=\ #:%3b                                     " ASCII representation
     " set statusline+=\ %3p%%                                     " Cursor position in [P]ercentage
     " set statusline+=\ l:%3l/%3L                                 " Cursor [l]ine in [L]ines
@@ -556,7 +565,8 @@ nnoremap <silent> <expr> <F10>
 
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
-            \ &buftype ==# 'quickfix' ? "\r" : ":nohlsearch<Enter>"
+            \ &buftype ==# 'quickfix' ? "\r" :
+            \ ":nohlsearch<Enter>"
 
 " Fast Visual Line selection
 noremap <silent> TT :call <SID>smartselection(visualmode())<Enter>
