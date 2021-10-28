@@ -1011,6 +1011,7 @@ function! s:go_line() abort
             throw 'Nothing to do.'
         endif
 
+        let l:lbuffer = bufnr('%')
         let l:parts = split(trim(expand('<cWORD>'), '"'), ':')
         let l:file = strlen(l:parts[0]) > 0 ? l:parts[0] : ''
         let l:line = strlen(l:parts[1]) > 0 ? l:parts[1] : 1
@@ -1021,14 +1022,8 @@ function! s:go_line() abort
             silent execute 'edit +' . l:line . ' ' . l:file
         endif
 
-        if (index(['php'], &filetype) >= 0)
-            if g:isneovim
-                " Not use normal! <Bang>, it cancel printable char
-                silent execute "normal \<C-w>w\<C-w>q"
-            else
-                " Not use normal! <Bang>, it cancel printable char
-                silent execute "normal \<C-w>w\<Enter>"
-            endif
+        if index(['php'], &filetype) >= 0 && getbufvar(l:lbuffer, '&buftype') ==# 'terminal'
+            silent execute l:lbuffer . 'bdelete!'
         endif
     catch /^Nothing/
         echo 'Nothing to do.'
@@ -1101,10 +1096,14 @@ function s:go_docs(word) abort
 endfunction
 
 " Fast <Esc>
+" In Insert Mode
 " Ctrl-c does not trigger the InsertLeave autocommand when leaving insert mode
 " inoremap <C-c> <Esc>`^
 inoremap <silent> jk <Esc>
+" In Command Mode
 cnoremap <silent> jk <C-c>
+" In Terminal Mode (Freeze FZF popup window)
+" tnoremap <silent> <Leader><Esc> <C-\><C-n>
 
 " Fast moving in Insert Mode
 " Use <C-o> to use Normal mode in Insert mode, by example: <C-o>Nf0
@@ -1819,10 +1818,13 @@ augroup AutoCommands
 
     " Hide signcolumn in terminal
     if g:isneovim
-        autocmd TermOpen * setlocal signcolumn=no
+        autocmd TermOpen * if &buftype == 'terminal'
+        \ | setlocal bufhidden=wipe
+        \ | setlocal signcolumn=no
+        \ | endif
     else
         autocmd TerminalWinOpen * if &buftype == 'terminal'
-        \ | setlocal bufhidden=hide
+        \ | setlocal bufhidden=wipe
         \ | setlocal signcolumn=no
         \ | endif
     endif
