@@ -149,6 +149,7 @@ set sessionoptions-=options                                     " No save local 
 set sessionoptions-=terminal                                    " No save terminal buffers
 set sessionoptions-=folds                                       " No save folds create manually
 set sessionoptions-=help                                        " No save help windows
+set sessionoptions-=blank                                       " No save blank windows
 " Used in mkview
 " set viewoptions-=options                                        " No save mappings
 
@@ -267,7 +268,7 @@ set textwidth=120                                               " Breakline in I
 set synmaxcol=200                                               " Only highlight the first N columns. Avoid very slow redrawing (default: 3000)
 " set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option (default: 1)
 " set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option (default: 1)
-set updatetime=50                                               " Default 4s is a lot time. RIP :redir command
+set updatetime=100                                              " Time await for any: sign git-gutter, events. RIP :redir command (default: 4000)
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
 
 if g:isneovim
@@ -387,7 +388,7 @@ endfunction
 
 function! GetNameCurrentPath() abort
     return index(['quickfix', 'terminal', 'help'], &buftype) == -1 && &filetype !=# 'netrw'
-                \ ? split(getcwd(), '/')[-1] . (&filetype !=# '' ? ' -> ' : '')
+                \ ? split(getcwd(), '/')[-1] . (expand('%:t') !=# '' ? ' -> ' : '')
                 \ : ''
 endfunction
 
@@ -447,9 +448,9 @@ function! s:statusline() abort
     set statusline+=\%r                                         " Readonly flag
     set statusline+=\ %3{&filetype}                             " Is it require description?
     " set statusline+=\ #:%3b                                     " ASCII representation
-    " set statusline+=\ %3p%%                                     " Cursor position in [P]ercentage
-    " set statusline+=\ l:%3l/%3L                                 " Cursor [l]ine in [L]ines
     set statusline+=\ c:%3c                                     " Cursor Truncatec]olumn
+    " set statusline+=\ l:%3l/%3L                                 " Cursor [l]ine in [L]ines
+    " set statusline+=\ %3p%%                                     " Cursor position in [P]ercentage
     set statusline+=\%<                                         " Truncate long statusline here
     set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
     " set statusline+=\ @\ %{strftime(\"%H:%M\")}               " Date: HH:MM
@@ -1090,6 +1091,8 @@ function s:go_docs(word) abort
         call <SID>show_documentation()
 
         return
+    elseif index(['terminal'], &buftype) >= 0
+        return
     endif
 
     silent call <SID>go_url(l:docsurl . l:word)
@@ -1243,7 +1246,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete), viwS', ysiwf|viwSf (as function)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
-Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa
+Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
@@ -1251,7 +1254,7 @@ Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from Vim: tests, git add, docker start, etc
-Plug 'airblade/vim-gitgutter'                                   " Show changes in git repository
+Plug 'airblade/vim-gitgutter'                                   " Show changes in files if cwd is a git repository
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
@@ -1259,9 +1262,9 @@ Plug 'SirVer/ultisnips'                                         " Performance us
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
 
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
-Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar for PHP in on-the-fly
+Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
-Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'} " LSP and refactor tool
+Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
 Plug 'vim-scripts/autotags', {'for': 'c'}
 
@@ -1821,6 +1824,7 @@ augroup AutoCommands
         autocmd TermOpen * if &buftype == 'terminal'
         \ | setlocal bufhidden=wipe
         \ | setlocal signcolumn=no
+        \ | startinsert
         \ | endif
     else
         autocmd TerminalWinOpen * if &buftype == 'terminal'
