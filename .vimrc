@@ -92,11 +92,6 @@
 
 let g:isneovim = has('nvim')
 
-syntax enable
-
-" set runtimepath-=/etc/vim/vimrc                                 " TODO: No load vimrc default system
-" set runtimepath-=$VIMRUNTIME/debian.vim                         " TODO: No load debian.vim defaults
-
 " set nocompatible                                                " Vim rules, no vi (default: on, but only .vimrc exists: off)
 set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */ (default: Vim: on, Debian: off) (why nvim why!)
 set secure                                                      " Security!: Not autocmd in .vimrc file (default: off)
@@ -154,10 +149,10 @@ set sessionoptions-=blank                                       " No save blank 
 " set viewoptions-=options                                        " No save mappings
 
 " Better Search
-set hlsearch                                                    " Highligth match results with / and ? (default: off)
-set incsearch                                                   " Search first match. On TOP return BOTTOM, on BOTTOM return TOP (default: off)
+set hlsearch                                                    " Highligth match results with /, ?, *, # (default: off)
+set incsearch                                                   " Search first match while typing. On TOP return BOTTOM, on BOTTOM return TOP (default: off)
 set ignorecase                                                  " Case-insensitive in search (default: off)
-set smartcase                                                   " Case-sensitive if keyword contains al least one uppercasa char (default: off)
+set smartcase                                                   " Case-sensitive if keyword contains al least one uppercase char (default: off)
 
 if g:isneovim
     set inccommand=nosplit                                      " Preview substitute command
@@ -268,7 +263,7 @@ set textwidth=120                                               " Breakline in I
 set synmaxcol=200                                               " Only highlight the first N columns. Avoid very slow redrawing (default: 3000)
 " set winminheight=0                                              " Current buffer use all screen. This settings fail with 'split' option (default: 1)
 " set winheight=999                                               " Current buffer use all screen. This settings fail with 'split' option (default: 1)
-set updatetime=100                                              " Time await for any: sign git-gutter, events. RIP :redir command (default: 4000)
+set updatetime=300                                              " Time await for any: sign git-gutter, events. RIP :redir command (default: 4000)
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
 
 if g:isneovim
@@ -433,8 +428,9 @@ function! s:statusline() abort
     " set statusline+=\ %n                                        " [N]umber buffer
     " set statusline+=\ %{g:currentmode[mode()]}                  " Translate of Mode
     set statusline+=\                                           " Extra space
+    " This expressions redraw statusline after save file always
     set statusline+=%{GetNameCurrentPath()}                     " Relative folder
-    set statusline+=%{GetNameCurrentFile()}                 " Relative filename
+    set statusline+=%{GetNameCurrentFile()}                     " Relative filename
     set statusline+=\                                           " Extra space
     " set statusline+=%#SignColumn#                               " Other color from here
 
@@ -453,7 +449,7 @@ function! s:statusline() abort
     " set statusline+=\ %3p%%                                     " Cursor position in [P]ercentage
     set statusline+=\%<                                         " Truncate long statusline here
     set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-    " set statusline+=\ @\ %{strftime(\"%H:%M\")}               " Date: HH:MM
+    set statusline+=\ @\ %{strftime(\"%a\ %H:%M\")}               " Date: HH:MM
     set statusline+=\                                           " Extra space
 endfunction
 
@@ -1181,7 +1177,7 @@ function! s:cycling_buffers(incr) abort
     if a:incr == 1
                 \ && l:cbuffer != l:abuffer
                 \ && buflisted(l:abuffer) == 1
-                \ && getbufvar(l:abuffer, '&filetype') != 'help'
+                \ && getbufvar(l:abuffer, '&filetype') !=# 'help'
         try
             silent execute "normal! \<C-^>g`\""
         catch /^Vim\%((\a\+)\)\=:E19/
@@ -1200,7 +1196,7 @@ function! s:cycling_buffers(incr) abort
     while 1
         if l:nbuffer != 0
                     \ && buflisted(l:nbuffer) == 1
-                    \ && getbufvar(l:nbuffer, '&filetype') != 'help'
+                    \ && getbufvar(l:nbuffer, '&filetype') !=# 'help'
             silent execute ':buffer ' . l:nbuffer
 
             break
