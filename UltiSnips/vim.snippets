@@ -16,6 +16,14 @@ if ${1}
 endif
 endsnippet
 
+snippet try "Try/catch" b
+try
+    ${VISUAL}$1
+catch
+    $0
+endtry
+endsnippet
+
 snippet Plug "Add new plug" b
 Plug '${1:`!v substitute(@+, '\([^\/]*\/\/[^\/]*\/\)\([^/]*\/[^/]*\)\(.*\)', '\2', '' )`}'
 endsnippet
