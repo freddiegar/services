@@ -221,7 +221,7 @@ set complete=                                                   " Reset option (
 set complete+=.                                                 " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
 set complete+=b                                                 " Buffers in [b]uffers list
-set completeopt=longest,menuone,preview                         " Show usefull preview in popup menu (default: menu,preview)
+set completeopt=longest,menuone,preview                         " Show preview in popup menu (default: menu,preview)
 
 " Custom Interface
 " set title                                                       " Use filename as title in console (default: off)
@@ -666,6 +666,7 @@ nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
 vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 vnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 
+" Close current buffer
 nnoremap <silent> <expr> <Leader>z
             \ !&filetype ? ":bdelete!<Enter>" : ":update <Bar> bdelete<Enter>"
 
@@ -695,7 +696,9 @@ nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
 " Cursor can be positioned where there is no actual character
-nnoremap <silent> yov :<C-U>set <C-r>=(&virtualedit =~# 'all') ? 'virtualedit-=all' : 'virtualedit+=all'<Enter><Enter>
+nnoremap <silent> yov :<C-U>set <C-r>=(&virtualedit =~# 'all')
+            \ ? 'virtualedit-=all'
+            \ : 'virtualedit+=all'<Enter><Enter>
 
 nnoremap <silent> <Leader>gm :messages<Enter>
 
@@ -988,14 +991,7 @@ function! s:generate_bcrypt(type) abort
         let l:passphrase = expand('<cword>')
     endif
 
-    " Escape backslash (\)
-    let l:escaped = substitute(l:passphrase, '\', '\\\\\\\\', 'g')
-    " Escape double quotes (")
-    let l:escaped = substitute(l:escaped, '"', '\\"', 'g')
-    " Escape single quotes (')
-    let l:escaped = substitute(l:escaped, "'", "\\\\'", 'g')
-    " Escape dollar sign ($)
-    let l:escaped = substitute(l:escaped, '\$', '\\\$', 'g')
+    let l:escaped = <SID>escape(l:passphrase)
 
     " @see https://www.php.net/manual/en/features.commandline.options.php
     let l:command = "php --run \"echo password_hash('" . l:escaped . "', PASSWORD_DEFAULT);\""
@@ -1005,6 +1001,19 @@ function! s:generate_bcrypt(type) abort
     let @@ = l:saved_unnamed_register
 
     return [l:passphrase, (v:shell_error == 0 && strlen(l:bcrypt) > 0 ? l:bcrypt : 'Retry!')]
+endfunction
+
+function s:escape(string) abort
+    " Escape backslash (\)
+    let l:escaped = substitute(a:string, '\', '\\\\\\\\', 'g')
+    " Escape double quotes (")
+    let l:escaped = substitute(l:escaped, '"', '\\"', 'g')
+    " Escape single quotes (')
+    let l:escaped = substitute(l:escaped, "'", "\\\\'", 'g')
+    " Escape dollar sign ($)
+    let l:escaped = substitute(l:escaped, '\$', '\\\$', 'g')
+
+    return l:escaped
 endfunction
 
 function! s:go_line() abort
@@ -1227,18 +1236,16 @@ function! s:cycling_buffers(incr) abort
     endwhile
 endfunction
 
-if !has('gui_running')
-    set notimeout                                               " For mappings (default: on)
-    set ttimeout                                                " For key codes (default: off)
-    set ttimeoutlen=10                                          " Wait 10ms after Esc for special key (default: -1)
+set notimeout                                                   " For mappings (default: on)
+set ttimeout                                                    " For key codes (default: off)
+set ttimeoutlen=10                                              " Wait 10ms after Esc for special key (default: -1)
 
-    augroup FastEscape
-        autocmd!
+augroup FastEscape
+    autocmd!
 
-        autocmd InsertEnter * set timeoutlen=0
-        autocmd InsertLeave * set timeoutlen=1000
-    augroup END
-endif
+    autocmd InsertEnter * set timeoutlen=0
+    autocmd InsertLeave * set timeoutlen=1000
+augroup END
 
 " Plugins
 " @see https://github.com/junegunn/vim-plug
@@ -1335,18 +1342,6 @@ call plug#end()
 
 " LSP Vue
 " npm -g install vls eslint eslint-plugin-vue -D
-
-" Themes
-" Allowed 24 bit colors, by default only accept 8 bit
-" @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
-" @see https://github.com/vim/vim/issues/993#issuecomment-255651605
-if has('termguicolors')
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-
-    set t_Co=256
-    set termguicolors
-endif
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -1461,17 +1456,17 @@ let g:syntastic_style_warning_symbol = 's'
 " COC Completion
 " @see https://github.com/neoclide/coc.nvim
 let g:coc_global_extensions = [
+    \ 'coc-clangd',
     \ 'coc-css',
+    \ 'coc-eslint',
     \ 'coc-html',
     \ 'coc-json',
-    \ 'coc-yaml',
     \ 'coc-phpactor',
-    \ 'coc-clangd',
-    \ 'coc-vetur',
-    \ 'coc-eslint',
     \ 'coc-tslint',
     \ 'coc-tsserver',
+    \ 'coc-vetur',
     \ 'coc-vimlsp',
+    \ 'coc-yaml',
     \]
 
 " coc-tailwindcss: Change class in HTML Files (blade include)
@@ -1822,7 +1817,7 @@ augroup AutoCommands
          \   silent execute "normal! g`\"" |
          \ endif
 
-    " Hide signcolumn in terminal
+    " Hide signcolumn in Terminal Mode
     if g:isneovim
         autocmd TermOpen * if &buftype == 'terminal'
         \ | setlocal bufhidden=wipe
@@ -2071,6 +2066,18 @@ function! s:get_hlinfo() abort
                 \ . ' -> ' . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
                 \ . ' -> ' . g:colors_name
 endfunction
+
+" Themes
+" Allowed 24 bit colors, by default only accept 8 bit
+" @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
+" @see https://github.com/vim/vim/issues/993#issuecomment-255651605
+if has('termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+    set t_Co=256
+    set termguicolors
+endif
 
 set background=dark                                             " (default: depends)
 
