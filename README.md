@@ -598,7 +598,7 @@ curl -I https://development.local
 
 ```bash
 # Config file to use in process
-export OPENSSL_CONF=/var/www/html/freddiegar/services/ssl/openssl.conf
+export OPENSSL_CONF=/var/www/html/freddiegar/services/ssl/openssl.cnf
 
 mkdir /var/www/ssl
 cd /var/www/ssl
@@ -619,6 +619,61 @@ mkdir certs crl newcerts private
 chmod 700 private
 touch index.txt
 echo 1000 > serial
+openssl genrsa -aes256 -out private/intermediate.key.pem 4096
+
+openssl req -sha256 -new -key private/intermediate.key.pem -out certs/intermediate.csr.pem
+
+cd /var/www/ssl
+openssl ca -keyfile private/ca.key.pem -cert certs/ca.cert.pem -extensions v3_ca -notext -md sha256 -in intermediate/certs/intermediate.csr.pem -out intermediate/certs/intermediate.cert.pem
+
+# Verification
+# openssl verify -CAfile certs/ca.cert.pem intermediate/certs/intermediate.cert.pem
+
+cat intermediate/certs/intermediate.cert.pem certs/ca.cert.pem > intermediate/certs/ca-chain.cert.pem
+
+cd /var/www/ssl/intermediate
+openssl genrsa -out private/development.local.key.pem 2048
+chmod 644 private/development.local.key.pem
+openssl req -sha256 -new -key private/development.local.key.pem -out certs/development.local.csr.pem
+
+cd /var/www/ssl
+openssl ca -keyfile private/ca.key.pem -cert certs/ca.cert.pem -extensions usr_cert -notext -md sha256 -in intermediate/certs/development.local.csr.pem -out intermediate/certs/development.local.cert.pem
+
+# Optional: Lighttpd certificate
+# cat intermediate/private/development.local.key.pem intermediate/certs/development.local.cert.pem > intermediate/certs/development.local.lighttpd.pem
+
+find . -type d -exec chmod 755 {} +
+find . -type f -exec chmod 644 {} +
+chown freddie:freddie . -R
+ll /var/www/ssl/intermediate/certs/development.local.cert.pem
+ll /var/www/ssl/intermediate/private/development.local.key.pem
+ll /var/www/ssl/intermediate/certs/ca-chain.cert.pem
+# ll /var/www/ssl/intermediate/certs/development.local.lighttpd.pem
+
+# Copy new files in docker services
+
+cp -p /var/www/ssl/certs/ca.cert.pem /var/www/html/freddiegar/services/ssl/
+cp -p /var/www/ssl/intermediate/certs/ca-chain.cert.pem /var/www/html/freddiegar/services/ssl/
+cp -p /var/www/ssl/intermediate/certs/development.local.cert.pem /var/www/html/freddiegar/services/ssl/
+cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/freddiegar/services/ssl/
+
+```
+> Upload new CA in browser: /var/www/html/freddiegar/services/ssl/ca.cert.pem
+
+### Re-generate Expired
+
+[See](https://www.golinuxcloud.com/generate-duplicate-certificates-openssl/)
+
+```bash
+# Config file to use in process
+export OPENSSL_CONF=/var/www/html/freddiegar/services/ssl/openssl.cnf
+
+cd /var/www/ssl
+
+echo 'unique_subject = no' > index.txt.attr
+
+cd /var/www/ssl/intermediate
+# echo `expr $(cat serial) + 1` > serial
 openssl genrsa -aes256 -out private/intermediate.key.pem 4096
 
 openssl req -sha256 -new -key private/intermediate.key.pem -out certs/intermediate.csr.pem
