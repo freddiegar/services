@@ -545,10 +545,6 @@ command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 " nnoremap <Leader>s <kDivide>
 " nnoremap <Leader>S ?
 
-" Open help (toggle)
-nnoremap <silent> <expr> <F1>
-            \ &filetype ==# 'help' ? ":bdelete!<Enter>" : ":help<Enter>"
-
 " Open explore in current work directory (toggle)
 nnoremap <silent> <expr> <F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute ':20Vexplore ' . getcwd()<Enter>"
@@ -556,8 +552,6 @@ nnoremap <silent> <expr> <F2>
 " Open explore in current file directory (toggle)
 nnoremap <silent> <expr> <F3>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":20Vexplore<Enter>"
-
-nnoremap <silent> <F5> :registers<Enter>
 
 " Fast Vim configuration (and plugins)
 nnoremap <silent> <expr> <F10>
@@ -641,15 +635,6 @@ nnoremap <silent> <Leader>X "_X
 nnoremap <silent> <Leader>y "+y
 nnoremap <silent> <Leader>Y "+Y
 
-" Edit .env
-nnoremap <silent> <expr> <Leader>env
-            \ filereadable(expand('.env')) ? ":edit .env<Enter>" : ":echo '.env not found.'<Enter>"
-
-" Fast saving
-nnoremap <silent> <Leader>w :update<Enter>
-nnoremap <silent> <Leader>W :wall
-            \ <Bar> echo 'All saved!'<Enter>
-
 " Show/Copied current filename (full path)
 nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')
@@ -699,8 +684,6 @@ nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
 nnoremap <silent> yov :<C-U>set <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all'<Enter><Enter>
-
-nnoremap <silent> <Leader>gm :messages<Enter>
 
 nnoremap <silent> <Leader>gb :echo 'Branch:   ' . <SID>get_branch()<Enter>
 nnoremap <silent> <Leader>gp :echo 'Path:     ' . getcwd()<Enter>
@@ -1149,9 +1132,6 @@ nnoremap <silent> <S-Tab> :call <SID>cycling_buffers(-1)<Enter>
 vnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
 vnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 vnoremap <silent> <S-Tab> :<C-u>call <SID>cycling_buffers(-1)<Enter>
-
-" History files
-nnoremap <silent> <Leader>H :History<Enter>
 
 " Insert mode navigation (Forget Arrows)
 inoremap <silent> <C-a> <C-o>^
@@ -1653,17 +1633,13 @@ nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zzzv
 nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
 nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
 nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
-nmap <silent> <Leader>hh :GitGutterToggle<Enter>
-nmap <silent> <Leader>hs :GitGutterSignsToggle<Enter>
 
 " let g:gitgutter_enabled = 1 (default)
 " let g:gitgutter_eager = 1 (¿?)
 let g:gitgutter_realtime = 0
 let g:gitgutter_map_keys = 0
-let g:gitgutter_diff_args = ''
 let g:gitgutter_sign_priority = 100000
 let g:gitgutter_sign_allow_clobber = 0
-let g:gitgutter_set_sign_backgrounds = 1
 let g:gitgutter_preview_win_floating = 1
 let g:gitgutter_close_preview_on_escape = 1
 let g:gitgutter_show_msg_on_hunk_jumping = 0
