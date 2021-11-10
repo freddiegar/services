@@ -65,28 +65,6 @@
 " "abc" ==? "Abc"         evaluates to 1
 " "abc" ==  "Abc"         evaluates to 1 if 'ignorecase' is set, 0 otherwise
 
-" SWITCHING WINDOWS
-" @see :h windows
-" <C-w>q    quit
-" <C-w>s    split
-" <C-w>v    vsplit
-" <C-w>h    move left
-" <C-w>j    move down
-" <C-w>k    move up
-" <C-w>l    move right
-" <C-w>w    move next right
-" <C-w>W    move before
-
-" SETUP
-" @see https://vim.fandom.com/wiki/Example_vimrc
-" @see https://vim.fandom.com/wiki/Best_Vim_Tips
-" @see https://www.shortcutfoo.com/blog/top-50-vim-configuration-options/
-" @see :h quickref
-" @see :h motion
-
-" Build-in improve % option (works with if statements and tags html) (slower)
-" packadd! matchit
-
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
 
@@ -126,9 +104,6 @@ set sessionoptions-=terminal                                    " No save termin
 set sessionoptions-=folds                                       " No save folds create manually
 set sessionoptions-=help                                        " No save help windows
 set sessionoptions-=blank                                       " No save blank windows
-
-" Used in mkview
-" set viewoptions-=options                                        " No save mappings
 
 " Better Search
 set hlsearch                                                    " Highligth match results with /, ?, *, # (default: off)
@@ -188,7 +163,6 @@ if executable('rg')
 endif
 
 " Better Completion
-" @see :h 'complete'
 set complete=                                                   " Reset option (default: .,w,b,u,t,i)
 set complete+=.                                                 " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
@@ -285,56 +259,6 @@ let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recu
 let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles
 let g:netrw_sizestyle = 'H'                                     " Human-readable: 5K, 4M, uses 1024 base (default: [b]ytes)
 
-" Statusline
-let g:currentmode = {
-    \ 'c'     : 'COMMAND  ',
-    \ 'i'     : 'INSERT   ',
-    \ 'ic'    : 'INSERT   ',
-    \ 'ix'    : 'INSERT   ',
-    \ 'n'     : 'NORMAL   ',
-    \ 'multi' : 'MULTIPLE ',
-    \ 'ni'    : 'NORMAL   ',
-    \ 'no'    : 'NORMAL   ',
-    \ 'R'     : 'REPLACE  ',
-    \ 'Rv'    : 'R-VIRTUAL',
-    \ 's'     : 'SELECT   ',
-    \ 'S'     : 'S-LINE   ',
-    \ ''    : 'S-BLOCK  ',
-    \ '!'     : 'SHELL    ',
-    \ 't'     : 'TERMINAL ',
-    \ 'v'     : 'VISUAL   ',
-    \ 'V'     : 'V-LINE   ',
-    \ ''    : 'V-BLOCK  ',
-    \}
-
-function! ChangeStatuslineColor() abort
-    try
-        if (mode() =~# '\v(n|no|ni|c)')
-            silent execute "highlight! link StatusLine LineNr"
-        elseif (mode() =~# '\v^i')
-            silent execute "highlight! StatusLine cterm=reverse guifg=#84A598 guibg=NONE"
-        elseif (mode() =~# '\v^R')
-            silent execute "highlight! StatusLine cterm=reverse guifg=#8FBF7F guibg=NONE"
-        elseif (mode() =~# '\v(v|V|t|!)' || g:currentmode[mode()] ==# 'V-BLOCK  ')
-            silent execute "highlight! StatusLine cterm=reverse guifg=#FC802D guibg=NONE"
-        elseif (mode() =~# '\v(s|S)' || g:currentmode[mode()] ==# 'S-BLOCK  ')
-            silent execute "highlight! StatusLine cterm=reverse guifg=#D3869B guibg=NONE"
-        else
-            echo 'Mode no color: ' . mode() . '.'
-            silent execute "highlight! StatusLine cterm=reverse guifg=#FB4934 guibg=NONE"
-        endif
-
-        " Apply changes quickly
-        silent redrawstatus
-    catch
-        " Force reload on fail (hacky)
-        let &readonly = &readonly
-    endtry
-
-    " Don't show 0 in statusline
-    return ''
-endfunction
-
 function! GetNameCurrentPath() abort
     return index(['quickfix', 'terminal', 'help'], &buftype) == -1 && &filetype !=# 'netrw'
                 \ ? split(getcwd(), '/')[-1] . (expand('%:t') !=# '' ? ' -> ' : '')
@@ -372,7 +296,6 @@ set laststatus=2                                                " Always show st
 
 function! s:statusline() abort
     set statusline=                                             " Start from scratch (default: empty)
-    set statusline+=%{ChangeStatuslineColor()}                  " Color by mode
 
     if exists('g:loaded_syntastic_plugin')
         set statusline+=%1*                                     " Set custom color
@@ -380,31 +303,19 @@ function! s:statusline() abort
         set statusline+=%*                                      " Reset to default colors
     endif
 
-    " set statusline+=\ %n                                        " [N]umber buffer
-    " set statusline+=\ %{g:currentmode[mode()]}                  " Translate of Mode
     set statusline+=\                                           " Extra space
+
     " This expressions redraw statusline after save file always
     set statusline+=%{GetNameCurrentPath()}                     " Relative folder
     set statusline+=%{GetNameCurrentFile()}                     " Relative filename
-    set statusline+=\                                           " Extra space
-    " set statusline+=%#SignColumn#                               " Other color from here
-
-    " if exists('g:loaded_gitgutter')
-        " set statusline+=\ %{GitGutterStatuslineFlag()}          " Modifications info
-    " endif
 
     set statusline+=%=                                          " New group
-    set statusline+=\%W                                         " Preview flag
     set statusline+=\%m                                         " Modified flag
-    set statusline+=\%r                                         " Readonly flag
     set statusline+=\ %3{&filetype}                             " Is it require description?
-    " set statusline+=\ #:%3b                                     " ASCII representation
-    " set statusline+=\ c:%3c                                     " Cursor Truncatec]olumn
-    " set statusline+=\ l:%3l/%3L                                 " Cursor [l]ine in [L]ines
-    " set statusline+=\ %3p%%                                     " Cursor position in [P]ercentage
     set statusline+=\%<                                         " Truncate long statusline here
-    set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-    set statusline+=\ @\ %{strftime(\"%a\ %H:%M\")}               " Date: HH:MM
+
+    set statusline+=\ c:%3c                                     " Cursor [c]olumn
+
     set statusline+=\                                           " Extra space
 endfunction
 
@@ -1597,25 +1508,6 @@ let g:gitgutter_show_msg_on_hunk_jumping = 0
 if executable('rg')
     let g:gitgutter_grep = 'rg'
 endif
-
-function! GitGutterStatuslineFlag() abort
-    let [l:nradded, l:nrmodified, l:nrremoved] = GitGutterGetHunkSummary()
-
-    if (l:nradded + l:nrmodified + l:nrremoved) == 0
-        return ''
-    endif
-
-    let l:status = []
-
-    call add(l:status, l:nradded > 0 ? '+' . l:nradded : '')
-    call add(l:status, l:nrmodified > 0 ? '~' . l:nrmodified : '')
-    call add(l:status, l:nrremoved > 0 ? '-' . l:nrremoved : '')
-    call filter(l:status, 'v:val != ""')
-
-    let l:gitstatus = join(l:status)
-
-    return len(l:gitstatus) > 0 ? printf('%s', trim(l:gitstatus)) : ''
-endfunction
 
 " Tagalong
 " @see https://github.com/AndrewRadev/tagalong.vim
