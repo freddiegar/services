@@ -92,7 +92,6 @@
 
 let g:isneovim = has('nvim')
 
-" set nocompatible                                                " Vim rules, no vi (default: on, ~/.vimrc exists: off)
 set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */
                                                                 " (default: Vim: on, Debian: off) (why nvim why!)
 set secure                                                      " Security!: Not autocmd in .vimrc file (default: off)
@@ -100,35 +99,15 @@ set exrc                                                        " Always search 
 set hidden                                                      " Allow change between buffer without save (default: off)
 set omnifunc=syntaxcomplete#Complete                            " Default complete function global (default: empty)
 set completefunc=syntaxcomplete#Complete                        " Default complete function in buffers (default: empty)
-" set cryptmethod=blowfish2                                       " Strong encription (default: blowfish2) (nvim removed)
-" set encoding=utf-8                                              " Output encoding used in the terminal (default: utf-8)
 set fileencoding=utf-8                                          " Output encoding of the file that is written
                                                                 " (default: empty, but fzf.vim: utf-8)
-
-" scriptencoding utf-8                                            " Encoding for file (default is &encoding)
-
 " ALL in one BIG autocmd
 execute 'augroup ALL1BIG'
 autocmd!
 
-set wildmenu                                                    " Autocomplete in command-line with <Tab> (default: off)
-" set wildmode=full                                               " Command complete as zsh (default: full)
-set wildignore=                                                 " Reset option (default: empty)
-set wildignore+=.git,.vscode,.idea                              " Ignored files in command-line autocomplete
-set wildignore+=*.zip,*.tar,*.tar.gz,*.gz                       " CAUTION: vimgrep use this configuration
-set wildignore+=*.jpg,*.jpeg,*.png,*.gif,*.svg
-set wildignore+=**/tmp/*,*.so,*.swp,*~,._*
-set wildignore+=var/*,storage/*
-set wildignore+=node_modules/*,vendor/*,**/coverage/*
-
-set suffixes=                                                   " Reset option (default: .bak,~,.o,.h,.info,.swp,.obj)
-set suffixes+=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg     " Suffixes that get lower priority when doing tab completion for filenames
-set suffixes+=.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-
 set lazyredraw                                                  " No redraw when macro/script is running (default: off)
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
 
-" set nobackup                                                    " Not use backup before written a file (default: off)
 set nowritebackup                                               " Not use backup before overwrite a file (default: depends)
 set noswapfile                                                  " Not swap for new buffer (default: on)
 " Options:
@@ -140,9 +119,8 @@ set noswapfile                                                  " Not swap for n
 set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind
                                                                 " Skip /usr/include, it's slow (default: .,/usr/include,,)
 
-" Used in mksession                                             " Default: blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal
+" Used in mksession command                                     " Default: blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal
 set sessionoptions+=globals                                     " Save global vars (g:), error after changes
-" set sessionoptions-=buffers                                     " No save hidden|unload buffers, only buffers in window
 set sessionoptions-=options                                     " No save local mappings
 set sessionoptions-=terminal                                    " No save terminal buffers
 set sessionoptions-=folds                                       " No save folds create manually
@@ -155,8 +133,6 @@ set sessionoptions-=blank                                       " No save blank 
 " Better Search
 set hlsearch                                                    " Highligth match results with /, ?, *, # (default: off)
 set incsearch                                                   " Search first match while typing. On TOP return BOTTOM, on BOTTOM return TOP (default: off)
-set ignorecase                                                  " Case-insensitive in search (default: off)
-set smartcase                                                   " Case-sensitive if keyword contains al least one uppercase char (default: off)
 
 if g:isneovim
     set inccommand=nosplit                                      " Preview substitute command
@@ -183,7 +159,7 @@ if executable('rg')
     " %m    error message (finds a string)
     set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m      " (default: %f:%l:%m,%f:%l%m,%f %l%m)
 
-    " Better integration's rg. Only Vim
+    " Better integration's rg. Only Vim (or nvim 0.5+)
     " @thanks https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
     function! Grep(...)
         let s:grep_command = join([&grepprg] + [expandcmd(join(a:000, ' '))], ' ')
@@ -211,10 +187,6 @@ if executable('rg')
     augroup END
 endif
 
-" Tell Vim to remember certain things when we exit
-" @see https://vimhelp.org/options.txt.html#%27viminfo%27
-" set viminfo=!,'20,<50,s10,h                                     " TODO: Session not works
-
 " Better Completion
 " @see :h 'complete'
 set complete=                                                   " Reset option (default: .,w,b,u,t,i)
@@ -224,8 +196,6 @@ set complete+=b                                                 " Buffers in [b]
 set completeopt=longest,menuone,preview                         " Show preview in popup menu (default: menu,preview)
 
 " Custom Interface
-" set title                                                       " Use filename as title in console (default: off)
-" set novisualbell                                                " Not screen flash (default: off)
 set autoread                                                    " Reload after external changes (default: off)
 set autowrite                                                   " Save on lost focus (cycling buffers) (default: off)
 set backspace=indent,eol,start                                  " Allow backspacing over everything (default: depends)
@@ -234,39 +204,28 @@ set splitbelow                                                  " :split  opens 
 set splitright                                                  " :vsplit opens window right (default: off)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
 set pumheight=15                                                " Maximum options showed in popup menu (default: 0)
-" set cmdheight=1                                                 " More space, less: "Press ENTER ..." (default: 1)
 
 if has('mouse')
     set mouse=a                                                 " Mouse exist always (default: "")
 endif
 
 " Custom Render
-" syntax enable                                                   " (default)
+syntax on                                                       " Enable syntax
+
 set nowrap                                                      " No cut lines (default: on)
 set linebreak                                                   " No cut words on wrap enable (default: off)
 set breakindent                                                 " Indent wrap lines better (default: off)
 set showbreak=↪                                                 " Visual char on wrap line (default: empty)
 set display=lastline                                            " Show as much as possible of the last line (default: empty)
-" set scrolloff=1                                                 " Lines (rows) showed before current cursor line (default: 0)
-" set sidescrolloff=5                                             " Columns (cols) showed  after current cursor position (default: 0)
 set sidescroll=1                                                " Better horizontally scroll (default: 0 => half-screen)
 set nojoinspaces                                                " No insert two spaces after a ., ? and ! (default: on)
 
 " Custom View
 set number                                                      " Number in cursorline, no zero (default: off)
 set relativenumber                                              " Relative number (slower) (default: off)
-" @see https://eduncan911.com/software/fix-slow-scrolling-in-vim-and-neovim.html
-" set cursorline                                                  " Highligth cursorline in screen (slower) (default: off)
-" set colorcolumn=121                                             " Column limit for write (slower) (default: "")
-" set noshowmatch                                                 " No jump a match never (default: off)
-" set matchtime=0                                                 " Visible match (default: 5ms)
-" set list                                                        " Visible white spaces, easy reading (default: off)
 set listchars=space:·,tab:»-                                    " Chars used for invisible chars
-" set fillchars+=eob:\                                            " Hide ~ in end of buffer (default vert:|,fold:-,eob:~)
 set textwidth=120                                               " Breakline in Insert Mode (default: 0 => off)
 set synmaxcol=200                                               " Only highlight the first N columns (default: 3000)
-" set winminheight=0                                              " Current buffer use all screen on split (default: 1)
-" set winheight=999                                               " Current buffer use all screen on split (default: 1)
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
 
@@ -277,22 +236,14 @@ else
 endif
 
 " Custom identation
-" set autoindent                                                  " Indent after <Enter>, o, O. Breakindent in textwidth, awful!
 set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
 set shiftwidth=4                                                " 1 tab === 4 spaces (default: 8)
 set shiftround                                                  " Indentation to multiples of &shiftwidth 3>4>8 (default: off)
 set expandtab                                                   " Don't use tabs please (default: off)
 set fileformat=unix                                             " End of line as Unix format. Always! (default: depends)
 
-" Enable folding : Hit za
-set nofoldenable                                                " Unfold lines by default in buffers (default: on)
-set foldmethod=indent                                           " Use indent to fold code (default: manual)
-set foldnestmax=10                                              " Limit nested fold (default: 20)
-set foldlevel=99                                                " Higher numbers will close fewer folds (default: 0)
-
 " Utils
 set nrformats-=octal                                            " I don't use octal numbers (default: bin,octal,hex)
-" set nrformats+=alpha                                            " Allow [in/de]crement chars: <C-a>, <C-x>
 
 " Avoid (unused) built-in plugins
 let g:loaded_2html_plugin = 1
@@ -331,7 +282,6 @@ let g:netrw_browse_split = 4                                    " Open file vert
 let g:netrw_winsize = 20                                        " Keep same size after open file in previews (default: 50 => 50%)
 let g:netrw_liststyle = 3                                       " Show as tree: folders and files always. Cycling: i
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive (default: cp)
-" let g:netrw_localrmdir = 'rm -r'                                " Remove dirs recursive (< in 7.4.1107)
 let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles
 let g:netrw_sizestyle = 'H'                                     " Human-readable: 5K, 4M, uses 1024 base (default: [b]ytes)
 
@@ -404,7 +354,7 @@ function! s:get_branch() abort
 endfunction
 
 set noruler                                                     " Position is showed in command-line (default: depends)
-set noshowmode                                                  " Mode is showed in command-line (default: on)
+set showmode                                                    " Mode is showed in command-line (default: on)
 set showcmd                                                     " Current pending command in command-line and visual
                                                                 " selection (default: on, Debian: off) (slower)
 
