@@ -639,14 +639,17 @@ export NVM_DIR="$HOME/.nvm"
 # Close Terminal to load changes
 # Show version available
 nvm ls-remote
-nvm install v14.17.6
-# nvm alias default v14.17.6
+nvm install v16.13.0
+# nvm alias default v16.13.0
 # nvm current
 ## Enabled to all users in [L|X]Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
 
 ## Install package: npm install express
-## nvm deactivate && nvm uninstall v10.15.3
+## nvm deactivate && nvm uninstall v16.13.0
+
+## Install npm
+npm install -g npm
 ```
 
 # Profile
@@ -688,7 +691,7 @@ sudo ln -s ~/.vim/plugged/fzf/bin/fzf /usr/bin/fzf
 sudo apt-get install fzf
 ```
 
-## RigGrep for Vim search (Performance FZF and Terminal)
+# RigGrep for Vim search (Performance FZF and Terminal)
 
 [See](https://github.com/BurntSushi/ripgrep)
 
@@ -714,6 +717,16 @@ sudo dpkg -i bat.deb && rm -f bat.deb
 ## Command:
 ## bat file.php
 ## sudo apt-get remove bat && sudo apt-get autoremove
+```
+
+# Vifm (Terminal File Manager with Vim Style)
+
+[See](https://wiki.vifm.info/index.php?title=Manual)
+
+```bash
+cd ~
+sudo apt-get install vifm
+## sudo apt-get remove vifm && sudo apt-get autoremove
 ```
 
 # Coding (Optionals)

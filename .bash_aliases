@@ -10,6 +10,7 @@ alias ll="ls -lh"
 alias __="ssh-add"
 alias npkg="dpkg --list | wc --lines"
 
+alias vf="vifm"
 alias vd="vimdiff"
 alias vv="nvim"
 alias vz="vim ~/.zshrc"
