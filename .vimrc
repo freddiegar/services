@@ -271,12 +271,6 @@ function! GetNameCurrentFile() abort
                 \ : ''
 endfunction
 
-function! s:get_branch() abort
-    let l:branchname = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
-
-    return strlen(l:branchname) > 0 ? l:branchname : ''
-endfunction
-
 set noruler                                                     " Position is showed in command-line (default: depends)
 set showmode                                                    " Mode is showed in command-line (default: on)
 set showcmd                                                     " Current pending command in command-line and visual
@@ -425,66 +419,6 @@ nnoremap <silent> <nowait> <expr> <Enter>
             \ &buftype ==# 'quickfix' ? "\r" :
             \ ":nohlsearch<Enter>"
 
-" Fast Visual Line selection
-noremap <silent> TT :call <SID>smartselection(visualmode())<Enter>
-
-function! s:smartselection(type) abort
-    let l:vsapplied = ''
-    let l:cline = getline('.')
-    let l:cposition = getcurpos()[2]
-    let l:vcontent = <SID>get_visual_selection()
-    let l:hasparenthesis = match(l:cline, ')', l:cposition) >= 0
-    let l:hassemicolon = match(l:cline, ';', l:cposition) >= 0
-    let l:hascontent = match(l:cline, l:vcontent, 1) >= 0
-
-    if l:hassemicolon
-        " Check if semicolon is the last char not empty
-        let l:ccursor = getpos('.')
-
-        silent execute "normal! g_v\"zy"
-        let l:lastchar = @@
-
-        silent call setpos('.', l:ccursor)
-
-        let l:hassemicolon = @@ ==# ';'
-    endif
-
-    if l:hasparenthesis && !l:hascontent
-        " Line has parenthesis
-        call feedkeys('vi)', 't')
-
-        let l:vsapplied = 'Parenthesis'
-    elseif l:hassemicolon && l:hascontent && match(l:vcontent, ';')
-        " Line has semicolon
-        call feedkeys('_vt;', 't')
-
-        let l:vsapplied = 'Semicolon'
-    else
-        " as V but with trim spaces
-        call feedkeys('_vg_', 't')
-
-        let l:vsapplied = 'Default'
-    endif
-
-    echo 'V-SELECT applied: ' . l:vsapplied
-endfunction
-
-" @thanks https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript#6271254
-function! s:get_visual_selection()
-    let [l:linestart, l:colstart] = getpos("'<")[1:2]
-    let [l:lineend, l:colend] = getpos("'>")[1:2]
-    let l:lines = getline(l:linestart, l:lineend)
-
-    if len(l:lines) == 0
-        return ''
-    endif
-
-    let l:lines[-1] = l:lines[-1][: l:colend - (&selection == 'inclusive' ? 1 : 2)]
-    let l:lines[0] = l:lines[0][l:colstart - 1:]
-
-    return l:lines[0]
-endfunction
-
 " Preserve default register ("x) content
 nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>C "_C
@@ -545,9 +479,6 @@ nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
 nnoremap <silent> yov :<C-U>set <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all'<Enter><Enter>
-
-nnoremap <silent> <Leader>gb :echo 'Branch:   ' . <SID>get_branch()<Enter>
-nnoremap <silent> <Leader>gp :echo 'Path:     ' . getcwd()<Enter>
 
 nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
 nnoremap <silent> <Leader>gF :echo 'Copied:   ' . <SID>get_current_function(1)<Enter>
