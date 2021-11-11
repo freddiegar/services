@@ -462,13 +462,9 @@ nnoremap <silent> ]Q :<C-u>clast<Enter>zzzv
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
-" Cursor can be positioned where there is no actual character
 nnoremap <silent> yov :<C-U>set <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all'<Enter><Enter>
-
-nnoremap <silent> <Leader>gf :echo 'Function: ' . <SID>get_current_function(0)<Enter>
-nnoremap <silent> <Leader>gF :echo 'Copied:   ' . <SID>get_current_function(1)<Enter>
 
 nnoremap <silent> <Leader>gC :call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
 
@@ -488,9 +484,6 @@ nnoremap <silent> <Leader>gB :let bcrypt=<SID>generate_bcrypt('word')
 vnoremap <silent> <Leader>gB :<C-u>let bcrypt=<SID>generate_bcrypt(visualmode())
             \ <Bar> let @+=bcrypt[1]
             \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> '. @+<Enter>
-
-nnoremap <silent> <Plug>ExecuteLineRepeatable :call <SID>execute_line()<Enter>
-nmap <silent> <Leader>ge <Plug>ExecuteLineRepeatable
 
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
@@ -550,19 +543,6 @@ function! s:find_function (flags, ...)
     else
         return searchpos(l:pattern, l:fcursor . l:fbackward . l:fnomove)
     end
-endfunction
-
-function! s:execute_line() abort
-    let l:saved_unnamed_register = @@
-
-    let l:line = getline('.')
-
-    " Not add silent option, odd behaviour
-    execute ":!" .l:line
-
-    let @@ = l:saved_unnamed_register
-
-    silent! call repeat#set("\<Plug>ExecuteLineRepeatable")
 endfunction
 
 function! s:delete_method() abort
@@ -808,43 +788,6 @@ function! s:go_line() abort
 
     " Avoid weird chars in command line
     return ''
-endfunction
-
-function! s:get_current_function(copy) abort
-    let l:namespace = ''
-
-    if (index(['php'], &filetype) >= 0)
-        let l:filename = expand('%:t:r')
-        let l:functionname = <SID>get_function_name()
-        let l:namespace = l:filename
-
-        if len(l:functionname) > 0
-            let l:namespace .= '::' . l:functionname
-        endif
-    endif
-
-    if a:copy == 1 && l:namespace != ''
-        let @+=l:namespace
-    endif
-
-    return l:namespace
-endfunction
-
-function! s:get_function_name() abort
-    let l:parts = split(getline(search("^\\( \\{4}\\|\\t\\)\\?\\a\\S\\{-}\\( \\a\\S\\{-}\\)\\+\\s\\?(.*[^;]\\s\\{-}$", 'bWnc')), ' ')
-    let l:counter = 1
-    let l:result = ''
-
-    for l:part in l:parts
-        if l:part ==# 'function'
-            let l:result = l:parts[l:counter]
-            break
-        endif
-
-        let l:counter += 1
-    endfor
-
-    return substitute(l:result, '(.*', '', 'g')
 endfunction
 
 " Docs rescue
@@ -1471,18 +1414,6 @@ function! s:split() abort
 
     silent! call repeat#set("\<Plug>SplitRepeatable")
 endfunction
-
-" @see http://vimcasts.org/episodes/search-multiple-files-with-vimgrep/
-noremap <silent> <F6> :call <SID>quickfix_toggle()<Enter>
-
-function! s:quickfix_toggle()
-    if exists('g:qfix_win')
-        cclose
-        unlet g:qfix_win
-    else
-        copen 10
-        let g:qfix_win = bufnr('$')
-    endif
 
 function! s:exception() abort
     return join(split(v:exception, ' ')[1:-1], ' ')
