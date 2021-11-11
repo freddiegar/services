@@ -1441,26 +1441,26 @@ augroup AutoCommands
 
     " PHP Refactor
     " @see https://github.com/phpactor/phpactor
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rnc :call phpactor#ClassNew()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rxc :call phpactor#ClassExpand()<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer><Leader>rnc :call phpactor#ClassNew()<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer><Leader>rxc :call phpactor#ClassExpand()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>ruu :call phpactor#ImportMissingClasses()<Enter>
 
     autocmd FileType php nnoremap <silent> <buffer><Leader>rmf :call phpactor#MoveFile()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rcf :call phpactor#CopyFile()<Enter>
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>ram :call <SID>phpactor('implement_contracts')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call <SID>phpactor('add_missing_properties')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rcc :call <SID>phpactor('complete_constructor')<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer><Leader>ram :call <SID>phpactor('implement_contracts')<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call <SID>phpactor('add_missing_properties')<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer><Leader>rcc :call <SID>phpactor('complete_constructor')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>run :call <SID>phpactor('fix_namespace_class_name')<Enter>
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rec :call phpactor#ExtractConstant()<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer><Leader>rec :call phpactor#ExtractConstant()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>ree :<C-u>call phpactor#ExtractExpression(v:true)<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
 
     autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
-    autocmd FileType php nmap <silent> <C-]> :call phpactor#GotoDefinition()<Enter>
+    " autocmd FileType php nmap <silent> <C-]> :call phpactor#GotoDefinition()<Enter>
 "     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
 "     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
 
@@ -1638,12 +1638,12 @@ augroup AutoCommands
     autocmd VimEnter * nested call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
     " Cursorline only in window active, not on Insert Mode
-    autocmd WinEnter * setlocal cursorline
+    autocmd WinEnter * if &cursorline | setlocal cursorline | endif
     autocmd WinLeave * setlocal nocursorline
     " Relative numbers on Insert Mode
-    " autocmd WinEnter,InsertLeave * setlocal norelativenumber
+    " autocmd WinEnter,InsertLeave * if &relativenumber | setlocal norelativenumber | endif
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
-    autocmd BufWritePre *.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
     " autocmd VimResized * wincmd =
