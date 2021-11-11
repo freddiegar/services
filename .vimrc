@@ -888,7 +888,6 @@ Plug 'wellle/targets.vim'                                       " {operator}ia, 
 Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
-Plug 'mg979/vim-visual-multi'                                   " <C-n>, <C-s>
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from Vim: tests, git add, docker start, etc
@@ -902,7 +901,7 @@ Plug 'sniphpets/sniphpets'                                      " PHP snippet wi
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
-Plug 'phpactor/phpactor', {'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
+Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
 Plug 'vim-scripts/autotags', {'for': 'c'}
 
@@ -979,12 +978,6 @@ let g:delimitMate_expand_cr = 1
 let g:delimitMate_smart_quotes = 1
 let g:delimitMate_expand_inside_quotes = 0
 let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
-
-" Multiple Cursors
-" @see https://github.com/mg979/vim-visual-multi
-let g:VM_maps = {}
-let g:VM_maps['Find Under'] = '<C-n>'
-let g:VM_maps['Select All'] = '<C-s>'
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
