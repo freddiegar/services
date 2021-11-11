@@ -396,10 +396,6 @@ xnoremap <silent> k gk
 " Sudo rescue
 command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 
-" / and ? search alternatives
-" nnoremap <Leader>s <kDivide>
-" nnoremap <Leader>S ?
-
 " Open explore in current work directory (toggle)
 nnoremap <silent> <expr> <F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute ':20Vexplore ' . getcwd()<Enter>"
@@ -424,11 +420,6 @@ nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>C "_C
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
-nnoremap <silent> <Del>     "_x
-nnoremap <silent> <Leader>x "_x
-nnoremap <silent> <Leader>X "_X
-nnoremap <silent> <Leader>y "+y
-nnoremap <silent> <Leader>Y "+Y
 
 " Show/Copied current filename (full path)
 nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
@@ -462,10 +453,6 @@ nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 nnoremap <silent> <Leader>ga  :AsyncRun -post=edit!\ <Bar>\ echo\ 'Added:\ \ \ \ '\ .\ expand('%') git add %:p<Enter>
 nnoremap <silent> <Leader>gco :AsyncRun -post=edit!\ <Bar>\ echo\ 'Checkout:\ '\ .\ expand('%') git checkout %:p<Enter>
 nnoremap <silent> <Leader>grh :AsyncRun -post=edit!\ <Bar>\ echo\ 'Reset:\ \ \ \ '\ .\ expand('%') git reset HEAD %:p<Enter>
-
-nnoremap <silent> <Leader>gk :AsyncRun -post=echo\ 'Docker...\ ' docker start db cache proxy apache74<Enter>
-
-nnoremap <silent> <Leader>gcda :AsyncRun -post=echo\ 'Dumped:\ \ \ '\ .\ getcwd() composer dump-autoload<Enter>
 
 " @thanks https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
@@ -883,20 +870,6 @@ function s:go_docs(word) abort
     silent call <SID>go_url(l:docsurl . l:word)
 endfunction
 
-" Fast <Esc>
-" In Insert Mode
-" Ctrl-c does not trigger the InsertLeave autocommand when leaving insert mode
-" inoremap <C-c> <Esc>`^
-inoremap <silent> jk <Esc>
-" In Command Mode
-cnoremap <silent> jk <C-c>
-" In Terminal Mode (Freeze FZF popup window)
-" tnoremap <silent> <Leader><Esc> <C-\><C-n>
-
-" Fast moving in Insert Mode
-" Use <C-o> to use Normal mode in Insert mode, by example: <C-o>Nf0
-inoremap <silent> PP <Esc>pa
-
 " Fast append lines
 nnoremap <silent> <Plug>PrependEnterRepeatable :call <SID>append_char('O')<Enter>
 nmap <silent> g<Enter> <Plug>PrependEnterRepeatable
@@ -919,11 +892,9 @@ nmap <silent> >i <Plug>DropIncompleteMarkRepeatable
 " Buffers navigation
 nnoremap <silent> <Leader><Leader> :Buffers<Enter>
 nnoremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
-nnoremap <silent> <S-Tab> :call <SID>cycling_buffers(-1)<Enter>
 
 vnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
 vnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
-vnoremap <silent> <S-Tab> :<C-u>call <SID>cycling_buffers(-1)<Enter>
 
 " Insert mode navigation (Forget Arrows)
 inoremap <silent> <C-a> <C-o>^
@@ -944,17 +915,6 @@ cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
-
-" Paste (from external sources)
-" @see https://www.reddit.com/r/vim/wiki/pasting-in-vim
-" @see https://vim.fandom.com/wiki/Toggle_auto-indenting_for_code_paste
-setglobal pastetoggle=<S-F2>
-nnoremap <silent> <S-F2> :call <SID>toggle_paste()<Enter>
-
-function! s:toggle_paste() abort
-    set invpaste
-    echo 'Paste is ' . (&paste ? 'enabled' : 'disabled') . '.'
-endfun
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
