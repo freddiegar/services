@@ -613,12 +613,6 @@ function! s:append_char(type) abort
         if a:type ==# 'd'
             silent execute "normal! $\"_x\e"
             let l:repeatable = 'DeleteFinal'
-        elseif a:type ==# 'O'
-            silent execute "normal! O\e"
-            let l:repeatable = 'PrependEnter'
-        elseif a:type ==# 'o'
-            silent execute "normal! o\e"
-            let l:repeatable = 'AppendEnter'
         elseif a:type ==# 'i'
             let l:bsearch = getreg('/')
             let l:changerow = -(1 + &scrolloff)
@@ -643,32 +637,6 @@ function! s:append_char(type) abort
 
             silent call setreg('/', l:bsearch)
             let l:repeatable = 'DropIncompleteMark'
-        elseif a:type ==# '{'
-            let l:bsearch = getreg('/')
-            let l:changerow = -(1 + &scrolloff)
-
-            silent execute "normal! ?^    {\rk"
-
-            if getline(line('.') - 1)[-2:] ==# '*/'
-                " Has docs (inline too)
-                silent execute "normal! ?^    /\\*\r"
-            elseif trim(getline(line('.') - 1))[0:1] ==# '//'
-                " Has comments
-                silent execute 'normal! k'
-            endif
-
-            silent execute "normal! O\e"
-
-            silent call setreg('/', l:bsearch)
-            let l:repeatable = 'PrependSeparator'
-        elseif a:type ==# '}'
-            let l:fsearch = getreg('/')
-            let l:changerow = -(1 + &scrolloff)
-
-            silent execute "normal! /^    }\ro\e"
-
-            silent call setreg('/', l:fsearch)
-            let l:repeatable = 'AppendSeparator'
         elseif l:lastchar == ';'
             silent execute "normal! \"_xA,\e"
         elseif l:lastchar == ','
@@ -812,19 +780,6 @@ function s:go_docs(word) abort
 
     silent call <SID>go_url(l:docsurl . l:word)
 endfunction
-
-" Fast append lines
-nnoremap <silent> <Plug>PrependEnterRepeatable :call <SID>append_char('O')<Enter>
-nmap <silent> g<Enter> <Plug>PrependEnterRepeatable
-
-nnoremap <silent> <Plug>AppendEnterRepeatable :call <SID>append_char('o')<Enter>
-nmap <silent> <Leader><Enter> <Plug>AppendEnterRepeatable
-
-nnoremap <silent> <Plug>PrependSeparatorRepeatable :call <SID>append_char('{')<Enter>
-nmap <silent> <<Enter> <Plug>PrependSeparatorRepeatable
-
-nnoremap <silent> <Plug>AppendSeparatorRepeatable :call <SID>append_char('}')<Enter>
-nmap <silent> ><Enter> <Plug>AppendSeparatorRepeatable
 
 nnoremap <silent> <Plug>AddIncompleteMarkRepeatable :call <SID>append_char('i')<Enter>
 nmap <silent> <i <Plug>AddIncompleteMarkRepeatable
