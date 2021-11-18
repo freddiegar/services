@@ -413,6 +413,7 @@ nnoremap <silent> <expr> <F10>
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
             \ &buftype ==# 'quickfix' ? "\r" :
+            \ &buftype ==# 'nofile' && index(['vim', ''], &filetype) >= 0 ? "\r" :
             \ ":nohlsearch<Enter>"
 
 " Preserve default register ("x) content
@@ -1306,7 +1307,7 @@ function! s:split() abort
     " Is ternary?
     if match(getline('.'), ' ? ') > 0
                 \ && match(getline('.'), ' : ') > 0
-                \ && (match(getline('.'), ';') > 0 || match(getline('.'), ',') > 0)
+                " \ && (match(getline('.'), ';') > 0 || match(getline('.'), ',') > 0) VimL not need this chars
         silent execute "normal! _/ ? \ri\r\e/ : \r\"_xi\r\e"
     " Is array?
     elseif match(getline('.'), '[') > 0
