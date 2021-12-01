@@ -313,7 +313,7 @@ services:
     image: atmoz/sftp:alpine
     container_name: ftp
     volumes:
-      - $FTP_DOCROOT:/home/ftpusr/upload
+      - $FTP_DOCROOT:/home/ftpusr
     command: $FTP_USER:$FTP_PASSWORD:$FTP_UUID
     networks:
       development:
