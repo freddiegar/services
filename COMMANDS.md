@@ -1575,6 +1575,15 @@ Rename files using xargs
 ll *20211022.sql.gz | awk '{print $9 " " $9}' | sed 's/22/23/' | awk '{print $2 " " $1}' | xargs -n2 mv
 ```
 
+Replace text in files using xargs
+-r: recursive
+-l: files with matches
+-s: no messages
+
+```bash
+grep -rls "OLDTEXT" | xargs sed -i 's/OLDTEXT/NEWTEXT/g'
+```
+
 Revert git pull execute in incorrect branch
 
 ```bash

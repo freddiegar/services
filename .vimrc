@@ -1140,6 +1140,10 @@ nnoremap <silent> K :call <SID>show_documentation()<Enter>
 function! s:show_documentation() abort
     let l:word = expand('<cword>')
 
+    if l:word ==# ''
+        return
+    endif
+
     if index(['vim', 'help'], &filetype) >= 0
         try
             silent execute 'help ' . l:word
