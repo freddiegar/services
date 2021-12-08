@@ -426,7 +426,7 @@ sudo chmod +x /usr/local/bin/phpmd
 
 [See 2](https://docs.docker.com/install/linux/linux-postinstall/)
 
-## [L|X]Ubuntu 18.*, 19.*, Debian 10
+## [L|X]Ubuntu 18.*, 19.*, 20.* Debian 10
 
 ```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common
@@ -440,17 +440,6 @@ gnome-session-quit
 # In Lubuntu
 lxqt-leave
 ## sudo apt-get remove docker-ce && sudo apt-get autoremove
-```
-
-```bash
-sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
-sudo apt-get update
-apt-cache policy docker-engine
-sudo apt-get install -y docker-engine
-sudo usermod -aG docker $(whoami)
-sudo reboot
-## sudo apt-get remove docker-engine && sudo apt-get autoremove
 ```
 
 ## Docker Compose

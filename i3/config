@@ -134,7 +134,7 @@ assign [class="Nautilus"]                   $workspace9
 assign [class="Opera"]                      $workspace10
 
 default_orientation auto
-floating_maximum_size 1280 x 720
+# floating_maximum_size 1280 x 720
 
 # Enable floating
 for_window [window_role="(?i)pop-up"]       floating enable
