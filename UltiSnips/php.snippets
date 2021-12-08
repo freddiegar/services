@@ -127,6 +127,14 @@ public function get$1(): array
 }
 endsnippet
 
+snippet rfg "Return For Getter"
+return $this->`!v sniphpets#method()`;
+endsnippet
+
+snippet rfs "Return For Setter"
+$this->`!v sniphpets#lcfirst(substitute(sniphpets#method(), 'set', '', ''))` = $`!v sniphpets#lcfirst(substitute(sniphpets#method(), 'set', '', ''))`;
+endsnippet
+
 snippet dd "Debug Dump"
 dd($$1, __FILE__ . ':' . __LINE__);
 endsnippet
