@@ -1584,6 +1584,12 @@ Replace text in files using xargs
 grep -rls "OLDTEXT" | xargs sed -i 's/OLDTEXT/NEWTEXT/g'
 ```
 
+Add only files modified in repository
+
+```bash
+git status | grep modified | awk '{print $2}' | xargs -n1 git add
+```
+
 Revert git pull execute in incorrect branch
 
 ```bash
