@@ -1193,7 +1193,7 @@ function! s:check_large_file(file) abort
         syntax off
         filetype off
         " No syntax highlighting event
-        " set eventignore+=FileType  "Comment because on change filetype in same session is weird
+        " set eventignore+=FileType  " Comment because on change filetype in same session has weird behaviour
         setlocal noloadplugins
         setlocal noundofile
         setlocal noswapfile
@@ -1201,7 +1201,7 @@ function! s:check_large_file(file) abort
         setlocal nocursorcolumn
         setlocal norelativenumber
         setlocal bufhidden=unload
-        setlocal buftype=nowrite
+        " setlocal buftype=nowrite " No allowed changes in same file, it's annoyoning!
         setlocal foldmethod=manual
         setlocal undolevels=-1
 
