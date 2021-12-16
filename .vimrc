@@ -1076,16 +1076,6 @@ let g:coc_global_extensions = [
 " Use <Ctrl-Space> to trigger completion.
 inoremap <silent> <expr> <C-@> coc#refresh()
 
-" Make <Tab> for complete navigation and trigger snippets
-" @see https://github.com/SirVer/ultisnips/commit/66d81fc2c0bda30be69fffa46da0932ee8d5ddd5
-" @see :h 'UltiSnips-trigger-functions'
-if maparg('<Tab>', 's')
-    sunmap <Tab>
-endif
-
-snoremap <Enter> <Esc>
-snoremap <Tab> <Esc> :<C-u>call feedkeys('bcia', 't')<Enter>
-snoremap <BS> <Esc> :<C-u>call feedkeys('da)', 't')<Enter>
 inoremap <silent> <expr> <Tab>
             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
