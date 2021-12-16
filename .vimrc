@@ -894,17 +894,17 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 
 Plug 'vim-scripts/autotags', {'for': 'c'}
 
-Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easy
-Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}         " Performance using emmet syntax
+" Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easy
+" Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}         " Performance using emmet syntax
 
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 
-Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight PHP syntax: unmanteined
-Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight C syntax
-Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " Better highlight i3 syntax
-Plug 'storyn26383/vim-vue', {'for': 'vue'}                      " Better highlight vue syntax
-Plug 'tpope/vim-markdown', {'for': 'markdown'}                  " Better highlight markdown syntax
+" Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight PHP syntax: unmanteined
+" Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight C syntax
+" Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " Better highlight i3 syntax
+" Plug 'storyn26383/vim-vue', {'for': 'vue'}                      " Better highlight vue syntax
+" Plug 'tpope/vim-markdown', {'for': 'markdown'}                  " Better highlight markdown syntax
 
 " Plug 'ekalinin/dockerfile.vim'                                " Better highlight dockerfile syntax (better?)
 " Plug 'pangloss/vim-javascript'                                " Better highlight javascript syntax
@@ -977,6 +977,11 @@ let g:UltiSnipsListSnippets = ''
 let g:UltiSnipsExpandTrigger = '<C-Tab>'
 let g:UltiSnipsRemoveSelectModeMappings = 0
 let g:UltiSnipsUsePythonVersion = 3
+
+" " Emmet
+" " @see https://github.com/mattn/emmet-vim
+" let g:user_emmet_install_global = 0
+" let g:user_emmet_leader_key = ','
 
 " Goyo
 " @see https://github.com/junegunn/goyo.vim
@@ -1253,9 +1258,9 @@ if executable('rg')
     let g:gitgutter_grep = 'rg'
 endif
 
-" Tagalong
-" @see https://github.com/AndrewRadev/tagalong.vim
-let g:tagalong_filetypes = ['html', 'xml']
+" " Tagalong
+" " @see https://github.com/AndrewRadev/tagalong.vim
+" let g:tagalong_filetypes = ['html', 'xml']
 
 nnoremap <silent> <Plug>SplitRepeatable :<C-u>call <SID>split()<Enter>
 nmap <silent> gS <Plug>SplitRepeatable
@@ -1504,6 +1509,7 @@ augroup AutoCommands
     " Customization
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType apache setlocal commentstring=#\ %s
+    " autocmd FileType i3config setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
@@ -1511,6 +1517,7 @@ augroup AutoCommands
     autocmd FileType vim setlocal keywordprg=:help
     autocmd FileType git setlocal foldmethod=syntax foldlevel=1
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
+    " autocmd FileType html,css,vue EmmetInstall
 
     autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
