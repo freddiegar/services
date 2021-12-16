@@ -1403,9 +1403,9 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>rmf :call phpactor#MoveFile()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rcf :call phpactor#CopyFile()<Enter>
 
-    " autocmd FileType php nnoremap <silent> <buffer><Leader>ram :call <SID>phpactor('implement_contracts')<Enter>
-    " autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call <SID>phpactor('add_missing_properties')<Enter>
-    " autocmd FileType php nnoremap <silent> <buffer><Leader>rcc :call <SID>phpactor('complete_constructor')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>ric :call <SID>phpactor('implement_contracts')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call <SID>phpactor('add_missing_properties')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rcc :call <SID>phpactor('complete_constructor')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>run :call <SID>phpactor('fix_namespace_class_name')<Enter>
 
     " autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
@@ -1414,10 +1414,10 @@ augroup AutoCommands
     autocmd FileType php xnoremap <silent> <buffer><Leader>ree :<C-u>call phpactor#ExtractExpression(v:true)<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
 
-    autocmd FileType php nmap <silent> gd :call phpactor#GotoDefinition()<Enter>
-    " autocmd FileType php nmap <silent> <C-]> :call phpactor#GotoDefinition()<Enter>
-"     autocmd FileType php nmap <silent> gy :call phpactor#GotoImplementations()<Enter>
-"     autocmd FileType php nmap <silent> gr :call phpactor#FindReferences()<Enter>
+    autocmd FileType php nmap <silent> <buffer>gd :call phpactor#GotoDefinition()<Enter>
+    autocmd FileType php nmap <silent> <buffer><C-]> :call phpactor#GotoDefinition()<Enter>
+    " autocmd FileType php nmap <silent> <buffer>gy :call phpactor#GotoImplementations()<Enter>
+    " autocmd FileType php nmap <silent> <buffer>gr :call phpactor#FindReferences()<Enter>
 
     function! s:phpactor(transformer) abort
         silent update!
