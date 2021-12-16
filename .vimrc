@@ -492,25 +492,14 @@ nmap <silent> dm <Plug>DeleteMethodRepeatable
 nnoremap <silent> <Plug>DeleteInnerCallRepeatable :call <SID>delete_call('vbc', 'Inner')<Enter>
 nmap <silent> dc <Plug>DeleteInnerCallRepeatable
 
-nnoremap <silent> <Plug>DeleteACallRepeatable :call <SID>delete_call('vb', 'A')<Enter>
-nmap <silent> dC <Plug>DeleteACallRepeatable
-
 function! s:delete_call(flags, type) abort
     let l:saved_unnamed_register = @@
-
-    if a:type ==# 'A' && !<SID>check_backspaces()
-        silent execute "normal! b"
-    endif
 
     silent call <SID>find_function(a:flags)
 
     silent execute "normal! \"_dyi)\"_da)P"
 
-    if a:type ==# 'A' && !<SID>check_backspaces()
-        silent execute "normal! 0f("
-    else
-        silent execute "normal! F("
-    endif
+    silent execute "normal! F("
 
     let @@ = l:saved_unnamed_register
 
