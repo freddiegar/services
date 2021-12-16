@@ -61,6 +61,32 @@ services:
           cpus: $CACHE_CORE
           memory: $CACHE_MEMORY
 
+  apache81:
+    container_name: apache81
+    build:
+      context: .
+      dockerfile: ./php81/Dockerfile
+      args:
+        - DEV_ENABLE=${DEV_ENABLE:-off}
+        - CACHE_ENABLE=${CACHE_ENABLE:-on}
+        - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
+        - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
+    volumes:
+      - $WEB_DOCROOT:/var/www/html
+    networks:
+      development:
+        ipv4_address: 172.20.0.81
+    expose:
+    - 80
+    - 443
+    extra_hosts:
+      - "host.docker.internal:${HOST_DOCKER}"
+    deploy:
+      resources:
+        limits:
+          cpus: $WEB_CORE
+          memory: $WEB_MEMORY
+
   apache80:
     container_name: apache80
     build:
