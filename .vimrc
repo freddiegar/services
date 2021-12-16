@@ -886,7 +886,6 @@ Plug 'tpope/vim-commentary'                                     " gcc, {motion}g
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
-Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 
