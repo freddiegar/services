@@ -989,27 +989,6 @@ let g:UltiSnipsExpandTrigger = '<C-Tab>'
 let g:UltiSnipsRemoveSelectModeMappings = 0
 let g:UltiSnipsUsePythonVersion = 3
 
-" PHPVim
-" @see https://github.com/StanAngeloff/php.vim
-let g:php_version_id = 70400
-let g:php_html_load = 0
-let g:php_html_in_nowdoc = 0
-let g:php_html_in_heredoc = 0
-let g:php_sql_query = 0
-let g:php_sql_heredoc = 0
-let g:php_sql_nowdoc = 0
-
-" Emmet
-" @see https://github.com/mattn/emmet-vim
-let g:user_emmet_install_global = 0
-let g:user_emmet_leader_key = ','
-
-" Vim Snake
-" @see https://github.com/justinmk/vim-sneak
-let g:sneak#label = 1
-" Use 's' over ';' to go a 2nd result
-" let g:sneak#s_next = 1
-
 " Goyo
 " @see https://github.com/junegunn/goyo.vim
 nnoremap <silent> <F12> :Goyo<Enter>
@@ -1546,7 +1525,6 @@ augroup AutoCommands
     " Customization
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType apache setlocal commentstring=#\ %s
-    autocmd FileType html,css,vue EmmetInstall
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
