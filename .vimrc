@@ -3,6 +3,9 @@
 " @see http://www.viemu.com/a-why-vi-vim.html
 " @see https://blog.sanctum.geek.nz/vim-koans/
 
+" QUICKREF
+" @see https://quickref.me/vim
+
 " VIM Config
 " @see https://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118
 " @see https://blog.joren.ga/tools/vim-learning-steps
