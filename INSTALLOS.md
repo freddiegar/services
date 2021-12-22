@@ -84,6 +84,7 @@ sudo update-grub
 
 sudo systemctl set-default multi-user.target
 ```
+
 # Change graphical to text GRUB
 
 ```bash
@@ -93,6 +94,14 @@ sudo sed -i 's/GRUB_TERMINAL=console/#GRUB_TERMINAL=console/g' /etc/default/grub
 sudo update-grub
 
 sudo systemctl set-default graphical.target
+```
+
+# Turn-off hibernation
+
+```bash
+sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g' /etc/systemd/logind.conf
+sudo sed -i 's/#LidSwitchIgnoreInhibited=yes/LidSwitchIgnoreInhibited=no/g' /etc/systemd/logind.conf
+sudo systemctl restart systemd-logind
 ```
 
 # English Language for All
