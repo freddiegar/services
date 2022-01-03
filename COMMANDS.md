@@ -1595,3 +1595,19 @@ Revert git pull execute in incorrect branch
 ```bash
 git reset --hard <SHA>
 ```
+
+Fixed multiple session in request AJAX
+
+```bash
+# In vhost or alias add Header
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+
+# By Example
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options nosniff
+    Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+</IfModule>
+```
+> Delete sessions in framework: rm -rf storage/framework/sessions/*
+
