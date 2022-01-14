@@ -20,6 +20,7 @@ COPY ./vhosts/localhost.conf /etc/apache2/sites-available/
 COPY ./vhosts/development.local.conf /etc/apache2/sites-available/
 COPY ./vhosts/development.local-ssl.conf /etc/apache2/sites-available/
 
+COPY ./conf/crontab /var/spool/cron/crontabs/root
 COPY ./conf/entrypoint.sh /usr/local/bin/
 COPY ./conf/alias.conf /etc/apache2/
 COPY ./conf/vhost.conf /etc/apache2/sites-available/
@@ -41,7 +42,8 @@ RUN set -eux \
     libfreetype6-dev \
     # Permissions
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
-    && chmod 0600 /etc/crontab \
+    && chown root:crontab /var/spool/cron/crontabs/root \
+    && chmod 0600 /var/spool/cron/crontabs/root \
     && chmod 0500 /usr/local/bin/entrypoint.sh \
     # Apache
     && a2dissite 000-default \
@@ -107,7 +109,6 @@ RUN set -eux \
     && apt-get autoremove -y \
     && apt-get autoclean -y
 
-COPY ./conf/crontab /etc/
 COPY ./php71/php.ini /usr/local/etc/php/
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
