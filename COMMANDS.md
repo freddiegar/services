@@ -1569,6 +1569,12 @@ Shared Folder from Windows in Linux
 
 [See](https://www.howtogeek.com/176471/how-to-share-files-between-windows-and-linux/)
 
+```bash
+mkdir ~/Windows-{User}
+sudo mount.cifs //192.168.0.10/Users/{User}/Desktop/Shared/ ~/Windows-{User} -o user={User}
+```
+> {User} needs a password
+
 Rename files using xargs
 
 ```bash
