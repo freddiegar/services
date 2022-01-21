@@ -330,6 +330,7 @@ zle -N history-beginning-search-forward-end history-search-end
 # Normal mode
 bindkey '^P' history-beginning-search-backward-end
 bindkey '^N' history-beginning-search-forward-end
+bindkey '^R' history-incremental-search-backward
 
 # Insert mode
 bindkey -M viins '^A' beginning-of-line
