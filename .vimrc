@@ -415,7 +415,7 @@ nnoremap <silent> <expr> <F10>
 
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
-            \ &buftype ==# 'quickfix' ? "\r" :
+            \ &buftype ==# 'quickfix' ? "\rzzzv" :
             \ &buftype ==# 'nofile' && index(['vim', ''], &filetype) >= 0 ? "\r" :
             \ ":nohlsearch<Enter>"
 
