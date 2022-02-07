@@ -636,7 +636,7 @@ function! s:append_char(type) abort
             silent execute "normal! \"_xA;\e"
         elseif l:lastchar == ' '
             silent execute "normal! g_l\"_D\e"
-        elseif index(['}'], l:lastchar) >= 0 && index(['json'], &filetype) >= 0
+        elseif index(['}'], l:lastchar) >= 0 && index(['json', 'javascript', 'typescript'], &filetype) >= 0
             silent execute "normal! A,\e"
         elseif index(['"', "'", ')', ']'], l:lastchar) >= 0 || match(l:lastchar, "\a") || match(l:lastchar, "\d")
             silent execute "normal! A;\e"
