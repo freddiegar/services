@@ -122,7 +122,7 @@ if executable('rg')
     " @see https://beyondgrep.com/feature-comparison/
     " @see http://vimcasts.org/episodes/search-multiple-files-with-vimgrep/
     " @see https://gist.github.com/seanh/a866462a27cb3ad7b084c8e6000a06b9
-    "  --no-messages:       No show warning messages ig not found nothing
+    "  --no-messages:       No show warning messages if not found nothing
     "  --vimgrep:           Every match on its own line with line number and column
     "  --follow:            Follow symlinks (-L)
     "  --ignore-case:       Ignore lower and upper case (-i)
@@ -385,7 +385,7 @@ inoremap <silent> <Enter> <Enter><C-g>u
 " Keep cursor position after join
 nnoremap <silent> J maJ`a
 
-" Move complete lines selected (:move) and indent (gv=gv, ==)
+" Move complete lines selected (:move) and indent (gv=gv)
 vnoremap <silent> J :move '>+1<Enter>gv=gv
 vnoremap <silent> K :move '<-2<Enter>gv=gv
 
@@ -721,14 +721,16 @@ endfunction
 
 function! s:go_line() abort
     try
-        if match(getline('.'), ':') < 0
+        let l:separator = match(getline('.'), '(') > 0 ? '(' : ':'
+
+        if match(getline('.'), l:separator) < 0
             throw 'Nothing to do.'
         endif
 
         let l:lbuffer = bufnr('%')
-        let l:parts = split(trim(expand('<cWORD>'), '"'), ':')
+        let l:parts = split(trim(expand('<cWORD>'), '"'), l:separator)
         let l:file = strlen(l:parts[0]) > 0 ? l:parts[0] : ''
-        let l:line = strlen(l:parts[1]) > 0 ? l:parts[1] : 1
+        let l:line = strlen(l:parts[1]) > 0 ? substitute(l:parts[1], '\D', '', 'g') : 1
 
         if filereadable(l:file) && l:line > 0
             " Not use normal! <Bang>, it cancel printable char
