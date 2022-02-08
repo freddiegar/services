@@ -280,9 +280,14 @@ exec --no-startup-id ~/.config/i3/battery-popup -L 20 -l 10 -t 2m -m "Battery is
 exec --no-startup-id feh --bg-scale ~/BG/background.jpeg
 # Init background transparency
 exec --no-startup-id xcompmgr -c -C -o.1 &
+# Init IP public
+exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
 
 # Reload Wallpaper
 bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background.jpeg
+
+# Reload IP Public
+bindsym $mod+Shift+i exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
 
 # Set default browser
 exec_always --no-startup-id xdg-settings set default-web-browser firefox.desktop
