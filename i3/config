@@ -356,13 +356,15 @@ mode "$mode_system" {
 bindsym $mod+Escape mode "$mode_system"
 
 # Controls
-set $mode_control Control (n)etwork, (s)ound
+set $mode_control Control (n)etwork, (s)ound, (r)esources
 
 mode "$mode_control" {
     # Control Network
     bindsym n exec          $emulator --nofork --fullscreen -e 'nmtui', mode "default"
     # Control Volume
     bindsym s exec          --no-startup-id pavucontrol, mode "default"
+    # Control Resources
+    bindsym r exec          $emulator --nofork --fullscreen -e 'htop', mode "default"
 
     # back to normal
     bindsym Return          mode "default"
