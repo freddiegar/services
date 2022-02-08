@@ -29,6 +29,7 @@ alias ci="composer install"
 alias cu="composer update"
 alias ct="composer test"
 alias cda="composer dump-autoload"
+alias cii="composer install --ignore-platform-reqs"
 
 alias pa="php artisan"
 alias ccs="sudo chmod 770 -Rf var && sudo php bin/console cache:clear && sudo chown freddie:www-data -Rf var && sudo chmod 770 -Rf var"
