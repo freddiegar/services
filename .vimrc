@@ -176,6 +176,7 @@ set completeopt=longest,menuone,preview                         " Show preview i
 " Custom Interface
 set autoread                                                    " Reload after external changes (default: off)
 set autowrite                                                   " Save on lost focus (cycling buffers) (default: off)
+set autoindent                                                  " Same indent in new line, if Esc indent is deleted (default: off)
 set backspace=indent,eol,start                                  " Allow backspacing over everything (default: depends)
 set clipboard=unnamedplus                                       " Shared SO clipboard
 set splitbelow                                                  " :split  opens window below (default: off)
