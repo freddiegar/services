@@ -203,7 +203,7 @@ set number                                                      " Number in curs
 set relativenumber                                              " Relative number (slower) (default: off)
 set listchars=space:·,tab:»-                                    " Chars used for invisible chars
 set textwidth=120                                               " Breakline in Insert Mode (default: 0 => off)
-set synmaxcol=200                                               " Only highlight the first N columns (default: 3000)
+set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
 
@@ -1551,7 +1551,7 @@ augroup AutoCommands
     " query (string), [fullscreen (0/1), [dir (string)]
     function! s:rgfzf(query, fullscreen, ...) abort
         let l:dir = a:0 > 0 && isdirectory(a:1) ? a:1 : ''
-        let l:finder_command = 'rg --column --line-number --no-heading --color=always --smart-case --fixed-strings -- %s ' . l:dir . ' || true'
+        let l:finder_command = 'rg --column --line-number --no-heading --color=always --fixed-strings -- %s ' . l:dir . ' || true'
         let l:initial_command = printf(l:finder_command, shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
         let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
