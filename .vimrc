@@ -2,6 +2,7 @@
 " @see https://www.moolenaar.net/habits.html
 " @see http://www.viemu.com/a-why-vi-vim.html
 " @see https://blog.sanctum.geek.nz/vim-koans/
+" @see https://rwx.gg/tools/editors/vi/how/magic/
 
 " QUICKREF
 " @see https://quickref.me/vim
@@ -1138,10 +1139,10 @@ nnoremap <silent> gx :call <SID>go_url(expand('<cWORD>'))<Enter>
 function! s:go_url(url) abort
     let l:uri = a:url
 
-    let l:uri = substitute(l:uri, '?', '\\?', '')
+    let l:uri = trim(substitute(l:uri, '?', '\\?', ''), ',')
     let l:uri = shellescape(l:uri, 1)
 
-    if l:uri != ''
+    if l:uri !=# ''
         silent execute "!/usr/bin/firefox '" . l:uri . "'"
 
         silent redraw!
