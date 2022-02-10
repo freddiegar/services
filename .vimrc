@@ -71,6 +71,7 @@
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
+" - ma  Save current position in function, keep position
 
 let g:isneovim = has('nvim')
 
@@ -708,6 +709,38 @@ function! s:generate_bcrypt(type) abort
     return [l:passphrase, (v:shell_error == 0 && strlen(l:bcrypt) > 0 ? l:bcrypt : 'Retry!')]
 endfunction
 
+function! s:get_masked(type) abort
+    let l:saved_search_register = @/
+    let l:saved_unnamed_register = @@
+    let l:repeatable = ''
+
+    silent execute "normal! ma"
+
+    if a:type ==# 'word'
+        silent execute "normal! viw\e"
+
+        let l:repeatable = 'GetMasked'
+    elseif a:type ==# 'v' || a:type ==# 'V'
+        silent execute "normal! `<v`>\"zy"
+    endif
+
+    " Replaced symbols -> * (no spaces)
+    silent execute ":s/\\%V[^a-zA-Z0-9 ]/*/ge"
+    " Replaced chars -> @
+    silent execute ":s/\\%V[a-zA-Z]/@/ge"
+    " Replaced numbers -> #
+    silent execute ":s/\\%V[0-9]/#/ge"
+
+    silent execute "normal! `a"
+
+    let @@ = l:saved_unnamed_register
+    let @/ = l:saved_search_register
+
+    if len(l:repeatable) > 0
+        silent! call repeat#set("\<Plug>" . l:repeatable . 'Repeatable', a:type)
+    endif
+endfunction
+
 function s:escape(string) abort
     " Escape backslash (\)
     let l:escaped = substitute(a:string, '\', '\\\\\\\\', 'g')
@@ -783,6 +816,11 @@ nmap <silent> <i <Plug>AddIncompleteMarkRepeatable
 
 nnoremap <silent> <Plug>DropIncompleteMarkRepeatable :call <SID>append_char('I')<Enter>
 nmap <silent> >i <Plug>DropIncompleteMarkRepeatable
+
+nnoremap <silent> <Plug>GetMaskedRepeatable :call <SID>get_masked('word')<Enter>
+nmap <silent> <Leader>gm <Plug>GetMaskedRepeatable
+
+vnoremap <silent> <Leader>gm :<C-u>call <SID>get_masked(visualmode())<Enter>
 
 " Buffers navigation
 nnoremap <silent> <Leader><Leader> :Buffers<Enter>
