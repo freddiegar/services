@@ -21,6 +21,7 @@ alias ra="source ~/.bash_aliases"
 
 alias sai="sudo apt-get install -y"
 alias sar="sudo apt-get remove -y"
+alias sau="sudo apt-get update && sudo apt-get upgrade -y && sac"
 alias sac="sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
 
 alias c="composer"
@@ -48,7 +49,6 @@ alias stu="bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
 alias stf="bin/phpunit --stop-on-failure --no-coverage --filter"
 
 alias ducks="du -cks * | sort -rn | head"
-alias update="sudo apt-get update && sudo apt-get upgrade -y && sac"
 alias fo="/opt/firefox/firefox --new-tab"
 
 alias dexec="docker exec -it"
@@ -92,6 +92,7 @@ alias gsb="git stash branch"
 alias gss="git stash show"
 alias grh="git reset HEAD"
 alias grH="git reset HEAD~"
+
 alias gff="git flow init -d"
 alias gffs="git flow feature start"
 alias gfff="git flow feature finish"
@@ -101,6 +102,7 @@ alias gfhs="git flow hotfix start"
 alias gfhf="git flow hotfix finish"
 alias gfrs="git flow release start"
 alias gfrf="git flow release finish"
+
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias glop="glog -p"
 alias gconf="git config --list"
