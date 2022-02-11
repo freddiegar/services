@@ -1554,7 +1554,6 @@ augroup AutoCommands
     " Customization
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType apache setlocal commentstring=#\ %s
-    " autocmd FileType i3config setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
@@ -1574,7 +1573,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
     autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
     autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
-    autocmd BufRead,BufNewFile */i3/config setlocal filetype=i3config
+    autocmd BufRead,BufNewFile */i3/config setlocal filetype=i3config commentstring=#\ %s
     autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
 
     " Rg not find in file names
@@ -1647,8 +1646,8 @@ augroup AutoCommands
     autocmd WinEnter * if &cursorline | setlocal cursorline | endif
     autocmd WinLeave * setlocal nocursorline
     " Relative numbers on Insert Mode
-    " autocmd WinEnter,InsertLeave * if &relativenumber | setlocal norelativenumber | endif
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
+    " autocmd WinEnter,InsertLeave * setlocal norelativenumber
     autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
