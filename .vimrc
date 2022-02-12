@@ -204,7 +204,7 @@ set nojoinspaces                                                " No insert two 
 " Custom View
 set number                                                      " Number in cursorline, no zero (default: off)
 set relativenumber                                              " Relative number (slower) (default: off)
-set listchars=space:·,tab:»-                                    " Chars used for invisible chars
+set listchars=space:·,tab:»-,eol:↲                              " Chars used for invisible chars
 set textwidth=120                                               " Breakline in Insert Mode (default: 0 => off)
 set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
