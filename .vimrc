@@ -458,10 +458,6 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
 
-nnoremap <silent> <Leader>ga  :AsyncRun -post=edit!\ <Bar>\ echo\ 'Added:\ \ \ \ '\ .\ expand('%') git add %:p<Enter>
-nnoremap <silent> <Leader>gco :AsyncRun -post=edit!\ <Bar>\ echo\ 'Checkout:\ '\ .\ expand('%') git checkout %:p<Enter>
-nnoremap <silent> <Leader>grh :AsyncRun -post=edit!\ <Bar>\ echo\ 'Reset:\ \ \ \ '\ .\ expand('%') git reset HEAD %:p<Enter>
-
 " @thanks https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
 nnoremap <silent> ]q :<C-u>cnext<Enter>zzzv
@@ -925,13 +921,15 @@ Plug 'machakann/vim-swap'                                       " Swap args: g>,
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
-Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from Vim: tests, git add, docker start, etc
-Plug 'airblade/vim-gitgutter'                                   " Show changes in files if cwd is a git repository
+Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from Vim: tests
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
+
+Plug 'tpope/vim-fugitive'                                       " Git with superpowers
+Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
@@ -1281,6 +1279,28 @@ let g:autotags_no_global = 0
 let g:autotags_cscope_file_extensions = '.php .h .c'
 let g:autotags_ctags_global_include = ''
 let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=node_modules --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[   ]*trait[        ]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
+
+" Vim Fugitive
+" @see https://github.com/tpope/vim-fugitive
+function! s:git_alias() abort
+    let l:aliases = []
+    let l:lines = systemlist('cat ~/.bash_aliases | grep -e "^alias\(.*\)=\"git " | grep -v "log\|blame" | sed "s/alias \|\"//gi"')
+
+    for l:line in l:lines
+        let [l:shortcut, l:command] = split(trim(l:line), '=', 1)
+
+        let l:aliases += [[trim(l:shortcut), trim(substitute(substitute(l:command, 'git ', 'Git ', ''), ' -w', '', ''))]]
+    endfor
+
+    return l:aliases
+endfunction
+
+" I don't want to learn (or write) new aliases
+cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' : 'git'
+
+for [s:shortcut, s:command] in <SID>git_alias() + [['gh', 'Git blame']]
+    execute "cnoreabbrev <expr> " . s:shortcut . " (getcmdtype() ==# ':' && getcmdline() ==# '" . s:shortcut . "') ? '" . s:command . "' : '" . s:shortcut . "'"
+endfor
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
