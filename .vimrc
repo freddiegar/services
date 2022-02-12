@@ -184,6 +184,7 @@ set splitbelow                                                  " :split  opens 
 set splitright                                                  " :vsplit opens window right (default: off)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
 set pumheight=15                                                " Maximum options showed in popup menu (default: 0)
+set cursorline                                                  " Highligth current line (default: off)
 
 if has('mouse')
     set mouse=a                                                 " Mouse exist always (default: "")
@@ -1643,7 +1644,7 @@ augroup AutoCommands
     autocmd VimEnter * nested call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
     " Cursorline only in window active, not on Insert Mode
-    autocmd WinEnter * if &cursorline | setlocal cursorline | endif
+    autocmd WinEnter,VimEnter,BufWinEnter * setlocal cursorline
     autocmd WinLeave * setlocal nocursorline
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
