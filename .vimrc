@@ -1342,9 +1342,11 @@ function! s:query(range, ...) abort
         let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
     endif
 
-    let l:query = len(a:000) > 0 ? join(a:000, ' ') : getline('.')
+    let l:query = ''
 
-    if l:query ==# '' && a:range == 2
+    if len(a:000) > 0
+        let l:query = join(a:000, ' ')
+    elseif a:range == 2
         " @see https://vi.stackexchange.com/a/11028
         let [l:lnum1, l:col1] = getpos("'<")[1:2]
         let [l:lnum2, l:col2] = getpos("'>")[1:2]
@@ -1362,7 +1364,7 @@ function! s:query(range, ...) abort
     execute join(['DB', l:url, l:query], ' ')
 endfunction
 
-command! -nargs=? -range -bar Q call <SID>query(<range>, <f-args>)
+command! -nargs=? -range Q call <SID>query(<range>, <f-args>)
 
 " " Tagalong
 " " @see https://github.com/AndrewRadev/tagalong.vim
