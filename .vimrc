@@ -767,7 +767,7 @@ function! s:go_line() abort
         if filereadable(l:file) && l:line > 0
             " Not use normal! <Bang>, it cancel printable char
             silent execute "normal \<C-w>w"
-            silent execute 'edit +' . l:line . ' ' . l:file
+            silent execute 'edit +' . l:line . ' ' . fnameescape(l:file)
         endif
 
         if index(['php'], &filetype) >= 0 && getbufvar(l:lbuffer, '&buftype') ==# 'terminal'
@@ -930,6 +930,9 @@ Plug 'sniphpets/sniphpets'                                      " PHP snippet wi
 
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
+
+Plug 'tpope/vim-dotenv'                                         " Load env vars in VimL
+Plug 'tpope/vim-dadbod'                                         " DB console in Vim
 
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
@@ -1207,7 +1210,7 @@ function! s:go_file(ffile) abort
             let l:file = join([l:cdir, l:path, l:ffile], '/')
 
             if filereadable(l:file)
-                silent execute 'edit ' . l:file
+                silent execute 'edit ' . fnameescape(l:file)
 
                 return 0
             endif
@@ -1324,6 +1327,43 @@ if executable('rg')
     let g:gitgutter_grep = 'rg'
 endif
 
+" DadBod
+" @see https://github.com/tpope/vim-dadbod
+function! s:query(range, ...) abort
+    let l:url = DotenvGet('DATABASE_URL')
+
+    if l:url ==# ''
+        let l:conn = DotenvGet('DB_CONNECTION')
+        let l:host = DotenvGet('DB_HOST')
+        let l:port = DotenvGet('DB_PORT')
+        let l:data = DotenvGet('DB_DATABASE')
+        let l:user = DotenvGet('DB_USERNAME')
+        let l:pass = DotenvGet('DB_PASSWORD')
+        let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
+    endif
+
+    let l:query = len(a:000) > 0 ? join(a:000, ' ') : getline('.')
+
+    if l:query ==# '' && a:range == 2
+        " @see https://vi.stackexchange.com/a/11028
+        let [l:lnum1, l:col1] = getpos("'<")[1:2]
+        let [l:lnum2, l:col2] = getpos("'>")[1:2]
+
+        let l:lines = getline(l:lnum1, l:lnum2)
+
+        if len(l:lines) > 0
+            let l:lines[-1] = l:lines[-1][: l:col2 - (&selection == 'inclusive' ? 1 : 2)]
+            let l:lines[0] = l:lines[0][l:col1 - 1:]
+
+            let l:query = join(l:lines, ' ')
+        endif
+    endif
+
+    execute join(['DB', l:url, l:query], ' ')
+endfunction
+
+command! -nargs=? -range -bar Q call <SID>query(<range>, <f-args>)
+
 " " Tagalong
 " " @see https://github.com/AndrewRadev/tagalong.vim
 " let g:tagalong_filetypes = ['html', 'xml']
@@ -1410,7 +1450,7 @@ function! s:notes() abort
     if bufname('%') !=# '' && split(bufname('%'), '/')[-1] ==# split(l:filename, '/')[-1]
         silent update!
     else
-        silent execute 'edit ' . l:filename
+        silent execute 'edit ' . fnameescape(l:filename)
     endif
 
     silent execute ':%g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
@@ -1632,6 +1672,10 @@ augroup AutoCommands
             echomsg 'Loaded ' . g:session_file . ' session.'
         elseif !argc() && isdirectory('.git')
             echomsg 'None ' . g:session_file . ' session.'
+        endif
+
+        if filereadable(expand('.env.local')) || filereadable(expand('.env'))
+            execute 'Dotenv ' . (filereadable(expand('.env.local')) ? expand('.env.local') : '.env')
         endif
     endfunction
 
