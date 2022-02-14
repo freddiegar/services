@@ -1,19 +1,25 @@
 snippet ffx "Function" b
-function ${1}(${2}) abort
-    ${0}
+function $1($2) abort
+    $0
 endfunction
 endsnippet
 
 snippet ff! "Function bang" b
-function! ${1}(${2}) abort
-    ${0}
+function! $1($2) abort
+    $0
 endfunction
 endsnippet
 
 snippet if "If"
-if ${1}
-    ${VISUAL}${0}
+if $1
+    ${VISUAL}$0
 endif
+endsnippet
+
+snippet for "For loop"
+for $1 in $2
+    ${VISUAL}$0
+endfor
 endsnippet
 
 snippet try "Try/catch" b
