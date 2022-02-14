@@ -1327,9 +1327,9 @@ if executable('rg')
     let g:gitgutter_grep = 'rg'
 endif
 
-" DadBod
+" Vim DadBod
 " @see https://github.com/tpope/vim-dadbod
-function! s:query(range, ...) abort
+function! s:query(range, interactive, ...) abort
     let l:url = DotenvGet('DATABASE_URL')
 
     if l:url ==# ''
@@ -1342,10 +1342,10 @@ function! s:query(range, ...) abort
         let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
     endif
 
-    let l:query = ''
+    let l:command = ''
 
     if len(a:000) > 0
-        let l:query = join(a:000, ' ')
+        let l:command = join(a:000, ' ')
     elseif a:range == 2
         " @see https://vi.stackexchange.com/a/11028
         let [l:lnum1, l:col1] = getpos("'<")[1:2]
@@ -1357,14 +1357,22 @@ function! s:query(range, ...) abort
             let l:lines[-1] = l:lines[-1][: l:col2 - (&selection == 'inclusive' ? 1 : 2)]
             let l:lines[0] = l:lines[0][l:col1 - 1:]
 
-            let l:query = join(l:lines, ' ')
+            let l:command = join(l:lines, ' ')
         endif
+    elseif !a:interactive
+        let l:command = trim(getline('.'))
     endif
 
-    execute join(['DB', l:url, l:query], ' ')
+    if l:command ==# '' && !a:interactive
+        echo 'Nothing to do.'
+
+        return 0
+    endif
+
+    execute join(['DB', l:url, l:command], ' ')
 endfunction
 
-command! -nargs=? -range Q call <SID>query(<range>, <f-args>)
+command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
 
 " " Tagalong
 " " @see https://github.com/AndrewRadev/tagalong.vim
