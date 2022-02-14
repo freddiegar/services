@@ -120,13 +120,11 @@ bindsym $mod+$meta+0 move container to workspace $workspace10; workspace $worksp
 # bindsym $mod+Shift+w rename workspace to $workspace7
 
 # Search WM_CLASS 2nd arg using xprop: xprop | grep WM_CLASS
-assign [class="Firefox Developer Edition"]  $workspace2
+assign [class="(?i)firefox"]                $workspace2
 assign [class="Microsoft Teams - Preview"]  $workspace3
 assign [class="Mysql-workbench-bin"]        $workspace4
 assign [class="jetbrains-phpstorm"]         $workspace5
-assign [class="Sublime_text"]               $workspace5
-assign [class="Anydesk"]                    $workspace6
-assign [class="postman"]                    $workspace7
+assign [class="(?i)postman"]                $workspace6
 assign [class="VirtualBox Manager"]         $workspace8
 assign [class="VirtualBox Machine"]         $workspace8
 assign [class="^VirtualBox$"]               $workspace8
@@ -145,7 +143,6 @@ for_window [window_type="notification"]     floating enable, sticky enable
 
 # Programs
 for_window [class="Gnome-calculator"]       floating enable
-for_window [class="Anydesk"]                floating enable
 for_window [class="obs"]                    floating enable
 for_window [class="Pavucontrol"]            floating enable
 
@@ -157,11 +154,11 @@ for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]   floating
 for_window [instance="^VirtualBox$" class="^VirtualBox$"]               floating enable
 
 # Enable PiP as sticky
-for_window [instance="Toolkit" class="Firefox Developer Edition"]       floating enable, sticky enable
+for_window [instance="Toolkit" class="(?i)firefox"]       floating enable, sticky enable
 # Downloads
-for_window [instance="Places" class="Firefox Developer Edition"]        floating enable
-# Info certificates
-for_window [instance="Browser" class="Firefox Developer Edition"]       floating enable
+for_window [instance="Places" class="(?i)firefox"]        floating enable
+# Certificates information
+for_window [instance="Browser" class="(?i)firefox"]       floating enable
 
 # reload the configuration file
 # bindsym $mod+Shift+c reload
@@ -263,7 +260,7 @@ bindsym $mod+Shift+n exec --no-startup-id nautilus --no-desktop
 bindsym $mod+Shift+m exec --no-startup-id mysql-workbench
 
 # @see https://www.reddit.com/r/i3wm/comments/2y9aj9/what_are_your_favourite_configuration_tips/
-# Move workspace between layouts
+# Move workspace between layouts (monitors)
 bindsym $mod+Left focus output left
 bindsym $mod+Shift+Left move workspace to output left
 bindsym $mod+Right focus output right
@@ -284,7 +281,7 @@ exec --no-startup-id xcompmgr -c -C -o.1 &
 # Init IP public
 exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
 
-# Reload Wallpaper
+# Reload wallpaper
 bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background.jpeg
 
 # Reload IP Public
