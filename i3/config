@@ -255,9 +255,12 @@ focus_follows_mouse no
 
 # @see https://www.youtube.com/watch?v=8-S0cWnLBKg&list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf&index=2
 bindsym $mod+Shift+f exec --no-startup-id firefox
-bindsym $mod+Shift+o exec --no-startup-id opera
-bindsym $mod+Shift+n exec --no-startup-id nautilus --no-desktop
+bindsym $mod+Shift+t exec --no-startup-id teams
 bindsym $mod+Shift+m exec --no-startup-id mysql-workbench
+bindsym $mod+Shift+p exec --no-startup-id postman
+bindsym $mod+Shift+v exec --no-startup-id virtualbox
+bindsym $mod+Shift+n exec --no-startup-id nautilus --no-desktop
+bindsym $mod+Shift+o exec --no-startup-id opera
 
 # @see https://www.reddit.com/r/i3wm/comments/2y9aj9/what_are_your_favourite_configuration_tips/
 # Move workspace between layouts (monitors)
