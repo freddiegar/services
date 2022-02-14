@@ -921,7 +921,6 @@ Plug 'machakann/vim-swap'                                       " Swap args: g>,
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
-Plug 'skywind3000/asyncrun.vim'                                 " Async tasks from Vim: tests
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
@@ -1301,7 +1300,7 @@ endfunction
 " I don't want to learn (or write) new aliases
 cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' : 'git'
 
-for [s:shortcut, s:command] in <SID>git_alias() + [['gh', 'Git blame']]
+for [s:shortcut, s:command] in <SID>git_alias() + [['gh', 'Git blame'], ['gst', 'Git']]
     execute "cnoreabbrev <expr> " . s:shortcut . " (getcmdtype() ==# ':' && getcmdline() ==# '" . s:shortcut . "') ? '" . s:command . "' : '" . s:shortcut . "'"
 endfor
 
@@ -1675,17 +1674,44 @@ augroup AutoCommands
     " Save|Load sessions
     let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . (g:isneovim ? '.nvim' : '.vim'))
 
+    function! s:envfile() abort
+        let l:envfile = ''
+        let l:envfiles = [
+                \ '.env.local',
+                \ '.env',
+              \ ]
+
+        for l:file in l:envfiles
+            if filereadable(expand(l:file))
+                let l:envfile = l:file
+
+                break
+            endif
+        endfor
+
+        return l:envfile
+    endfunction
+
     function! s:sessionload() abort
+        let l:message = ''
+        let l:envfile = <SID>envfile()
+
         if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
             silent execute 'source ' . g:session_file
 
-            echomsg 'Loaded ' . g:session_file . ' session.'
+            let l:message = 'Loaded ' . g:session_file . ' session##ENV##.'
         elseif !argc() && isdirectory('.git')
-            echomsg 'None ' . g:session_file . ' session.'
+            let l:message = 'None ' . g:session_file . ' session##ENV##.'
         endif
 
-        if filereadable(expand('.env.local')) || filereadable(expand('.env'))
-            execute 'Dotenv ' . (filereadable(expand('.env.local')) ? expand('.env.local') : '.env')
+        if l:envfile !=# ''
+            silent execute 'Dotenv ' . l:envfile
+
+            let l:message = l:message ==# '' ? 'Loaded ' . l:envfile . ' vars.' : substitute(l:message, '##ENV##', ' with ' . l:envfile . ' file', '')
+        endif
+
+        if l:message !=# ''
+            echomsg l:message
         endif
     endfunction
 
