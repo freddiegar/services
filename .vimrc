@@ -930,7 +930,6 @@ Plug 'sniphpets/sniphpets'                                      " PHP snippet wi
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 
-Plug 'tpope/vim-dotenv'                                         " Load env vars in VimL
 Plug 'tpope/vim-dadbod'                                         " DB console in Vim
 
 Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
@@ -1329,15 +1328,15 @@ endif
 " Vim DadBod
 " @see https://github.com/tpope/vim-dadbod
 function! s:query(range, interactive, ...) abort
-    let l:url = DotenvGet('DATABASE_URL')
+    let l:url = <SID>env('DATABASE_URL')
 
     if l:url ==# ''
-        let l:conn = DotenvGet('DB_CONNECTION')
-        let l:host = DotenvGet('DB_HOST')
-        let l:port = DotenvGet('DB_PORT')
-        let l:data = DotenvGet('DB_DATABASE')
-        let l:user = DotenvGet('DB_USERNAME')
-        let l:pass = DotenvGet('DB_PASSWORD')
+        let l:conn = <SID>env('DB_CONNECTION')
+        let l:host = <SID>env('DB_HOST')
+        let l:port = <SID>env('DB_PORT')
+        let l:data = <SID>env('DB_DATABASE')
+        let l:user = <SID>env('DB_USERNAME')
+        let l:pass = <SID>env('DB_PASSWORD')
         let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
     endif
 
@@ -1656,7 +1655,7 @@ augroup AutoCommands
     " @see :help :function
     " @see :help function-argument
     " @see http://www.adp-gmbh.ch/vim/user_commands.html
-    " query (string), [fullscreen (0/1), [dir (string)]
+    " query (string), (fullscreen (0/1), [dir (string)])
     function! s:rgfzf(query, fullscreen, ...) abort
         let l:dir = a:0 > 0 && isdirectory(a:1) ? a:1 : ''
         let l:finder_command = 'rg --column --line-number --no-heading --color=always --fixed-strings -- %s ' . l:dir . ' || true'
@@ -1671,8 +1670,9 @@ augroup AutoCommands
     " @thanks https://gist.github.com/romainl/5b827f4aafa7ee29bdc70282ecc31640
     command! -range GB echo join(systemlist('git -C ' . shellescape(expand('%:p:h')) . ' blame -L <line1>,<line2> ' . expand('%:t')), "\n")
 
-    " Save|Load sessions
-    let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . (g:isneovim ? '.nvim' : '.vim'))
+    " Load env vars
+    let s:env = {}
+    let s:envcache = {}
 
     function! s:envfile() abort
         let l:envfile = ''
@@ -1692,16 +1692,89 @@ augroup AutoCommands
         return l:envfile
     endfunction
 
+    function! s:envload(bang = 0, ...) abort
+        let l:message = ''
+        let l:envfile = !a:0 ? <SID>envfile() : a:1
+
+        if l:envfile ==# ''
+            return
+        endif
+
+        let l:ftime = getftime(fnamemodify(l:envfile, ':p'))
+
+        if l:ftime < 0
+            return
+        endif
+
+        let [l:ctime, l:lines] = get(s:envcache, l:envfile, [-2, []])
+
+        if l:ftime != l:ctime
+            let l:lines = systemlist('cat ' . l:envfile . ' | grep -e "^\(DB_\|DATABASE_URL\)" | sed "s/^D/VIM_D/"')
+            let s:envcache[l:envfile] = [l:ftime, l:lines]
+
+            let l:message = 'Loaded ' . l:envfile . ' vars.'
+        endif
+
+        for l:line in l:lines
+            let [l:name, l:value] = split(l:line, '=', 1)
+
+            let s:env[l:name] = shellescape(l:value)
+
+            silent execute 'let $' . l:name ' = ' . shellescape(l:value)
+        endfor
+
+        if &verbose
+            for l:name in sort(keys(s:env))
+                call <SID>envecho(l:name, s:env[l:name])
+            endfor
+        endif
+
+        if l:message !=# ''
+            echomsg l:message
+        endif
+    endfunction
+
+    function! s:envecho(name, value) abort
+        echohl VimLet
+        echon 'let '
+        echohl vimEnvvar
+        echon '$' . a:name
+        echohl vimOper
+        echon ' = '
+        echohl vimString
+        echon a:value
+        echohl None
+        echon "\n"
+    endfunction
+
+    " env (string), (name, [default])
+    function s:env(...) abort
+        try
+            let l:prefix = 'VIM_'
+            let l:key = l:prefix . substitute(a:1, '^\$' . l:prefix, '', '')
+
+            return exists('$' . l:key) ? eval('$' . l:key) : get(s:env, l:key, (a:0 > 1 ? a:2 : ''))
+        catch
+            return
+        endtry
+    endfunction
+
+    command! -bar -bang -nargs=? -complete=file Dotenv call <SID>envload(<bang>0, <f-args>)
+
+    " Save|Load sessions
+    let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . (g:isneovim ? '.nvim' : '.vim'))
+
     function! s:sessionload() abort
         let l:message = ''
         let l:envfile = <SID>envfile()
+        let l:session = split(g:session_file, '/')[-1]
 
         if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
             silent execute 'source ' . g:session_file
 
-            let l:message = 'Loaded ' . g:session_file . ' session##ENV##.'
+            let l:message = 'Loaded ' . l:session . ' session##ENV##.'
         elseif !argc() && isdirectory('.git')
-            let l:message = 'None ' . g:session_file . ' session##ENV##.'
+            let l:message = 'None ' . l:session . ' session##ENV##.'
         endif
 
         if l:envfile !=# ''
