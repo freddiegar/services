@@ -7,7 +7,7 @@
 " QUICKREF
 " @see https://quickref.me/vim
 
-" VIM Config
+" CONFIG
 " @see https://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118
 " @see https://blog.joren.ga/tools/vim-learning-steps
 " @see https://learnvimscriptthehardway.stevelosh.com/
@@ -652,6 +652,7 @@ function! s:append_char(type) abort
         echohl None
     endtry
 
+    silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
     silent call setpos('.', l:ccursor)
 
     if l:changerow != 0
@@ -1810,6 +1811,7 @@ augroup AutoCommands
 
         silent! %s/\s\+$//e
 
+        silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
         silent call setpos('.', l:ccursor)
         silent call setreg('/', l:lsearch)
     endfunction
