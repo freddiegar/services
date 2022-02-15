@@ -1289,7 +1289,7 @@ function! s:git_alias() abort
     let l:lines = systemlist('cat ~/.bash_aliases | grep -e "^alias\(.*\)=\"git " | grep -v "log\|blame" | sed "s/alias \|\"//gi"')
 
     for l:line in l:lines
-        let [l:shortcut, l:command] = split(trim(l:line), '=', 1)
+        let [l:shortcut, l:command] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
 
         let l:aliases += [[trim(l:shortcut), trim(substitute(substitute(l:command, 'git ', 'Git ', ''), ' -w', '', ''))]]
     endfor
@@ -1709,7 +1709,7 @@ augroup AutoCommands
 
         let [l:ctime, l:lines] = get(s:envcache, l:envfile, [-2, []])
 
-        if l:ftime != l:ctime
+        if l:ftime != l:ctime || a:bang
             let l:lines = systemlist('cat ' . l:envfile . ' | grep -e "^\(DB_\|DATABASE_URL\)" | sed "s/^D/VIM_D/"')
             let s:envcache[l:envfile] = [l:ftime, l:lines]
 
@@ -1717,7 +1717,7 @@ augroup AutoCommands
         endif
 
         for l:line in l:lines
-            let [l:name, l:value] = split(l:line, '=', 1)
+            let [l:name, l:value] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
 
             let s:env[l:name] = shellescape(l:value)
 
@@ -1785,7 +1785,7 @@ augroup AutoCommands
         endif
 
         if l:message !=# ''
-            echomsg l:message
+            echomsg substitute(l:message, '##ENV##', '' , '')
         endif
     endfunction
 
