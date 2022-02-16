@@ -211,6 +211,7 @@ set guicursor=                                                  " Always cursor 
 
 if g:isneovim
     set diffopt+=vertical,algorithm:histogram,indent-heuristic  " Best diff
+    set wildoptions-=pum                                        " Don't use popupmenu for wildmode completion
 else
     set diffopt+=iwhite                                         " Ignore white spaces in diff mode
 endif
@@ -564,6 +565,7 @@ function! s:delete_method() abort
         silent execute "normal! ?\\/\\*\rd/\\*\\/\r\"_dd"
 
         silent call setreg('/', l:bsearch)
+        silent call histdel('/', -1)
     endif
 
     let @@ = l:saved_unnamed_register
@@ -617,6 +619,7 @@ function! s:append_char(type) abort
             endif
 
             silent call setreg('/', l:bsearch)
+            silent call histdel('/', -1)
             let l:repeatable = 'AddIncompleteMark'
         elseif a:type ==# 'I'
             let l:bsearch = getreg('/')
@@ -629,6 +632,7 @@ function! s:append_char(type) abort
             endif
 
             silent call setreg('/', l:bsearch)
+            silent call histdel('/', -1)
             let l:repeatable = 'DropIncompleteMark'
         elseif l:lastchar == ';'
             silent execute "normal! \"_xA,\e"
@@ -1041,6 +1045,7 @@ nnoremap <silent> <F12> :Goyo<Enter>
 
 " TagBar
 " @see https://github.com/preservim/tagbar
+let g:tagbar_sort = 0
 let g:tagbar_compact = 1
 let g:tagbar_autofocus = 1
 
@@ -1827,6 +1832,7 @@ augroup AutoCommands
         silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
         silent call setpos('.', l:ccursor)
         silent call setreg('/', l:lsearch)
+        silent call histdel('/', -1)
     endfunction
 
     autocmd VimEnter * nested call <SID>sessionload()
