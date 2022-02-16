@@ -1706,7 +1706,7 @@ augroup AutoCommands
     endfunction
 
     " bang (1/0), [envfile (string)]: void
-    function! s:envload(bang = 0, ...) abort
+    function! s:envload(bang, ...) abort
         let l:message = ''
         let l:envfile = !a:0 ? <SID>envfile() : a:1
 
