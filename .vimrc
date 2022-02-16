@@ -359,6 +359,7 @@ nnoremap <silent> <Right> :vertical resize +5<Enter>
 
 " Utility
 nnoremap <silent> Q @@
+" Don't add <C-u>
 vnoremap <silent> Q :normal! @@<Enter>gv
 vnoremap <silent> . :normal! .<Enter>gv
 nnoremap <silent> Y y$
@@ -388,7 +389,7 @@ inoremap <silent> <Enter> <Enter><C-g>u
 " Keep cursor position after join
 nnoremap <silent> J maJ`a
 
-" Move complete lines selected (:move) and indent (gv=gv)
+" Move complete lines selected (:move) and indent (gv=gv). Don't add <C-u>
 vnoremap <silent> J :move '>+1<Enter>gv=gv
 vnoremap <silent> K :move '<-2<Enter>gv=gv
 
@@ -1031,23 +1032,26 @@ let g:UltiSnipsUsePythonVersion = 3
 
 " Goyo
 " @see https://github.com/junegunn/goyo.vim
-nnoremap <silent> <F12> :Goyo<Enter>
 let g:goyo_linenr = 1
 let g:goyo_width = 120
 let g:goyo_height = '100%'
 let g:goyo_bg = '#1D2021'
 
+nnoremap <silent> <F12> :Goyo<Enter>
+
 " TagBar
 " @see https://github.com/preservim/tagbar
-nnoremap <silent> <F8> :TagbarToggle<Enter>
 let g:tagbar_compact = 1
 let g:tagbar_autofocus = 1
+
+nnoremap <silent> <F8> :TagbarToggle<Enter>
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
 " Jump to the existing window if possible
 let g:fzf_buffers_jump = 1
+
 " String in current file dir (by default: current cursor word)
 nnoremap <silent> <Leader>I :silent call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
 " Files in current file dir
@@ -1071,6 +1075,7 @@ let g:test#strategy = {
 let g:test#php#phpunit#options = {
     \ 'all': '--no-coverage --stop-on-failure',
 \}
+
 nnoremap <silent> <Leader>tt :TestNearest<Enter>
 nnoremap <silent> <Leader>tf :TestFile<Enter>
 nnoremap <silent> <Leader>ts :TestSuite<Enter>
@@ -1270,17 +1275,19 @@ endfunction
 " Surround
 " @see https://github.com/tpope/vim-surround
 " b = between
+let g:surround_indent = 1
+
 nmap <silent> <leader>b ysiw
 vmap <silent> <leader>b S
-let g:surround_indent = 1
 
 " CTags
 " @see https://github.com/vim-scripts/autotags
-nnoremap <C-]> g<C-]>
 let g:autotags_no_global = 0
 let g:autotags_cscope_file_extensions = '.php .h .c'
 let g:autotags_ctags_global_include = ''
 let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=node_modules --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[   ]*trait[        ]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
+
+nnoremap <C-]> g<C-]>
 
 " Fugitive
 " @see https://github.com/tpope/vim-fugitive
@@ -1307,12 +1314,6 @@ endfor
 
 " GitGutter
 " @see https://github.com/airblade/vim-gitgutter
-nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zzzv
-nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zzzv
-nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
-nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
-nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
-
 " let g:gitgutter_enabled = 1 (default)
 " let g:gitgutter_eager = 1 (¿?)
 let g:gitgutter_realtime = 0
@@ -1326,6 +1327,12 @@ let g:gitgutter_show_msg_on_hunk_jumping = 0
 if executable('rg')
     let g:gitgutter_grep = 'rg'
 endif
+
+nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zzzv
+nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zzzv
+nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
+nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
+nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
 
 " DadBod
 " @see https://github.com/tpope/vim-dadbod
