@@ -154,11 +154,17 @@ for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]   floating
 for_window [instance="^VirtualBox$" class="^VirtualBox$"]               floating enable
 
 # Enable PiP as sticky
-for_window [instance="Toolkit" class="(?i)firefox"]       floating enable, sticky enable
+for_window [instance="Toolkit" class="(?i)firefox"]                     floating enable, sticky enable
 # Downloads
-for_window [instance="Places" class="(?i)firefox"]        floating enable
+for_window [instance="Places" class="(?i)firefox"]                      floating enable
 # Certificates information
-for_window [instance="Browser" class="(?i)firefox"]       floating enable
+for_window [instance="Browser" class="(?i)firefox"]                     floating enable
+
+# GIMP
+for_window [class="^Gimp$" title="^GNU Image Manipulation Program$"]    floating disabled
+for_window [class="^Gimp$" title=" ? GIMP$"]                            floating disabled
+for_window [class="^Gimp$" title="Tool Options$"]                       floating enable
+for_window [class="^Gimp$" title="^Quit GIMP$"]                         floating enable
 
 # reload the configuration file
 # bindsym $mod+Shift+c reload
@@ -278,14 +284,14 @@ exec --no-startup-id $emulator
 # Init battery warning
 exec --no-startup-id ~/.config/i3/battery-popup -L 20 -l 10 -t 2m -m "Battery is low!"
 # Init background image
-exec --no-startup-id feh --bg-scale ~/BG/background.jpeg
+exec --no-startup-id feh --bg-scale ~/BG/background-${I3_DAY:-1}.jpeg
 # Init background transparency
 exec --no-startup-id xcompmgr -c -C -o.1 &
 # Init IP public
 exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
 
 # Reload wallpaper
-bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background.jpeg
+bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background-${I3_DAY:-1}.jpeg
 
 # Reload IP Public
 bindsym $mod+Shift+i exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip

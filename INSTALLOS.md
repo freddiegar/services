@@ -153,8 +153,11 @@ sudo update-alternatives --config x-session-manager
 
 ## Start i3 after StartX
 
+[See](https://www.reddit.com/r/i3wm/comments/72oiwl/how_do_i_set_environment_variables_so_that_they/)
+
 ```bash
-echo 'exec i3' >> ~/.xinitrc
+echo 'export I3_DAY=$(date +"%d" -u)
+exec i3' >> ~/.xinitrc
 ```
 
 # Vim Plugins
