@@ -455,7 +455,7 @@ nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<En
 nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
-nmap <silent> <Leader>df <Plug>DeleteFinalRepeatable
+nmap <silent> <Leader>x <Plug>DeleteFinalRepeatable
 
 " @thanks https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
@@ -1297,6 +1297,7 @@ function! s:git_alias() abort
     return l:aliases
 endfunction
 
+nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<Enter>
 " I don't want to learn (or write) new aliases
 cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' : 'git'
 
