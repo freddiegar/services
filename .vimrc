@@ -1467,7 +1467,7 @@ function! s:notes() abort
     silent execute ':%g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
 
     if !filereadable(l:filename) || len(l:matches) == 0
-        silent execute "normal! Go\r" . l:header . "\r\e"
+        silent execute "normal! Go\e<<i\r" . l:header . "\r\e"
     else
         silent execute "normal! Go\e"
     endif
@@ -1529,6 +1529,8 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call <SID>phpactor('add_missing_properties')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rcc :call <SID>phpactor('complete_constructor')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>run :call <SID>phpactor('fix_namespace_class_name')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rfg :call setreg('z', "orfg\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rfs :call setreg('z', "orfs\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
 
     " autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
