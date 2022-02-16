@@ -71,7 +71,6 @@
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
-" - ma  Save current position in function, keep position
 
 let g:isneovim = has('nvim')
 
@@ -432,12 +431,12 @@ nnoremap <silent> <Leader>D "_D
 " Show/Copied current filename (full path)
 nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
 nnoremap <silent> <Leader>N :let @+=expand('%:p')
-            \ <Bar> echo 'Copied:   ' . expand('%:p')<Enter>
+            \ <Bar> echo 'Copied:   ' . @+<Enter>
 
 " Show/Copied current filename (only last part)
 nnoremap <silent> <Leader>l :echo 'File:     ' . expand('%:t')<Enter>
 nnoremap <silent> <Leader>L :let @+=expand('%:t')
-            \ <Bar> echo 'Copied:   ' . expand('%:t')<Enter>
+            \ <Bar> echo 'Copied:   ' . @+<Enter>
 
 " Improve search in fuzzy finder
 nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
@@ -483,11 +482,11 @@ nnoremap <silent> <Leader>gh :let @+=<SID>generate_hash()
 
 nnoremap <silent> <Leader>gB :let bcrypt=<SID>generate_bcrypt('word')
             \ <Bar> let @+=bcrypt[1]
-            \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> '. @+<Enter>
+            \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> ' . @+<Enter>
 
 vnoremap <silent> <Leader>gB :<C-u>let bcrypt=<SID>generate_bcrypt(visualmode())
             \ <Bar> let @+=bcrypt[1]
-            \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> '. @+<Enter>
+            \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> ' . @+<Enter>
 
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
@@ -516,7 +515,7 @@ function! s:check_backspaces() abort
 endfunction
 
 " @thanks https://github.com/romgrk/nvim/blob/master/rc/keymap.vim#L761
-function! s:find_function (flags, ...)
+function! s:find_function (flags)
     " @see :h search()
     let l:fcursor = a:flags =~# 'c' ? 'c' : ''
     let l:fbackward = a:flags =~# 'b' ? 'b' : ''
@@ -712,7 +711,7 @@ function! s:get_masked(type) abort
     let l:saved_unnamed_register = @@
     let l:repeatable = ''
 
-    silent execute "normal! ma"
+    let l:ccursor = getpos('.')
 
     if a:type ==# 'word'
         silent execute "normal! viw\e"
@@ -729,7 +728,8 @@ function! s:get_masked(type) abort
     " Replaced numbers -> #
     silent execute ":s/\\%V[0-9]/#/ge"
 
-    silent execute "normal! `a"
+    silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
+    silent call setpos('.', l:ccursor)
 
     let @@ = l:saved_unnamed_register
     let @/ = l:saved_search_register
@@ -1058,7 +1058,7 @@ nnoremap <silent> <Leader>p :silent Files<Enter>
 nnoremap <silent> <expr> <Leader>o
             \ isdirectory('.git') ? ":silent execute 'GFiles'<Enter>" : ":silent execute 'Files'<Enter>"
 
-" Vim Tests
+" Tests
 " https://github.com/vim-test/vim-test
 let g:test_strategy = g:isneovim ? 'neovim' : 'vimterminal'
 let g:test#echo_command = 0
@@ -1282,7 +1282,7 @@ let g:autotags_cscope_file_extensions = '.php .h .c'
 let g:autotags_ctags_global_include = ''
 let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=node_modules --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[   ]*trait[        ]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
 
-" Vim Fugitive
+" Fugitive
 " @see https://github.com/tpope/vim-fugitive
 function! s:git_alias() abort
     let l:aliases = []
@@ -1326,8 +1326,9 @@ if executable('rg')
     let g:gitgutter_grep = 'rg'
 endif
 
-" Vim DadBod
+" DadBod
 " @see https://github.com/tpope/vim-dadbod
+" range (0,1,2), interactive (0/1), [command (string)]: void
 function! s:query(range, interactive, ...) abort
     let l:url = <SID>env('DATABASE_URL')
 
@@ -1384,18 +1385,19 @@ function! s:split() abort
     let l:saved_search_register = @/
     let l:saved_unnamed_register = @@
     let l:command_string = ''
+    let l:line = getline('.')
 
     " Is ternary?
-    if match(getline('.'), ' ? ') > 0
-                \ && match(getline('.'), ' : ') > 0
-                " \ && (match(getline('.'), ';') > 0 || match(getline('.'), ',') > 0) VimL not need this chars
+    if match(l:line, ' ? ') > 0
+                \ && match(l:line, ' : ') > 0
+                " \ && (match(l:line, ';') > 0 || match(l:line, ',') > 0) VimL not need this chars
         silent execute "normal! _/ ? \ri\r\e/ : \r\"_xi\r\e"
     " Is array?
-    elseif match(getline('.'), '[') > 0
-                \ && match(getline('.'), ',') > 0
-                \ && match(getline('.'), ']') > 0
-                \ && match(getline('.'), ';') > 0
-                \ && match(getline('.'), '[') + 1 != match(getline('.'), ']')
+    elseif match(l:line, '[') > 0
+                \ && match(l:line, ',') > 0
+                \ && match(l:line, ']') > 0
+                \ && match(l:line, ';') > 0
+                \ && match(l:line, '[') + 1 != match(l:line, ']')
         silent execute 'normal! _f[vi["zy'
 
         let l:arguments_list = split(@@, ',')
@@ -1406,9 +1408,9 @@ function! s:split() abort
 
         silent execute "normal! \"_di[i\r" . l:command_string . "\e"
     " Are arguments?
-    elseif match(getline('.'), '(') > 0
-                \ && match(getline('.'), ',') > 0
-                \ && match(getline('.'), ')') > 0
+    elseif match(l:line, '(') > 0
+                \ && match(l:line, ',') > 0
+                \ && match(l:line, ')') > 0
         silent execute 'normal! _f(vi("zy'
 
         let l:arguments_list = split(@@, ',')
@@ -1426,8 +1428,8 @@ function! s:split() abort
             silent execute 'normal! kJ'
         endif
     " Is comma list?
-    elseif match(getline('.'), ',') > 0
-        let l:arguments_list = split(getline('.'), ',')
+    elseif match(l:line, ',') > 0
+        let l:arguments_list = split(l:line, ',')
 
         for l:argument in l:arguments_list
             let l:command_string .= trim(l:argument) . (len(l:arguments_list) > 1 ? ',' : '') . "\r"
@@ -1656,7 +1658,7 @@ augroup AutoCommands
     " @see :help :function
     " @see :help function-argument
     " @see http://www.adp-gmbh.ch/vim/user_commands.html
-    " query (string), (fullscreen (0/1), [dir (string)])
+    " query (string), fullscreen (0/1), [dir (string)] : void
     function! s:rgfzf(query, fullscreen, ...) abort
         let l:dir = a:0 > 0 && isdirectory(a:1) ? a:1 : ''
         let l:finder_command = 'rg --column --line-number --no-heading --color=always --fixed-strings -- %s ' . l:dir . ' || true'
@@ -1693,6 +1695,7 @@ augroup AutoCommands
         return l:envfile
     endfunction
 
+    " bang (1/0), [envfile (string)]: void
     function! s:envload(bang = 0, ...) abort
         let l:message = ''
         let l:envfile = !a:0 ? <SID>envfile() : a:1
@@ -1748,7 +1751,7 @@ augroup AutoCommands
         echon "\n"
     endfunction
 
-    " env (string), (name, [default])
+    " name (string), [default (string)]: string
     function s:env(...) abort
         try
             let l:prefix = 'VIM_'
