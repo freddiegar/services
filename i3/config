@@ -13,6 +13,7 @@ set $emulator konsole
 set $font_family fira code retina
 set $font_size 12
 set $font_size_status 10
+set $font_size_scratch 11
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -22,7 +23,7 @@ font pango:$font_family $font_size
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id $emulator
+bindsym $mod+Return exec --no-startup-id "$emulator -p font='$font_family,$font_size_scratch'"
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -166,6 +167,11 @@ for_window [class="^Gimp$" title=" ? GIMP$"]                            floating
 for_window [class="^Gimp$" title="Tool Options$"]                       floating enable
 for_window [class="^Gimp$" title="^Quit GIMP$"]                         floating enable
 
+# Scratchpad
+# @see https://youtu.be/q-l7DnDbiiU?t=134
+for_window [title="^::scratchpad::"]                                    floating enable, move scratchpad
+bindsym $mod+minus [title="^::scratchpad::"]                            scratchpad show; [title="^::scratchpad::"] move position center
+
 # reload the configuration file
 # bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
@@ -289,6 +295,8 @@ exec --no-startup-id export feh --bg-scale ~/BG/background-$(shuf -i 0-31 -n1).j
 exec --no-startup-id xcompmgr -c -C -o.1 &
 # Init IP public
 exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
+# Init Scratchpad (help: --list-profile-properties)
+exec --no-startup-id $emulator -p tabtitle='::scratchpad::' -p font='$font,$font_size_scratch'
 
 # Reload wallpaper
 bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-31 -n1).jpeg
