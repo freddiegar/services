@@ -398,8 +398,8 @@ vnoremap <silent> K :move '<-2<Enter>gv=gv
 " Using screen rows (g option)
 nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
 nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
-xnoremap <silent> j gj
 xnoremap <silent> k gk
+xnoremap <silent> j gj
 
 " Sudo rescue
 command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
@@ -573,12 +573,15 @@ function! s:delete_method() abort
     silent! call repeat#set("\<Plug>DeleteMethodRepeatable")
 endfunction
 
-function! s:find_filter(type)
+" type (string), [filter (string)]: void
+function! s:find_filter(type, ...)
     let l:saved_unnamed_register = @@
     let l:filter = ''
 
     if a:type ==# 'word' || a:type ==# 'file'
         let l:filter = expand('<cword>')
+    elseif a:type ==# 'pattern' && len(a:000) > 0
+        let l:filter = a:1
     elseif a:type ==# 'v' || a:type ==# 'V'
         silent execute "normal! `<v`>\"zy"
 
@@ -1562,6 +1565,36 @@ augroup AutoCommands
         let l:result = system(g:phpactorbinpath . ' class:transform ' . expand('%') . ' --transform="' . a:transformer . '"')
 
         silent edit!
+    endfunction
+
+    " Go parent (extends) or implements (interface) file from 'any' position
+    autocmd FileType php nmap <silent> <buffer>gX :call <SID>go_parent()<Enter>
+
+    function! s:go_parent() abort
+        let l:bsearch = getreg('/')
+        let l:pattern = ' extends \| implements '
+
+        let [l:lnum, l:col] = searchpos(l:pattern, 'n')
+
+        if l:lnum > 0 && l:col > 0
+            silent call cursor(l:lnum, l:col)
+            " Not use normal! <Bang>, it needs gd mapping
+            silent! execute "keepjumps normal 2Wgd"
+        else
+            echo 'Nothing to do.'
+        endif
+
+        silent call setreg('/', l:bsearch)
+        silent call histdel('/', -1)
+    endfunction
+
+    " Search implementations's file
+    autocmd FileType php nmap <silent> <buffer>gY :call <SID>get_implementations()<Enter>
+
+    function! s:get_implementations() abort
+        let l:pattern = expand('%:t:r')
+
+        call <SID>find_filter('pattern', l:pattern)
     endfunction
 
     " PHP Fixer
