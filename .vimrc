@@ -388,7 +388,7 @@ inoremap <silent> ? ?<C-g>u
 inoremap <silent> <Enter> <Enter><C-g>u
 
 " Keep cursor position after join
-nnoremap <silent> J maJ`a
+" nnoremap <silent> J maJ`a
 
 " Move complete lines selected (:move) and indent (gv=gv). Don't add <C-u>
 vnoremap <silent> J :move '>+1<Enter>gv=gv
@@ -403,6 +403,9 @@ xnoremap <silent> j gj
 
 " Sudo rescue
 command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
+
+" Don't write in update <- Sugar
+cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
 
 " Open explore in current work directory (toggle)
 nnoremap <silent> <expr> <F2>
@@ -457,7 +460,7 @@ nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<En
 nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
-nmap <silent> <Leader>x <Plug>DeleteFinalRepeatable
+nmap <silent> <Leader>- <Plug>DeleteFinalRepeatable
 
 " @thanks https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
