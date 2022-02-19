@@ -312,7 +312,7 @@ function! s:statusline() abort
 
     set statusline+=%=                                          " New group
     set statusline+=\%m                                         " Modified flag
-    set statusline+=\ %3{&filetype}                             " Is it require description?
+    set statusline+=\ %3{&filetype!=#''?&filetype.'\ \\|':''}   " Is it require description?
     set statusline+=\%<                                         " Truncate long statusline here
 
     set statusline+=\ c:%3c                                     " Cursor [c]olumn
@@ -460,7 +460,7 @@ nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<En
 nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
-nmap <silent> <Leader>- <Plug>DeleteFinalRepeatable
+nmap <silent> <Leader>sa <Plug>DeleteFinalRepeatable
 
 " @thanks https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
@@ -511,12 +511,6 @@ function! s:delete_call(flags, type) abort
     let @@ = l:saved_unnamed_register
 
     silent! call repeat#set("\<Plug>Delete" . a:type . 'CallRepeatable')
-endfunction
-
-function! s:check_backspaces() abort
-    let l:col = col('.') - 1
-
-    return !l:col || getline('.')[l:col - 1]  =~# '\s'
 endfunction
 
 " @thanks https://github.com/romgrk/nvim/blob/master/rc/keymap.vim#L761
@@ -1680,6 +1674,19 @@ augroup AutoCommands
     endfunction
 
     " Customization
+    autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
+    autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
+    autocmd BufRead,BufNewFile .php_cs* setlocal filetype=php
+    autocmd BufRead,BufNewFile *.conf setlocal filetype=apache
+    autocmd BufRead,BufNewFile *.json.* setlocal filetype=json
+    autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
+    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
+    autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
+    autocmd BufRead,BufNewFile */i3/config setlocal filetype=i3config commentstring=#\ %s
+    autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
+    autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log
+    autocmd BufRead,BufNewFile *.log setlocal filetype=log
+
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType apache setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
@@ -1692,17 +1699,6 @@ augroup AutoCommands
     " autocmd FileType html,css,vue EmmetInstall
 
     autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
-
-    autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
-    autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
-    autocmd BufRead,BufNewFile .php_cs* setlocal filetype=php
-    autocmd BufRead,BufNewFile *.conf setlocal filetype=apache
-    autocmd BufRead,BufNewFile *.json.* setlocal filetype=json
-    autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
-    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
-    autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
-    autocmd BufRead,BufNewFile */i3/config setlocal filetype=i3config commentstring=#\ %s
-    autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
 
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
