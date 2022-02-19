@@ -931,6 +931,7 @@ Plug 'tpope/vim-repeat'                                         " Repeat: surrou
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
+Plug 'machakann/vim-highlightedyank'                            " See yank
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
@@ -1048,6 +1049,10 @@ let g:goyo_height = '100%'
 let g:goyo_bg = '#1D2021'
 
 nnoremap <silent> <F12> :Goyo<Enter>
+
+" HighlightedYank
+" @see https://github.com/machakann/vim-highlightedyank
+let g:highlightedyank_highlight_duration = 500
 
 " TagBar
 " @see https://github.com/preservim/tagbar
