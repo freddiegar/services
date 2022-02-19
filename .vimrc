@@ -1727,7 +1727,19 @@ augroup AutoCommands
 
     " Git blame
     " @thanks https://gist.github.com/romainl/5b827f4aafa7ee29bdc70282ecc31640
-    command! -range GB echo join(systemlist('git -C ' . shellescape(expand('%:p:h')) . ' blame -L <line1>,<line2> ' . expand('%:t')), "\n")
+    command! -range GB call <SID>get_blame(<line1>, <line2>)
+
+    function! s:get_blame(line1, line2) abort
+        let l:result = systemlist('git -C ' . shellescape(expand('%:p:h')) . ' blame -L ' . a:line1 . ',' . a:line2 . ' ' . expand('%:t'))
+
+        let l:commit = len(l:result) > 0 ? split(l:result[0])[0] : '0000000000'
+
+        if l:commit !=# '0000000000'
+            let @+ = l:commit
+        endif
+
+        echo join(l:result, "\n")
+    endfunction
 
     " Load env vars
     let s:env = {}
