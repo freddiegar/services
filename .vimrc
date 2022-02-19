@@ -723,6 +723,7 @@ function! s:get_masked(type) abort
     let l:repeatable = ''
 
     let l:ccursor = getpos('.')
+    let l:lsearch = getreg('/')
 
     if a:type ==# 'word'
         silent execute "normal! viw\e"
@@ -741,6 +742,8 @@ function! s:get_masked(type) abort
 
     silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
     silent call setpos('.', l:ccursor)
+    silent call setreg('/', l:lsearch)
+    silent call histdel('/', -1)
 
     let @@ = l:saved_unnamed_register
     let @/ = l:saved_search_register
@@ -963,6 +966,7 @@ Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 " Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " Better highlight i3 syntax
 " Plug 'storyn26383/vim-vue', {'for': 'vue'}                      " Better highlight vue syntax
 " Plug 'tpope/vim-markdown', {'for': 'markdown'}                  " Better highlight markdown syntax
+" Plug 'MTDL9/vim-log-highlighting'                               " Better highlight log syntax
 
 " Plug 'ekalinin/dockerfile.vim'                                " Better highlight dockerfile syntax (better?)
 " Plug 'pangloss/vim-javascript'                                " Better highlight javascript syntax
@@ -1052,7 +1056,7 @@ nnoremap <silent> <F12> :Goyo<Enter>
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
-let g:highlightedyank_highlight_duration = 500
+let g:highlightedyank_highlight_duration = 250
 
 " TagBar
 " @see https://github.com/preservim/tagbar
@@ -1579,7 +1583,6 @@ augroup AutoCommands
     autocmd FileType php nmap <silent> <buffer>gX :call <SID>go_parent()<Enter>
 
     function! s:go_parent() abort
-        let l:bsearch = getreg('/')
         let l:pattern = ' extends \| implements '
 
         let [l:lnum, l:col] = searchpos(l:pattern, 'n')
@@ -1591,9 +1594,6 @@ augroup AutoCommands
         else
             echo 'Nothing to do.'
         endif
-
-        silent call setreg('/', l:bsearch)
-        silent call histdel('/', -1)
     endfunction
 
     " Search implementations's file
