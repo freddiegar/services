@@ -1617,3 +1617,16 @@ Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
 ```
 > Delete sessions in framework: rm -rf storage/framework/sessions/*
 
+Test loading times in Vim
+
+```bash
+rm -Rf start*.log time.log
+
+for i in {1..10}; do
+    vim --startuptime start$i.log developer.php
+done
+
+find start* -exec grep STARTED {} \; | cut -d' ' -f1 > time.log
+
+awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' time.log
+```
