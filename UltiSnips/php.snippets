@@ -49,6 +49,10 @@ snippet "p(0|1)" "Define False|True Property" ir
 $$1 = `!p snip.rv='false' if match.group(1) == '0' else 'true'`;
 endsnippet
 
+snippet py "Define Array Property" i
+$$1 = [$2];$0
+endsnippet
+
 snippet pi "Define Instance Property" i
 $$1 = new $2($3);$0
 endsnippet
