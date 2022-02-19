@@ -1198,6 +1198,14 @@ nnoremap <silent> gx :call <SID>go_url(expand('<cWORD>'))<Enter>
 function! s:go_url(url) abort
     let l:uri = a:url
 
+    if match(l:uri, '[') >= 0
+        let l:uri = substitute(l:uri, '\v\[(.*)\]', '', '')
+    endif
+
+    if match(l:uri, '(') >= 0
+        let l:uri = substitute(l:uri, '\v\((.*)\)', '\1', '')
+    endif
+
     let l:uri = trim(substitute(l:uri, '?', '\\?', ''), ',')
     let l:uri = shellescape(l:uri, 1)
 
