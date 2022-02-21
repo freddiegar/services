@@ -986,8 +986,10 @@ call plug#end()
 "  "suggest.languageSourcePriority": 99,
 "  "suggest.disableKind": true,
 "  "suggest.disableMenu": true,
+"  "suggest.selection": "recentlyUsed",
 "  "suggest.maxCompleteItemCount": 20,
-"  "suggest.minTriggerInputLength": 1,
+"  "suggest.triggerCompletionWait": 100,
+"  "suggest.minTriggerInputLength": 4,
 "  "suggest.snippetIndicator": "",
 "  "suggest.removeDuplicateItems": true,
 "  "diagnostic.enable": false,
@@ -1704,6 +1706,7 @@ augroup AutoCommands
     autocmd FileType vim setlocal keywordprg=:help
     autocmd FileType git setlocal foldmethod=syntax foldlevel=1
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
+    autocmd FileType markdown,log let b:coc_suggest_disable = 1
     " autocmd FileType html,css,vue EmmetInstall
 
     autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>

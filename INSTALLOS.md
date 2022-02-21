@@ -206,6 +206,7 @@ vim --version | grep xterm
 ### LSP
 
 [See](https://llvm.org/docs/GettingStarted.html#overview)
+[See 2](https://www.jianshu.com/p/3c7eae5c0c68)
 
 ```bash
 cd ~
