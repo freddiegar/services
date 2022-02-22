@@ -1630,3 +1630,9 @@ find start* -exec grep STARTED {} \; | cut -d' ' -f1 > time.log
 
 awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' time.log
 ```
+
+Monitor resolution
+
+```bash
+xdpyinfo | grep dim
+```

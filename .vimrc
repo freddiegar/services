@@ -121,8 +121,10 @@ endif
 if executable('rg')
     " Replace built-in grep's Vim, options:
     " @see https://github.com/BurntSushi/ripgrep
+    " @see https://docs.rs/regex/1.5.4/regex/#syntax
     " @see https://beyondgrep.com/feature-comparison/
     " @see http://vimcasts.org/episodes/search-multiple-files-with-vimgrep/
+    " @see https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#automatic-filtering
     " @see https://gist.github.com/seanh/a866462a27cb3ad7b084c8e6000a06b9
     "  --no-messages:       No show warning messages if not found nothing
     "  --vimgrep:           Every match on its own line with line number and column
@@ -131,6 +133,7 @@ if executable('rg')
     "  --case-sensitive:    Respect lower and upper case (-s)
     "  --smart-case:        Uppercase are important!, if there is (-S)
     "  --fixed-strings      No use regex symbols (-F)
+    "  --glob               Include or exclude dirs or files (-g). Examples: -g '!{.git,.svn}'
     set grepprg=rg\ --no-messages\ --vimgrep\ --follow          " Used in :grep command (default: grep -n $* /dev/null)
 
     " %f    file name (finds a string)
@@ -145,6 +148,15 @@ if executable('rg')
         let s:grep_command = join([&grepprg] + [expandcmd(join(a:000, ' '))], ' ')
 
         return system(s:grep_command)
+    endfunction
+
+    function! s:rg_escape(string) abort
+        let l:string = a:string
+
+        let l:string = substitute(l:string, '\\' ,'\\\\\\', 'g')
+        let l:string = substitute(l:string, '|' ,'\\|', 'g')
+
+        return l:string
     endfunction
 
     " Quickfix List
@@ -1618,7 +1630,7 @@ augroup AutoCommands
     autocmd FileType php nmap <silent> <buffer>gd :call phpactor#GotoDefinition()<Enter>
     autocmd FileType php nmap <silent> <buffer><C-]> :call phpactor#GotoDefinition()<Enter>
     " autocmd FileType php nmap <silent> <buffer>gy :call phpactor#GotoImplementations()<Enter>
-    " autocmd FileType php nmap <silent> <buffer>gr :call phpactor#FindReferences()<Enter>
+    autocmd FileType php nmap <silent> <buffer>gr :call phpactor#FindReferences()<Enter>
 
     function! s:phpactor(transformer) abort
         silent update!
@@ -1645,13 +1657,71 @@ augroup AutoCommands
         endif
     endfunction
 
-    " Search implementations's file
-    autocmd FileType php nmap <silent> <buffer>gY :call <SID>get_implementations()<Enter>
+    " Search file(Y) or call(y) implementations
+    autocmd FileType php nmap <silent> <buffer>gY :call <SID>get_implementations('file')<Enter>
+    autocmd FileType php nmap <silent> <buffer>gy :call <SID>get_implementations('call')<Enter>
 
-    function! s:get_implementations() abort
-        let l:pattern = expand('%:t:r')
+    function! s:get_implementations(type) abort
+        " Files likes:
+        "   class Name
+        "   trait Name
+        "   interface Name
+        "   class Name extends Parent
+        " but doesn't likes:
+        "   interface NameLarge
+        "   interface LargeName
+        " Call likes: Files and:
+        "   function name(
+        " but doesn't likes:
+        "   function nameLarge(
+        let l:string = a:type ==# 'file'
+                    \ ? expand('%:t:r')
+                    \ : expand('<cword>')
 
-        silent call <SID>find_filter('pattern', l:pattern)
+        if l:string ==# ''
+            echo 'Nothing to do.'
+
+            return
+        endif
+
+        let l:pattern = a:type ==# 'file'
+                    \ ? '(class|trait|interface) ' . l:string . '(\s?\w*)'
+                    \ : '(class|trait|interface|function) ' . l:string . '(\(|\s?\w*)'
+
+        silent execute "Grep --glob '*.php' '" . <SID>rg_escape(l:pattern) . "'"
+    endfunction
+
+    " Search file(R) or call(r) references
+    autocmd FileType php nmap <silent> <buffer>gR :call <SID>get_references('file')<Enter>
+    autocmd FileType php nmap <silent> <buffer><Leader>gr :call <SID>get_references('call')<Enter>
+
+    function! s:get_references(type) abort
+        " Files likes:
+        "   Name::
+        "   Name(
+        " Call likes: Files and:
+        "   name(
+        "   ->name(
+        "   ::name(
+        "   new name(
+        " but doesn't likes:
+        "   _name(
+        "   -name(
+        let l:string = a:type ==# 'file'
+                    \ ? expand('%:t:r')
+                    \ : expand('<cword>')
+
+        if l:string ==# ''
+            echo 'Nothing to do.'
+
+            return
+        endif
+
+        let l:pattern = a:type ==# 'file'
+                    \ ? l:string . '(::|\()'
+                    \ : '(->|::|new )?[^_-]' . l:string . '(\()'
+
+        silent execute "Grep --glob '*.php' '" . <SID>rg_escape(l:pattern) . "'"
     endfunction
 
     " PHP Fixer
