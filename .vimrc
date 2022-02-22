@@ -386,6 +386,8 @@ inoremap <silent> : :<C-g>u
 inoremap <silent> = =<C-g>u
 inoremap <silent> ! !<C-g>u
 inoremap <silent> ? ?<C-g>u
+inoremap <silent> ( (<C-g>u
+inoremap <silent> ) )<C-g>u
 inoremap <silent> <Enter> <Enter><C-g>u
 
 " Keep cursor position after join
@@ -1212,13 +1214,17 @@ function! s:go_url(url) abort
         let l:uri = substitute(l:uri, '\v\((.*)\)', '\1', '')
     endif
 
-    let l:uri = trim(substitute(l:uri, '?', '\\?', ''), ',')
+    let l:uri = substitute(l:uri, '?', '\\?', 'g')
+    let l:uri = substitute(l:uri, ' ', '\\ ', 'g')
+    let l:uri = trim(l:uri, ',')
     let l:uri = shellescape(l:uri, 1)
 
     if l:uri !=# ''
         silent execute "!/usr/bin/firefox '" . l:uri . "'"
 
         silent redraw!
+
+        " echo 'Open:     ' . l:uri
     endif
 endfunction
 
