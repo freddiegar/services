@@ -73,6 +73,7 @@
 " - "z  Save content yank in function, this no overwrite default register
 
 let g:isneovim = has('nvim')
+let g:hasgit = isdirectory('.git')
 
 set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */
                                                                 " (default: Vim: on, Debian: off) (why nvim why!)
@@ -432,6 +433,8 @@ nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>C "_C
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
+nnoremap <silent> <Leader>x "_x
+nnoremap <silent> <Leader>X "_X
 
 " Show/Copied current filename (full path)
 nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
@@ -895,7 +898,7 @@ function! s:cycling_buffers(incr) abort
             endif
 
             if l:nbuffer == l:cbuffer
-                if isdirectory('.git')
+                if g:hasgit
                     silent execute 'GFiles'
                 else
                     silent execute 'Files'
@@ -964,17 +967,18 @@ Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 
 " Plug 'ekalinin/dockerfile.vim'                                " Better highlight dockerfile syntax (better?)
 " Plug 'pangloss/vim-javascript'                                " Better highlight javascript syntax
-" Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'vue', 'vim']}" Preview html colors
+" Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'js', 'vue', 'vim']}" Preview html colors
 
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
 
 call plug#end()
 
 " Use Syntastic to diagnostics
-" PHPActor as LSP for PHP
-" CLangd as LSP for C
-" TsServer as LSP for Typescript (javascript)
-" Vetur as LSP for Vue
+" LSP       ->  Language(s)
+" PHPActor  ->  php
+" CLangd    ->  c, c++
+" TsServer  ->  typescript, javascript
+" Vetur     ->  vue
 
 " ~/.vim/coc-settings.json
 "{
@@ -1076,7 +1080,7 @@ nnoremap <silent> <Leader>i :silent execute 'Files ' . expand('%:p:h')<Enter>
 nnoremap <silent> <Leader>p :silent Files<Enter>
 " GFiles or Files in current work directory
 nnoremap <silent> <expr> <Leader>o
-            \ isdirectory('.git') ? ":silent execute 'GFiles'<Enter>" : ":silent execute 'Files'<Enter>"
+            \ g:hasgit ? ":silent execute 'GFiles'<Enter>" : ":silent execute 'Files'<Enter>"
 
 " Tests
 " https://github.com/vim-test/vim-test
@@ -1515,6 +1519,31 @@ augroup AutoCommands
     " Reload after save
     autocmd BufWritePost .vimrc nested source ~/.vimrc
 
+    " Customization
+    autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
+    autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
+    autocmd BufRead,BufNewFile .php_cs* setlocal filetype=php
+    autocmd BufRead,BufNewFile *.conf setlocal filetype=apache
+    autocmd BufRead,BufNewFile *.json.* setlocal filetype=json
+    autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
+    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
+    autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
+    autocmd BufRead,BufNewFile */i3/config setlocal filetype=i3config commentstring=#\ %s
+    autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
+    autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log
+    autocmd BufRead,BufNewFile *.log setlocal filetype=log
+
+    autocmd FileType sql setlocal commentstring=--\ %s
+    autocmd FileType apache setlocal commentstring=#\ %s
+    autocmd FileType html,xml setlocal matchpairs+=<:>
+    autocmd FileType php,c setlocal matchpairs-=<:>
+    autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
+    autocmd FileType c,cpp setlocal path+=/usr/include include&
+    autocmd FileType vim setlocal keywordprg=:help
+    autocmd FileType git setlocal foldmethod=syntax foldlevel=1
+    autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
+    autocmd FileType markdown,log let b:coc_suggest_disable = 1
+
     " Return to last edit position when opening files
     autocmd BufReadPost *
          \ if &filetype !=# 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
@@ -1672,8 +1701,8 @@ augroup AutoCommands
         echo 'Fixer ' . l:fixertype . ' v' . l:fixerversion . ' applied.'
     endfunction
 
-    " JSON Fixer
     autocmd FileType json nnoremap <silent> <buffer><F1> :call <SID>jsonfixer()<Enter>
+    autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
     function! s:jsonfixer() abort
         if bufname('%') !=# ''
@@ -1682,34 +1711,6 @@ augroup AutoCommands
 
         silent execute ':%!python3 -m json.tool'
     endfunction
-
-    " Customization
-    autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
-    autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
-    autocmd BufRead,BufNewFile .php_cs* setlocal filetype=php
-    autocmd BufRead,BufNewFile *.conf setlocal filetype=apache
-    autocmd BufRead,BufNewFile *.json.* setlocal filetype=json
-    autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
-    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
-    autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
-    autocmd BufRead,BufNewFile */i3/config setlocal filetype=i3config commentstring=#\ %s
-    autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
-    autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log
-    autocmd BufRead,BufNewFile *.log setlocal filetype=log
-
-    autocmd FileType sql setlocal commentstring=--\ %s
-    autocmd FileType apache setlocal commentstring=#\ %s
-    autocmd FileType html,xml setlocal matchpairs+=<:>
-    autocmd FileType php,c setlocal matchpairs-=<:>
-    autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
-    autocmd FileType c,cpp setlocal path+=/usr/include include&
-    autocmd FileType vim setlocal keywordprg=:help
-    autocmd FileType git setlocal foldmethod=syntax foldlevel=1
-    autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
-    autocmd FileType markdown,log let b:coc_suggest_disable = 1
-    " autocmd FileType html,css,vue EmmetInstall
-
-    autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
     " Rg not find in file names
     command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
@@ -1848,11 +1849,11 @@ augroup AutoCommands
         let l:envfile = <SID>envfile()
         let l:session = split(g:session_file, '/')[-1]
 
-        if !argc() && isdirectory('.git') && empty(v:this_session) && filereadable(g:session_file) && !&modified
+        if !argc() && g:hasgit && empty(v:this_session) && filereadable(g:session_file) && !&modified
             silent execute 'source ' . g:session_file
 
             let l:message = 'Loaded ' . l:session . ' session##ENV##.'
-        elseif !argc() && isdirectory('.git')
+        elseif !argc() && g:hasgit
             let l:message = 'None ' . l:session . ' session##ENV##.'
         endif
 
@@ -1868,7 +1869,7 @@ augroup AutoCommands
     endfunction
 
     function! s:sessionsave() abort
-        if isdirectory('.git') && expand('%:h:p') !=# '/tmp'
+        if g:hasgit && expand('%:h:p') !=# '/tmp'
             silent execute 'mksession! ' . g:session_file
 
             echomsg 'Saved ' . g:session_file . ' session.'
