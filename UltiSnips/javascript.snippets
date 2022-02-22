@@ -3,9 +3,35 @@ console.log(${0});return;
 endsnippet
 
 snippet du "Debug Dump"
-console.log(${0});
+console.log(${0})
 endsnippet
 
 snippet fn "Function" i
 function
+endsnippet
+
+snippet if "If"
+if ($1) {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet else "Else"
+ else {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet elif "Elseif"
+ else if ($1) {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet try "Try/catch" b
+try {
+    ${VISUAL}$1
+} catch (error) {
+    $0
+}
 endsnippet

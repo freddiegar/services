@@ -969,7 +969,13 @@ Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 
 " Plug 'ekalinin/dockerfile.vim'                                " Better highlight dockerfile syntax (better?)
 " Plug 'pangloss/vim-javascript'                                " Better highlight javascript syntax
-" Plug 'ap/vim-css-color',  {'for': ['html', 'css', 'js', 'vue', 'vim']}" Preview html colors
+" Plug 'ap/vim-css-color',  {'for': [
+"             \ 'html',
+"             \ 'css',
+"             \ 'javascript',
+"             \ 'vue',
+"             \ 'vim'
+"             \ ]}                                                " Preview html colors
 
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
 

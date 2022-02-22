@@ -1,23 +1,109 @@
 extends javascript
 
-# Required deliMate plugin
-snippet { "Print Property"
-{ $0 
-endsnippet
+global !p
+def autocomplete(t, options):
+	if t:
+		options =  [ m[len(t):] for m in options if m.startswith(t) ]
+	if len(options) == 1:
+		return options[0]
+
+	return '|'.join(options)
+
+def events():
+	return eventsbefore() + eventsready()
+
+def eventsbefore():
+	return ['beforeCreate', 'beforeMount', 'beforeUpdate', 'beforeDestroy']
+
+def eventsready():
+	return ['created', 'mounted', 'updated', 'destroyed']
+endglobal
 
 # Required deliMate plugin
-snippet {{ "Print Property"
-{{ $0 
+snippet {{ "Interpolation Property"
+{{ $0
 endsnippet
 
-snippet import "Import Component"
+snippet import "Import Component" b
 import ${1:Name} from './$0components/$1.vue';
 endsnippet
 
-snippet data "Data Component"
-data() {
+# New instance app
+snippet tti "New Instance" b
+const ${1:app} = new Vue({
+    el: '${2:#app}',
+    data: {
+	$3
+    }$0
+});
+endsnippet
+
+# Input data component or reactive props
+snippet ttd "Data Component" b
+data${1:()} {
     return {
-        ${1:key}: ${2:value}
+        ${2:key}: ${3:value}
     };
-}
+}$0
+endsnippet
+
+# Methods available in <template>
+snippet ttm "Methods Component" b
+methods: {
+    ${1:method}($2) {
+        $3
+    }
+}$0
+endsnippet
+
+# Trigger when properties used in changes, it is cached
+snippet ttc "Computed Component" b
+computed: {
+    ${1:method}: function () {
+	return this.${2:prop}
+    }
+}$0
+endsnippet
+
+# When you have some data that needs to change based on some other data
+# USE computed!
+snippet ttw "Watch Component" b
+watch: {
+    ${1:prop}: function ($2) {
+	$3
+    }
+}$0
+endsnippet
+
+# Props inheritance from parents
+snippet ttp "Props Component" b
+props: [
+    '$1',${2:,}
+]$0
+endsnippet
+
+snippet ttr "Script Component" b
+<script>
+    $0
+</script>
+endsnippet
+
+snippet ttt "Template Component" b
+<template>
+    $1
+</template>
+endsnippet
+
+snippet tts "Style Component" b
+<style${1: scoped}>
+${1:name} {
+    ${2:attribute};
+}$0
+</style>
+endsnippet
+
+snippet tte "Event Component" b
+$1`!p snip.rv=autocomplete(t[1], events())`() {
+    $2
+}$0
 endsnippet
