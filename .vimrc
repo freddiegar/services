@@ -410,7 +410,7 @@ cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' :
 
 " Open explore in current work directory (toggle)
 nnoremap <silent> <expr> <F2>
-            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute ':20Vexplore ' . getcwd()<Enter>"
+            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd()<Enter>"
 
 " Open explore in current file directory (toggle)
 nnoremap <silent> <expr> <F3>
@@ -731,11 +731,11 @@ function! s:get_masked(type) abort
     endif
 
     " Replaced symbols -> * (no spaces)
-    silent execute ":s/\\%V[^a-zA-Z0-9 ]/*/ge"
+    silent execute "s/\\%V[^a-zA-Z0-9 ]/*/ge"
     " Replaced chars -> @
-    silent execute ":s/\\%V[a-zA-Z]/@/ge"
+    silent execute "s/\\%V[a-zA-Z]/@/ge"
     " Replaced numbers -> #
-    silent execute ":s/\\%V[0-9]/#/ge"
+    silent execute "s/\\%V[0-9]/#/ge"
 
     silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
     silent call setpos('.', l:ccursor)
@@ -885,7 +885,7 @@ function! s:cycling_buffers(incr) abort
         if l:nbuffer != 0
                     \ && buflisted(l:nbuffer) == 1
                     \ && getbufvar(l:nbuffer, '&filetype') !=# 'help'
-            silent execute ':buffer ' . l:nbuffer
+            silent execute 'buffer ' . l:nbuffer
 
             break
         else
@@ -1500,7 +1500,7 @@ function! s:notes() abort
         silent execute 'edit ' . fnameescape(l:filename)
     endif
 
-    silent execute ':%g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
+    silent execute '%g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
 
     if !filereadable(l:filename) || len(l:matches) == 0
         silent execute "normal! Go\e<<i\r" . l:header . "\r\e"
@@ -1709,7 +1709,7 @@ augroup AutoCommands
             silent update!
         endif
 
-        silent execute ':%!python3 -m json.tool'
+        silent execute '%!python3 -m json.tool'
     endfunction
 
     " Rg not find in file names
