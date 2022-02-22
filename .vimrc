@@ -1499,6 +1499,7 @@ function! s:notes() abort
     let l:matches = []
     let l:header = '>> ' . strftime('%A, %d of %B %Y')
     let l:filename = expand('~/Documents/notes_' . strftime('%Y%m') . '.md')
+    let l:lsearch = getreg('/')
 
     if bufname('%') !=# '' && split(bufname('%'), '/')[-1] ==# split(l:filename, '/')[-1]
         silent update!
@@ -1515,6 +1516,9 @@ function! s:notes() abort
     endif
 
     silent execute "normal! Gzto== " . strftime('%H:%M:%S') . " ==\r- \e"
+
+    silent call setreg('/', l:lsearch)
+    silent call histdel('/', -1)
 
     return 0
 endfunction
