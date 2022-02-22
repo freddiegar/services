@@ -810,7 +810,7 @@ function s:go_docs(word) abort
     elseif expand('%:t') ==# 'composer.json'
         let l:docsurl = 'https://github.com/'
     elseif index(['vim', 'help'], &filetype) >= 0
-        call <SID>show_documentation()
+        silent call <SID>show_documentation()
 
         return
     elseif index(['terminal'], &buftype) >= 0
@@ -1186,7 +1186,7 @@ function! s:show_documentation() abort
             echohl None
         endtry
     elseif coc#rpc#ready()
-        call CocActionAsync('doHover')
+        silent call CocActionAsync('doHover')
     else
         silent execute '!' . &keywordprg . ' ' . l:word
     endif
@@ -1635,7 +1635,7 @@ augroup AutoCommands
     function! s:get_implementations() abort
         let l:pattern = expand('%:t:r')
 
-        call <SID>find_filter('pattern', l:pattern)
+        silent call <SID>find_filter('pattern', l:pattern)
     endfunction
 
     " PHP Fixer
