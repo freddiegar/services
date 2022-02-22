@@ -1895,7 +1895,7 @@ augroup AutoCommands
 
     function! s:sessionsave() abort
         if g:hasgit && expand('%:h:p') !=# '/tmp'
-            silent call <SID>sessionpresave()
+            silent call <SID>sessionsavepre()
 
             silent execute 'mksession! ' . g:session_file
 
@@ -1931,7 +1931,7 @@ augroup AutoCommands
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml :call <SID>cleanspaces()
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml,*.snippets :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
     " autocmd VimResized * wincmd =
