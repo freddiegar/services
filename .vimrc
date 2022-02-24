@@ -851,8 +851,9 @@ xnoremap <silent> <Leader>gm :<C-u>call <SID>get_masked(visualmode())<Enter>
 nnoremap <silent> <Leader><Leader> :Buffers<Enter>
 nnoremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
 
-vnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
-vnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
+xnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
+" Snippets using $VISUAL with :vnoremap fails!
+xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 
 " Insert mode navigation (Forget Arrows)
 inoremap <silent> <C-a> <C-o>^
@@ -1054,6 +1055,8 @@ let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
+" @see https://developpaper.com/vim-code-snippet-plug-in-ultisnips-usage-tutorial/
+" @options https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L662
 " IMPORTANT: Custom g:UltiSnipsExpandTrigger MUST BE DIFF to <Tab> to integration CoC
 " IMPORTANT: Custom g:UltiSnipsJumpForwardTrigger MUST BE KEEP diferent to g:UltiSnipsExpandTrigger
 let g:UltiSnipsEditSplit = 'vertical'
@@ -1168,6 +1171,12 @@ inoremap <silent> <expr> <Tab>
             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
             \ pumvisible() ? "\<C-n>" : "\<Tab>"
+
+" In snippets with predefined values|content it uses Select Mode. WIP
+" snoremap <silent> <expr> <Tab>
+"             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
+"             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
+"             \ pumvisible() ? "\<C-n>" : "\<Tab>"
 
 " Make <S-Tab> for complete and snippet navigation
 " Konsole change shortcut <S-Tab> to <C-S-Tab>

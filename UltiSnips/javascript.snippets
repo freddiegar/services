@@ -12,25 +12,25 @@ endsnippet
 
 snippet if "If"
 if ($1) {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
 snippet else "Else"
  else {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
 snippet elif "Elseif"
  else if ($1) {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
 snippet try "Try/catch" b
 try {
-    ${VISUAL}$1
+    ${1:${VISUAL}}
 } catch (error) {
     $0
 }

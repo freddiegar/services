@@ -12,24 +12,28 @@ endsnippet
 
 snippet if "If"
 if $1
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 endif
 endsnippet
 
 snippet for "For loop"
 for $1 in $2
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 endfor
 endsnippet
 
 snippet try "Try/catch" b
 try
-    ${VISUAL}$1
+    ${0:${VISUAL}}
 catch
     $0
 endtry
 endsnippet
 
 snippet Plug "Add new plug" b
-Plug '${1:`!v substitute(@+, '\([^\/]*\/\/[^\/]*\/\)\([^/]*\/[^/]*\)\(.*\)', '\2', '' )`}'
+Plug '${1:`!v substitute(match(getreg('+'), '\chttp') == 0 ? getreg('+') : '', '\([^\/]*\/\/[^\/]*\/\)\([^/]*\/[^/]*\)\(.*\)', '\2', '') `}'
+endsnippet
+
+snippet see "See Link"
+" @$1 ${0:`!v match(getreg('+'), '\chttp') == 0 ? getreg('+') : ''`}
 endsnippet

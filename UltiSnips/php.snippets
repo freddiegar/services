@@ -214,7 +214,7 @@ namespace $1`!v sniphpets#namespace()`;
 `!p snip.rv='abstract ' if match.group(1) == 'a' else ('final ' if match.group(1) == 'f' else '')`class `!v
 sniphpets#basename()`$2
 {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
@@ -225,7 +225,7 @@ namespace $1`!v sniphpets#namespace()`;
 
 interface `!v sniphpets#basename()`
 {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
@@ -236,7 +236,7 @@ namespace $1`!v sniphpets#namespace()`;
 
 trait `!v sniphpets#basename()`
 {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
@@ -247,43 +247,43 @@ namespace $1`!v sniphpets#namespace()`;
 
 final class `!v sniphpets#basename()` extends TestCase
 {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
 snippet if "If"
 if ($1) {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
 snippet else "Else"
  else {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
 snippet elif "Elseif"
  else if ($1) {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
 snippet fir "For loop"
 for ($i = 0; $i ${1:<} $2; ++$i) {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
 snippet for "Foreach loop"
 foreach ($1 as $1$2) {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
 snippet fas "Foreach key => val"
 foreach ($1 as $${2:key} => $${3:value}) {
-    ${VISUAL}$0
+    ${0:${VISUAL}}
 }
 endsnippet
 
@@ -297,7 +297,7 @@ endsnippet
 
 snippet try "Try/catch" b
 try {
-    ${VISUAL}$1
+    ${1:${VISUAL}}
 } catch (${1:Exception} $e) {
     $0
 }
