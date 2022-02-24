@@ -1232,17 +1232,18 @@ function! s:go_url(url) abort
         let l:uri = substitute(l:uri, '\v\((.*)\)', '\1', '')
     endif
 
-    let l:uri = substitute(l:uri, '?', '\\?', 'g')
-    let l:uri = substitute(l:uri, ' ', '\\ ', 'g')
+    let l:uri = substitute(l:uri, '"', '', 'ge')
+    let l:uri = substitute(l:uri, "'", '', 'ge')
+    let l:uri = substitute(l:uri, '?', '\\?', 'ge')
+    let l:uri = substitute(l:uri, ' ', '\\ ', 'ge')
     let l:uri = trim(l:uri, ',')
-    let l:uri = shellescape(l:uri, 1)
 
     if l:uri !=# ''
-        silent execute "!/usr/bin/firefox '" . l:uri . "'"
+        silent execute "!/usr/bin/firefox '" . shellescape(l:uri, 1) . "'"
 
         silent redraw!
 
-        " echo 'Open:     ' . l:uri
+        echo 'Opened:   ' . l:uri
     endif
 endfunction
 
