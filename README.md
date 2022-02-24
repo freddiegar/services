@@ -644,7 +644,7 @@ openssl ca -keyfile private/ca.key.pem -cert certs/ca.cert.pem -extensions usr_c
 
 find . -type d -exec chmod 755 {} +
 find . -type f -exec chmod 644 {} +
-chown freddie:freddie . -R
+chown $USER:$USER . -R
 ll /var/www/ssl/intermediate/certs/development.local.cert.pem
 ll /var/www/ssl/intermediate/private/development.local.key.pem
 ll /var/www/ssl/intermediate/certs/ca-chain.cert.pem
@@ -699,7 +699,7 @@ openssl ca -keyfile private/ca.key.pem -cert certs/ca.cert.pem -extensions usr_c
 
 find . -type d -exec chmod 755 {} +
 find . -type f -exec chmod 644 {} +
-chown freddie:freddie . -R
+chown $USER:$USER . -R
 ll /var/www/ssl/intermediate/certs/development.local.cert.pem
 ll /var/www/ssl/intermediate/private/development.local.key.pem
 ll /var/www/ssl/intermediate/certs/ca-chain.cert.pem

@@ -1636,3 +1636,21 @@ Monitor resolution
 ```bash
 xdpyinfo | grep dim
 ```
+
+stdin (0), stdout (1), stderr (2)
+
+```bash
+# Messages to file
+command > filelog
+command 1> filelog
+# Use diff output to error messages
+command > filelog 2> errorlog
+command 1> filelog 2> errorlog
+# Use same output to error messages and messages
+command > filelog 2>&1
+command >& filelog
+# Send errors to another galaxy
+command > filelog 2>/dev/null
+# Send all to another galaxy
+command > /dev/null 2>&1
+```
