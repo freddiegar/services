@@ -123,7 +123,19 @@ bindsym $mod+$meta+0 move container to workspace $workspace10; workspace $worksp
 # Return using $mod+a by each window, after $mod+Shift+{number}
 # bindsym $mod+Shift+w rename workspace to $workspace7
 
-# Search WM_CLASS 2nd arg using xprop: xprop | grep WM_CLASS
+default_orientation auto
+# floating_maximum_size 1280 x 720
+
+# Criteria
+# @see https://i3wm.org/docs/userguide.html#command_criteria
+# command: xprop | g -e WM_CLASS -e WM_WINDOW_ROLE -e _NET_WM_WINDOW_TYPE -e WM_NAME
+# Brief:
+# instance  ->  1rs part of WM_CLASS
+# class     ->  2nd part of WM_CLASS
+# role      ->  WM_WINDOW_ROLE
+# type      ->  _NET_WM_WINDOW_TYPE
+# title     ->  _NET_WM_NAME (WM_NAME as fallback)
+
 assign [class="(?i)firefox"]                $workspace2
 assign [class="Microsoft Teams - Preview"]  $workspace3
 assign [class="Mysql-workbench-bin"]        $workspace4
@@ -134,9 +146,6 @@ assign [class="VirtualBox Machine"]         $workspace8
 assign [class="^VirtualBox$"]               $workspace8
 assign [class="Nautilus"]                   $workspace9
 assign [class="Opera"]                      $workspace10
-
-default_orientation auto
-# floating_maximum_size 1280 x 720
 
 # Enable floating
 for_window [window_role="(?i)pop-up"]       floating enable
@@ -157,12 +166,15 @@ for_window [title="^Event Tester$"]         floating enable
 for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]   floating enable
 for_window [instance="^VirtualBox$" class="^VirtualBox$"]               floating enable
 
-# Enable PiP as sticky
+# PiP in Firefox
 for_window [instance="Toolkit" class="(?i)firefox"]                     floating enable, sticky enable
 # Downloads
 for_window [instance="Places" class="(?i)firefox"]                      floating enable
 # Certificates information
 for_window [instance="Browser" class="(?i)firefox"]                     floating enable
+
+# PiP in Opera
+for_window [title="Picture in Picture"]                                 floating enable, sticky enable
 
 # GIMP
 for_window [class="^Gimp$" title="^GNU Image Manipulation Program$"]    floating disabled
@@ -208,8 +220,8 @@ mode "resize" {
     bindsym f       floating enable, resize set 426 240, move position 1474 815
     bindsym g       floating enable, resize set 256 144, move position 1644 911
 
-    bindsym v       floating enable, resize set 854 540, move position 1046 515
-    bindsym t       floating enable, resize set 720 500, move position 1180 555
+    bindsym v       floating enable, resize set 854 540, move position 1046 515, sticky enable
+    bindsym t       floating enable, resize set 720 500, move position 1180 555, sticky enable
 
     # back to normal
     bindsym Return mode "default"
