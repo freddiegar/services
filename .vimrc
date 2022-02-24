@@ -374,8 +374,9 @@ nnoremap <silent> <Right> :vertical resize +5<Enter>
 " Utility
 nnoremap <silent> Q @@
 " Don't add <C-u>
-vnoremap <silent> Q :normal! @@<Enter>gv
-vnoremap <silent> . :normal! .<Enter>gv
+xnoremap <silent> Q :normal! @@<Enter>gv
+" Don't works as expected. Works append chars
+" xnoremap <silent> . :normal! .<Enter>gv
 nnoremap <silent> Y y$
 " 'x    Jump to the beginning of the line of mark 'x'
 " `x    Jump to the cursor position of mark 'x'
@@ -406,15 +407,15 @@ inoremap <silent> <Enter> <Enter><C-g>u
 " nnoremap <silent> J maJ`a
 
 " Move complete lines selected (:move) and indent (gv=gv). Don't add <C-u>
-vnoremap <silent> J :move '>+1<Enter>gv=gv
-vnoremap <silent> K :move '<-2<Enter>gv=gv
+xnoremap <silent> J :move '>+1<Enter>gv=gv
+xnoremap <silent> K :move '<-2<Enter>gv=gv
 
 " Save previous position in mark ', (<C-o> not works)
 " Using screen rows (g option)
-nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
 nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
-xnoremap <silent> k gk
+nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
 xnoremap <silent> j gj
+xnoremap <silent> k gk
 
 " Sudo rescue
 command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
@@ -464,8 +465,8 @@ nnoremap <silent> <Leader>L :let @+=expand('%:t')
 " Improve search in fuzzy finder
 nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
-vnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
-vnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
+xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
+xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 
 " Close current buffer
 nnoremap <silent> <expr> <Leader>z
@@ -507,7 +508,7 @@ nnoremap <silent> <Leader>gB :let bcrypt=<SID>generate_bcrypt('word')
             \ <Bar> let @+=bcrypt[1]
             \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> ' . @+<Enter>
 
-vnoremap <silent> <Leader>gB :<C-u>let bcrypt=<SID>generate_bcrypt(visualmode())
+xnoremap <silent> <Leader>gB :<C-u>let bcrypt=<SID>generate_bcrypt(visualmode())
             \ <Bar> let @+=bcrypt[1]
             \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> ' . @+<Enter>
 
@@ -844,7 +845,7 @@ nmap <silent> >i <Plug>DropIncompleteMarkRepeatable
 nnoremap <silent> <Plug>GetMaskedRepeatable :call <SID>get_masked('word')<Enter>
 nmap <silent> <Leader>gm <Plug>GetMaskedRepeatable
 
-vnoremap <silent> <Leader>gm :<C-u>call <SID>get_masked(visualmode())<Enter>
+xnoremap <silent> <Leader>gm :<C-u>call <SID>get_masked(visualmode())<Enter>
 
 " Buffers navigation
 nnoremap <silent> <Leader><Leader> :Buffers<Enter>
@@ -1333,7 +1334,7 @@ endfunction
 let g:surround_indent = 1
 
 nmap <silent> <leader>b ysiw
-vmap <silent> <leader>b S
+xmap <silent> <leader>b S
 
 " CTags
 " @see https://github.com/vim-scripts/autotags
