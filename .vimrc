@@ -434,6 +434,7 @@ nnoremap <silent> <expr> <F3>
 nnoremap <silent> <expr> <F10>
             \ expand('%:t') ==# '.vimrc' ? ":PlugUpdate<Enter>" :
             \ &filetype ==# 'vim-plug' ? ":silent execute \"normal! :bdelete!\\r\"<Enter>" :
+            \ filereadable('.vimrc') ? ":silent execute 'edit .vimrc'<Enter>" :
             \ ":silent execute 'edit ~/.vimrc'<Enter>"
 
 " Turn-off highlighting
@@ -1161,6 +1162,7 @@ let g:coc_global_extensions = [
 " Use <Ctrl-Space> to trigger completion.
 inoremap <silent> <expr> <C-@> coc#refresh()
 
+" Use <Tab> to select pum value or jump between placeholder in snippets
 inoremap <silent> <expr> <Tab>
             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
@@ -1573,6 +1575,9 @@ augroup AutoCommands
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
     autocmd FileType markdown,log let b:coc_suggest_disable = 1
 
+    " @see https://github.com/tpope/vim-vinegar/issues/13#issuecomment-47133890
+    autocmd FileType netrw setlocal bufhidden=delete
+
     " Return to last edit position when opening files
     autocmd BufReadPost *
          \ if &filetype !=# 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
@@ -1961,7 +1966,7 @@ augroup AutoCommands
         while l:index < argc()
             let l:larg = argv(l:index)
 
-            if index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], l:larg) >= 0
+            if index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], l:larg) >= 0 || isdirectory(l:larg) || getbufvar(l:lbuffer, '&filetype') ==# 'netrw'
                 silent execute 'argdelete ' . l:larg
                 silent execute 'bdelete! ' . l:larg
             endif
@@ -2008,7 +2013,7 @@ augroup AutoCommands
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml,*.snippets :call <SID>cleanspaces()
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml,*.snippets,*.conf :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
     " autocmd VimResized * wincmd =
