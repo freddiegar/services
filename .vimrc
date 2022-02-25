@@ -210,7 +210,7 @@ set linebreak                                                   " No cut words o
 set breakindent                                                 " Indent wrap lines better (default: off)
 set showbreak=↪                                                 " Visual char on wrap line (default: empty)
 set display=lastline                                            " Show as much as possible of the last line (default: empty)
-set sidescroll=1                                                " Better horizontally scroll (default: 0 => half-screen)
+set sidescroll=5                                                " Better horizontally scroll (default: 0 => half-screen)
 set nojoinspaces                                                " No insert two spaces after a ., ? and ! (default: on)
 
 " Custom View
@@ -970,7 +970,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 Plug 'vim-scripts/autotags', {'for': 'c'}
 
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easy
-" Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'vue']}         " Performance using emmet syntax
+Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
 
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
@@ -1065,10 +1065,12 @@ let g:UltiSnipsExpandTrigger = '<C-Tab>'
 let g:UltiSnipsRemoveSelectModeMappings = 0
 let g:UltiSnipsUsePythonVersion = 3
 
-" " Emmet
-" " @see https://github.com/mattn/emmet-vim
-" let g:user_emmet_install_global = 0
-" let g:user_emmet_leader_key = ','
+" Emmet
+" @see https://github.com/mattn/emmet-vim
+" Only enable in [i]nsert mode, in [n]ormal mode f, F, t, T don't work!
+let g:user_emmet_mode = 'i'
+let g:user_emmet_leader_key = ','
+let g:user_emmet_install_global = 0
 
 " Goyo
 " @see https://github.com/junegunn/goyo.vim
@@ -1585,6 +1587,8 @@ augroup AutoCommands
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
     autocmd FileType markdown,log let b:coc_suggest_disable = 1
 
+    autocmd FileType html,css,javascript,vue EmmetInstall
+
     " @see https://github.com/tpope/vim-vinegar/issues/13#issuecomment-47133890
     autocmd FileType netrw setlocal bufhidden=delete
 
@@ -1990,8 +1994,6 @@ augroup AutoCommands
             silent call <SID>sessionsavepre()
 
             silent execute 'mksession! ' . g:session_file
-
-            echomsg 'Saved ' . g:session_file . ' session.'
         endif
     endfunction
 
@@ -2008,6 +2010,7 @@ augroup AutoCommands
         let l:lsearch = getreg('/')
 
         silent! %s/\s\+$//e
+        silent! %s/\n\+\%$//e
 
         silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
         silent call setpos('.', l:ccursor)
