@@ -1654,3 +1654,23 @@ command > filelog 2>/dev/null
 # Send all to another galaxy
 command > /dev/null 2>&1
 ```
+
+Utils variables in Terminal
+
+```bash
+echo $0
+# output: /usr/bin/zsh
+
+echo $PS1
+# output: %(?:%{%}➜ :%{%}➜ ) %{$fg[cyan]%}%c%{$reset_color%} $(git_prompt_info)
+
+tar -xf     archive.tar.gz
+tar -xf     archive.tar.bz2
+tar -xvjf   archive.tar.bz2 -C /destine
+# tar: Tape ARchive
+# [x]tract
+# [v]erbose
+# [j] or --bzip2
+# [f]ile
+# [C] or --directory
+```

@@ -1827,7 +1827,7 @@ augroup AutoCommands
     " query (string), fullscreen (0/1), [dir (string)] : void
     function! s:rgfzf(query, fullscreen, ...) abort
         let l:dir = a:0 > 0 && isdirectory(a:1) ? a:1 : ''
-        let l:finder_command = 'rg --column --line-number --no-heading --color=always --fixed-strings -- %s ' . l:dir . ' || true'
+        let l:finder_command = "rg --glob '!{*.log,*-lock.json,*.lock}' --column --line-number --no-heading --color=always --fixed-strings -- %s " . l:dir . ' || true'
         let l:initial_command = printf(l:finder_command, shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
         let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
