@@ -33,10 +33,10 @@ alias cda="composer dump-autoload"
 alias cii="composer install --ignore-platform-reqs"
 
 alias ps="php bin/console"
-alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                      && php bin/console cache:clear"
-alias ccm="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                                                      && gco var"
+alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                      && ps cache:clear"
+alias ccm="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                                                && gco var"
 alias pa="php artisan"
-alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && php artisan cache:clear      && gco storage"
+alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && pa optimize:clear      && gco storage"
 alias py="export APPLICATION_ENV=dev && php yii"
 alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-data -Rf runtime web/assets       && py cacle:flush-all"
 
