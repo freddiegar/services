@@ -365,11 +365,13 @@ cnoremap <Down> <Nop>
 cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
-" Arrow keys resize windows
-nnoremap <silent> <Up> :resize -5<Enter>
-nnoremap <silent> <Down> :resize +5<Enter>
-nnoremap <silent> <Left> :vertical resize -5<Enter>
-nnoremap <silent> <Right> :vertical resize +5<Enter>
+" Moving between windows fast, except in Terminal Mode!
+" @see https://www.reddit.com/r/vim/comments/hrlric/comment/fy58mvp/?utm_source=share&utm_medium=web2x&context=3
+" Then: Resize windows
+nnoremap <silent> <C-k> :resize -5<Enter>
+nnoremap <silent> <C-j> :resize +5<Enter>
+nnoremap <silent> <C-h> :vertical resize -5<Enter>
+nnoremap <silent> <C-l> :vertical resize +5<Enter>
 
 " Utility
 nnoremap <silent> Q @@
@@ -497,6 +499,19 @@ nnoremap <silent> <Leader>gC :call <SID>go_url('https://www.color-hex.com/color/
 
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
+
+" Shorcuts for Date/Times in Insert Mode
+inoremap <silent> <F5> <C-r>=strftime('%Y-%m-%d')<Enter>
+inoremap <silent> <S-F5> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
+inoremap <silent> <F6> <C-r>=strftime('%Y-%m-%d 00:00:00')<Enter>
+inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d 23:59:59')<Enter>
+
+" Same!, but in Normal Mode
+" Not use normal! <Bang>, it needs remapings
+nnoremap <silent> <F5> :execute "normal a\<F5>\e"<Enter>
+nnoremap <silent> <S-F5> :execute "normal a\<S-F5>\e"<Enter>
+nnoremap <silent> <F6> :execute "normal a\<F6>\e"<Enter>
+nnoremap <silent> <S-F6> :execute "normal a\<S-F6>\e"<Enter>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
@@ -975,22 +990,23 @@ Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Perfor
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 
+" Plug 'ap/vim-css-color',  {'for': [
+"             \ 'html',
+"             \ 'css',
+"             \ 'javascript',
+"             \ 'vue',
+"             \ 'i3config',
+"             \ 'vim'
+"             \ ]}                                                " Preview html colors
+
 " Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight PHP syntax: unmanteined
 " Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight C syntax
 " Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " Better highlight i3 syntax
 " Plug 'storyn26383/vim-vue', {'for': 'vue'}                      " Better highlight vue syntax
 " Plug 'tpope/vim-markdown', {'for': 'markdown'}                  " Better highlight markdown syntax
 " Plug 'MTDL9/vim-log-highlighting'                               " Better highlight log syntax
-
-" Plug 'ekalinin/dockerfile.vim'                                " Better highlight dockerfile syntax (better?)
-" Plug 'pangloss/vim-javascript'                                " Better highlight javascript syntax
-" Plug 'ap/vim-css-color',  {'for': [
-"             \ 'html',
-"             \ 'css',
-"             \ 'javascript',
-"             \ 'vue',
-"             \ 'vim'
-"             \ ]}                                                " Preview html colors
+" Plug 'ekalinin/dockerfile.vim'                                  " Better highlight dockerfile syntax (better?)
+" Plug 'pangloss/vim-javascript'                                  " Better highlight javascript syntax
 
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
 
@@ -1272,7 +1288,6 @@ function! s:go_file(ffile) abort
     let l:paths = ['templates', 'resources/views']
 
     try
-        " file.blade.php
         if l:cext ==# 'php' && match(l:ffile, '\.twig$') <= 0
             let l:ffile = substitute(l:ffile, '\.', '/', 'g') . '.blade.php'
         endif
@@ -1299,7 +1314,6 @@ function! s:go_file(ffile) abort
 endfunction
 
 " @see https://vim.fandom.com/wiki/Faster_loading_of_large_files
-" File is large from 2MB
 augroup LargeFile
     autocmd!
 
@@ -1307,6 +1321,7 @@ augroup LargeFile
 augroup END
 
 function! s:check_large_file(file) abort
+    " File is large from 2MB
     let l:maxsize = 1024 * 1024 * 2
     let l:fsize = getfsize(a:file)
     let l:hfsize = l:fsize / 1024 / 1024
