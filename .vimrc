@@ -1007,7 +1007,6 @@ Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 "             \ 'css',
 "             \ 'javascript',
 "             \ 'vue',
-"             \ 'i3config',
 "             \ 'vim'
 "             \ ]}                                                " Preview html colors
 

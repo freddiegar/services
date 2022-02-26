@@ -1660,6 +1660,8 @@ Utils variables in Terminal
 ```bash
 echo $0
 # output: /usr/bin/zsh
+echo $SHELL
+# output: /usr/bin/zsh
 
 echo $PS1
 # output: %(?:%{%}➜ :%{%}➜ ) %{$fg[cyan]%}%c%{$reset_color%} $(git_prompt_info)
