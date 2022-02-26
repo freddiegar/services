@@ -855,7 +855,7 @@ xnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
 " Snippets using $VISUAL with :vnoremap fails!
 xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 
-" Insert mode navigation (Forget Arrows)
+" Insert Mode navigation (Forget Arrows)
 inoremap <silent> <C-a> <C-o>^
 inoremap <silent> <C-e> <C-o>$
 inoremap <silent> <C-k> <C-o>k
@@ -865,7 +865,7 @@ inoremap <silent> <C-l> <C-o>l
 inoremap <silent> <C-b> <C-o>B
 inoremap <silent> <C-f> <C-o>W
 
-" Command mode navigation (Forget Arrows). Not add <silent> option
+" Command Mode navigation (Forget Arrows). Not add <silent> option
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <C-k> <Up>
@@ -1067,7 +1067,7 @@ let g:UltiSnipsUsePythonVersion = 3
 
 " Emmet
 " @see https://github.com/mattn/emmet-vim
-" Only enable in [i]nsert mode, in [n]ormal mode f, F, t, T don't work!
+" Only enable in [I]nsert Mode, in [N]ormal Mode f, F, t, T don't work!
 let g:user_emmet_mode = 'i'
 let g:user_emmet_leader_key = ','
 let g:user_emmet_install_global = 0
@@ -1980,7 +1980,10 @@ augroup AutoCommands
         while l:index < argc()
             let l:larg = argv(l:index)
 
-            if index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], l:larg) >= 0 || isdirectory(l:larg) || getbufvar(l:lbuffer, '&filetype') ==# 'netrw'
+            if index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], l:larg) >= 0
+                        \ || isdirectory(l:larg)
+                        \ || buflisted(l:larg) == 0
+                        \ || getbufvar(l:larg, '&filetype') ==# 'netrw'
                 silent execute 'argdelete ' . l:larg
                 silent execute 'bdelete! ' . l:larg
             endif
