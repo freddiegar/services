@@ -840,6 +840,15 @@ function s:go_docs(word) abort
         let l:docsurl = 'https://www.php.net/'
     elseif expand('%:t') ==# 'composer.json'
         let l:docsurl = 'https://github.com/'
+    elseif index(['vim'], &filetype) >= 0 && match(getline('.'), 'Plug') == 0
+        let l:saved_unnamed_register = @@
+
+        silent execute "normal! 0vi'\"zy"
+
+        let l:word = trim(@@)
+        let l:docsurl = 'https://github.com/'
+
+        let @@ = l:saved_unnamed_register
     elseif index(['vim', 'help'], &filetype) >= 0
         silent call <SID>show_documentation()
 
@@ -963,7 +972,6 @@ Plug 'tpope/vim-repeat'                                         " Repeat: surrou
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
-Plug 'machakann/vim-highlightedyank'                            " See yank
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
@@ -986,6 +994,10 @@ Plug 'vim-scripts/autotags', {'for': 'c'}
 
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easy
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
+
+Plug 'machakann/vim-highlightedyank'                            " See yank
+" Plug 'voldikss/vim-browser-search'                              " Search in browser
+" Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
