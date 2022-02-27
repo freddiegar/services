@@ -999,7 +999,7 @@ Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Perfor
 
 Plug 'machakann/vim-highlightedyank'                            " See yank
 Plug 'voldikss/vim-browser-search'                              " Search in browser
-" Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
+Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
@@ -1090,6 +1090,16 @@ let g:delimitMate_expand_cr = 1
 let g:delimitMate_smart_quotes = 1
 let g:delimitMate_expand_inside_quotes = 0
 let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
+
+" Translate
+" @see https://github.com/skanehira/translate.vim
+let g:translate_target = 'es'
+
+nmap <silent> <Leader>gt <Plug>(Translate)
+xmap <silent> <Leader>gt <Plug>(VTranslate)
+nmap <silent> <Leader>gT :Translate!<Enter>
+" Don't use <C-u>
+xmap <silent> <Leader>gT :Translate!<Enter>
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
