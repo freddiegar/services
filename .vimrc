@@ -998,7 +998,7 @@ Plug 'vim-scripts/autotags', {'for': 'c'}
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
 
 Plug 'machakann/vim-highlightedyank'                            " See yank
-" Plug 'voldikss/vim-browser-search'                              " Search in browser
+Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
 Plug 'junegunn/goyo.vim'                                        " Zen mode
@@ -1074,6 +1074,15 @@ call plug#end()
 
 " LSP Vue
 " npm -g install vls eslint eslint-plugin-vue -D
+
+" Search Browser
+" @see https://github.com/voldikss/vim-browser-search
+let g:browser_search_default_engine = 'duckduckgo'
+
+nmap <silent> <Leader>S <Plug>SearchNormal
+xmap <silent> <Leader>S <Plug>SearchVisual
+
+command! -nargs=* -range S call search#start(<q-args>, visualmode(), <range>)
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
