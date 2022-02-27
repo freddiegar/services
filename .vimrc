@@ -427,6 +427,13 @@ command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
 
+" Set file type fast?
+cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'set filetype=php' : 'php'
+cnoreabbrev <expr> json (getcmdtype() ==# ':' && getcmdline() ==# 'json' && &filetype ==# '') ? 'set filetype=json' : 'json'
+cnoreabbrev <expr> js (getcmdtype() ==# ':' && getcmdline() ==# 'js' && &filetype ==# '') ? 'set filetype=javascript' : 'js'
+cnoreabbrev <expr> ts (getcmdtype() ==# ':' && getcmdline() ==# 'ts' && &filetype ==# '') ? 'set filetype=typecript' : 'ts'
+cnoreabbrev <expr> vue (getcmdtype() ==# ':' && getcmdline() ==# 'vue' && &filetype ==# '') ? 'set filetype=vue' : 'vue'
+
 " Open explore in current work directory (toggle)
 nnoremap <silent> <expr> <F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd()<Enter>"
