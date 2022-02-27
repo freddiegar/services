@@ -1,5 +1,7 @@
 extends javascript
 
+# @see https://www.vuemastery.com/pdf/Vue-Essentials-Cheat-Sheet.pdf
+
 global !p
 def autocomplete(t, options):
 	if t:
@@ -24,8 +26,16 @@ snippet {{ "Interpolation Property"
 {{ $0
 endsnippet
 
+snippet bind "Bind"
+:${1:attr}="${0:prop}"
+endsnippet
+
+snippet for "Loop"
+v-for="(${1:item}, ${2:index}) of ${3:items} :key="$2"$0
+endsnippet
+
 snippet import "Import Component" b
-import ${1:Name} from './$0components/$1.vue';
+import ${1:Name} from '@/$0components/$1.vue';
 endsnippet
 
 # New instance app
@@ -82,19 +92,23 @@ props: [
 ]$0
 endsnippet
 
-snippet ttr "Script Component" b
-<script>
-    $0
-</script>
-endsnippet
-
 snippet ttt "Template Component" b
 <template>
-    $1
+    <div>
+	$1
+    </div>
 </template>
 endsnippet
 
-snippet tts "Style Component" b
+snippet tts "Script Component" b
+<script>
+export default {
+    $0
+}
+</script>
+endsnippet
+
+snippet tty "Style Component" b
 <style${1: scoped}>
 ${1:name} {
     ${2:attribute};
@@ -106,4 +120,36 @@ snippet tte "Event Component" b
 $1`!p snip.rv=autocomplete(t[1], events())`() {
     $2
 }$0
+endsnippet
+
+snippet ttx "Vuex Instance"
+const $1 new Vuex.Store ({
+    state: {
+	$2
+    },
+    mutations: {
+	$3
+    },
+    actions: {
+	$0
+    }
+}
+endsnippet
+
+snippet txs "State Vuex"
+state: {
+    ${1:name}: $0
+}
+endsnippet
+
+snippet "tx(m|a)" "Actions Vuex" r
+`!p snip.rv='mutations' if match.group(1) == 'm' else 'actions'`: {
+    ${1:name}($2) {
+	$3
+    }$0
+}
+endsnippet
+
+snippet "m(s|m|a)" "State|Mutations|Actions Map" r
+...map`!p snip.rv='State' if match.group(1) == 's' else ('Mutations' if match.group(1) == 'm' else 'Actions')`(['${0:name}'])
 endsnippet

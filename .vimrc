@@ -6,6 +6,8 @@
 
 " QUICKREF
 " @see https://quickref.me/vim
+" @see http://www.rayninfo.co.uk/vimtips.html
+" @see http://www.angelwatt.com/coding/notes/vim-commands.html
 
 " CONFIG
 " @see https://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118
@@ -412,7 +414,7 @@ inoremap <silent> <Enter> <Enter><C-g>u
 xnoremap <silent> J :move '>+1<Enter>gv=gv
 xnoremap <silent> K :move '<-2<Enter>gv=gv
 
-" Save previous position in mark ', (<C-o> not works)
+" Save previous position in mark ', (<C-o> not works as expected)
 " Using screen rows (g option)
 nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
 nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
