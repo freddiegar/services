@@ -984,6 +984,7 @@ Plug 'sniphpets/sniphpets'                                      " PHP snippet wi
 
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
+Plug 'junegunn/gv.vim'                                          " Commits filter (need vim-fugitive) -> :GV[!]
 
 Plug 'tpope/vim-dadbod'                                         " DB console in Vim
 
