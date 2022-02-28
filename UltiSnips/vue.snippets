@@ -26,20 +26,32 @@ snippet {{ "Interpolation Property"
 {{ $0
 endsnippet
 
-snippet bind "Bind"
+snippet vb "Bind Vue"
 :${1:attr}="${0:prop}"
 endsnippet
 
-snippet for "Loop"
+snippet vm "Model Vue"
+v-model="${0:prop}"
+endsnippet
+
+snippet ve "Event Vue"
+@${1:event}="${0:method}"
+endsnippet
+
+snippet vif "If Vue"
+v-if="${0:condition}"
+endsnippet
+
+snippet vfor "Loop Vue"
 v-for="(${1:item}, ${2:index}) of ${3:items} :key="$2"$0
 endsnippet
 
 snippet import "Import Component" b
-import ${1:Name} from '@/$0components/$1.vue';
+import ${1:Name} from '${0:@}${1:/components}/$1.vue';
 endsnippet
 
 # New instance app
-snippet tti "New Instance" b
+snippet tt2 "New Instance" b
 const ${1:app} = new Vue({
     el: '${2:#app}',
     data: {
@@ -48,16 +60,29 @@ const ${1:app} = new Vue({
 });
 endsnippet
 
+# New instance app
+snippet tti "New Instance" b
+import { createApp } from 'vue';
+
+const ${1:app} = createApp({
+    data() {
+	return {
+	    $2
+	}
+    }
+}).mount('#${0:app}');
+endsnippet
+
 # Input data component or reactive props
 snippet ttd "Data Component" b
-data${1:()} {
+data() {
     return {
-        ${2:key}: ${3:value}
+        ${1:key}: ${2:value}
     };
 }$0
 endsnippet
 
-# Methods available in <template>
+# Methods available to use in <template>
 snippet ttm "Methods Component" b
 methods: {
     ${1:method}($2) {
@@ -87,23 +112,27 @@ endsnippet
 
 # Props inheritance from parents
 snippet ttp "Props Component" b
-props: [
-    '$1',${2:,}
-]$0
+props: {
+    ${1:name}: ${2:String}
+}$0
 endsnippet
 
 snippet ttt "Template Component" b
 <template>
-    <div>
-	$1
-    </div>
+    <${1:div}>
+	$0
+    </$1>
 </template>
 endsnippet
 
 snippet tts "Script Component" b
 <script>
 export default {
-    $0
+    data() {
+	return {
+	    $0
+	}
+    }
 }
 </script>
 endsnippet
