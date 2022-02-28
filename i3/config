@@ -22,6 +22,7 @@ set $font_size_scratch 11
 # @see https://thomashunter.name/i3-configurator/
 set $bg-color               #00000000
 set $white-color            #FFFFFF
+set $focus-color            #D65D0E
 set $black-color            #000000
 set $inactive-bg-color      #1D2021
 set $text-color             #F3F4F5
@@ -278,7 +279,7 @@ bar {
 }
 
 # class                 border              background          text                    indicator           child border
-client.focused          $inactive-bg-color  $inactive-bg-color  $text-color             $indicator-color    $active-bg-color
+client.focused          $inactive-bg-color  $inactive-bg-color  $focus-color             $indicator-color    $active-bg-color
 client.focused_inactive $inactive-bg-color  $inactive-bg-color  $inactive-text-color    $indicator-color    $inactive-bg-color
 client.unfocused        $inactive-bg-color  $inactive-bg-color  $inactive-text-color    $indicator-color    $inactive-bg-color
 client.urgent           $urgent-bg-color    $urgent-bg-color    $text-color             $indicator-color    $urgent-bg-color
