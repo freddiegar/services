@@ -433,6 +433,7 @@ cnoreabbrev <expr> json (getcmdtype() ==# ':' && getcmdline() ==# 'json' && &fil
 cnoreabbrev <expr> js (getcmdtype() ==# ':' && getcmdline() ==# 'js' && &filetype ==# '') ? 'set filetype=javascript' : 'js'
 cnoreabbrev <expr> ts (getcmdtype() ==# ':' && getcmdline() ==# 'ts' && &filetype ==# '') ? 'set filetype=typecript' : 'ts'
 cnoreabbrev <expr> vue (getcmdtype() ==# ':' && getcmdline() ==# 'vue' && &filetype ==# '') ? 'set filetype=vue' : 'vue'
+cnoreabbrev <expr> sql (getcmdtype() ==# ':' && getcmdline() ==# 'sql' && &filetype ==# '') ? 'set filetype=sql' : 'sql'
 
 " Open explore in current work directory (toggle)
 nnoremap <silent> <expr> <F2>
@@ -1633,6 +1634,7 @@ augroup AutoCommands
 
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType apache setlocal commentstring=#\ %s
+    autocmd FileType crontab setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
