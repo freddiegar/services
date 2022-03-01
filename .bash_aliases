@@ -18,6 +18,7 @@ alias va="vim ~/.bash_aliases"
 
 alias rz="source ~/.zshrc"
 alias ra="source ~/.bash_aliases"
+alias ri="i3-msg 'restart'"
 
 alias sai="sudo apt-get install -y"
 alias sar="sudo apt-get remove -y"
@@ -112,6 +113,7 @@ alias gfrf="git flow release finish"
 alias gh="git blame --date=relative -w -L1"
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias glop="glog -p"
+alias glof="git show --name-only"
 alias gconf="git config --list"
 
 alias cdh="cd /var/www/html"

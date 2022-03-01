@@ -1263,6 +1263,15 @@ Install GPG v1
 apt-get install -y gpgv1
 ```
 
+Create GPG v1 Key
+```bash
+gpg1 --gen-key
+
+# Export Private Key
+gpg1 --output ivr-co.rsa -a --export-secret-key ivr-co@development.local
+```
+> Check ID KEY after create it!
+
 Install cron in docker container
 ```bash
 apt-get install -y cron
@@ -1675,4 +1684,7 @@ tar -xvjf   archive.tar.bz2 -C /destine
 # [j] or --bzip2
 # [f]ile
 # [C] or --directory
+
+# SO info
+hostnamectl
 ```

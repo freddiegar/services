@@ -1,6 +1,8 @@
 Install Software in Debian|[L|X]Ubuntu OS
 ___
 
+[Comparation SO](https://wiki.archlinux.org/title/Arch_compared_to_other_distributions)
+
 # Utils
 
 ```bash
@@ -142,6 +144,12 @@ ln -s `pwd`/i3/config ~/.config/i3/config
 ln -s `pwd`/i3/status.conf ~/.config/i3/status.conf
 ln -s `pwd`/i3/battery ~/.config/i3/battery-popup
 ```
+> On VM:
+> cp -p /var/www/html/freddiegar/services/i3/config ~/.config/i3/config
+> Change $mod Mod4 -> Mod1
+> sudo sed -i 's/$mod Mod4/$mod Mod1/g' ~/.config/i3/config
+> Change $meta Mod1 -> Mod4
+> sudo sed -i 's/$meta Mod1/$meta Mod4/g' ~/.config/i3/config
 
 ## Set i3 as WM
 
@@ -157,6 +165,14 @@ sudo update-alternatives --config x-session-manager
 
 ```bash
 echo 'exec i3' >> ~/.xinitrc
+```
+
+## Wallpapers in i3
+
+```bash
+git clone --depth=1 git@github.com:freddiegar/wallpapers.git
+
+ln -s /var/www/html/freddiegar/wallpapers ~/BG
 ```
 
 # Vim Plugins
