@@ -60,7 +60,7 @@ sudo sysctl -p
 # Change default User Max Watches
 
 ```bash
-echo '# Overwrite default: 8192 ~ 8M to ~540M
+echo '# Overwrite default: 8192 ~8M to ~540M
 fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 sudo sysctl -p
 ```
@@ -85,17 +85,6 @@ sudo sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
 sudo update-grub
 
 sudo systemctl set-default multi-user.target
-```
-
-# Change graphical to text GRUB
-
-```bash
-sudo sed -i 's/#GRUB_CMDLINE_LINUX_DEFAULT/GRUB_CMDLINE_LINUX_DEFAULT/g' /etc/default/grub
-sudo sed -i 's/GRUB_CMDLINE_LINUX="text"/GRUB_CMDLINE_LINUX=""/g' /etc/default/grub
-sudo sed -i 's/GRUB_TERMINAL=console/#GRUB_TERMINAL=console/g' /etc/default/grub
-sudo update-grub
-
-sudo systemctl set-default graphical.target
 ```
 
 # Turn-off hibernation
@@ -167,31 +156,11 @@ sudo update-alternatives --config x-session-manager
 echo 'exec i3' >> ~/.xinitrc
 ```
 
-## Wallpapers in i3
-
-```bash
-git clone --depth=1 git@github.com:freddiegar/wallpapers.git
-
-ln -s /var/www/html/freddiegar/wallpapers ~/BG
-```
-
 # Vim Plugins
 
 ```bash
 # Install
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-# Enable
-echo "\" Plugins
-call plug#begin('~/.vim/plugged')
-Plug 'freddiegar/miningbox.vim'
-call plug#end()
-
-\" Theme
-set background=dark
-
-colorscheme miningbox
-" >> ~/.vimrc
 
 # Open Vim and run
 :PlugInstall
@@ -247,9 +216,7 @@ echo "--recurse=yes
 " > ~/.ctags
 
 ```bash
-# In Vim run to generate tags files
 # Need: Plug 'vim-scripts/autotags'
-Pulse <F4>
 ```
 
 ### PHP Tags
@@ -266,7 +233,7 @@ sudo chmod +x /usr/local/bin/phpctags
 ## Vim Snippets
 
 ```bash
-ln -s `pwd`/UltiSnips/ ~/.vim/UltiSnips
+ln -s `pwd`/UltiSnips ~/.vim/UltiSnips
 ```
 
 ## Vim in PHPStorm
@@ -303,9 +270,13 @@ sudo chmod +x /usr/local/bin/git-summary
 ## sudo apt-get remove gawk && sudo rm /usr/local/bin/git-summary && sudo apt-get autoremove
 ```
 
-### GIT Rebase
+## Wallpapers in i3
 
-[See](https://youtu.be/INjj0eGhNXs)
+```bash
+git clone --depth=1 git@github.com:freddiegar/wallpapers.git
+
+ln -s /var/www/html/freddiegar/wallpapers ~/BG
+```
 
 # Zsh
 
@@ -1025,20 +996,21 @@ sudo apt-get install virtualbox
 cd ~
 sudo apt-get update
 sudo apt-get install -y libqt5opengl5
-sudo curl -L https://download.virtualbox.org/virtualbox/6.1.26/virtualbox-6.1_6.1.26-145957~Ubuntu~bionic_amd64.deb virtualbox.deb
+sudo curl -L https://download.virtualbox.org/virtualbox/6.1.32/virtualbox-6.1_6.1.32-149290~Ubuntu~bionic_amd64.deb -o virtualbox.deb
 sudo dpkg -i virtualbox.deb
 reboot
 rm -f ~/virtualbox.deb
 ## sudo apt-get remove virtualbox-6.1 && sudo apt-get autoremove
 ```
+> On updated, first uninstall: sau virtualbox-6.1
 
 ### Virtual Box Shared Folders
 
 ```bash
 # After Shared Folder in GUI in Guest
 # Insert Guest Additions Image
-cd /media/[username]/VBox_GAs_6.1.26
-# cd /media/freddie/VBox_GAs_6.1.26
+cd /media/[username]/VBox_GAs_6.1.32
+# cd /media/freddie/VBox_GAs_6.1.32
 sudo sh VBoxLinuxAdditions.run
 sudo shutdown -r now
 

@@ -850,7 +850,7 @@ function s:go_docs(word) abort
         let l:docsurl = 'https://www.php.net/'
     elseif expand('%:t') ==# 'composer.json'
         let l:docsurl = 'https://github.com/'
-    elseif index(['vim'], &filetype) >= 0 && match(getline('.'), 'Plug') == 0
+    elseif index(['vim'], &filetype) >= 0 && match(getline('.'), 'Plug') >= 0
         let l:saved_unnamed_register = @@
 
         silent execute "normal! 0vi'\"zy"
