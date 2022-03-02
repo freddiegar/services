@@ -22,7 +22,7 @@ alias ri="i3-msg 'restart'"
 
 alias sai="sudo apt-get install -y"
 alias sar="sudo apt-get remove -y"
-alias sau="sudo apt-get update && sudo apt-get upgrade -y && sac"
+alias sau="sudo apt-get update && sudo apt-get --with-new-pkgs upgrade -y && sac"
 alias sac="sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
 
 alias c="composer"
