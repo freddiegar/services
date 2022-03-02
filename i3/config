@@ -184,8 +184,8 @@ for_window [class="Pavucontrol"]            floating enable
 for_window [title="^Event Tester$"]         floating enable
 
 # Virtual Machines
-for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]   floating enable
-for_window [instance="^VirtualBox$" class="^VirtualBox$"]               floating enable
+for_window [instance="^VirtualBox$" class="^VirtualBox$"]               floating enable, move position center
+for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]   floating enable, move position center, resize set 1026 770
 
 # PiP in Firefox
 for_window [instance="Toolkit" class="(?i)firefox"]                     floating enable, sticky enable
