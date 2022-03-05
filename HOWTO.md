@@ -45,3 +45,74 @@ SEE:
 [See 1](https://github.com/symfony/skeleton/issues/40)
 [See 2](https://github.com/symfony/symfony/issues/35568)
 ```
+
+Downgrade|Upgrade PHP version in Ubuntu
+
+```bash
+sudo update-alternatives --config php
+```
+
+Detect EFI Systems in Linux
+
+```
+ls /sys/firmware/efi/efivars/
+
+# If path exists, YES, you have UEFI system
+```
+
+Mount ISO image in USB
+
+```bash
+# List block devices
+lsblk
+
+# Connect USB, and run again: lsblk
+lsblk
+
+# as sudo
+sudo su
+
+# dd: disk and dump (or disk and destroyer :|)
+## if: Input File
+## of: Output File
+## status: Verbose option
+dd if=/path/yo/file.iso of=/dev/sda status="progress"
+# dd if=/home/freddie/Downloads/ISO/archlinux-2022.02.01-x86_64.iso of=/dev/sda status="progress"
+```
+> [YT](https://www.youtube.com/watch?v=4PBqpX0_UOchttps://www.youtube.com/watch?v=4PBqpX0_UOc)
+
+Convert id_rsa to ppk (Filezilla or Putty)
+
+```bash
+apt-get install putty-tools
+# pacman -S putty
+
+puttygen ~/.ssh/id_rsa.ftpusr -o ~/.ssh/ftpusr@ftp.ppk
+```
+
+Enable SSH Private Key Auth
+
+```bash
+COMMAND:
+sftp -i ~/.ssh/id_rsa.kftpusr -P 22 kftpusr@kftp
+
+OUTOUT:
+Permission denied (publickey,password,keyboard-interactive)
+
+CHECK:
+In Server (aka: kftp) check in file `/etc/ssh/sshd_config` next values:
+
+# Not allow password
+PasswordAuthentication no
+# Allow private key
+PubkeyAuthentication yes
+# Where are private keys?
+AuthorizedKeysFile .ssh/authorized_keys
+```
+> In `authorized_keys` file add all pub keys allowed
+> @see: man ssh
+> Too: check pemissions in dir and files (in host and guest machines)
+> .ssh                  -> 700
+>   id_rsa              -> 600
+>   id_rsa.pub          -> 600
+>   authorized_keys     -> 600

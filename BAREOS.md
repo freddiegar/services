@@ -40,27 +40,33 @@ g -> Create a nre empty GPT partition table
         First sector        -> use default
         Last Sector         -> +550M
 
-    # Partition SWAP
+    # Partition SWAP (1.5 * memory ram)
     n -> new partition table (swap)
         Partition number    -> use default -> 2
         First sector        -> use default
         Last Sector         -> +1G
 
     # Partition System
-    n -> new partition table (/)
+    n -> new partition table (/) (~25G)
         Partition number    -> use defautl -> 3
+        First sector        -> use default
+        Last Sector         -> 25G
+
+    # Partition System
+    n -> new partition table (/home) (whole)
+        Partition number    -> use defautl -> 4
         First sector        -> use default
         Last Sector         -> use default -> free space
 
 # Set partition types
-    t -> change type partion (UEFI)
+    t -> change type partition (UEFI)
         1 -> UEFI System
 
-    t -> change type partion (swap)
+    t -> change type partition (swap)
         19 -> Linux swap
 
-    # Last one already has correct type
-    t -> change type partion (/)
+    # Last already has correct type
+    t -> change type partition (/)
         20 -> Linux system
 
 # Write changes
@@ -79,12 +85,20 @@ fdisk -l
     # Partition System
     mkfs.ext4 /dev/sda3
 
+    # Partition Home
+    mkfs.ext4 /dev/sda3
+
 # Mount Partition System
     # Partition SWAP
     swapon /dev/sda2
 
     # Partition System
+    mkdir /mnt
     mount /dev/sda3 /mnt
+
+    # Partition System
+    mkdir /mnt/home
+    mount /dev/sda4 /mnt/home
 
     # Partition UEFI
     mkdir /boot/EFI
@@ -92,6 +106,7 @@ fdisk -l
 
 # [Unpackage Arch in system](https://man.archlinux.org/man/pacstrap.8)
     # base              -> base system
+    # base-devel        -> base utils (sudo, gcc and friends. Don't require in VM's or containers)
     # linux             -> [kernel](http://kroah.com/log/blog/2018/08/24/what-stable-kernel-should-i-use/) (don't require in containers)
                         -> stable: Vanilla Linux kernel and modules, with a few patches applied.
                         -> [5.16.11](https://cdn.kernel.org/pub/linux/kernel/v5.x/ChangeLog-5.16.11)
@@ -100,12 +115,13 @@ fdisk -l
     # man-db            -> Kidding? A utility for reading man pages (don't require in VM's or containers)
 
     # As VM or container
-    pacstrap /mnt base linux vi
+    pacstrap /mnt base linux vim
 
     # As Host
-    pacstrap /mnt base linux linux-firmware man-pages man-db
+    pacstrap /mnt base linux base-devel linux-firmware man-pages man-db
 
 # [File System Table](https://wiki.archlinux.org/title/Fstab)
+## U    -> Use unique id over label is better
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # [Change Root User](https://wiki.archlinux.org/title/Change_root)
@@ -119,14 +135,21 @@ hwclock --systohc
 
 # Install another utils require with [pacman](https://man.archlinux.org/man/pacman.8)
 ## -S -> sync
-pacman -S vi sudo grub
-## UEFI needs
+pacman -S sudo grub
+
+## UEFI needs!
 ### efibootmgr  -> Linux user-space application to modify the EFI Boot Manager
 pacman -S efibootmgr
 
+# Of course, I need network
+pacman -S networkmanager
+
+# And Enable Network Manager on Boot
+sudo systemctl enable NetworkManager
+
 # Set Locale
 ## Uncomment line en_US.UTF-8 UTF-8
-vi /etc/locale.gen
+vim /etc/locale.gen
 
 locale-gen
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
@@ -138,7 +161,7 @@ echo 'KEYMAP=la-latin1' > /etc/vconsole.conf
 echo 'arch' > /etc/hostname
 
 # [Append Route to Localhost](https://wiki.archlinux.org/title/Network_configuration)
-vi /etc/hosts
+vim /etc/hosts
 127.0.0.1   localhost
 ::1         localhost
 127.0.1.1   arch.localdomain    arch
@@ -221,8 +244,7 @@ VBoxClient --clipboard
 ================
 
 # Main
-sudo pacman -S vim konsole unzip tree htop xcompmgr feh pavucontrol networkmanager
-## vim              -> 1 pkg
+sudo pacman -S konsole unzip tree htop xcompmgr feh pavucontrol
 ## konsole          -> 92 pkgs
 ## unzip            -> 1 pkg
 ## tree             -> 1 pkg
@@ -230,10 +252,6 @@ sudo pacman -S vim konsole unzip tree htop xcompmgr feh pavucontrol networkmanag
 ## xcompmgr         -> 12 pkgs
 ## feh              -> 29 pkgs
 ## pavucontrol      -> 73 pkgs
-## networkmanager   -> 18 pkgs
-
-# Enable Network Manager
-sudo systemctl enable NetworkManager
 
 sudo pacman -S xorg i3
 ## xorg             -> 56 pkgs

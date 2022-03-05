@@ -1688,3 +1688,12 @@ tar -xvjf   archive.tar.bz2 -C /destine
 # SO info
 hostnamectl
 ```
+
+Copy in clipboard from output
+
+[See](https://github.com/astrand/xclip)
+
+```bash
+command | xclip  -selection clipboard
+```
+> Require: sudo apt-get clipboard
