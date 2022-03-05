@@ -515,6 +515,8 @@ inoremap <silent> <F5> <C-r>=strftime('%Y-%m-%d')<Enter>
 inoremap <silent> <S-F5> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
 inoremap <silent> <F6> <C-r>=strftime('%Y-%m-%d 00:00:00')<Enter>
 inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d 23:59:59')<Enter>
+inoremap <silent> <F7> <C-r>='Y-m-d'<Enter>
+inoremap <silent> <S-F7> <C-r>='Y-m-d H:i:s'<Enter>
 
 " Same!, but in Normal Mode
 " Not use normal! <Bang>, it needs remapings
@@ -522,6 +524,8 @@ nnoremap <silent> <F5> :execute "normal a\<F5>\e"<Enter>
 nnoremap <silent> <S-F5> :execute "normal a\<S-F5>\e"<Enter>
 nnoremap <silent> <F6> :execute "normal a\<F6>\e"<Enter>
 nnoremap <silent> <S-F6> :execute "normal a\<S-F6>\e"<Enter>
+nnoremap <silent> <F7> :execute "normal a\<F7>\e"<Enter>
+nnoremap <silent> <S-F7> :execute "normal a\<S-F7>\e"<Enter>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
@@ -2086,7 +2090,7 @@ augroup AutoCommands
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yaml,*.snippets,*.conf :call <SID>cleanspaces()
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.conf :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
     " autocmd VimResized * wincmd =
