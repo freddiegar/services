@@ -235,11 +235,17 @@ mode "resize" {
     bindsym Shift+l resize grow   width   10 px or 10 ppt
 
     # Borders                                                           -20 -25
-    bindsym a       floating enable, resize set 1024 576, move position 876 479
-    bindsym s       floating enable, resize set 854 480, move position 1046 575
-    bindsym d       floating enable, resize set 640 360, move position 1260 695
-    bindsym f       floating enable, resize set 426 240, move position 1474 815
-    bindsym g       floating enable, resize set 256 144, move position 1644 911
+    bindsym a       floating enable, resize set 1024 576,   move position 876 479
+    bindsym s       floating enable, resize set 854 480,    move position 1046 575
+    bindsym d       floating enable, resize set 640 360,    move position 1260 695
+    bindsym f       floating enable, resize set 426 240,    move position 1474 815
+    bindsym g       floating enable, resize set 256 144,    move position 1644 911
+
+    bindsym Shift+a       floating enable, resize set 1024 576, move position 20 479
+    bindsym Shift+s       floating enable, resize set 854 480,  move position 20 575
+    bindsym Shift+d       floating enable, resize set 640 360,  move position 20 695
+    bindsym Shift+f       floating enable, resize set 426 240,  move position 20 815
+    bindsym Shift+g       floating enable, resize set 256 144,  move position 20 911
 
     bindsym v       floating enable, resize set 854 540, move position 1046 515, sticky enable
     bindsym t       floating enable, resize set 720 500, move position 1180 555, sticky enable
@@ -321,7 +327,7 @@ exec --no-startup-id $emulator
 # Init battery warning
 exec --no-startup-id ~/.config/i3/battery-popup -L 20 -l 10 -t 2m -m "Battery is low!"
 # Init background image
-exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-31 -n1).jpeg
+exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-42 -n1).jpeg
 # Init background transparency
 exec --no-startup-id xcompmgr -c -C -o.1 &
 # Init IP public
@@ -330,7 +336,7 @@ exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
 exec --no-startup-id $emulator -p tabtitle='::scratchpad::'
 
 # Reload wallpaper
-bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-31 -n1).jpeg
+bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-42 -n1).jpeg
 
 # Reload IP Public
 bindsym $mod+Shift+i exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
@@ -356,6 +362,12 @@ bindsym XF86AudioMute        exec --no-startup-id pactl set-sink-mute   0 toggle
 # Sreen brightness controls
 # bindsym XF86MonBrightnessUp   exec xbacklight -inc 20 # increase screen brightness
 # bindsym XF85MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
+
+# Screenshot
+bindsym --release Print         exec maim ~/Pictures/Screenshot\ from\ $(date +%Y-%m-%d-%H-%M-%S).png | ls ~/Pictures -1 -t | head -1 | xargs -I {} echo ~/Pictures/{} | tr -d "\n" | xclip -selection clipboard
+bindsym --release Shift+Print   exec maim -s | xclip -selection clipboard -t image/png
+bindsym --release $mod+Print    exec maim -sd 3 --quiet | xclip -selection clipboard -t image/png
+bindsym --release Ctrl+Print    exec maim -st 9999999 -p 10 | xclip -selection clipboard -t image/png
 
 # Display selector
 set $external_output HDMI-2 --auto
