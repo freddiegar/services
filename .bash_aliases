@@ -20,9 +20,11 @@ alias rz="source ~/.zshrc"
 alias ra="source ~/.bash_aliases"
 alias ri="i3-msg 'restart'"
 
+alias sas="sudo apt-cache search"
+alias sad="sudo apt-cache show"
 alias sai="sudo apt-get install -y"
 alias sar="sudo apt-get remove -y"
-alias sau="sudo apt-get update && sudo apt-get --with-new-pkgs upgrade -y && sac"
+alias sau="sudo apt-get update && sudo apt-get upgrade -y && sac"
 alias sac="sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
 
 alias c="composer"
@@ -38,7 +40,7 @@ alias ps="php bin/console"
 alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                      && ps cache:clear"
 alias ccm="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                                                && gco var"
 alias pa="php artisan"
-alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && pa optimize:clear      && gco storage"
+alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && pa optimize:clear      && gco storage bootstrap"
 alias py="export APPLICATION_ENV=dev && php yii"
 alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-data -Rf runtime web/assets       && py cacle:flush-all"
 
@@ -123,3 +125,6 @@ alias cdx="cd /var/www/html/flexphp"
 alias cdf="cd /var/www/html/freddiegar"
 
 alias cdd="cd /home/$USER/Downloads"
+
+alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
+alias yy="xclip -selection clipboard"
