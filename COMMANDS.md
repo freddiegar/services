@@ -1697,3 +1697,29 @@ Copy in clipboard from output
 command | xclip  -selection clipboard
 ```
 > Require: sudo apt-get clipboard
+
+Install i3-gaps
+
+```bash
+sudo add-apt-repository ppa:regolith-linux/release
+
+sudo apt-get install i3-gaps
+```
+
+Machine details
+
+```bash
+sudo apt-get install neofetch
+```
+
+Utils commads in Terminal
+
+```bash
+Alt + . -> Insert last success parameter
+reset   -> Restart current terminal
+fc      -> Edit a before command
+bg      -> Backgound list command (inverse to fg)
+
+# SSH Tunnel local in another port
+ssl -L 8022:127.0.0.1:22 freddie@localhost -N &
+```

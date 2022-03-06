@@ -27,6 +27,9 @@ alias sar="sudo apt-get remove -y"
 alias sau="sudo apt-get update && sudo apt-get upgrade -y && sac"
 alias sac="sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
 
+alias xpa='echo "\n" | sudo add-apt-repository'
+alias xpr='echo "\n" | sudo add-apt-repository --remove'
+
 alias c="composer"
 alias c1="composer_v1"
 alias ci="composer install"

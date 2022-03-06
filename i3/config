@@ -53,7 +53,7 @@ bindsym $mod+Shift+q kill
 # [nb] -> background color
 # [sf] -> selected foreground color
 # [sb] -> selected background color
-bindsym $mod+d exec dmenu_run -i -b -fn "$font_family:size:$font_size" -nb "$black-color" -nf "$text-color" -sb "$black-color" -sf "$focus-color"
+bindsym $mod+d exec dmenu_run -i -b -p 'Open: ' -fn "$font_family:size:$font_size" -nb "$black-color" -nf "$text-color" -sb "$black-color" -sf "$focus-color"
 
 # change focus (as Vim)
 bindsym $mod+h focus left
@@ -285,7 +285,7 @@ bar {
 }
 
 # class                 border              background          text                    indicator           child border
-client.focused          $inactive-bg-color  $inactive-bg-color  $focus-color             $indicator-color    $active-bg-color
+client.focused          $inactive-bg-color  $inactive-bg-color  $focus-color            $indicator-color    $active-bg-color
 client.focused_inactive $inactive-bg-color  $inactive-bg-color  $inactive-text-color    $indicator-color    $inactive-bg-color
 client.unfocused        $inactive-bg-color  $inactive-bg-color  $inactive-text-color    $indicator-color    $inactive-bg-color
 client.urgent           $urgent-bg-color    $urgent-bg-color    $text-color             $indicator-color    $urgent-bg-color
@@ -348,7 +348,8 @@ exec_always --no-startup-id xdg-settings set default-web-browser firefox.desktop
 # Disable Caps Lock && Repeat Keys
 # exec_always --no-startup-id "sleep 1; setxkbmap -option caps:none; xset r off;"
 # Disable Caps Lock to Escape
-exec_always --no-startup-id "sleep 1; setxkbmap -option caps:escape; xset r off;"
+# exec_always --no-startup-id "sleep 1; setxkbmap -option caps:escape; xset r off;"
+exec_always --no-startup-id "sleep 1; setxkbmap -option caps:escape;"
 # Swap Caps Lock with Escape
 # exec_always --no-startup-id "sleep 1; setxkbmap -option caps:swapescape; xset r off;"
 
