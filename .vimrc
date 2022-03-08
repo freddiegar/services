@@ -6,8 +6,12 @@
 
 " QUICKREF
 " @see https://quickref.me/vim
+" @see https://vim.rtorr.com/
 " @see http://www.rayninfo.co.uk/vimtips.html
 " @see http://www.angelwatt.com/coding/notes/vim-commands.html
+
+" CVE
+" @see https://www.cvedetails.com/vendor/8218/VIM.html
 
 " CONFIG
 " @see https://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118
@@ -854,6 +858,8 @@ function s:go_docs(word) abort
         let l:docsurl = 'https://www.php.net/'
     elseif expand('%:t') ==# 'composer.json'
         let l:docsurl = 'https://github.com/'
+    elseif expand('%:t') ==# 'package.json'
+        let l:docsurl = 'https://www.npmjs.com/package/'
     elseif index(['vim'], &filetype) >= 0 && match(getline('.'), 'Plug') >= 0
         let l:saved_unnamed_register = @@
 

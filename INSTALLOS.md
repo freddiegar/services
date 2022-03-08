@@ -628,8 +628,8 @@ export NVM_DIR="$HOME/.nvm"
 # Close Terminal to load changes
 # Show version available
 nvm ls-remote
-nvm install v16.13.0
-# nvm alias default v16.13.0
+nvm install v16.14.0
+# nvm alias default v16.14.0
 # nvm current
 ## Enabled to all users in [L|X]Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
