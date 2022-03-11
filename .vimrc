@@ -1119,6 +1119,8 @@ xmap <silent> <Leader>gt <Plug>(VTranslate)
 nmap <silent> <Leader>gT :Translate!<Enter>
 " Don't use <C-u>
 xmap <silent> <Leader>gT :Translate!<Enter>
+" Sound of silence
+nnoremap <silent> <Leader>gW :call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<Enter>
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
@@ -1876,6 +1878,7 @@ augroup AutoCommands
 
     autocmd FileType json nnoremap <silent> <buffer><F1> :call <SID>jsonfixer()<Enter>
     autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
+    autocmd FileType json nnoremap <silent> <buffer><Leader>gi :echo 'Version:  ' . <SID>composer('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
     function! s:jsonfixer() abort
         if bufname('%') !=# ''
@@ -1883,6 +1886,12 @@ augroup AutoCommands
         endif
 
         silent execute '%!python3 -m json.tool'
+    endfunction
+
+    function! s:composer(command, ...) abort
+        let l:version = system('composer ' . a:command . ' 2>/dev/null | grep -e "' . a:1 . '" | sed "s#\s\+# #g" | cut -d " " -f 2 | tr -d "\n"')
+
+        return len(l:version) > 0 ? l:version : 'None'
     endfunction
 
     " Rg not find in file names
