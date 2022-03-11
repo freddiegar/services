@@ -1440,6 +1440,13 @@ function! s:git_alias() abort
 endfunction
 
 nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<Enter>
+
+" Resolve conflicts
+nnoremap <silent> <Leader>gf :diffget //2<Enter>
+nnoremap <silent> <Leader>gj :diffget //3<Enter>
+nnoremap <silent> <Leader>gg :Gwrite <Bar> edit %<Enter>
+nnoremap <silent> <Leader>hh /<<<<<<<<Enter>
+
 " I don't want to learn (or write) new aliases
 cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' : 'git'
 
