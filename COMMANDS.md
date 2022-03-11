@@ -1464,7 +1464,11 @@ vapor env dev --docker
 vapor database:delete-proxy database-name
 
 # MySQL console
-vapor database:shell database-name
+vapor database:tunnel database-name 3317
+# vapor database:tunnel dev-database 3317
+
+mysql -hlocalhost -p3317 -uuser -p database;
+
 
 # Redis connection local
 vapor cache:tunnel database-name
@@ -1719,7 +1723,23 @@ Alt + . -> Insert last success parameter
 reset   -> Restart current terminal
 fc      -> Edit a before command
 bg      -> Backgound list command (inverse to fg)
+man -f  -> Search results of man pages (same as: whatis)
+man -k  -> Index search results of man pages (same as: apropos)
+man #   -> Search in capitulo #
+info    -> Information in GNU format
+pstree  -> Process tree
 
 # SSH Tunnel local in another port
 ssl -L 8022:127.0.0.1:22 freddie@localhost -N &
 ```
+
+Load average
+
+```bash
+w
+# 0.45: Last minute       -> 45% in average.
+# 0.17: Last 5 minutes    -> 17% in average
+# 0.12: last 15 minutes   -> 12% in average
+```
+> 1.0: Overload, system puts process in wait
+> #.# must be divide by # of CPU

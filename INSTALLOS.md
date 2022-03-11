@@ -280,6 +280,9 @@ ln -s /var/www/html/freddiegar/wallpapers ~/BG
 
 # Zsh
 
+[See](https://towardsdatascience.com/comparing-sh-bash-ksh-and-zsh-speed-82a72bbc20ed)
+[See 2](https://google.github.io/styleguide/shellguide.html)
+
 ```bash
 sudo apt-get install -y zsh
 # As User NOT root

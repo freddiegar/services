@@ -25,7 +25,7 @@ alias sad="sudo apt-cache show"
 alias sai="sudo apt-get install -y"
 alias sar="sudo apt-get remove -y"
 alias sau="sudo apt-get update && sudo apt-get upgrade -y && sac"
-alias sac="sudo apt-get autoremove -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
+alias sac="sudo apt-get autoremove --purge -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
 
 alias xpa='echo "\n" | sudo add-apt-repository'
 alias xpr='echo "\n" | sudo add-apt-repository --remove'
@@ -39,13 +39,13 @@ alias cda="composer dump-autoload"
 alias cii="composer install --ignore-platform-reqs"
 alias cip="composer install --no-dev"
 
-alias ps="php bin/console"
-alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                      && ps cache:clear"
+alias pps="php bin/console"
+alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                      && pps cache:clear"
 alias ccm="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                                                && gco var"
-alias pa="php artisan"
-alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && pa optimize:clear      && gco storage bootstrap"
-alias py="export APPLICATION_ENV=dev && php yii"
-alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-data -Rf runtime web/assets       && py cacle:flush-all"
+alias ppa="php artisan"
+alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && ppa optimize:clear      && gco storage bootstrap"
+alias ppy="export APPLICATION_ENV=dev && php yii"
+alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-data -Rf runtime web/assets       && ppy cacle:flush-all"
 
 alias pex="sudo phpenmod xdebug"
 alias pdx="sudo phpdismod xdebug"

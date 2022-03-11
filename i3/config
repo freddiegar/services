@@ -91,7 +91,7 @@ bindsym $mod+space focus mode_toggle
 bindsym $mod+a focus parent
 
 # focus the child container
-#bindsym $mod+d focus child
+#bindsym $mod+Shift+a focus child
 
 set $workspace1     "1:>__"
 set $workspace2     "2"
@@ -327,7 +327,7 @@ exec --no-startup-id $emulator
 # Init battery warning
 exec --no-startup-id ~/.config/i3/battery-popup -L 20 -l 10 -t 2m -m "Battery is low!"
 # Init background image
-exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-42 -n1).jpeg
+exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-`ls ~/BG/*.jpeg | wc --lines` -n1).jpeg
 # Init background transparency
 exec --no-startup-id xcompmgr -c -C -o.1 &
 # Init IP public
@@ -336,7 +336,7 @@ exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
 exec --no-startup-id $emulator -p tabtitle='::scratchpad::'
 
 # Reload wallpaper
-bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-42 -n1).jpeg
+bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-`ls ~/BG/*.jpeg | wc --lines` -n1).jpeg
 
 # Reload IP Public
 bindsym $mod+Shift+i exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
@@ -446,9 +446,9 @@ mode "move" {
     bindsym k move up
     bindsym l move right
 
-    bindsym Shift+h move left, move left, move left, move left, move left, move left, move left, move left, move left
-    bindsym Shift+j move down, move down, move down, move down, move down, move down, move down, move down, move down
-    bindsym Shift+k move up, move up, move up, move up, move up, move up, move up, move up, move up
+    bindsym Shift+h move left,  move left,  move left,  move left,  move left,  move left,  move left,  move left,  move left
+    bindsym Shift+j move down,  move down,  move down,  move down,  move down,  move down,  move down,  move down,  move down
+    bindsym Shift+k move up,    move up,    move up,    move up,    move up,    move up,    move up,    move up,    move up
     bindsym Shift+l move right, move right, move right, move right, move right, move right, move right, move right, move right
 
     # back to normal
