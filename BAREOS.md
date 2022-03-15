@@ -50,7 +50,7 @@ g -> Create a nre empty GPT partition table
     n -> new partition table (/) (~25G)
         Partition number    -> use defautl -> 3
         First sector        -> use default
-        Last Sector         -> 25G
+        Last Sector         -> +25G
 
     # Partition System
     n -> new partition table (/home) (whole)
@@ -93,16 +93,11 @@ fdisk -l
     swapon /dev/sda2
 
     # Partition System
-    mkdir /mnt
     mount /dev/sda3 /mnt
 
     # Partition System
     mkdir /mnt/home
     mount /dev/sda4 /mnt/home
-
-    # Partition UEFI
-    mkdir /boot/EFI
-    mount /dev/sda1 /boot/EFI
 
 # [Unpackage Arch in system](https://man.archlinux.org/man/pacstrap.8)
     # base              -> base system
@@ -114,14 +109,22 @@ fdisk -l
     # man-pages         -> Really? Linux man pages (don't require in VM's or containers)
     # man-db            -> Kidding? A utility for reading man pages (don't require in VM's or containers)
 
+    ## 231  Installed in this point
+
     # As VM or container
-    pacstrap /mnt base linux vim
+    pacstrap /mnt base base-devel linux vim
+    ## 110  new packages ~460M  Installed
+    ## 32   new packages ~351M  Installed
+    ## 3    new packages ~161M  Installed
+    ## 3    new packages ~36M   Installed
+
+    ## 379  Installed in this point
 
     # As Host
-    pacstrap /mnt base linux base-devel linux-firmware man-pages man-db
+    pacstrap /mnt base base-devel linux linux-firmware vim man-pages man-db
 
 # [File System Table](https://wiki.archlinux.org/title/Fstab)
-## U    -> Use unique id over label is better
+## U    -> Use unique id over label. It's better!
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # [Change Root User](https://wiki.archlinux.org/title/Change_root)
@@ -136,23 +139,29 @@ hwclock --systohc
 # Install another utils require with [pacman](https://man.archlinux.org/man/pacman.8)
 ## -S -> sync
 pacman -S sudo grub
+## 1 new packages ~6M   Installed
+## 1 new packages ~34M  Installed
 
 ## UEFI needs!
 ### efibootmgr  -> Linux user-space application to modify the EFI Boot Manager
 pacman -S efibootmgr
+## 2 new packages ~1M   Installed
 
 # Of course, I need network
 pacman -S networkmanager
+## 17 new packages  ~17M    Installed
 
 # And Enable Network Manager on Boot
-sudo systemctl enable NetworkManager
+systemctl enable NetworkManager
 
 # Set Locale
 ## Uncomment line en_US.UTF-8 UTF-8
 vim /etc/locale.gen
 
 locale-gen
+
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
+echo 'LC_CTYPE=en_US.UTF-8' >> /etc/locale.conf
 
 ## Keymaps persistent
 echo 'KEYMAP=la-latin1' > /etc/vconsole.conf
@@ -182,14 +191,18 @@ passwd freddie
 ### optical -> Access to optical devices such as CD and DVD drive
 ### storage -> Used to gain access to removable drives such as USB hard drives
 ### video   -> Access to video capture devices (diff to X11)
-usermod -aG wheel,audio,optical,storage,video freddie
+usermod -G wheel,audio,optical,storage,video -a freddie
 
-## Enable freddie as sudo (sudo command)
-### Uncomment
+## Enable freddie as sudo (using sudo command)
+### Uncomment or run: visudo
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
+# Partition UEFI
+mkdir /boot/efi
+mount /dev/sda1 /boot/efi
+
 # [Enable GRUB](https://wiki.archlinux.org/title/GRUB)
-grub-install --target=x86_64-fi --bootloader-id=grub-uefi --recheck
+grub-install --target=x86_64-efi --bootloader-id=grub-uefi --recheck
 
 ## Updated Timeout GRUP screen 5 -> 0 seconds
 sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=0/g' /etc/default/grub
@@ -202,7 +215,6 @@ grub-mkconfig -o /boot/grub/grub.cfg
 # Turn-off hibernation
 sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g' /etc/systemd/logind.conf
 sed -i 's/#LidSwitchIgnoreInhibited=yes/LidSwitchIgnoreInhibited=no/g' /etc/systemd/logind.conf
-systemctl restart systemd-logind
 
 # Ending (for now)
 exit
@@ -216,9 +228,14 @@ shutdown now
 
 # Packages installe until here
 pacman -Q | wc --lines
-274
+379
 
+# Power-off and remove USB booteable
+shutdown now
+
+###########################################
 # Extra installation after base system ends
+###########################################
 
 # Update Packages
 pacman -Syu
