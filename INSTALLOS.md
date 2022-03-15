@@ -986,7 +986,32 @@ sudo apt-get install -y google-chrome-stable
 ## sudo apt-get remove google-chrome-stable && sudo apt-get autoremove
 ```
 
-## Virtual Box
+## Virtual Machine
+
+### Virt-Manager
+
+[See](https://www.youtube.com/watch?v=p1d_b_91YlU)
+[See 2](https://www.youtube.com/watch?v=9FBhcOnCxM8)
+
+```bash
+cd ~
+sudo apt-get update
+sudo apt-get install qemu qemu-kvm libvirt-bin bridge-utils virt-manager
+sudo systemctl enable libvirtd
+sudo systemctl start libvirtd
+# Enable user to use libvirt
+sudo usermod -G libvirt -a $USER
+# Enable UEFI feature
+sudo apt-get install -y ovmf
+## Return to Host: Ctrl + Alt keys
+## -format
+## -Output
+## Convert vdi image
+sudo qemu-img convert -f vdi -O qcow2 Ubuntu\ 20.04.vdi /var/lib/libvirt/images/ubuntu-20-04.qcow2
+## sudo apt-get remove virt-manager && sudo apt-get autoremove
+```
+
+### Virtual Box
 
 ```bash
 # v5.2
@@ -1005,7 +1030,7 @@ reboot
 rm -f ~/virtualbox.deb
 ## sudo apt-get remove virtualbox-6.1 && sudo apt-get autoremove
 ```
-> On updated, first uninstall: sau virtualbox-6.1
+> On updated, first uninstall: sar virtualbox-6.1
 
 ### Virtual Box Shared Folders
 
