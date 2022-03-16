@@ -1743,3 +1743,24 @@ w
 ```
 > 1.0: Overload, system puts process in wait
 > #.# must be divide by # of CPU
+
+Loading setting in Linux
+
+```bash
+/etc            -> Global configuration
+/home/{user}    -> User configuration
+
+Login Shell -> No  (new terminal)   ->  .bashrc
+            -> Yes (init OS)        ->  .bash_profile (priority 1)
+                                            .bash_login (priority 2)
+                                                .profile (priority 3)
+```
+
+Users and groups
+
+```bash
+    1       2     3   4       5           6           7
+username:pasword:UID:GID:descripcion:home directory:default shell
+```
+>  <1000:   Users system
+> >=1000:   Users local

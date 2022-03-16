@@ -31,13 +31,18 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         \Rector\CodeQuality\Rector\FuncCall\CompactToVariablesRector::class,
         \Rector\CodeQuality\Rector\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector::class,
         \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
+        \Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector::class,
+        \Rector\CodeQuality\Rector\If_\ExplicitBoolCompareRector::class,
         \Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector::class,
         \Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector::class,
         \Rector\CodingStyle\Rector\Switch_\BinarySwitchToIfElseRector::class,
         \Rector\CodingStyle\Rector\Encapsed\WrapEncapsedVariableInCurlyBracesRector::class,
         \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector::class,
+        \Rector\CodingStyle\Rector\ClassMethod\UnSpreadOperatorRector::class,
+        \Rector\CodingStyle\Rector\PostInc\PostIncDecToPreIncDecRector::class,
         \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedConstructorParamRector::class,
         \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
+        \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
     ]);
 
     $services = $containerConfigurator->services();
