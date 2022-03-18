@@ -1677,7 +1677,19 @@ echo $SHELL
 # output: /usr/bin/zsh
 
 echo $PS1
+# \u - username
+# \h - hostname
+# \w - work directory
+# \! - id history
+# \d - date
 # output: %(?:%{%}➜ :%{%}➜ ) %{$fg[cyan]%}%c%{$reset_color%} $(git_prompt_info)
+
+# history
+# !         -> Hitory substitution
+# !!        -> Last command
+# !$        -> Last argument
+# !n        -> Last command in n position
+# !string   -> Last command init with string
 
 tar -xf     archive.tar.gz
 tar -xf     archive.tar.bz2

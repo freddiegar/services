@@ -75,6 +75,21 @@
 " "abc" ==? "Abc"         evaluates to 1
 " "abc" ==  "Abc"         evaluates to 1 if 'ignorecase' is set, 0 otherwise
 
+" SEARCHING
+"     \v    \m       \M       \V         matches ~
+"         'magic' 'nomagic'
+"     a     a        a        a          literal 'a'
+"     \a    \a       \a       \a         any alphabetic character
+"     .     .        \.       \.         any character
+"     \.    \.       .        .          literal dot
+"     $     $        $        \$         end-of-line
+"     *     *        \*       \*         any number of the previous atom
+"     ~     ~        \~       \~         latest substitute string
+"     ()    \(\)     \(\)     \(\)       group as an atom
+"     |     \|       \|       \|         nothing: separates alternatives
+"     \\    \\       \\       \\         literal backslash
+"     \{    {        {        {          literal curly brace
+
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
 
@@ -1603,6 +1618,8 @@ endfunction
 
 noremap <silent> <F9> :call <SID>notes()<Enter>
 
+" Copy content between text
+" /^- Daily"Uy/^==\|^>>:call histdel('/', -1)j
 function! s:notes() abort
     let l:matches = []
     let l:header = '>> ' . strftime('%A, %d of %B %Y')

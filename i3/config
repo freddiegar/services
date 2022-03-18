@@ -11,6 +11,9 @@ set $mod Mod4
 set $meta Mod1
 # eTerminal
 set $emulator konsole
+# Browser
+set $browser firefox --new-tab
+set $browser-private firefox --new-tab --private-window
 
 # Fonts
 set $font_family fira code retina
@@ -459,3 +462,29 @@ mode "move" {
 
 # Move floating windows with keys
 bindsym $mod+m mode "move" focus floating
+
+# Open tab in browser
+set $mode_browser (b)itbucket, (g)ithub, (l)inkedin, (o)utlook, (r)eddit, (t)witch, (u)rban, (w)reference, (T)ranslate, (y|Y)outube
+
+mode "$mode_browser" {
+    bindsym b exec  $browser bitbucket.org, workspace $workspace2,              mode "default"
+    bindsym g exec  $browser github.com, workspace $workspace2,                 mode "default"
+    bindsym l exec  $browser linkedin.com, workspace $workspace2,               mode "default"
+
+    bindsym o exec  $browser outlook.live.com, workspace $workspace2,           mode "default"
+    bindsym r exec  $browser reddit.com, workspace $workspace2,                 mode "default"
+    bindsym t exec  $browser twitch.tv, workspace $workspace2,                  mode "default"
+    bindsym u exec  $browser urbandictionary.com, workspace $workspace2,        mode "default"
+    bindsym w exec  $browser wordreference.com, workspace $workspace2,          mode "default"
+    bindsym y exec  $browser youtube.com, workspace $workspace2,                mode "default"
+
+    bindsym Shift+t exec  $browser-private translate.google.com, workspace $workspace1,    mode "default"
+    bindsym Shift+y exec  $browser-private youtube.com, workspace $workspace2,             mode "default"
+
+    # back to normal
+    bindsym Return      mode "default"
+    bindsym Escape      mode "default"
+    bindsym $mod+b      mode "default"
+}
+
+bindsym $mod+b mode "$mode_browser"
