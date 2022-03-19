@@ -1633,15 +1633,15 @@ Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
 Test loading times in Vim
 
 ```bash
-rm -Rf start*.log time.log
+rm -Rf start*.log vim.time
 
 for i in {1..10}; do
     vim --startuptime start$i.log developer.php
 done
 
-find start* -exec grep STARTED {} \; | cut -d' ' -f1 > time.log
+find start*.log -exec grep STARTED {} \; | cut -d' ' -f1 > vim.time
 
-awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' time.log
+awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' vim.time
 ```
 
 Monitor resolution
