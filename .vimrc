@@ -447,7 +447,7 @@ command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
 
-" Set file type fast?
+" Set file type fast
 cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'set filetype=php' : 'php'
 cnoreabbrev <expr> json (getcmdtype() ==# ':' && getcmdline() ==# 'json' && &filetype ==# '') ? 'set filetype=json' : 'json'
 cnoreabbrev <expr> js (getcmdtype() ==# ':' && getcmdline() ==# 'js' && &filetype ==# '') ? 'set filetype=javascript' : 'js'
@@ -1029,12 +1029,12 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 
 Plug 'vim-scripts/autotags', {'for': 'c'}
 
-" Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easy
+" Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easily
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
 
-Plug 'machakann/vim-highlightedyank'                            " See yank
-Plug 'voldikss/vim-browser-search'                              " Search in browser
-Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
+Plug 'machakann/vim-highlightedyank'                            " See yank preview
+" Plug 'voldikss/vim-browser-search'                              " Search in browser
+" Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
 Plug 'junegunn/goyo.vim'                                        " Zen mode
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
@@ -1051,7 +1051,7 @@ Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 " Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight C syntax
 " Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " Better highlight i3 syntax
 " Plug 'storyn26383/vim-vue', {'for': 'vue'}                      " Better highlight vue syntax
-" Plug 'tpope/vim-markdown', {'for': 'markdown'}                  " Better highlight markdown syntax
+" Plug 'tpope/vim-markdown', {'for': 'markdown'}                  " Better highlight markdown syntax (slower?)
 " Plug 'MTDL9/vim-log-highlighting'                               " Better highlight log syntax
 " Plug 'ekalinin/dockerfile.vim'                                  " Better highlight dockerfile syntax (better?)
 " Plug 'pangloss/vim-javascript'                                  " Better highlight javascript syntax
@@ -1110,14 +1110,14 @@ call plug#end()
 " LSP Vue
 " npm -g install vls eslint eslint-plugin-vue -D
 
-" Search Browser
-" @see https://github.com/voldikss/vim-browser-search
-let g:browser_search_default_engine = 'duckduckgo'
+" " Search Browser
+" " @see https://github.com/voldikss/vim-browser-search
+" let g:browser_search_default_engine = 'duckduckgo'
 
-nmap <silent> <Leader>S <Plug>SearchNormal
-xmap <silent> <Leader>S <Plug>SearchVisual
+" nmap <silent> <Leader>S <Plug>SearchNormal
+" xmap <silent> <Leader>S <Plug>SearchVisual
 
-command! -nargs=* -range S call search#start(<q-args>, visualmode(), <range>)
+" command! -nargs=* -range S call search#start(<q-args>, visualmode(), <range>)
 
 " DelitMate
 " @see https://github.com/Raimondi/delimitMate
@@ -1126,17 +1126,17 @@ let g:delimitMate_smart_quotes = 1
 let g:delimitMate_expand_inside_quotes = 0
 let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 
-" Translate
-" @see https://github.com/skanehira/translate.vim
-let g:translate_target = 'es'
+" " Translate
+" " @see https://github.com/skanehira/translate.vim
+" let g:translate_target = 'es'
 
-nmap <silent> <Leader>gt <Plug>(Translate)
-xmap <silent> <Leader>gt <Plug>(VTranslate)
-nmap <silent> <Leader>gT :Translate!<Enter>
-" Don't use <C-u>
-xmap <silent> <Leader>gT :Translate!<Enter>
-" Sound of silence
-nnoremap <silent> <Leader>gW :call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<Enter>
+" nmap <silent> <Leader>gt <Plug>(Translate)
+" xmap <silent> <Leader>gt <Plug>(VTranslate)
+" nmap <silent> <Leader>gT :Translate!<Enter>
+" " Don't use <C-u>
+" xmap <silent> <Leader>gT :Translate!<Enter>
+" " Sound of silence
+" nnoremap <silent> <Leader>gW :call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<Enter>
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
@@ -1181,7 +1181,7 @@ nnoremap <silent> <F8> :TagbarToggle<Enter>
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
-" Jump to the existing window if possible
+" Jump to the existing buffer if possible
 let g:fzf_buffers_jump = 1
 
 " String in current file dir (by default: current cursor word)
@@ -1204,18 +1204,6 @@ let g:test#strategy = {
     \ 'file':    g:test_strategy,
     \ 'suite':   g:test_strategy,
 \}
-let g:test#php#phpunit#options = {
-    \ 'all': '--no-coverage --stop-on-failure',
-\}
-
-nnoremap <silent> <Leader>tt :TestNearest<Enter>
-nnoremap <silent> <Leader>tf :TestFile<Enter>
-nnoremap <silent> <Leader>ts :TestSuite<Enter>
-nnoremap <silent> <Leader>tl :TestLast<Enter>
-nnoremap <silent> <Leader>tg :TestVisit<Enter>
-nnoremap <silent> <Leader>tT :TestNearest --testdox -vvv<Enter>
-nnoremap <silent> <Leader>tF :TestFile --testdox -vvv<Enter>
-nnoremap <silent> <Leader>tS :TestSuite --testdox -vvv<Enter>
 
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
@@ -1223,8 +1211,6 @@ let g:syntastic_stl_format = "%E{%fe #%e !}%B{,}%W{%fw #%w ?}"
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_enable_balloons = 0
-let g:syntastic_php_checkers = ['php', 'phpmd']
-let g:syntastic_php_phpmd_post_args = 'unusedcode'
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_enable_highlighting = 1
 let g:syntastic_error_symbol = 'E'
@@ -1248,7 +1234,7 @@ let g:coc_global_extensions = [
     \ 'coc-yaml',
     \]
 
-" coc-tailwindcss: Change class in HTML Files (blade include)
+" coc-tailwindcss: Change class in HTML Files (blade included)
 
 " Use <Ctrl-Space> to trigger completion.
 inoremap <silent> <expr> <C-@> coc#refresh()
@@ -1671,6 +1657,7 @@ augroup AutoCommands
     autocmd FileType apache setlocal commentstring=#\ %s
     autocmd FileType crontab setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
+    autocmd FileType php setlocal commentstring=//\ %s
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
     autocmd FileType c,cpp setlocal path+=/usr/include include&
@@ -1713,9 +1700,26 @@ augroup AutoCommands
     autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 
     " PHP Customization
-    autocmd FileType php setlocal commentstring=//\ %s
     autocmd FileType php inoremap <silent> <buffer><Leader>uu <Esc>:call phpactor#UseAdd()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
+
+    " PHP Testing
+    autocmd FileType php let g:test#php#phpunit#options = {
+        \ 'all': '--no-coverage --stop-on-failure',
+    \}
+
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tt :TestNearest<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tf :TestFile<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>ts :TestSuite<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tl :TestLast<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tg :TestVisit<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tT :TestNearest --testdox -vvv<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tF :TestFile --testdox -vvv<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tS :TestSuite --testdox -vvv<Enter>
+
+    " PHP Syntastic
+    autocmd FileType php let g:syntastic_php_checkers = ['php', 'phpmd']
+    autocmd FileType php let g:syntastic_php_phpmd_post_args = 'unusedcode'
 
     " PHP Refactor
     " @see https://github.com/phpactor/phpactor
