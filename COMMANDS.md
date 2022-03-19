@@ -1776,3 +1776,12 @@ username:pasword:UID:GID:descripcion:home directory:default shell
 ```
 >  <1000:   Users system
 > >=1000:   Users local
+
+Merge change from forked projecct
+
+```bash
+cd /var/www/html/php/php
+git fetch upstream
+git checkout master
+git merge upstream/master
+```
