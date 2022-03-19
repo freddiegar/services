@@ -347,6 +347,7 @@ function! s:statusline() abort
     set statusline+=%=                                          " New group
     set statusline+=\%m                                         " Modified flag
     set statusline+=\ %3{&filetype!=#''?&filetype.'\ \\|':''}   " Is it require description?
+    set statusline+=\ %{&fileencoding.'\ \\|'}                  " Is it require description?
     set statusline+=\%<                                         " Truncate long statusline here
 
     set statusline+=\ c:%3c                                     " Cursor [c]olumn
@@ -1618,8 +1619,6 @@ endfunction
 
 noremap <silent> <F9> :call <SID>notes()<Enter>
 
-" Copy content between text
-" /^- Daily"Uy/^==\|^>>:call histdel('/', -1)j
 function! s:notes() abort
     let l:matches = []
     let l:header = '>> ' . strftime('%A, %d of %B %Y')
