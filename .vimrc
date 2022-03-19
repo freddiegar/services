@@ -876,13 +876,22 @@ function s:go_docs(word) abort
         let l:docsurl = 'https://github.com/'
     elseif expand('%:t') ==# 'package.json'
         let l:docsurl = 'https://www.npmjs.com/package/'
+    elseif expand('%:t') ==# 'Dockerfile' && match(getline('.'), 'FROM') >= 0
+        let l:docsurl = 'https://hub.docker.com/r/'
+        let l:saved_unnamed_register = @@
+
+        silent execute "normal! 0wviW\"zy"
+
+        let l:word = split(trim(@@), ':')[0]
+
+        let @@ = l:saved_unnamed_register
     elseif index(['vim'], &filetype) >= 0 && match(getline('.'), 'Plug') >= 0
+        let l:docsurl = 'https://github.com/'
         let l:saved_unnamed_register = @@
 
         silent execute "normal! 0vi'\"zy"
 
         let l:word = trim(@@)
-        let l:docsurl = 'https://github.com/'
 
         let @@ = l:saved_unnamed_register
     elseif index(['vim', 'help'], &filetype) >= 0
@@ -1033,6 +1042,7 @@ Plug 'vim-scripts/autotags', {'for': 'c'}
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
 
 Plug 'machakann/vim-highlightedyank'                            " See yank preview
+Plug 'markonm/traces.vim'                                       " See range, substitution and global preview
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
@@ -2132,7 +2142,7 @@ augroup AutoCommands
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.conf :call <SID>cleanspaces()
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.conf,sshd_config,Dockerfile :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     " No resize in i3
     " autocmd VimResized * wincmd =

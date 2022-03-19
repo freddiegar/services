@@ -94,7 +94,7 @@ Enable SSH Private Key Auth
 
 ```bash
 COMMAND:
-sftp -i ~/.ssh/id_rsa.kftpusr -P 22 kftpusr@kftp
+sftp -i /var/www/html/$USER/kftp/ssh/id_rsa -P 22 kftpusr@kftp
 
 OUTOUT:
 Permission denied (publickey,password,keyboard-interactive)

@@ -865,7 +865,7 @@ sudo curl -fLo /usr/local/ssl/cert.pem http://curl.haxx.se/ca/cacert.pem
 ```bash
 # VS Code
 cd ~
-curl -L "https://az764295.vo.msecnd.net/stable/e7d7e9a9348e6a8cc8c03f877d39cb72e5dfb1ff/code_1.60.0-1630494279_amd64.deb" -o vscode.deb
+curl -L "https://az764295.vo.msecnd.net/stable/c722ca6c7eed3d7987c0d5c3df5c45f6b15e77d1/code_1.65.2-1646927742_amd64.deb" -o vscode.deb
 sudo dpkg -i vscode.deb
 rm -f vscode.deb
 ## sudo apt-get remove code && sudo apt-get autoremove

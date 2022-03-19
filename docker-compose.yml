@@ -354,7 +354,28 @@ services:
           cpus: $FTP_CORE
           memory: $FTP_MEMORY
 
+  kftp:
+    image: atmoz/sftp:alpine
+    container_name: kftp
+    volumes:
+      - $KFTP_DOCROOT:/home/$KFTP_USER
+      - ./kftp/sshd_config:/etc/ssh/sshd_config
+      - ./kftp/ssh/id_rsa.pub.kftpusr:/home/$KFTP_USER/.ssh/keys/id_rsa.pub:ro
+    command:
+      - $KFTP_USER::$KFTP_UUID
+    networks:
+      development:
+        ipv4_address: 172.20.0.96
+    ports:
+    - '8023:22'
+    extra_hosts:
+      - development.local:$PROXY_IP_ADDRESS
+    deploy:
+      resources:
+        limits:
+          cpus: $KFTP_CORE
+          memory: $KFTP_MEMORY
+
 networks:
   development:
     external: true
-
