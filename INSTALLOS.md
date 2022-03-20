@@ -136,9 +136,9 @@ ln -s `pwd`/i3/battery ~/.config/i3/battery-popup
 > On VM:
 > cp -p /var/www/html/freddiegar/services/i3/config ~/.config/i3/config
 > Change $mod Mod4 -> Mod1
-> sudo sed -i 's/$mod Mod4/$mod Mod1/g' ~/.config/i3/config
+> sed -i 's/$mod Mod4/$mod Mod1/g' ~/.config/i3/config
 > Change $meta Mod1 -> Mod4
-> sudo sed -i 's/$meta Mod1/$meta Mod4/g' ~/.config/i3/config
+> sed -i 's/$meta Mod1/$meta Mod4/g' ~/.config/i3/config
 
 ## Set i3 as WM
 
@@ -528,7 +528,7 @@ gpg --list-secret-keys --keyid-format LONG
 git config --global commit.gpgsign true
 git config --global user.signingkey [ID]
 
-# Use ssb short id: 9567702A, in this example
+# Use ssh short id: 9567702A, in this example
 git config --global user.signingkey 9567702A
 
 # Override by repository
