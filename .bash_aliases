@@ -124,7 +124,7 @@ alias glof="git show --name-only"
 alias gconf="git config --list"
 
 alias cdh="cd /var/www/html"
-alias cdt="cd /var/www/html/atar"
+alias cdt="cd /var/www/html/ataringenieria"
 alias cde="cd /var/www/html/evertec"
 alias cdx="cd /var/www/html/flexphp"
 alias cdf="cd /var/www/html/freddiegar"

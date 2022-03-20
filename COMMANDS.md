@@ -1777,11 +1777,22 @@ username:pasword:UID:GID:descripcion:home directory:default shell
 >  <1000:   Users system
 > >=1000:   Users local
 
-Merge change from forked projecct
+Merge change from forked project
 
 ```bash
 cd /var/www/html/php/php
 git fetch upstream
 git checkout master
 git merge upstream/master
+```
+
+Cipher file using Vim
+
+```bash
+# New file
+vim -x file
+# Exists file
+:X
+# Remove cipher
+:X <- Let empty
 ```
