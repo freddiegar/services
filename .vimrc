@@ -1324,7 +1324,7 @@ function! s:go_url(url) abort
     endif
 
     if match(l:uri, '(') >= 0
-        let l:uri = substitute(l:uri, '\v\((.*)\)', '\1', '')
+        let l:uri = substitute(l:uri, '\v.*\((.*)\)', '\1', 'ge')
     endif
 
     let l:uri = substitute(l:uri, '"', '', 'ge')
