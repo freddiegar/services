@@ -121,8 +121,8 @@ sudo service cups stop && sudo systemctl disable cups
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim
-## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim && sudo apt-get autoremove
+sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim toilet figlet
+## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim toilet figlet && sudo apt-get autoremove
 ```
 
 # i3
