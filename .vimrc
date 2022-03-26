@@ -112,7 +112,7 @@ autocmd!
 set lazyredraw                                                  " No redraw when macro/script is running (default: off)
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
 
-set nowritebackup                                               " Not use backup before overwrite a file (default: depends)
+set nowritebackup                                               " Not use backup before overwrite a file (default: depends). Use git!
 set noswapfile                                                  " Not swap for new buffer (default: on)
 " Options:
 " Relative or absoluts, explode by , (comma)
@@ -135,7 +135,15 @@ set sessionoptions-=blank                                       " No save blank 
 set hlsearch                                                    " Highligth match results with /, ?, *, # (default: off)
 set incsearch                                                   " Search first match while typing. On TOP return BOTTOM, on BOTTOM return TOP (default: off)
 
+" @see https://blog.jcoglan.com/2017/05/08/merging-with-diff3/
+set diffopt+=iwhite                                             " Ignore white spaces in diff mode
+set diffopt+=vertical                                           " Start with vertical splits
+set diffopt+=indent-heuristic                                   " Use same indent of file
+" @see https://deepai.org/publication/how-different-are-different-diff-algorithms-in-git-use-histogram-for-code-changes
+set diffopt+=algorithm:histogram                                " Mayers Linear++
+
 if g:isneovim
+    set wildoptions-=pum                                        " Don't use popupmenu for wildmode completion
     set inccommand=nosplit                                      " Preview substitute command
 endif
 
@@ -243,13 +251,6 @@ set synmaxcol=300                                               " Only highlight
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
 
-if g:isneovim
-    set diffopt+=vertical,algorithm:histogram,indent-heuristic  " Best diff
-    set wildoptions-=pum                                        " Don't use popupmenu for wildmode completion
-else
-    set diffopt+=iwhite                                         " Ignore white spaces in diff mode
-endif
-
 " Custom identation
 set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
 set shiftwidth=4                                                " 1 tab === 4 spaces (default: 8)
@@ -266,8 +267,11 @@ let g:loaded_gzip = 1
 let g:loaded_logiPat = 1
 let g:loaded_rrhelper = 1
 let g:loaded_spellfile_plugin = 1
+let g:loaded_tar = 1
 let g:loaded_tarPlugin = 1
+let g:loaded_vimball = 1
 let g:loaded_vimballPlugin = 1
+let g:loaded_zip = 1
 let g:loaded_zipPlugin = 1
 
 " Netrw
@@ -1243,7 +1247,9 @@ let g:coc_global_extensions = [
     \ 'coc-yaml',
     \]
 
-" coc-tailwindcss: Change class in HTML Files (blade included)
+" \, 'coc-go',
+" \, 'coc-rust-analyzer',
+" \, 'coc-tailwindcss', Change class in HTML Files (blade included)
 
 " Use <Ctrl-Space> to trigger completion.
 inoremap <silent> <expr> <C-@> coc#refresh()
@@ -1471,6 +1477,7 @@ endfor
 " let g:gitgutter_eager = 1 (¿?)
 let g:gitgutter_realtime = 0
 let g:gitgutter_map_keys = 0
+let g:gitgutter_max_signs = 500
 let g:gitgutter_sign_priority = 100000
 let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_preview_win_floating = 1
@@ -2231,7 +2238,18 @@ set background=dark                                             " (default: depe
 try
     colorscheme miningbox
 catch /^Vim\%((\a\+)\)\=:E185/
-    colorscheme evening
+    colorscheme default
+
+    highlight! CursorLine cterm=NONE
+    highlight! CursorLineNR cterm=NONE
+
+    highlight! link SignColumn LineNr
+    highlight! link EndOfBuffer LineNr
+
+    highlight! link GitGutterAdd LineNr
+    highlight! link GitGutterChange LineNr
+    highlight! link GitGutterDelete LineNr
+    highlight! link GitGutterChangeDelete LineNr
 endtry
 
 if filereadable(expand('~/.vimrc.local'))
