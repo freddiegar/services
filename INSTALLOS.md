@@ -246,11 +246,15 @@ ln -s `pwd`/.ideavimrc ~/.ideavimrc
 
 ```bash
 sudo apt-get install -y git-core
-git config --global user.name "Freddie Gar"
-git config --global user.email freddie.gar@outlook.com
-git config --global core.editor "vim"
-git config --list
 ## sudo apt-get remove git-core && sudo apt-get autoremove
+```
+
+## GIT Configuration
+
+[See](http://git-scm.com/docs/git-mergetool)
+
+```bash
+ln -s `pwd`/.gitconfig ~/.gitconfig
 ```
 
 ## GIT Flow

@@ -1,0 +1,8 @@
+[user]
+	name = Freddie Gar
+	email = freddie.gar@out"look.c"om
+	signingkey = 9567702A
+[core]
+	editor = vim
+[commit]
+	gpgsign = true

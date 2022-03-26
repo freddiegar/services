@@ -469,6 +469,7 @@ nnoremap <silent> <expr> <F10>
             \ &filetype ==# 'vim-plug' ? ":silent execute \"normal! :bdelete!\\r\"<Enter>" :
             \ filereadable('.vimrc') ? ":silent execute 'edit .vimrc'<Enter>" :
             \ ":silent execute 'edit ~/.vimrc'<Enter>"
+nnoremap <silent> <S-F10> :PlugClean<Enter>
 
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
@@ -477,12 +478,14 @@ nnoremap <silent> <nowait> <expr> <Enter>
             \ ":nohlsearch<Enter>"
 
 " Preserve default register ("x) content
+nnoremap <silent> <Leader>x "_x
+nnoremap <silent> <Leader>X "_X
 nnoremap <silent> <Leader>c "_c
 nnoremap <silent> <Leader>C "_C
 nnoremap <silent> <Leader>d "_d
 nnoremap <silent> <Leader>D "_D
-nnoremap <silent> <Leader>x "_x
-nnoremap <silent> <Leader>X "_X
+nnoremap <silent> <Leader>s "_s
+nnoremap <silent> <Leader>S "_S
 
 " Show/Copied current filename (full path)
 nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
