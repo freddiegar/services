@@ -1194,7 +1194,7 @@ nnoremap <silent> <F8> :TagbarToggle<Enter>
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
-" Jump to the existing buffer if possible
+" Jump to the existing buffer if is possible
 let g:fzf_buffers_jump = 1
 
 " String in current file dir (by default: current cursor word)
@@ -2116,8 +2116,11 @@ augroup AutoCommands
                         \ || isdirectory(l:larg)
                         \ || buflisted(l:larg) == 0
                         \ || getbufvar(l:larg, '&filetype') ==# 'netrw'
-                silent execute 'argdelete ' . l:larg
-                silent execute 'bdelete! ' . l:larg
+                silent execute 'argdelete! ' . l:larg
+
+                if filereadable(expand(l:larg))
+                    silent execute 'bdelete! ' . l:larg
+                endif
             endif
 
             let l:index = l:index + 1

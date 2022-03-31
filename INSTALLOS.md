@@ -506,6 +506,7 @@ fi' >> ~/.zshrc
 Clone GPG keys from Secrets or
 
 [See](https://docs.github.com/en/enterprise-server@2.22/github/authenticating-to-github/generating-a-new-gpg-key)
+[Errors](https://gist.github.com/paolocarrasco/18ca8fe6e63490ae1be23e84a7039374)
 
 ```bash
 # Create key
