@@ -549,7 +549,7 @@ git config user.signingkey [ID]
 gpg --armor --export [ID]
 
 # Use sec short id: C292DDB5, in this example
-gpg --armor --export C292DDB5
+gpg --armor --export C292DDB5 | xclip -selection clipboard
 ```
 
 ## GPG in Terminal (Use between shells instances)

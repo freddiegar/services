@@ -1605,6 +1605,16 @@ function! s:split() abort
         endfor
 
         silent execute "normal! \"_ddi" . l:command_string . "\e"
+    " Is chaining methods?
+    elseif match(l:line, '->') > 0
+        let l:arguments_list = split(l:line, '->')
+
+        for l:argument in l:arguments_list
+            let l:command_string .= (len(l:command_string) > '' ? '->' : '') . trim(l:argument) . "\r"
+            silent call remove(l:arguments_list, 0)
+        endfor
+
+        silent execute "normal! \"_ddi" . l:command_string . "\e"
     else
         echo 'Nothing to do.'
     endif
