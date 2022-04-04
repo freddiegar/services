@@ -10,6 +10,8 @@ ARG XDEBUG_ENABLE=off
 ENV XDEBUG_ENABLE="$XDEBUG_ENABLE"
 ARG PDFTK_ENABLE=off
 ENV PDFTK_ENABLE="$PDFTK_ENABLE"
+ARG GNUPG_ENABLE=off
+ENV GNUPG_ENABLE="$GNUPG_ENABLE"
 
 COPY ./ssl/* /var/www/ssl/
 COPY ./vhosts/apache2.conf /etc/apache2/
@@ -103,6 +105,7 @@ RUN set -eux \
     # Extra tools and options
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
+    && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install -y gnupg1; fi \
     # Clear
     && rm -rf /tmp/pear \
     && rm -rf /var/lib/apt/lists/* \
