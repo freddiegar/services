@@ -373,7 +373,7 @@ bindsym XF86AudioMute        exec --no-startup-id pactl set-sink-mute   0 toggle
 # Screenshot
 bindsym --release Print         exec maim ~/Pictures/Screenshot\ from\ $(date +%Y-%m-%d-%H-%M-%S).png | ls ~/Pictures -1 -t | head -1 | xargs -I {} echo ~/Pictures/{} | tr -d "\n" | xclip -selection clipboard
 bindsym --release Shift+Print   exec maim -s | xclip -selection clipboard -t image/png
-bindsym --release $mod+Print    exec maim -sd 3 --quiet | xclip -selection clipboard -t image/png
+bindsym --release $mod+Print    exec maim -sd 5 | xclip -selection clipboard -t image/png
 bindsym --release Ctrl+Print    exec maim -st 9999999 -p 10 | xclip -selection clipboard -t image/png
 
 # Display selector
