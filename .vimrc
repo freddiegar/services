@@ -501,6 +501,10 @@ nnoremap <silent> <Leader>l :echo 'File:     ' . expand('%:t')<Enter>
 nnoremap <silent> <Leader>L :let @+=expand('%:t')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
+" Copied current position (using relative path)
+nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
+            \ <Bar> echo 'Copied:   ' . @+<Enter>
+
 " Improve search in fuzzy finder
 nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>

@@ -6,3 +6,16 @@
 	editor = vim
 [commit]
 	gpgsign = true
+[mergetool]
+	prompt = false
+	keepBackup = false
+	hideResolved = true
+	useAutoMerge = auto
+[merge]
+	tool = vimdiff
+	conflictstyle = diff3
+	; Available in 2.35+
+	; @see https://git-scm.com/docs/git-merge#_how_conflicts_are_presented
+	; conflictstyle = zdiff3
+[diff]
+	algorithm = histogram
