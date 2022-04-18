@@ -1,8 +1,15 @@
-<?php
+<?php declare(strict_types=1);
+/*
+ * This file is part of FlexPHP.
+ *
+ * (c) Freddie Gar <freddie.gar@outlook.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+\set_time_limit(120); // 2 minutes
 
-set_time_limit(120); // 2 minutes
-
-$options = array();
+$options = [];
 
 // Show or hide the server name and IP address
 $showServerName = false;
@@ -19,13 +26,13 @@ $options['db.name'] = 'prestashop';
 // check performance
 try {
     $benchmarkResult = test_benchmark($options);
-} catch(Exception $e) {
-    die(sprintf('%s::%s:%s => %s', PHP_VERSION, $e->getFile(), $e->getLine(), $e->getMessage()));
+} catch (Exception $e) {
+    die(\sprintf('%s::%s:%s => %s', \PHP_VERSION, $e->getFile(), $e->getLine(), $e->getMessage()));
 }
 
 // html output
-echo "<!DOCTYPE html>\n<html><head>\n";
-echo "<style>
+print "<!DOCTYPE html>\n<html><head>\n";
+print '<style>
        table a:link {
         color: #666;
         font-weight: bold;
@@ -121,29 +128,29 @@ echo "<style>
     }
     </style>
     </head>
-    <body>";
+    <body>';
 
 $log = 'benchmark.log';
 
-if (!file_exists($log) || file_get_contents($log) === '') {
-    file_put_contents('benchmark.log', "V\tM\tS\tL\tI\tCT\tMT\tT\n");
+if (!\file_exists($log) || \file_get_contents($log) === '') {
+    \file_put_contents('benchmark.log', "V\tM\tS\tL\tI\tCT\tMT\tT\n");
 }
 
-file_put_contents('benchmark.log', sprintf(
+\file_put_contents('benchmark.log', \sprintf(
     "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
-    substr($benchmarkResult['sysinfo']['php_version'], 0, 6),
+    \substr($benchmarkResult['sysinfo']['php_version'], 0, 6),
     $benchmarkResult['benchmark']['math'],
     $benchmarkResult['benchmark']['string'],
     $benchmarkResult['benchmark']['loops'],
     $benchmarkResult['benchmark']['ifelse'],
     $benchmarkResult['benchmark']['calculation_total'],
-    isset($benchmarkResult['benchmark']['mysql_total']) ? $benchmarkResult['benchmark']['mysql_total'] : 0,
+    $benchmarkResult['benchmark']['mysql_total'] ?? 0,
     $benchmarkResult['benchmark']['total']
-), FILE_APPEND);
+), \FILE_APPEND);
 
-echo print_benchmark_result($benchmarkResult, $showServerName);
+print print_benchmark_result($benchmarkResult, $showServerName);
 
-echo "\n</body></html>";
+print "\n</body></html>";
 exit;
 
 // -----------------------------------------------------------------------------
@@ -152,15 +159,15 @@ exit;
 
 function test_benchmark($settings)
 {
-    $result = array();
-    $result['sysinfo']['time'] = date('Y-m-d H:i:s');
-    $result['sysinfo']['php_version'] = PHP_VERSION;
-    $result['sysinfo']['platform'] = PHP_OS;
+    $result = [];
+    $result['sysinfo']['time'] = \date('Y-m-d H:i:s');
+    $result['sysinfo']['php_version'] = \PHP_VERSION;
+    $result['sysinfo']['platform'] = \PHP_OS;
     $result['sysinfo']['server_name'] = $_SERVER['SERVER_NAME'];
     $result['sysinfo']['server_addr'] = $_SERVER['SERVER_ADDR'];
-    $result['sysinfo']['xdebug'] = in_array('xdebug', get_loaded_extensions());
+    $result['sysinfo']['xdebug'] = \in_array('xdebug', \get_loaded_extensions());
 
-    $timeStart = microtime(true);
+    $timeStart = \microtime(true);
 
     test_math($result);
     test_string($result);
@@ -169,7 +176,7 @@ function test_benchmark($settings)
 
     $result['benchmark']['calculation_total'] = timer_diff($timeStart);
 
-    if (PHP_VERSION_ID >= 70000 && isset($settings['db.host'])) {
+    if (\PHP_VERSION_ID >= 70000 && isset($settings['db.host'])) {
         test_mysql($result, $settings);
     }
 
@@ -178,42 +185,42 @@ function test_benchmark($settings)
     return $result;
 }
 
-function test_math(&$result, $count = 99999)
+function test_math(&$result, $count = 99999): void
 {
-    $timeStart = microtime(true);
+    $timeStart = \microtime(true);
 
-    $mathFunctions = array('abs', 'acos', 'asin', 'atan',  'floor', 'exp', 'sin', 'tan', 'is_finite', 'is_nan', 'sqrt');
+    $mathFunctions = ['abs', 'acos', 'asin', 'atan',  'floor', 'exp', 'sin', 'tan', 'is_finite', 'is_nan', 'sqrt'];
 
     for ($i = 0; $i < $count; $i++) {
         foreach ($mathFunctions as $function) {
-            call_user_func_array($function, array($i));
+            \call_user_func_array($function, [$i]);
         }
     }
 
     $result['benchmark']['math'] = timer_diff($timeStart);
 }
 
-function test_string(&$result, $count = 99999)
+function test_string(&$result, $count = 99999): void
 {
-    $timeStart = microtime(true);
-    $stringFunctions = array('addslashes', 'chunk_split', 'metaphone', 'strip_tags', 'md5', 'sha1', 'strtoupper', 'strtolower', 'strrev', 'strlen', 'soundex', 'ord');
+    $timeStart = \microtime(true);
+    $stringFunctions = ['addslashes', 'chunk_split', 'metaphone', 'strip_tags', 'md5', 'sha1', 'strtoupper', 'strtolower', 'strrev', 'strlen', 'soundex', 'ord'];
 
     $string = 'the quick brown fox jumps over the lazy dog';
 
     for ($i = 0; $i < $count; $i++) {
         foreach ($stringFunctions as $function) {
-            call_user_func_array($function, array($string));
+            \call_user_func_array($function, [$string]);
         }
     }
 
     $result['benchmark']['string'] = timer_diff($timeStart);
 }
 
-function test_loops(&$result, $count = 999999)
+function test_loops(&$result, $count = 999999): void
 {
-    $timeStart = microtime(true);
-    for ($i = 0; $i < $count; ++$i) {
+    $timeStart = \microtime(true);
 
+    for ($i = 0; $i < $count; ++$i) {
     }
 
     $i = 0;
@@ -225,18 +232,15 @@ function test_loops(&$result, $count = 999999)
     $result['benchmark']['loops'] = timer_diff($timeStart);
 }
 
-function test_ifelse(&$result, $count = 999999)
+function test_ifelse(&$result, $count = 999999): void
 {
-    $timeStart = microtime(true);
+    $timeStart = \microtime(true);
 
     for ($i = 0; $i < $count; $i++) {
         if ($i == -1) {
-
         } elseif ($i == -2) {
-
         } else {
             if ($i == -3) {
-
             }
         }
     }
@@ -246,28 +250,30 @@ function test_ifelse(&$result, $count = 999999)
 
 function test_mysql(&$result, $settings)
 {
-    $timeStart = microtime(true);
+    $timeStart = \microtime(true);
 
-    $link = mysqli_connect($settings['db.host'], $settings['db.user'], $settings['db.pw']);
+    $link = \mysqli_connect($settings['db.host'], $settings['db.user'], $settings['db.pw']);
+
     if (!$link) {
-        echo 'Unable to connect to mysql';
+        print 'Unable to connect to mysql';
+
         return;
     }
     $result['benchmark']['mysql_connect'] = timer_diff($timeStart);
 
-    mysqli_select_db($link, $settings['db.name']);
+    \mysqli_select_db($link, $settings['db.name']);
     $result['benchmark']['mysql_select_db'] = timer_diff($timeStart);
 
-    $dbResult = mysqli_query($link, 'SELECT VERSION() as version;');
-    $arr_row = mysqli_fetch_array($dbResult);
+    $dbResult = \mysqli_query($link, 'SELECT VERSION() as version;');
+    $arr_row = \mysqli_fetch_array($dbResult);
     $result['sysinfo']['mysql_version'] = $arr_row['version'];
     $result['benchmark']['mysql_query_version'] = timer_diff($timeStart);
 
     $query = "SELECT BENCHMARK(1000000, AES_ENCRYPT('hello', UNHEX('F3229A0B371ED2D9441B830D21A390C3')));";
-    mysqli_query($link, $query);
+    \mysqli_query($link, $query);
     $result['benchmark']['mysql_query_benchmark'] = timer_diff($timeStart);
 
-    mysqli_close($link);
+    \mysqli_close($link);
 
     $result['benchmark']['mysql_total'] = timer_diff($timeStart);
 
@@ -276,7 +282,7 @@ function test_mysql(&$result, $settings)
 
 function timer_diff($timeStart)
 {
-    return number_format(microtime(true) - $timeStart, 3);
+    return \number_format(\microtime(true) - $timeStart, 3);
 }
 
 function print_benchmark_result($data, $showServerName = true)
@@ -332,5 +338,5 @@ function print_benchmark_result($data, $showServerName = true)
 
 function h($v)
 {
-    return htmlentities($v);
+    return \htmlentities($v);
 }

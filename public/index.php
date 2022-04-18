@@ -1,9 +1,14 @@
-<?php
-
-// die('<pre>' . print_r($_SERVER, true) . '</pre>');
-
+<?php declare(strict_types=1);
+/*
+ * This file is part of FlexPHP.
+ *
+ * (c) Freddie Gar <freddie.gar@outlook.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 if (empty($_SERVER['HTTP_SEC_FETCH_MODE'])) {
-    phpinfo();
+    \phpinfo();
     die;
 }
 
@@ -22,4 +27,4 @@ $greetings = [
     ', I\'m Batman',
 ];
 
-echo sprintf('Hello %s', $greetings[array_rand($greetings)]);
+print \sprintf('Hello %s', $greetings[\array_rand($greetings)]);
