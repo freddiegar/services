@@ -40,9 +40,11 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector::class,
         \Rector\CodingStyle\Rector\ClassMethod\UnSpreadOperatorRector::class,
         \Rector\CodingStyle\Rector\PostInc\PostIncDecToPreIncDecRector::class,
+        \Rector\CodingStyle\Rector\ClassMethod\RemoveDoubleUnderscoreInMethodNameRector::class,
         \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedConstructorParamRector::class,
         \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
         \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
+        \Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class,
     ]);
 
     $services = $containerConfigurator->services();

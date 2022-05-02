@@ -21,6 +21,8 @@ $finder = PhpCsFixer\Finder::create()
     ->files()
     ->in(__DIR__);
 
+// @see https://github.com/FriendsOfPHP/PHP-CS-Fixer/tree/master/doc/rules
+
 return PhpCsFixer\Config::create()
     ->setFinder($finder)
     ->setRiskyAllowed(true)
