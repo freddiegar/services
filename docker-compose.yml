@@ -71,6 +71,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
+        - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -97,6 +98,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
+        - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -123,6 +125,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
+        - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -149,6 +152,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
+        - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -175,6 +179,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
+        - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -201,6 +206,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
+        - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -227,6 +233,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
+        - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -253,6 +260,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
+        - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
