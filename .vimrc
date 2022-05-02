@@ -448,6 +448,9 @@ xnoremap <silent> k gk
 " Sudo rescue
 command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 
+" @see https://vim.fandom.com/wiki/Redirect_g_search_output
+command! -nargs=? Filter let @z='' <Bar> execute 'g/<args>/y Z' <Bar> new <Bar> setlocal buftype=nofile <Bar> put<Bang> z
+
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
 
@@ -1463,10 +1466,15 @@ endfunction
 nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<Enter>
 
 " Resolve conflicts
-nnoremap <silent> <Leader>gf :diffget //2<Enter>
-nnoremap <silent> <Leader>gj :diffget //3<Enter>
-nnoremap <silent> <Leader>gg :Gwrite <Bar> edit %<Enter>
-nnoremap <silent> <Leader>hh /<<<<<<<<Enter>
+" @see https://vim.fandom.com/wiki/A_better_Vimdiff_Git_mergetool
+" @see https://gist.github.com/karenyyng/f19ff75c60f18b4b8149
+nnoremap <silent> <Leader>hh /\v[<\|>\|=]{7}<Enter>
+
+if &diff
+    nnoremap <silent> <Leader>gf :diffget //2<Enter>
+    nnoremap <silent> <Leader>gj :diffget //3<Enter>
+    nnoremap <silent> <Leader>gg :Gwrite <Bar> edit %<Enter>
+endif
 
 " I don't want to learn (or write) new aliases
 cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' : 'git'
