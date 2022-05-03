@@ -116,3 +116,18 @@ AuthorizedKeysFile .ssh/authorized_keys
 >   id_rsa              -> 600
 >   id_rsa.pub          -> 600
 >   authorized_keys     -> 600
+
+Change author commit in git
+
+[See](https://stackoverflow.com/questions/3042437/how-to-change-the-commit-author-for-one-specific-commit#3042512)
+
+```bash
+# Show current commits
+git log
+# Select commit before to change
+git rebase -i ffd697b
+# Before command open Vim, change `pick` to `edit` in lines required (with bad author info)
+# Close Vim
+git commit --amend -S --author="Freddie Gar <freddie@gar.com>" --no-edit
+git rebase --continue
+```
