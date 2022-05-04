@@ -201,7 +201,7 @@ for_window [instance="Places" class="(?i)firefox"]                      floating
 for_window [instance="Browser" class="(?i)firefox"]                     floating enable
 
 # PiP in Opera
-for_window [title="Picture in Picture"]                                 floating enable, sticky enable
+# for_window [class="Opera" title="Picture in Picture"]                 floating enable, sticky enable
 
 # GIMP
 for_window [class="^Gimp$" title="^GNU Image Manipulation Program$"]    floating disabled
