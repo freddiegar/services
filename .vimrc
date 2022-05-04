@@ -1118,7 +1118,6 @@ call plug#end()
 "  "language_server_code_transform.import_globals": true,
 "  "language_server_completion.trim_leading_dollar": true,
 "  "file_path_resolver.enable_logging": true,
-"  "completion_worse.disabled_completors": [],
 "  "indexer.exclude_patterns": [
 "    "\/tests\/coverage\/**\/*",
 "    "\/vendor\/**\/Tests\/**\/*",
