@@ -481,7 +481,7 @@ mode "$mode_browser" {
     bindsym w exec  $browser wordreference.com, workspace $workspace2,          mode "default"
     bindsym y exec  $browser youtube.com, workspace $workspace2,                mode "default"
 
-    bindsym Shift+t exec  $browser-private translate.google.com, workspace $workspace1,    mode "default"
+    bindsym Shift+t exec  $browser-private translate.google.com, workspace $workspace2,    mode "default"
     bindsym Shift+y exec  $browser-private youtube.com, workspace $workspace2,             mode "default"
 
     # back to normal
