@@ -1224,6 +1224,12 @@ let g:test#strategy = {
     \ 'suite':   g:test_strategy,
 \}
 
+nnoremap <silent> <Leader>tt :TestNearest<Enter>
+nnoremap <silent> <Leader>tf :TestFile<Enter>
+nnoremap <silent> <Leader>ts :TestSuite<Enter>
+nnoremap <silent> <Leader>tl :TestLast<Enter>
+nnoremap <silent> <Leader>tg :TestVisit<Enter>
+
 " Syntastic
 " @see https://github.com/vim-syntastic/syntastic
 let g:syntastic_stl_format = "%E{%fe #%e !}%B{,}%W{%fw #%w ?}"
@@ -1758,11 +1764,6 @@ augroup AutoCommands
         \ 'all': '--no-coverage --stop-on-failure',
     \}
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tt :TestNearest<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tf :TestFile<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>ts :TestSuite<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tl :TestLast<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tg :TestVisit<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>tT :TestNearest --testdox -vvv<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>tF :TestFile --testdox -vvv<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>tS :TestSuite --testdox -vvv<Enter>
