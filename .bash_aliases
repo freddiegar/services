@@ -46,7 +46,7 @@ alias ppa="php artisan"
 alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && ppa optimize:clear     && gco storage bootstrap"
 alias ppv='ppa app-version:create --sha="$(git rev-parse HEAD)" --time="$(date -u +%Y%m%d%H%M%S)" --branch="$(git rev-parse --abbrev-ref HEAD)"'
 alias ppy="export APPLICATION_ENV=dev && php yii"
-alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-data -Rf runtime web/assets       && ppy cacle:flush-all"
+alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-data -Rf runtime web/assets       && ppy cache/flush-all"
 
 alias pex="sudo phpenmod xdebug"
 alias pdx="sudo phpdismod xdebug"
