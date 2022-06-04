@@ -1026,7 +1026,7 @@ Plug 'tpope/vim-surround'                                       " cs"' ([c]hange
 Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
-Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
+" Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
@@ -1138,12 +1138,12 @@ call plug#end()
 
 " command! -nargs=* -range S call search#start(<q-args>, visualmode(), <range>)
 
-" DelitMate
-" @see https://github.com/Raimondi/delimitMate
-let g:delimitMate_expand_cr = 1
-let g:delimitMate_smart_quotes = 1
-let g:delimitMate_expand_inside_quotes = 0
-let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
+" " DelitMate
+" " @see https://github.com/Raimondi/delimitMate
+" let g:delimitMate_expand_cr = 1
+" let g:delimitMate_smart_quotes = 1
+" let g:delimitMate_expand_inside_quotes = 0
+" let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 
 " " Translate
 " " @see https://github.com/skanehira/translate.vim
@@ -1247,21 +1247,21 @@ let g:syntastic_style_warning_symbol = 's'
 " @see https://github.com/neoclide/coc.nvim
 let g:coc_global_extensions = [
     \ 'coc-clangd',
-    \ 'coc-css',
     \ 'coc-eslint',
-    \ 'coc-html',
-    \ 'coc-json',
     \ 'coc-phpactor',
     \ 'coc-tslint',
     \ 'coc-tsserver',
-    \ 'coc-vetur',
     \ 'coc-vimlsp',
-    \ 'coc-yaml',
     \]
 
-" \, 'coc-go',
-" \, 'coc-rust-analyzer',
-" \, 'coc-tailwindcss', Change class in HTML Files (blade included)
+    " \ 'coc-css',
+    " \ 'coc-html',
+    " \ 'coc-json',
+    " \ 'coc-vetur',
+    " \ 'coc-yaml',
+    " \ 'coc-go',
+    " \ 'coc-rust-analyzer',
+    " \ 'coc-tailwindcss', Change class in HTML Files (blade included)
 
 " Use <Ctrl-Space> to trigger completion.
 inoremap <silent> <expr> <C-@> coc#refresh()
