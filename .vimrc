@@ -1695,7 +1695,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
     autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log
     autocmd BufRead,BufNewFile *.log setlocal filetype=log
-    autocmd BufRead,BufNewFile *.vpm setlocal filetype=vpm
+    " autocmd BufRead,BufNewFile *.vpm setlocal filetype=vpm
 
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType apache setlocal commentstring=#\ %s
@@ -1744,16 +1744,16 @@ augroup AutoCommands
     autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 
     " VPM: Vim Presentation Mode
-    autocmd FileType vpm nnoremap <silent> <buffer><Left> :silent bprevious<Enter> :redraw!<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer><Right> :silent bnext<Enter> :redraw!<Enter>
+    " autocmd FileType vpm nnoremap <silent> <buffer><Left> :silent bprevious<Enter> :redraw!<Enter>
+    " autocmd FileType vpm nnoremap <silent> <buffer><Right> :silent bnext<Enter> :redraw!<Enter>
     " TOIlet
-    autocmd FileType vpm nnoremap <silent> <buffer>.f :.!toilet -w 200 -f small<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer>.F :.!toilet -w 200 -f standard<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer>.k :.!toilet -w 200 -f small -k<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer>.K :.!toilet -w 200 -f standard -k<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer>.w :.!toilet -w 200 -f small -W<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer>.W :.!toilet -w 200 -f standard -W<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer>.b :.!toilet -w 200 -f term -F border<Enter>
+    " autocmd FileType vpm nnoremap <silent> <buffer>.f :.!toilet -w 200 -f small<Enter>
+    " autocmd FileType vpm nnoremap <silent> <buffer>.F :.!toilet -w 200 -f standard<Enter>
+    " autocmd FileType vpm nnoremap <silent> <buffer>.k :.!toilet -w 200 -f small -k<Enter>
+    " autocmd FileType vpm nnoremap <silent> <buffer>.K :.!toilet -w 200 -f standard -k<Enter>
+    " autocmd FileType vpm nnoremap <silent> <buffer>.w :.!toilet -w 200 -f small -W<Enter>
+    " autocmd FileType vpm nnoremap <silent> <buffer>.W :.!toilet -w 200 -f standard -W<Enter>
+    " autocmd FileType vpm nnoremap <silent> <buffer>.b :.!toilet -w 200 -f term -F border<Enter>
 
     " PHP Customization
     autocmd FileType php inoremap <silent> <buffer><Leader>uu <Esc>:call phpactor#UseAdd()<Enter>
@@ -2188,11 +2188,11 @@ augroup AutoCommands
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
     autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
-    " Auto-source syntax in *.vpm
-    autocmd BufNewFile,BufRead *.vpm
-        \ if filereadable(expand('syntax.vim')) |
-        \   silent execute 'source ' . expand('syntax.vim') |
-        \ endif
+    " " Auto-source syntax in *.vpm
+    " autocmd BufNewFile,BufRead *.vpm
+    "     \ if filereadable(expand('syntax.vim')) |
+    "     \   silent execute 'source ' . expand('syntax.vim') |
+    "     \ endif
     " No resize in i3
     " autocmd VimResized * wincmd =
 augroup END
@@ -2210,41 +2210,41 @@ function! s:get_hlinfo() abort
                 \ . ' -> ' . g:colors_name
 endfunction
 
-nmap <silent> <F5> :call <SID>presentation_mode()<Enter>
+" nmap <silent> <F5> :call <SID>presentation_mode()<Enter>
 nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
 
-let g:presentation_mode = 0
+" let g:presentation_mode = 0
 
-function! s:presentation_mode() abort
-    let l:maximum_column = 21
-    let l:show_button_line = line('$') >= l:maximum_column
+" function! s:presentation_mode() abort
+"     let l:maximum_column = 21
+"     let l:show_button_line = line('$') >= l:maximum_column
 
-    if g:presentation_mode == 0
-        let g:presentation_mode = 1
+"     if g:presentation_mode == 0
+"         let g:presentation_mode = 1
 
-        silent set colorcolumn=81
-        silent set virtualedit+=all
+"         silent set colorcolumn=81
+"         silent set virtualedit+=all
 
-        if l:show_button_line
-            silent execute 'normal! mz' . l:maximum_column . 'G' . (&colorcolumn - 1) . "i-\e`z"
-        endif
+"         if l:show_button_line
+"             silent execute 'normal! mz' . l:maximum_column . 'G' . (&colorcolumn - 1) . "i-\e`z"
+"         endif
 
-        silent execute 'highlight! link MaxLinePresentation CursorColumn'
-        silent execute 'match MaxLinePresentation /\%' . l:maximum_column . 'l/'
-    else
-        silent execute 'match'
-        silent execute 'highlight! clear MaxLinePresentation'
+"         silent execute 'highlight! link MaxLinePresentation CursorColumn'
+"         silent execute 'match MaxLinePresentation /\%' . l:maximum_column . 'l/'
+"     else
+"         silent execute 'match'
+"         silent execute 'highlight! clear MaxLinePresentation'
 
-        if l:show_button_line
-            silent execute 'normal! mz' . l:maximum_column . "G\"_D`z"
-        endif
+"         if l:show_button_line
+"             silent execute 'normal! mz' . l:maximum_column . "G\"_D`z"
+"         endif
 
-        silent set virtualedit-=all
-        silent set colorcolumn=
+"         silent set virtualedit-=all
+"         silent set colorcolumn=
 
-        let g:presentation_mode = 0
-    endif
-endfunction
+"         let g:presentation_mode = 0
+"     endif
+" endfunction
 
 " Themes
 " Allowed 24 bit colors, by default only accept 8 bit
