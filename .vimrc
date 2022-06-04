@@ -1041,12 +1041,12 @@ Plug 'junegunn/gv.vim'                                          " Commits filter
 
 " Plug 'tpope/vim-dadbod'                                         " DB console in Vim
 
-Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
-Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
+" Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
+" Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
 Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
-Plug 'vim-scripts/autotags', {'for': 'c'}
+" Plug 'vim-scripts/autotags', {'for': 'c'}
 
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easily
 Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
@@ -1189,13 +1189,13 @@ nnoremap <silent> <F12> :Goyo<Enter>
 " @see https://github.com/machakann/vim-highlightedyank
 let g:highlightedyank_highlight_duration = 250
 
-" TagBar
-" @see https://github.com/preservim/tagbar
-let g:tagbar_sort = 0
-let g:tagbar_compact = 1
-let g:tagbar_autofocus = 1
+" " TagBar
+" " @see https://github.com/preservim/tagbar
+" let g:tagbar_sort = 0
+" let g:tagbar_compact = 1
+" let g:tagbar_autofocus = 1
 
-nnoremap <silent> <F8> :TagbarToggle<Enter>
+" nnoremap <silent> <F8> :TagbarToggle<Enter>
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
@@ -1444,14 +1444,14 @@ let g:surround_indent = 1
 nmap <silent> <leader>b ysiw
 xmap <silent> <leader>b S
 
-" CTags
-" @see https://github.com/vim-scripts/autotags
-let g:autotags_no_global = 0
-let g:autotags_cscope_file_extensions = '.php .h .c'
-let g:autotags_ctags_global_include = ''
-let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=node_modules --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[   ]*trait[        ]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
+" " CTags
+" " @see https://github.com/vim-scripts/autotags
+" let g:autotags_no_global = 0
+" let g:autotags_cscope_file_extensions = '.php .h .c'
+" let g:autotags_ctags_global_include = ''
+" let g:autotags_ctags_opts = '--exclude="\.git" --exclude="\.idea" --exclude="\.vscode" --exclude=bin --exclude=var --exclude="*Test.php" --exclude="*phpunit*" --exclude=node_modules --exclude=storage --exclude=database --tag-relative=yes --c++-kinds=+p --regex-php="/^[   ]*trait[        ]+([a-z0_9_]+)/\1/t,traits/i" --php-kinds=+cfi-vj --fields=+aimlS --extra=+q'
 
-nnoremap <C-]> g<C-]>
+" nnoremap <C-]> g<C-]>
 
 " Fugitive
 " @see https://github.com/tpope/vim-fugitive
