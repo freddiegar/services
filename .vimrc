@@ -1455,6 +1455,8 @@ xmap <silent> <leader>b S
 
 " Fugitive
 " @see https://github.com/tpope/vim-fugitive
+let g:fugitive_no_maps = 1
+
 function! s:git_alias() abort
     let l:aliases = []
     let l:lines = systemlist('cat ~/.bash_aliases | grep -e "^alias\(.*\)=\"git " | grep -v "log\|blame" | sed "s/alias \|\"//gi"')
