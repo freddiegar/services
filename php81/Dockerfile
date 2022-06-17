@@ -6,6 +6,8 @@ ARG DEV_ENABLE=off
 ENV DEV_ENABLE="$DEV_ENABLE"
 ARG CACHE_ENABLE=on
 ENV CACHE_ENABLE="$CACHE_ENABLE"
+ARG PROXY_ENABLE=off
+ENV PROXY_ENABLE="$PROXY_ENABLE"
 ARG XDEBUG_ENABLE=off
 ENV XDEBUG_ENABLE="$XDEBUG_ENABLE"
 ARG PDFTK_ENABLE=off
@@ -84,6 +86,7 @@ RUN set -eux \
     && if [ "$CACHE_ENABLE" = "on" ] ; then a2enmod cache cache_disk; fi \
     && if [ "$CACHE_ENABLE" = "on" ] ; then a2enconf cache; fi \
     # Extra for development
+    && if [ "$PROXY_ENABLE" = "on" ] ; then a2enmod proxy proxy_http; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then pecl install -o -f xdebug; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then docker-php-ext-enable xdebug; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then \

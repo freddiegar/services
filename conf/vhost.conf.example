@@ -4,3 +4,16 @@
 
 #     Include /var/www/ssl/certificates.conf
 # </VirtualHost>
+
+# <VirtualHost *:443>
+#     ServerName wordpress.development.local
+
+#     Include /var/www/ssl/certificates.conf
+
+#     ProxyPreserveHost On
+#     ProxyPass / http://host.docker.internal:6969/
+#     ProxyPassReverse / http://host.docker.internal:6969/
+
+#     RequestHeader set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME}
+#     RequestHeader set "X-Forwarded-SSL" expr=%{HTTPS}
+# </VirtualHost>
