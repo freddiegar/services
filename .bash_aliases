@@ -38,6 +38,7 @@ alias ct="composer test"
 alias cda="composer dump-autoload"
 alias cii="composer install --ignore-platform-reqs"
 alias cip="composer install --no-dev"
+alias cin="composer install --no-cache"
 
 alias pps="php bin/console"
 alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                      && pps cache:clear"
