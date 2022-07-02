@@ -563,13 +563,17 @@ nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
 nnoremap <silent> <Leader>gh :let @+=<SID>generate_hash()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
 
-nnoremap <silent> <Leader>gB :let bcrypt=<SID>generate_bcrypt('word')
-            \ <Bar> let @+=bcrypt[1]
-            \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> ' . @+<Enter>
+nnoremap <silent> <Leader>gM :let mask=<SID>generate_mask('word')
+            \ <Bar> if len(mask) > 0
+            \ <Bar> let @+=mask[1]
+            \ <Bar> echomsg 'Copied:   ' . mask[0] . ' -> ' . @+
+            \ <Bar> endif<Enter>
 
-xnoremap <silent> <Leader>gB :<C-u>let bcrypt=<SID>generate_bcrypt(visualmode())
-            \ <Bar> let @+=bcrypt[1]
-            \ <Bar> echomsg 'Copied:   ' . bcrypt[0] . ' -> ' . @+<Enter>
+xnoremap <silent> <Leader>gM :<C-u>let mask=<SID>generate_mask(visualmode())
+            \ <Bar> if len(mask) > 0
+            \ <Bar> let @+=mask[1]
+            \ <Bar> echomsg 'Copied:   ' . mask[0] . ' -> ' . @+
+            \ <Bar> endif<Enter>
 
 nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
@@ -766,7 +770,7 @@ function! s:generate_hash() abort
     return strlen(l:hash) > 0 && l:password !=# 'Retry!' ? l:hash : 'Retry!'
 endfunction
 
-function! s:generate_bcrypt(type) abort
+function! s:generate_mask(type) abort
     let l:saved_unnamed_register = @@
 
     if a:type ==# 'v' || a:type ==# 'V'
@@ -777,16 +781,28 @@ function! s:generate_bcrypt(type) abort
         let l:passphrase = expand('<cword>')
     endif
 
+    let @@ = l:saved_unnamed_register
     let l:escaped = <SID>escape(l:passphrase)
+    let l:type = confirm('Select mask:', "&bcrypt\n&sha1\ns&ha256\n&rot13\n&md5", 1, 'Q')
 
     " @see https://www.php.net/manual/en/features.commandline.options.php
-    let l:command = "php --run \"echo password_hash('" . l:escaped . "', PASSWORD_DEFAULT);\""
+    if l:type ==# 0
+        return []
+    elseif l:type ==# 1
+        let l:command = "php --run \"echo password_hash('" . l:escaped . "', PASSWORD_DEFAULT);\""
+    elseif l:type ==# 2
+        let l:command = "php --run \"echo hash('sha1', '" . l:escaped . "');\""
+    elseif  l:type ==# 3
+        let l:command = "php --run \"echo hash('sha256', '" . l:escaped . "');\""
+    elseif  l:type ==# 4
+        let l:command = "php --run \"echo str_rot13('" . l:escaped . "');\""
+    elseif  l:type ==# 5
+        let l:command = "php --run \"echo md5('" . l:escaped . "');\""
+    endif
 
-    let l:bcrypt = system(l:command)
+    let l:masked = system(l:command)
 
-    let @@ = l:saved_unnamed_register
-
-    return [l:passphrase, (v:shell_error == 0 && strlen(l:bcrypt) > 0 ? l:bcrypt : 'Retry!')]
+    return [l:passphrase, (v:shell_error == 0 && strlen(l:masked) > 0 ? l:masked : 'Retry!')]
 endfunction
 
 function! s:get_masked(type) abort
