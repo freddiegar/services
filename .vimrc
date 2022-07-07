@@ -670,7 +670,7 @@ function! s:find_filter(type, ...)
     let @@ = l:saved_unnamed_register
 
     if a:type ==# 'file'
-        silent call fzf#vim#files(getcwd(),  fzf#vim#with_preview({'options': ['--query', l:filter]}))
+        silent call fzf#vim#files(getcwd(), fzf#vim#with_preview({'options': ['--query', l:filter]}))
     else
         silent execute 'Rg ' . l:filter
     endif
@@ -814,19 +814,29 @@ function! s:get_masked(type) abort
     let l:lsearch = getreg('/')
 
     if a:type ==# 'word'
-        silent execute "normal! viw\e"
+        silent execute "normal! viw\"zy"
 
         let l:repeatable = 'GetMasked'
     elseif a:type ==# 'v' || a:type ==# 'V'
         silent execute "normal! `<v`>\"zy"
     endif
 
-    " Replaced symbols -> * (no spaces)
-    silent execute "s/\\%V[^a-zA-Z0-9 ]/*/ge"
-    " Replaced chars -> @
-    silent execute "s/\\%V[a-zA-Z]/@/ge"
-    " Replaced numbers -> #
-    silent execute "s/\\%V[0-9]/#/ge"
+    let l:type = confirm('Select mask:', "&symbols\n&rot13", 1, 'Q')
+
+    if l:type ==# 0
+        " Cancelled
+    elseif l:type ==# 1
+        " Replaced symbols -> * (no spaces)
+        silent execute "s/\\%V[^a-zA-Z0-9 ]/*/ge"
+        " Replaced chars -> @
+        silent execute "s/\\%V[a-zA-Z]/@/ge"
+        " Replaced numbers -> #
+        silent execute "s/\\%V[0-9]/#/ge"
+    elseif l:type ==# 2
+        let l:masked = system("php --run \"echo str_rot13('" . <SID>escape(@@) . "');\"")
+
+        silent execute "s/\\%V" . getreg('z') . "/" . l:masked . "/e"
+    endif
 
     silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
     silent call setpos('.', l:ccursor)
@@ -1045,7 +1055,7 @@ Plug 'machakann/vim-swap'                                       " Swap args: g>,
 " Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
-Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly
+Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly: unmanteined 2022-07-06
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
@@ -1083,7 +1093,7 @@ Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 "             \ 'vim'
 "             \ ]}                                                " Preview html colors
 
-" Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight PHP syntax: unmanteined
+" Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight PHP syntax: unmanteined 2020-05-28
 " Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight C syntax
 " Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " Better highlight i3 syntax
 " Plug 'storyn26383/vim-vue', {'for': 'vue'}                      " Better highlight vue syntax
