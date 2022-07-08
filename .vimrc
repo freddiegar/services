@@ -2130,7 +2130,7 @@ augroup AutoCommands
     command! -bar -bang -nargs=? -complete=file Dotenv call <SID>envload(<bang>0, <f-args>)
 
     " Save|Load sessions
-    let g:session_file =  expand('~/.vim/sessions/' . split(getcwd(), '/')[-1] . (g:isneovim ? '.nvim' : '.vim'))
+    let g:session_file =  expand('~/.vim/sessions/' . join(split(getcwd(), '/')[-2:], '@') . (g:isneovim ? '.nvim' : '.vim'))
 
     function! s:sessionload() abort
         let l:message = ''
