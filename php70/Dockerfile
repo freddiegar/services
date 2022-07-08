@@ -6,10 +6,14 @@ ARG DEV_ENABLE=off
 ENV DEV_ENABLE="$DEV_ENABLE"
 ARG CACHE_ENABLE=on
 ENV CACHE_ENABLE="$CACHE_ENABLE"
+ARG PROXY_ENABLE=off
+ENV PROXY_ENABLE="$PROXY_ENABLE"
 ARG XDEBUG_ENABLE=off
 ENV XDEBUG_ENABLE="$XDEBUG_ENABLE"
 ARG PDFTK_ENABLE=off
 ENV PDFTK_ENABLE="$PDFTK_ENABLE"
+ARG GNUPG_ENABLE=off
+ENV GNUPG_ENABLE="$GNUPG_ENABLE"
 
 COPY ./ssl/* /var/www/ssl/
 COPY ./vhosts/apache2.conf /etc/apache2/
@@ -40,6 +44,8 @@ RUN set -eux \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libmpc-dev \
+    libmcrypt-dev \
     # Permissions
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
     && chown root:crontab /var/spool/cron/crontabs/root \
@@ -67,6 +73,11 @@ RUN set -eux \
     # Manipulation images
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ --with-freetype-dir=/usr/lib/x86_64-linux-gnu/ --with-png-dir=/usr/lib/x86_64-linux-gnu/ \
     && docker-php-ext-install -j$(nproc) gd \
+    # Best math operations
+    && docker-php-ext-install -j$(nproc) bcmath \
+    && docker-php-ext-install -j$(nproc) gmp \
+    # Prestashop dependencies
+    && docker-php-ext-install -j$(nproc) mcrypt \
     # Extra information about images: grav
     && docker-php-ext-install -j$(nproc) exif \
     # Cache
@@ -78,6 +89,7 @@ RUN set -eux \
     && if [ "$CACHE_ENABLE" = "on" ] ; then a2enmod cache cache_disk; fi \
     && if [ "$CACHE_ENABLE" = "on" ] ; then a2enconf cache; fi \
     # Extra for development
+    && if [ "$PROXY_ENABLE" = "on" ] ; then a2enmod proxy proxy_http; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then pecl install -o -f xdebug-2.6.1; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then docker-php-ext-enable xdebug; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then \
@@ -100,6 +112,7 @@ RUN set -eux \
     && if [ "$DEV_ENABLE" = "on" ] ; then cp -p /var/www/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then update-ca-certificates; fi \
     # Extra tools and options
+    && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install -y gnupg1; fi \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
     # Clear

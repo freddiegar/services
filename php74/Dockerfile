@@ -75,6 +75,7 @@ RUN set -eux \
     # Best math operations
     && docker-php-ext-install -j$(nproc) bcmath \
     && docker-php-ext-install -j$(nproc) gmp \
+    && docker-php-ext-install -j$(nproc) pcntl \
     # Extra information about images: grav
     && docker-php-ext-install -j$(nproc) exif \
     # Cache
@@ -98,7 +99,6 @@ RUN set -eux \
         echo "xdebug.client_port=9003"; \
         echo ";xdebug.log=/var/www/html/xdebug/xdebug.log"; \
         echo "xdebug.file_link_format=xdebug://%f@%l"; \
-        echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)"; \
     } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite localhost; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite development.local; fi \

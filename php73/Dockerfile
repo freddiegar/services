@@ -6,10 +6,14 @@ ARG DEV_ENABLE=off
 ENV DEV_ENABLE="$DEV_ENABLE"
 ARG CACHE_ENABLE=on
 ENV CACHE_ENABLE="$CACHE_ENABLE"
+ARG PROXY_ENABLE=off
+ENV PROXY_ENABLE="$PROXY_ENABLE"
 ARG XDEBUG_ENABLE=off
 ENV XDEBUG_ENABLE="$XDEBUG_ENABLE"
 ARG PDFTK_ENABLE=off
 ENV PDFTK_ENABLE="$PDFTK_ENABLE"
+ARG GNUPG_ENABLE=off
+ENV GNUPG_ENABLE="$GNUPG_ENABLE"
 
 COPY ./ssl/* /var/www/ssl/
 COPY ./vhosts/apache2.conf /etc/apache2/
@@ -82,6 +86,7 @@ RUN set -eux \
     && if [ "$CACHE_ENABLE" = "on" ] ; then a2enmod cache cache_disk; fi \
     && if [ "$CACHE_ENABLE" = "on" ] ; then a2enconf cache; fi \
     # Extra for development
+    && if [ "$PROXY_ENABLE" = "on" ] ; then a2enmod proxy proxy_http; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then pecl install -o -f xdebug; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then docker-php-ext-enable xdebug; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then \
@@ -102,6 +107,7 @@ RUN set -eux \
     # Extra tools and options
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
+    && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install -y gnupg1; fi \
     # Clear
     && rm -rf /tmp/pear \
     && rm -rf /var/lib/apt/lists/* \

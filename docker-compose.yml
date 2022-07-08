@@ -69,6 +69,7 @@ services:
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
+        - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
@@ -96,6 +97,7 @@ services:
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
+        - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
@@ -123,6 +125,7 @@ services:
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
+        - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
@@ -150,6 +153,7 @@ services:
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
+        - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
@@ -177,6 +181,7 @@ services:
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
+        - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
@@ -204,6 +209,7 @@ services:
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
+        - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
@@ -231,6 +237,7 @@ services:
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
+        - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
@@ -258,6 +265,7 @@ services:
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
+        - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
