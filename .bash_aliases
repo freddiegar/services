@@ -64,6 +64,7 @@ alias ducks="du -cks * | sort -rn | head"
 alias fo="/opt/firefox/firefox --new-tab"
 
 alias dexec="docker exec -it"
+alias drun="docker exec -w `pwd` -it"
 alias dlogs="docker logs --tail 50 -f"
 alias dstart="docker start"
 alias dstop="docker stop"
