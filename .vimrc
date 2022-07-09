@@ -2206,7 +2206,15 @@ augroup AutoCommands
         silent call histdel('/', -1)
     endfunction
 
-    autocmd VimEnter * nested call <SID>sessionload()
+    function! s:cleanregistes() abort
+        let l:registers = split('abcdefghijklmnopqrstuvwxyz0123456789/-"', '\zs')
+
+        for register in l:registers
+            call setreg(register, [])
+        endfor
+    endfunction
+
+    autocmd VimEnter * nested call <SID>sessionload() | call <SID>cleanregistes()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
     " Cursorline only in window active, not on Insert Mode
     autocmd WinEnter,VimEnter,BufWinEnter * setlocal cursorline
