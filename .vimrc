@@ -1065,7 +1065,7 @@ Plug 'tpope/vim-fugitive'                                       " Git with super
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 Plug 'junegunn/gv.vim'                                          " Commits filter (need vim-fugitive) -> :GV[!]
 
-" Plug 'tpope/vim-dadbod'                                         " DB console in Vim
+Plug 'tpope/vim-dadbod'                                         " DB console in Vim
 
 " Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 " Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
@@ -1539,53 +1539,53 @@ nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
 nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
 nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
 
-" " DadBod
-" " @see https://github.com/tpope/vim-dadbod
-" " range (0,1,2), interactive (0/1), [command (string)]: void
-" function! s:query(range, interactive, ...) abort
-"     let l:url = <SID>env('DATABASE_URL')
+" DadBod
+" @see https://github.com/tpope/vim-dadbod
+" range (0,1,2), interactive (0/1), [command (string)]: void
+function! s:query(range, interactive, ...) abort
+    let l:url = <SID>env('DATABASE_URL')
 
-"     if l:url ==# ''
-"         let l:conn = <SID>env('DB_CONNECTION')
-"         let l:host = <SID>env('DB_HOST')
-"         let l:port = <SID>env('DB_PORT')
-"         let l:data = <SID>env('DB_DATABASE')
-"         let l:user = <SID>env('DB_USERNAME')
-"         let l:pass = <SID>env('DB_PASSWORD')
-"         let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
-"     endif
+    if l:url ==# ''
+        let l:conn = <SID>env('DB_CONNECTION')
+        let l:host = <SID>env('DB_HOST')
+        let l:port = <SID>env('DB_PORT')
+        let l:data = <SID>env('DB_DATABASE')
+        let l:user = <SID>env('DB_USERNAME')
+        let l:pass = <SID>env('DB_PASSWORD')
+        let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
+    endif
 
-"     let l:command = ''
+    let l:command = ''
 
-"     if len(a:000) > 0
-"         let l:command = join(a:000, ' ')
-"     elseif a:range == 2
-"         " @see https://vi.stackexchange.com/a/11028
-"         let [l:lnum1, l:col1] = getpos("'<")[1:2]
-"         let [l:lnum2, l:col2] = getpos("'>")[1:2]
+    if len(a:000) > 0
+        let l:command = join(a:000, ' ')
+    elseif a:range == 2
+        " @see https://vi.stackexchange.com/a/11028
+        let [l:lnum1, l:col1] = getpos("'<")[1:2]
+        let [l:lnum2, l:col2] = getpos("'>")[1:2]
 
-"         let l:lines = getline(l:lnum1, l:lnum2)
+        let l:lines = getline(l:lnum1, l:lnum2)
 
-"         if len(l:lines) > 0
-"             let l:lines[-1] = l:lines[-1][: l:col2 - (&selection == 'inclusive' ? 1 : 2)]
-"             let l:lines[0] = l:lines[0][l:col1 - 1:]
+        if len(l:lines) > 0
+            let l:lines[-1] = l:lines[-1][: l:col2 - (&selection ==# 'inclusive' ? 1 : 2)]
+            let l:lines[0] = l:lines[0][l:col1 - 1:]
 
-"             let l:command = join(l:lines, ' ')
-"         endif
-"     elseif !a:interactive
-"         let l:command = trim(getline('.'))
-"     endif
+            let l:command = join(l:lines, ' ')
+        endif
+    elseif !a:interactive
+        let l:command = trim(getline('.'))
+    endif
 
-"     if l:command ==# '' && !a:interactive
-"         echo 'Nothing to do.'
+    if l:command ==# '' && !a:interactive
+        echo 'Nothing to do.'
 
-"         return 0
-"     endif
+        return 0
+    endif
 
-"     execute join(['DB', l:url, l:command], ' ')
-" endfunction
+    execute join(['DB', l:url, l:command], ' ')
+endfunction
 
-" command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
+command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
 
 " " Tagalong
 " " @see https://github.com/AndrewRadev/tagalong.vim
