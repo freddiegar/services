@@ -716,11 +716,11 @@ function! s:append_char(type) abort
             silent call setreg('/', l:bsearch)
             silent call histdel('/', -1)
             let l:repeatable = 'DropIncompleteMark'
-        elseif l:lastchar == ';'
+        elseif l:lastchar ==# ';'
             silent execute "normal! \"_xA,\e"
-        elseif l:lastchar == ','
+        elseif l:lastchar ==# ','
             silent execute "normal! \"_xA;\e"
-        elseif l:lastchar == ' '
+        elseif l:lastchar ==# ' '
             silent execute "normal! g_l\"_D\e"
         elseif index(['}'], l:lastchar) >= 0 && index(['json', 'javascript', 'typescript'], &filetype) >= 0
             silent execute "normal! A,\e"
@@ -835,7 +835,7 @@ function! s:get_masked(type) abort
     elseif l:type ==# 2
         let l:masked = system("php --run \"echo str_rot13('" . <SID>escape(@@) . "');\"")
 
-        silent execute "s/\\%V" . getreg('z') . "/" . l:masked . "/e"
+        silent execute "sno/\\%V" . substitute(getreg('z'), '\/', '\\/', 'g') . "/" . substitute(l:masked, '\/', '\\/', 'g') . "/e"
     endif
 
     silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
@@ -1637,7 +1637,7 @@ function! s:split() abort
 
         silent execute 'normal! jlv"zy'
 
-        if @@ == '{'
+        if @@ ==# '{'
             silent execute 'normal! kJ'
         endif
     " Is comma list?
@@ -1751,13 +1751,13 @@ augroup AutoCommands
 
     " Hide signcolumn in Terminal Mode
     if g:isneovim
-        autocmd TermOpen * if &buftype == 'terminal'
+        autocmd TermOpen * if &buftype ==# 'terminal'
         \ | setlocal bufhidden=wipe
         \ | setlocal signcolumn=no
-        \ | startinsert
+        \ | nnoremap <Enter> i<Enter>
         \ | endif
     else
-        autocmd TerminalWinOpen * if &buftype == 'terminal'
+        autocmd TerminalWinOpen * if &buftype ==# 'terminal'
         \ | setlocal bufhidden=wipe
         \ | setlocal signcolumn=no
         \ | endif
