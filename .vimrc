@@ -2163,14 +2163,10 @@ augroup AutoCommands
             let l:larg = argv(l:index)
 
             if index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], l:larg) >= 0
-                        \ || isdirectory(l:larg)
                         \ || buflisted(l:larg) == 0
                         \ || getbufvar(l:larg, '&filetype') ==# 'netrw'
-                silent execute 'argdelete! ' . l:larg
-
-                if filereadable(expand(l:larg))
-                    silent execute 'bdelete! ' . l:larg
-                endif
+                        \ || isdirectory(l:larg)
+                silent execute 'argdelete! ' . fnameescape(l:larg)
             endif
 
             let l:index = l:index + 1
@@ -2178,8 +2174,8 @@ augroup AutoCommands
     endfunction
 
     function! s:sessionsave() abort
-        if g:hasgit && expand('%:h:p') !=# '/tmp'
-            silent call <SID>sessionsavepre()
+        if g:hasgit && !(expand('%:h:p') ==# '/tmp' && &filetype ==# 'zsh')
+            call <SID>sessionsavepre()
 
             silent execute 'mksession! ' . g:session_file
         endif
