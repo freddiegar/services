@@ -42,15 +42,13 @@
 
 " MAPS and MODES
 " @see https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
-" -> n  Normal mode map. Defined using ':nmap' or ':nnoremap'.
-" -> i  Insert mode map. Defined using ':imap' or ':inoremap'.
-" -> v  Visual and select mode map. Defined using ':vmap' or ':vnoremap'.
-" -> x  Visual mode map. Defined using ':xmap' or ':xnoremap'.
-" -> s  Select mode map. Defined using ':smap' or ':snoremap'.
-" -> c  Command-line mode map. Defined using ':cmap' or ':cnoremap'.
-" -> o  Operator pending mode map. Defined using ':omap' or ':onoremap'.
-" -> !  Insert and command-line mode map. Defined using 'map!' or 'noremap!'.
-" -> <Space>  Normal, Visual and operator pending mode map. Defined using ':map' or ':noremap'.
+" n  Normal mode map                    :nmap or :nnoremap      :nunmap
+" i  Insert mode map                    :imap or :inoremap      :iunmap
+" v  Visual and select mode map         :vmap or :vnoremap      :vunmap
+" x  Visual mode map                    :xmap or :xnoremap      :xunmap
+" s  Select mode map                    :smap or :snoremap      :sunmap
+" c  Command-line mode map              :cmap or :cnoremap      :cunmap
+" o  Operator pending mode map          :omap or :onoremap      :ounmap
 "
 " The following characters may be displayed before the {rhs} of the map:
 " -> *  The {rhs} of the map is not re-mappable. Defined using the ':noremap', ':nnoremap', ':inoremap', etc. commands.
@@ -89,6 +87,17 @@
 "     |     \|       \|       \|         nothing: separates alternatives
 "     \\    \\       \\       \\         literal backslash
 "     \{    {        {        {          literal curly brace
+
+" THE WAY
+" 1. Team Comprehension (Understand another code, yes: juniors)
+" 2. Reduce Interruptions (Try different ways)
+" 3. Extend Longetivity of Code (Minor changes, real refactor)
+" 4. Prevent Unfinished Code (Tecnical  due? Finishs tasks)
+" 5. Enforce Coding Standards (No diferent styles of code)
+" 6. Document Chosen Patterns (Why X, why Y)
+" 7. Review New Patterns Early (Bad decisions takes alone, then, ask!)
+" 8. Never Expose Refactoring (Task for this, really: It's my responsability)
+" 9. Assume Unexpected Change (Makes and takes decisions)
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
@@ -1767,6 +1776,9 @@ augroup AutoCommands
         \ | setlocal bufhidden=wipe
         \ | setlocal signcolumn=no
         \ | nnoremap <Enter> i<Enter>
+        \ | endif
+        autocmd TermClose * if &buftype ==# 'terminal'
+        \ | silent! nunmap <Enter>
         \ | endif
     else
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
