@@ -1559,10 +1559,26 @@ function! s:query(range, interactive, ...) abort
         let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
     endif
 
-    let l:command = ''
+    let l:command = <SID>get_selection(a:range, a:interactive, a:000)
 
-    if len(a:000) > 0
-        let l:command = join(a:000, ' ')
+    if l:command ==# '' && !a:interactive
+        echo 'Nothing to do.'
+
+        return 0
+    endif
+
+    " Don't add silent
+    execute join(['DB', l:url, l:command], ' ')
+endfunction
+
+command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
+
+" range (0,1,2), interactive (0/1), [args (string)]: void
+function! s:get_selection(range, interactive, args) abort
+    let l:selection = ''
+
+    if len(a:args) > 0
+        let l:selection = join(a:args, ' ')
     elseif a:range == 2
         " @see https://vi.stackexchange.com/a/11028
         let [l:lnum1, l:col1] = getpos("'<")[1:2]
@@ -1571,25 +1587,17 @@ function! s:query(range, interactive, ...) abort
         let l:lines = getline(l:lnum1, l:lnum2)
 
         if len(l:lines) > 0
-            let l:lines[-1] = l:lines[-1][: l:col2 - (&selection ==# 'inclusive' ? 1 : 2)]
+            let l:lines[-1] = l:lines[-1][:l:col2 - (&selection ==# 'inclusive' ? 1 : 2)]
             let l:lines[0] = l:lines[0][l:col1 - 1:]
 
-            let l:command = join(l:lines, ' ')
+            let l:selection = join(l:lines, ' ')
         endif
     elseif !a:interactive
-        let l:command = trim(getline('.'))
+        let l:selection = trim(getline('.'))
     endif
 
-    if l:command ==# '' && !a:interactive
-        echo 'Nothing to do.'
-
-        return 0
-    endif
-
-    execute join(['DB', l:url, l:command], ' ')
+    return l:selection
 endfunction
-
-command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
 
 " " Tagalong
 " " @see https://github.com/AndrewRadev/tagalong.vim
