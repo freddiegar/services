@@ -851,15 +851,19 @@ function! s:get_masked(type) abort
     endif
 endfunction
 
-function s:escape(string) abort
+" string (string), [ignorechars (List)]: string
+function s:escape(string, ...) abort
+    let l:escaped = a:string
+    let l:ignorechars = len(a:000) > 0 ? join(a:1) : ''
+
     " Escape backslash (\)
-    let l:escaped = substitute(a:string, '\', '\\\\\\\\', 'g')
+    let l:escaped = index(['\'], l:ignorechars) >= 0 ? l:escaped : substitute(l:escaped, '\', '\\\\\\\\', 'g')
     " Escape double quotes (")
-    let l:escaped = substitute(l:escaped, '"', '\\"', 'g')
+    let l:escaped = index(['"'], l:ignorechars) >= 0 ? l:escaped : substitute(l:escaped, '"', '\\"', 'g')
     " Escape single quotes (')
-    let l:escaped = substitute(l:escaped, "'", "\\\\'", 'g')
+    let l:escaped = index(["'"], l:ignorechars) >= 0 ? l:escaped : substitute(l:escaped, "'", "\\\\'", 'g')
     " Escape dollar sign ($)
-    let l:escaped = substitute(l:escaped, '\$', '\\\$', 'g')
+    let l:escaped = index(['$'], l:ignorechars) >= 0 ? l:escaped : substitute(l:escaped, '\$', '\\\$', 'g')
 
     return l:escaped
 endfunction
