@@ -1584,6 +1584,30 @@ endfunction
 
 command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
 
+" range (0,1,2), interactive (0/1), [command (string)]: void
+function! s:run(range, interactive, ...) abort
+    let l:execute = 'php --run'
+    let l:escapechars = ["'"]
+
+    if filereadable('artisan')
+        let l:execute = 'php artisan tinker --execute'
+    endif
+
+    let l:command = <SID>get_selection(a:range, a:interactive, a:000)
+
+    if l:command ==# ''
+        echo 'Nothing to do.'
+
+        return 0
+    endif
+
+    let l:result = system(join([l:execute, (l:command !=# '' ? '"' . <SID>escape(l:command, l:escapechars) . '"' : '')], ' '))
+
+    echo v:shell_error == 0 ? l:result : 'Run failed, check syntax.'
+endfunction
+
+command! -nargs=? -range -bang R call <SID>run(<range>, <bang>0, <f-args>)
+
 " range (0,1,2), interactive (0/1), [args (string)]: void
 function! s:get_selection(range, interactive, args) abort
     let l:selection = ''
