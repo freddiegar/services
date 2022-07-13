@@ -1126,6 +1126,7 @@ call plug#end()
 " TsServer  ->  typescript, javascript
 " Vetur     ->  vue
 
+" @see https://github.com/neoclide/coc.nvim/blob/master/doc/coc-config.txt
 " ~/.vim/coc-settings.json
 "{
 "  "coc.source.around.priority": 1,
@@ -1286,12 +1287,13 @@ let g:syntastic_style_warning_symbol = 's'
 " @see https://github.com/neoclide/coc.nvim
 let g:coc_global_extensions = [
     \ 'coc-clangd',
-    \ 'coc-eslint',
     \ 'coc-phpactor',
-    \ 'coc-tslint',
-    \ 'coc-tsserver',
-    \ 'coc-vimlsp',
-    \]
+\]
+
+    " \ 'coc-eslint',
+    " \ 'coc-tslint',
+    " \ 'coc-tsserver',
+    " \ 'coc-vimlsp',
 
     " \ 'coc-css',
     " \ 'coc-html',
@@ -1766,9 +1768,9 @@ augroup AutoCommands
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
-         \ if &filetype !=# 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
-         \   silent execute "normal! g`\"" |
-         \ endif
+                \ if &filetype !=# 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
+                \   silent execute "normal! g`\"" |
+                \ endif
 
     " Hide signcolumn in Terminal Mode
     if g:isneovim
