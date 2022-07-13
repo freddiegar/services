@@ -1797,20 +1797,34 @@ augroup AutoCommands
                 \ endif
 
     " Hide signcolumn in Terminal Mode
+    " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
+        " Starts :terminal in Insert Mode (Same to Vim behaviour)
+        " Enter: Close output view from vim-test (Same to Vim behaviour)
         autocmd TermOpen * if &buftype ==# 'terminal'
-        \ | setlocal bufhidden=wipe
-        \ | setlocal signcolumn=no
-        \ | nnoremap <Enter> i<Enter>
-        \ | endif
-        autocmd TermClose * if &buftype ==# 'terminal'
-        \ | silent! nunmap <Enter>
-        \ | endif
+                    \ | setlocal bufhidden=wipe
+                    \ | setlocal signcolumn=no
+                    \ | if getbufvar(bufnr('%'), 'term_title')[-4:] ==# '/zsh'
+                        \ | startinsert
+                    \ | endif
+                    \ | if getbufvar(bufnr('%'), 'term_title')[-3:] !=? 'fzf'
+                        \ | tnoremap <silent> <buffer><Esc> <C-\><C-n><Enter>
+                        \ | nnoremap <silent> <buffer><Enter> i<Enter>
+                    \ | endif
+                    \ | endif
+
+        " Open Terminal Mode splitted (Same to Vim behaviour)
+        for option in ['te', 'ter', 'term', 'termi', 'termin', 'termina', 'terminal']
+            silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() ==# '%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
+        endfor
     else
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
-        \ | setlocal bufhidden=wipe
-        \ | setlocal signcolumn=no
-        \ | endif
+                    \ | setlocal bufhidden=wipe
+                    \ | setlocal signcolumn=no
+                    \ | if expand('%')[-3:] !=? '!sh'
+                        \ | tnoremap <silent> <buffer><Esc> <C-\><C-n><Enter>
+                    \ | endif
+                    \ | endif
     endif
 
     " Ominifunctions
