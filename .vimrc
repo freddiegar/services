@@ -1059,6 +1059,14 @@ augroup END
 
 " Plugins
 " @see https://github.com/junegunn/vim-plug
+if empty(glob('~/.vim/autoload/plug.vim'))
+            \ || (fmod(str2float(strftime('%d')), 14.0) == 0.0 && strftime('%d') !=# strftime('%d', getftime(expand('~/.vim/autoload/plug.vim'))))
+    " Each n days it is updated
+    echomsg "Synchronizing junegunn/vim-plug version ..."
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+endif
+
 call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
@@ -1294,7 +1302,7 @@ let g:coc_global_extensions = [
     " \ 'coc-eslint',
     " \ 'coc-tslint',
     " \ 'coc-tsserver',
-    " \ 'coc-vimlsp',
+    " \ 'coc-vimlsp', <- Error: It starts a persist connection in node :(
 
     " \ 'coc-css',
     " \ 'coc-html',
