@@ -101,6 +101,7 @@
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
+" - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
 let g:isneovim = has('nvim')
 let g:hasgit = isdirectory('.git')
@@ -527,8 +528,8 @@ xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 nnoremap <silent> <expr> <Leader>z
             \ !&filetype ? ":bdelete!<Enter>" : ":update <Bar> bdelete<Enter>"
 
-" Close all but current buffer (saving changes)
-nnoremap <silent> <Leader>Z :wall <Bar> %bdelete <Bar> edit # <Bar> bdelete #<Enter>
+" Close all except current buffer (saving changes)
+nnoremap <silent> <Leader>Z :wall <Bar> execute "normal mZ" <Bar> %bdelete <Bar> execute "normal `Z" <Bar> bdelete # <Bar> delmarks Z<Enter>
 
 nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
 nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
