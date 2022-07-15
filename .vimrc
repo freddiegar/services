@@ -1405,7 +1405,7 @@ function! s:go_url(url) abort
 
     let l:uri = substitute(l:uri, '"', '', 'ge')
     let l:uri = substitute(l:uri, "'", '', 'ge')
-    let l:uri = substitute(l:uri, '?', '\\?', 'ge')
+    " let l:uri = substitute(l:uri, '?', '\\?', 'ge')
     let l:uri = substitute(l:uri, ' ', '\\ ', 'ge')
     let l:uri = trim(l:uri, ',')
 
