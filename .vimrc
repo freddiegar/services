@@ -466,12 +466,12 @@ cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' :
 " command! -nargs=? Filter let @z='' <Bar> execute 'g/<args>/y Z' <Bar> new <Bar> setlocal buftype=nofile <Bar> put<Bang> z
 
 " Set file type fast
-cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'set filetype=php' : 'php'
-cnoreabbrev <expr> json (getcmdtype() ==# ':' && getcmdline() ==# 'json' && &filetype ==# '') ? 'set filetype=json' : 'json'
-cnoreabbrev <expr> js (getcmdtype() ==# ':' && getcmdline() ==# 'js' && &filetype ==# '') ? 'set filetype=javascript' : 'js'
-cnoreabbrev <expr> ts (getcmdtype() ==# ':' && getcmdline() ==# 'ts' && &filetype ==# '') ? 'set filetype=typecript' : 'ts'
-cnoreabbrev <expr> vue (getcmdtype() ==# ':' && getcmdline() ==# 'vue' && &filetype ==# '') ? 'set filetype=vue' : 'vue'
-cnoreabbrev <expr> sql (getcmdtype() ==# ':' && getcmdline() ==# 'sql' && &filetype ==# '') ? 'set filetype=sql' : 'sql'
+cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'setfiletype php' : 'php'
+cnoreabbrev <expr> json (getcmdtype() ==# ':' && getcmdline() ==# 'json' && &filetype ==# '') ? 'setfiletype json' : 'json'
+cnoreabbrev <expr> js (getcmdtype() ==# ':' && getcmdline() ==# 'js' && &filetype ==# '') ? 'setfiletype javascript' : 'js'
+cnoreabbrev <expr> ts (getcmdtype() ==# ':' && getcmdline() ==# 'ts' && &filetype ==# '') ? 'setfiletype typecript' : 'ts'
+cnoreabbrev <expr> vue (getcmdtype() ==# ':' && getcmdline() ==# 'vue' && &filetype ==# '') ? 'setfiletype vue' : 'vue'
+cnoreabbrev <expr> sql (getcmdtype() ==# ':' && getcmdline() ==# 'sql' && &filetype ==# '') ? 'setfiletype sql' : 'sql'
 
 " Open explore in current work directory (toggle)
 nnoremap <silent> <expr> <F2>
@@ -1776,19 +1776,20 @@ augroup AutoCommands
     autocmd BufWritePost .vimrc nested source ~/.vimrc
 
     " Customization
-    autocmd BufRead,BufNewFile .env.* setlocal filetype=sh
-    autocmd BufRead,BufNewFile *.tphp setlocal filetype=php
-    autocmd BufRead,BufNewFile .php_cs* setlocal filetype=php
-    autocmd BufRead,BufNewFile *.conf setlocal filetype=apache
-    autocmd BufRead,BufNewFile *.json.* setlocal filetype=json
-    autocmd BufRead,BufNewFile *.twig setlocal filetype=html commentstring=\{#\ %s\ #\}
-    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html commentstring=\{\{--\ %s\ --\}\}
+    autocmd BufRead,BufNewFile .env.* setfiletype sh
+    autocmd BufRead,BufNewFile *.tphp setfiletype php
+    autocmd BufRead,BufNewFile .php_cs* setfiletype php
+    autocmd BufRead,BufNewFile *.conf setfiletype apache
+    autocmd BufRead,BufNewFile *.json.* setfiletype json
+    autocmd BufRead,BufNewFile *.twig setfiletype html | setlocal commentstring=\{#\ %s\ #\}
+    autocmd BufRead,BufNewFile *.blade.php setfiletype html | setlocal commentstring=\{\{--\ %s\ --\}\}
     autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
-    autocmd BufRead,BufNewFile */i3/config setlocal filetype=i3config commentstring=#\ %s
+    autocmd BufRead,BufNewFile */i3/config setfiletype i3config | setlocal commentstring=#\ %s
     autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
-    autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log
-    autocmd BufRead,BufNewFile *.log setlocal filetype=log
-    " autocmd BufRead,BufNewFile *.vpm setlocal filetype=vpm
+    autocmd BufRead,BufNewFile */{log,logs}/* setfiletype log
+    autocmd BufRead,BufNewFile *.log setfiletype log
+    autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
+    " autocmd BufRead,BufNewFile *.vpm setfiletype vpm
 
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType apache setlocal commentstring=#\ %s
