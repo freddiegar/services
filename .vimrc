@@ -101,6 +101,7 @@
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
+" - @z  Save temp content used to yank in search using :Filter
 " - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
 let g:isneovim = has('nvim')
@@ -402,7 +403,7 @@ cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
 " Moving between windows fast, except in Terminal Mode!
-" @see https://www.reddit.com/r/vim/comments/hrlric/comment/fy58mvp/?utm_source=share&utm_medium=web2x&context=3
+" @see https://www.reddit.com/r/vim/comments/hrlric/comment/fy58mvp
 " Then: Resize windows
 nnoremap <silent> <C-k> :resize -5<Enter>
 nnoremap <silent> <C-j> :resize +5<Enter>
@@ -458,11 +459,11 @@ xnoremap <silent> k gk
 " Sudo rescue
 command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 
-" @see https://vim.fandom.com/wiki/Redirect_g_search_output
-command! -nargs=? Filter let @z='' <Bar> execute 'g/<args>/y Z' <Bar> new <Bar> setlocal buftype=nofile <Bar> put<Bang> z
-
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
+
+" @see https://vim.fandom.com/wiki/Redirect_g_search_output
+" command! -nargs=? Filter let @z='' <Bar> execute 'g/<args>/y Z' <Bar> new <Bar> setlocal buftype=nofile <Bar> put<Bang> z
 
 " Set file type fast
 cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'set filetype=php' : 'php'
@@ -504,14 +505,12 @@ nnoremap <silent> <Leader>D "_D
 nnoremap <silent> <Leader>s "_s
 nnoremap <silent> <Leader>S "_S
 
-" Show/Copied current filename (full path)
-nnoremap <silent> <Leader>n :echo 'File:     ' . expand('%:p')<Enter>
-nnoremap <silent> <Leader>N :let @+=expand('%:p')
+" Show/Copied current filename (long path)
+nnoremap <silent> <Leader>L :let @+=expand('%:p')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
-" Show/Copied current filename (only last part)
-nnoremap <silent> <Leader>l :echo 'File:     ' . expand('%:t')<Enter>
-nnoremap <silent> <Leader>L :let @+=expand('%:t')
+" Show/Copied current filename (only name)
+nnoremap <silent> <Leader>N :let @+=expand('%:t')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
 " Copied current position (using relative path)
@@ -524,9 +523,17 @@ nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
 xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 
-" Close current buffer
+" Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
-            \ !&filetype ? ":bdelete!<Enter>" : ":update <Bar> bdelete<Enter>"
+            \ index(['', 'qf', 'netrw', 'help', 'vim-plug'], &filetype) >= 0
+            \ ? ":bdelete!<Enter>"
+            \ : ":update
+            \ <Bar> if buflisted(bufnr('#')) == 1 && bufname('#') !=# ''
+            \ <Bar>  edit #
+            \ <Bar>  bdelete #
+            \ <Bar> else
+            \ <Bar>  bdelete
+            \ <Bar> endif<Enter>"
 
 " Close all except current buffer (saving changes)
 nnoremap <silent> <Leader>Z :wall <Bar> execute "normal mZ" <Bar> %bdelete <Bar> execute "normal `Z" <Bar> bdelete # <Bar> delmarks Z<Enter>
@@ -555,22 +562,24 @@ nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
 " Shorcuts for Date/Times in Insert Mode
+" <F18> === Shift + F6
+" <F19> === Shift + F7
 inoremap <silent> <F6> <C-r>=strftime('%Y-%m-%d')<Enter>
-inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
+inoremap <silent> <F18> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
 inoremap <silent> <F7> <C-r>='Y-m-d'<Enter>
-inoremap <silent> <S-F7> <C-r>='Y-m-d H:i:s'<Enter>
+inoremap <silent> <F19> <C-r>='Y-m-d H:i:s'<Enter>
 
 " Same!, but in Normal Mode
-" Not use normal! <Bang>, it needs remapings
+" Not use normal! <Bang>, it uses remaps
 nnoremap <silent> <F6> :execute "normal a\<F6>\e"<Enter>
-nnoremap <silent> <S-F6> :execute "normal a\<S-F6>\e"<Enter>
+nnoremap <silent> <F18> :execute "normal a\<S-F6>\e"<Enter>
 nnoremap <silent> <F7> :execute "normal a\<F7>\e"<Enter>
-nnoremap <silent> <S-F7> :execute "normal a\<S-F7>\e"<Enter>
+nnoremap <silent> <F19> :execute "normal a\<S-F7>\e"<Enter>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
 
-nnoremap <silent> <Leader>gh :let @+=<SID>generate_hash()
+nnoremap <silent> <Leader>gH :let @+=<SID>generate_hash()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
 
 nnoremap <silent> <Leader>gM :let mask=<SID>generate_mask('word')
@@ -1869,7 +1878,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>tF :TestFile --testdox -vvv<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>tS :TestSuite --testdox -vvv<Enter>
 
-    " PHP Syntastic
+    " PHP Linter
     autocmd FileType php let g:syntastic_php_checkers = ['php', 'phpmd']
     autocmd FileType php let g:syntastic_php_phpmd_post_args = 'unusedcode'
 
