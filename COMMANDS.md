@@ -1633,16 +1633,20 @@ Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
 Test loading times in Vim
 
 ```bash
-rm -Rf start*.log vim.time
+EXECUTABLE=vim
+rm -Rf profile_*.log $EXECUTABLE.time
 
 for i in {1..10}; do
-    vim --startuptime start$i.log developer.php
+    $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log developer.php
 done
 
-find start*.log -exec grep STARTED {} \; | cut -d' ' -f1 > vim.time
+find profile_${EXECUTABLE}_*.log -exec grep STARTED {} \; | cut -d' ' -f1 > $EXECUTABLE.time
 
-awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' vim.time
+awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' $EXECUTABLE.time
 ```
+> BARE:     $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log -u NONE
+> NO LSP:   $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log
+> LSP(CoC): $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log developer.php
 
 Monitor resolution
 
