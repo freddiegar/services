@@ -256,7 +256,8 @@ set nojoinspaces                                                " No insert two 
 " Custom View
 set number                                                      " Number in cursorline, no zero (default: off)
 set relativenumber                                              " Relative number (slower) (default: off)
-set listchars=space:·,tab:»\ ,eol:↲                             " Chars used for invisible chars
+" @see https://utf8-icons.com/
+set listchars=space:·,tab:»\ ,trail:+,eol:↲                     " Chars used for invisible chars
 set textwidth=120                                               " Breakline in Insert Mode (default: 0 => off)
 set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
@@ -691,7 +692,7 @@ function! s:find_filter(type, ...)
     if a:type ==# 'file'
         silent call fzf#vim#files(getcwd(), fzf#vim#with_preview({'options': ['--query', l:filter]}))
     else
-        silent execute 'Rg ' . l:filter
+        silent call <SID>rgfzf(l:filter, 0)
     endif
 endfunction
 
@@ -1261,9 +1262,9 @@ let g:highlightedyank_highlight_duration = 250
 " Jump to the existing buffer if is possible
 let g:fzf_buffers_jump = 1
 
-" String in current file dir (by default: current cursor word)
+" String in current file directory (by default: current cursor word)
 nnoremap <silent> <Leader>I :silent call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
-" Files in current file dir
+" Files in current file directory
 nnoremap <silent> <Leader>i :silent execute 'Files ' . expand('%:p:h')<Enter>
 " Files in current work directory
 nnoremap <silent> <Leader>p :silent Files<Enter>
@@ -1786,8 +1787,8 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
     autocmd BufRead,BufNewFile */i3/config setfiletype i3config | setlocal commentstring=#\ %s
     autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
-    autocmd BufRead,BufNewFile */{log,logs}/* setfiletype log
-    autocmd BufRead,BufNewFile *.log setfiletype log
+    autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log
+    autocmd BufRead,BufNewFile *.log setlocal filetype=log
     autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
     " autocmd BufRead,BufNewFile *.vpm setfiletype vpm
 
@@ -2082,9 +2083,6 @@ augroup AutoCommands
 
         return len(l:version) > 0 ? l:version : 'None'
     endfunction
-
-    " Rg not find in file names
-    command! -nargs=* -bang Rg call <SID>rgfzf(<q-args>, <bang>0)
 
     " Open files with external application
     autocmd BufEnter *.jpg,*.jpeg,*.png,*.gif,*.svg call <SID>go_url(expand('%')) | bwipeout
