@@ -99,6 +99,23 @@
 " 8. Never Expose Refactoring (Task for this, really: It's my responsability)
 " 9. Assume Unexpected Change (Makes and takes decisions)
 
+" WHY DON'T TRY NEOVIM
+" 1. Save as sudo with :W don't work    -> https://github.com/neovim/neovim/issues/1716
+" 2. Encryption don't exist :X          -> https://github.com/neovim/neovim/issues/701
+" n. Don't need installation :O
+
+" WHY TRY NEOVIM
+" 1. Jump between hunk keeps position :0
+" 2. Colors are less painful for my eyes in :terminal :|
+" 3. No brake changes :(vim9script, yeah):
+" 4. Better separator in vertical split :@
+" n. Faster, it's really (Of course, my setup) :D
+"           Version                     BARE    NO LSP(NC)  NO LSP(C)   LSP (CoC)
+"   Vim:    8.2.4949                    3.702ms 82.131ms    88.110ms    319.519ms
+"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  9.563ms 74.382ms    78.913ms    233.283ms
+"   Diff:                               -158.3% +9.5%       +10.5%      +33.1%    = 78.69 minutes/year open 15 times by day
+" @see https://neovim.io/doc/user/vim_diff.html
+
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
 " - @z  Save temp content used to yank in search using :Filter
