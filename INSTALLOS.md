@@ -248,6 +248,7 @@ ln -s `pwd`/.ideavimrc ~/.ideavimrc
 sudo apt-get install -y git-core
 ## sudo apt-get remove git-core && sudo apt-get autoremove
 ```
+> https://www.howtogeek.com/devops/how-to-completely-reset-a-git-repository-including-untracked-files/
 
 ## GIT Configuration
 

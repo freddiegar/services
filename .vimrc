@@ -1536,7 +1536,7 @@ let g:fugitive_no_maps = 1
 
 function! s:git_alias() abort
     let l:aliases = []
-    let l:lines = systemlist('cat ~/.bash_aliases | grep -e "^alias\(.*\)=\"git " | grep -v "log\|blame" | sed "s/alias \|\"//gi"')
+    let l:lines = systemlist('cat ~/.bash_aliases | grep -e "^alias\(.*\)=\"git " | grep -v "log\|blame\||" | sed "s/alias \|\"//gi"')
 
     for l:line in l:lines
         let [l:shortcut, l:command] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
