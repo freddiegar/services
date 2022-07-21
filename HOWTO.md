@@ -131,3 +131,21 @@ git rebase -i ffd697b
 git commit --amend -S --author="Freddie Gar <freddie@gar.com>" --no-edit
 git rebase --continue
 ```
+
+Supervisor error
+
+unix:///var/run/supervisor.sock no such file
+error: <class 'socket.error'>, [Errno 2] No such file or directory: file: /usr/lib/python2.7/socket.py line: 228
+
+```bash
+# Start deamon
+systemctl start supervisord
+
+## Double-check! Is diferent to:
+# Start instance on deamon
+# service supervisor start
+```
+> Fix adding service start auto after reboot: systemctl enable supervisord
+> service supervisor status
+> service supervisor start
+> service supervisor stop

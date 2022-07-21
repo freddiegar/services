@@ -2287,6 +2287,8 @@ augroup AutoCommands
         set formatoptions-=t                                    " No auto-wrap text in Insert Mode
     endfunction
 
+    command! -nargs=0 CleanSpaces call <SID>cleanspaces()
+
     function! s:cleanspaces() abort
         let l:ccursor = getpos('.')
         let l:lsearch = getreg('/')
