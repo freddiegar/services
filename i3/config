@@ -407,14 +407,14 @@ exec --no-startup-id xrandr --output $internal_mode --primary --output $external
 # @see https://faq.i3wm.org/question/239/how-do-i-suspendlockscreen-and-logout.1.html
 # @see https://wiki.archlinux.org/title/I3#Shutdown.2C_reboot.2C_lock_screen
 set $locker i3lock --color 000000 && sleep 1
-set $mode_system System (l)ocked, (e)xit, (s)uspend, (h)ibernate, (r)eboot, Shift+(s)hutdown
+set $mode_system System (l)ocked, (e)xit, (s)uspend, (h)ibernate, (R)eboot, (S)hutdown
 
 mode "$mode_system" {
     bindsym l exec          --no-startup-id $locker,                              mode "default"
     bindsym e exec          --no-startup-id i3-msg exit,                          mode "default"
     bindsym s exec          --no-startup-id $locker && systemctl suspend -i,      mode "default"
     bindsym h exec          --no-startup-id $locker && systemctl hibernate -i,    mode "default"
-    bindsym r exec          --no-startup-id systemctl reboot,                     mode "default"
+    bindsym Shift+r exec    --no-startup-id systemctl reboot,                     mode "default"
     bindsym Shift+s exec    --no-startup-id systemctl poweroff -i,                mode "default"
 
     # back to normal
