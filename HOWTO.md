@@ -81,6 +81,27 @@ dd if=/path/yo/file.iso of=/dev/sda status="progress"
 ```
 > [YT](https://www.youtube.com/watch?v=4PBqpX0_UOchttps://www.youtube.com/watch?v=4PBqpX0_UOc)
 
+Format USB stick
+
+```bash
+# List block devices
+lsblk
+
+# Connect USB, and run again: lsblk
+lsblk
+
+sudo dd if=/dev/zero of=/dev/sdb bs=4k status="progress"
+
+sudo fdisk /dev/sdb
+# After o -> Create DOS partition
+# After n -> Create new partition
+# After w -> Write changes
+
+sudo umount /dev/sdb1
+sudo reject /dev/sdb
+```
+> [SO](https://askubuntu.com/questions/198065/how-to-format-a-usb-drive)
+
 Convert id_rsa to ppk (Filezilla or Putty)
 
 ```bash
