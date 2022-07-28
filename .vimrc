@@ -1806,6 +1806,8 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
     autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log
     autocmd BufRead,BufNewFile *.log setlocal filetype=log
+    autocmd BufRead,BufNewFile *.{csv,tsv} setlocal filetype=csv list
+    autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=4
     autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
     " autocmd BufRead,BufNewFile *.vpm setfiletype vpm
 
@@ -1820,7 +1822,7 @@ augroup AutoCommands
     autocmd FileType vim setlocal keywordprg=:help
     autocmd FileType git setlocal foldmethod=syntax foldlevel=1
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
-    autocmd FileType markdown,log let b:coc_suggest_disable = 1
+    autocmd FileType markdown,log,csv let b:coc_suggest_disable = 1
 
     autocmd FileType html,css,javascript,vue EmmetInstall
 
