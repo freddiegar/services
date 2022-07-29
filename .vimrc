@@ -891,16 +891,16 @@ endfunction
 " string (string), [ignorechars (List)]: string
 function s:escape(string, ...) abort
     let l:escaped = a:string
-    let l:ignorechars = len(a:000) > 0 ? join(a:1) : ''
+    let l:ignorechars = len(a:000) > 0 ? a:1 : []
 
     " Escape backslash (\)
-    let l:escaped = index(['\'], l:ignorechars) >= 0 ? l:escaped : substitute(l:escaped, '\', '\\\\\\\\', 'g')
+    let l:escaped = index(l:ignorechars, '\') >= 0 ? l:escaped : substitute(l:escaped, '\', '\\\\\\\\', 'g')
     " Escape double quotes (")
-    let l:escaped = index(['"'], l:ignorechars) >= 0 ? l:escaped : substitute(l:escaped, '"', '\\"', 'g')
+    let l:escaped = index(l:ignorechars, '"') >= 0 ? l:escaped : substitute(l:escaped, '"', '\\"', 'g')
     " Escape single quotes (')
-    let l:escaped = index(["'"], l:ignorechars) >= 0 ? l:escaped : substitute(l:escaped, "'", "\\\\'", 'g')
+    let l:escaped = index(l:ignorechars, "'") >= 0 ? l:escaped : substitute(l:escaped, "'", "\\\\'", 'g')
     " Escape dollar sign ($)
-    let l:escaped = index(['$'], l:ignorechars) >= 0 ? l:escaped : substitute(l:escaped, '\$', '\\\$', 'g')
+    let l:escaped = index(l:ignorechars, '$') >= 0 ? l:escaped : substitute(l:escaped, '\$', '\\\$', 'g')
 
     return l:escaped
 endfunction
@@ -1622,13 +1622,6 @@ command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
 
 " range (0,1,2), interactive (0/1), [command (string)]: void
 function! s:run(range, interactive, ...) abort
-    let l:execute = 'php --run'
-    let l:escapechars = ["'"]
-
-    if filereadable('artisan')
-        let l:execute = 'php artisan tinker --execute'
-    endif
-
     let l:command = <SID>get_selection(a:range, a:interactive, a:000)
 
     if l:command ==# ''
@@ -1637,9 +1630,36 @@ function! s:run(range, interactive, ...) abort
         return 0
     endif
 
-    let l:result = system(join([l:execute, (l:command !=# '' ? '"' . <SID>escape(l:command, l:escapechars) . '"' : '')], ' '))
+    let l:execute = ''
+    let l:ignorechars = []
 
-    echo v:shell_error == 0 ? l:result : 'Run failed, check syntax.'
+    if &filetype ==# 'markdown'
+        let l:execute = 'bash -c'
+        let l:ignorechars = ["'", '\']
+    else
+        let l:execute = 'php --run'
+        let l:ignorechars = ["'"]
+
+        if filereadable('artisan')
+            let l:execute = 'php artisan tinker --execute'
+        endif
+    endif
+
+    let l:result = system(trim(join([l:execute, (l:command !=# '' ? '"' . <SID>escape(l:command, l:ignorechars) . '"' : '')], ' ')))
+
+    if v:shell_error
+        echohl WarningMsg
+        echo 'Run ' . &filetype . ' failed [' . v:shell_error . ']: ' . l:result
+        echohl None
+
+        return 1
+    endif
+
+    let @+ = l:result
+
+    echo @+
+
+    return 0
 endfunction
 
 command! -nargs=? -range -bang R call <SID>run(<range>, <bang>0, <f-args>)
