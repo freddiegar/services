@@ -419,7 +419,7 @@ sudo chmod +x /usr/local/bin/php-cs-fixer
 
 ```bash
 cd ~
-sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.10.2/phpmd.phar -o /usr/local/bin/phpmd
+sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.12.0/phpmd.phar -o /usr/local/bin/phpmd
 sudo chmod +x /usr/local/bin/phpmd
 ## Command:
 ## phpmd source/code format ruleset
@@ -454,7 +454,7 @@ lxqt-leave
 
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -710,7 +710,7 @@ sudo apt-get install ripgrep
 
 ```bash
 cd ~
-sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.18.2/bat_0.18.2_amd64.deb -o bat.deb
+sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.19.0/bat_0.19.0_amd64.deb -o bat.deb
 sudo dpkg -i bat.deb && rm -f bat.deb
 ## Command:
 ## bat file.php
@@ -748,7 +748,7 @@ sudo ln -s ~/.composer/vendor/bin/rector /usr/local/bin/phprector
 
 ```bash
 cd ~
-sudo curl -L https://github.com/infection/infection/releases/download/0.24.0/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.25.6/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command:
 ## infection -j$(nproc) [--filter=file.php]
@@ -781,7 +781,7 @@ sudo chmod +x /usr/local/bin/phpcpd
 
 ```bash
 cd ~
-sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.7.4/phpmetrics.phar -o /usr/local/bin/phpmetrics
+sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.8.1/phpmetrics.phar -o /usr/local/bin/phpmetrics
 sudo chmod +x /usr/local/bin/phpmetrics
 ## Command:
 ## phpmetrics --excluded-dirs vendor --report-html=./tests/coverage/phpmetrics .
@@ -1101,3 +1101,44 @@ sudo apt-get remove -y --purge libreoffice\* && sudo apt-get clean -y && sudo ap
 ```bash
 sudo apt-get autoremove -y && sudo apt-get autoclean -y
 ```
+
+# Summary
+
+date            : 2022-07-28
+so              : Ubuntu 18.04.5 LTS
+kernel          : 5.4.0-122-generic
+gcc             : 7.5.0
+ssl             : 1.1.1k
+i3              : 4.14.1
+konsole         : 17.12.3
+bash            : 4.4.20(1)-release
+zsh             : 5.4.2
+vim             : 8.2.1-4929
+docker-compose  : v2.7.0
+curl            : 7.58.0
+git             : 2.17.1
+docker          : 20.10.17
+feh             : 2.23.2
+maim            : v5.4.68
+bat             : 0.19.0
+
+> Ubuntu 22.04: https://discourse.ubuntu.com/t/jammy-jellyfish-release-notes/24668
+
+## Commands
+
+lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
+uname -r
+gcc --version | grep -e "^gcc" | awk '{print $4}'
+openssl version | awk '{print $2}'
+i3 --version | awk '{print $3}'
+konsole --version | awk '{print $2}'
+bash --version | grep -e "bash" | awk '{print $4}'
+zsh --version | awk '{print $2}'
+echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included " | awk '{print $3}'`
+curl --version | grep -e "^curl " | awk '{print $2}'
+git --version | awk '{print $3}'
+docker --version | awk '{print $3}'
+docker-compose --version | awk '{print $4}'
+feh --version | grep version | awk '{print $3}'
+maim --version | awk '{print $1}'
+bat --version | awk '{print $2}'

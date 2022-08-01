@@ -1643,6 +1643,8 @@ done
 find profile_${EXECUTABLE}_*.log -exec grep STARTED {} \; | cut -d' ' -f1 > $EXECUTABLE.time
 
 awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' $EXECUTABLE.time
+
+rm -Rf profile_*.log $EXECUTABLE.time
 ```
 > BARE:     $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log -u NONE
 > NO LSP:   $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log
