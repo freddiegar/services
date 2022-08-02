@@ -1172,28 +1172,29 @@ call plug#end()
 " @see https://github.com/neoclide/coc.nvim/blob/master/doc/coc-config.txt
 " ~/.vim/coc-settings.json
 "{
-"  "coc.source.around.priority": 1,
-"  "coc.source.buffer.priority": 2,
-"  "coc.source.file.priority": 10,
-"  "coc.preferences.snippetStatusText": "SNIPPET  ",
-"  "coc.preferences.extensionUpdateCheck": "weekly",
-"  "suggest.languageSourcePriority": 99,
-"  "suggest.disableKind": true,
-"  "suggest.disableMenu": true,
-"  "suggest.maxCompleteItemCount": 20,
-"  "suggest.triggerCompletionWait": 100,
-"  "suggest.minTriggerInputLength": 1,
-"  "suggest.snippetIndicator": "",
-"  "suggest.removeDuplicateItems": true,
-"  "diagnostic.enable": false,
-"  "diagnostic.enableSign": false,
-"  "diagnostic.signOffset": 9999999,
-"  "notification.disabledProgressSources": ["*"],
-"  "phpactor.enable": true,
-"  "phpactor.path": "~/.vim/plugged/phpactor/bin/phpactor",
-"  "clangd.enable": true,
-"  "clangd.path": "/usr/local/clang_9.0.0/bin/clangd",
-"  "vetur.ignoreProjectWarning": true
+"    "coc.preferences.extensionUpdateCheck": "weekly",
+"    "coc.preferences.snippetStatusText": "SNIPPET  ",
+"    "coc.source.around.priority": 1,
+"    "coc.source.buffer.priority": 2,
+"    "coc.source.file.priority": 10,
+"    "diagnostic.enable": false,
+"    "diagnostic.enableSign": false,
+"    "diagnostic.signOffset": 9999999,
+"    "notification.disabledProgressSources": ["*"],
+"    "suggest.enablePreselect": false,
+"    "suggest.languageSourcePriority": 99,
+"    "suggest.maxCompleteItemCount": 20,
+"    "suggest.minTriggerInputLength": 3,
+"    "suggest.noselect": true,
+"    "suggest.removeDuplicateItems": true,
+"    "suggest.selection": "recentlyUsed",
+"    "suggest.snippetIndicator": "",
+"    "suggest.triggerCompletionWait": 100,
+"    "phpactor.enable": true,
+"    "phpactor.path": "~/.vim/plugged/phpactor/bin/phpactor",
+"    "clangd.enable": true,
+"    "clangd.path": "/usr/local/clang_9.0.0/bin/clangd",
+"    "vetur.ignoreProjectWarning": true
 "}
 
 " ~/.config/phpactor/phpactor.json
@@ -1348,42 +1349,50 @@ let g:coc_global_extensions = [
     " \ 'coc-tailwindcss', Change class in HTML Files (blade included)
 
 " Use <Ctrl-Space> to trigger completion.
-inoremap <silent> <expr> <C-@> coc#refresh()
+if g:isneovim
+    inoremap <silent> <expr> <c-space> coc#refresh()
+else
+    inoremap <silent> <expr> <C-@> coc#refresh()
+endif
 
 " Use <Tab> to select pum value or jump between placeholder in snippets
 inoremap <silent> <expr> <Tab>
             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
-            \ pumvisible() ? "\<C-n>" : "\<Tab>"
+            \ coc#pum#visible() ? coc#pum#next(1) :
+            \ "\<Tab>"
 
 " In snippets with predefined values|content it uses Select Mode. WIP
 " snoremap <silent> <expr> <Tab>
 "             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
 "             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
-"             \ pumvisible() ? "\<C-n>" : "\<Tab>"
+"             \ coc#pum#visible() ? coc#pum#next(1) :
+"             \ "\<Tab>"
 
 " Make <S-Tab> for complete and snippet navigation
 " Konsole change shortcut <S-Tab> to <C-S-Tab>
 " @see https://vim.fandom.com/wiki/Smart_mapping_for_tab_completion
 inoremap <silent> <expr> <Esc>[Z
             \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
-            \ pumvisible() ? "\<C-p>" : "\<C-d>"
+            \ coc#pum#visible() ? coc#pum#prev(1) :
+            \ "\<C-d>"
 
 " Make <Esc> close popup menu, keep pending (Conflict with <Esc>[Z aka <S-Tab>)
 " Use <nowait> is required
 inoremap <silent> <nowait> <expr> <Esc>
-            \ pumvisible() ? "\<C-e>" : "\<Esc>"
+            \ coc#pum#visible() ? coc#pum#cancel() :
+            \ "\<Esc>"
 
 " Make <Enter> auto-select the first completion item
 inoremap <silent> <expr> <Enter>
-            \ pumvisible() ? coc#_select_confirm() : "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
+            \ coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
 
-" GoTo code navigation.
+" Code navigation
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-" Use K to show documentation in preview window.
+" Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<Enter>
 
 function! s:show_documentation() abort
