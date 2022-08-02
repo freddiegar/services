@@ -1121,6 +1121,7 @@ docker          : 20.10.17
 feh             : 2.23.2
 maim            : v5.4.68
 bat             : 0.19.0
+rg              : 0.9.0
 
 > Ubuntu 22.04: https://discourse.ubuntu.com/t/jammy-jellyfish-release-notes/24668
 
@@ -1142,3 +1143,4 @@ docker-compose --version | awk '{print $4}'
 feh --version | grep version | awk '{print $3}'
 maim --version | awk '{print $1}'
 bat --version | awk '{print $2}'
+rg --version | grep -e "^ripgrep" | awk '{print $2}'

@@ -9,21 +9,20 @@
  */
 require_once \realpath('/home/freddie/.composer/vendor/autoload.php');
 
+use Rector\Config\RectorConfig;
 use Rector\Core\Configuration\Option;
 use Rector\Php74\Rector\Property\TypedPropertyRector;
 use Rector\Set\ValueObject\SetList;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 // @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $containerConfigurator->import(SetList::CODE_QUALITY);
-    $containerConfigurator->import(SetList::CODING_STYLE);
-    $containerConfigurator->import(SetList::DEAD_CODE);
-    $containerConfigurator->import(SetList::DEFLUENT);
-    $containerConfigurator->import(SetList::PHP_74);
+return static function (RectorConfig $configurator): void {
+    $configurator->import(SetList::CODE_QUALITY);
+    $configurator->import(SetList::CODING_STYLE);
+    $configurator->import(SetList::DEAD_CODE);
+    $configurator->import(SetList::PHP_74);
 
-    $parameters = $containerConfigurator->parameters();
+    $parameters = $configurator->parameters();
 
     $parameters->set(Option::SKIP, [
         \Rector\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector::class,
@@ -47,7 +46,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         \Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class,
     ]);
 
-    $services = $containerConfigurator->services();
+    $services = $configurator->services();
 
     // Translate from @var to scalar value
     // - /**
