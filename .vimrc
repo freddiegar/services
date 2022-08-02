@@ -100,9 +100,11 @@
 " 9. Assume Unexpected Change (Makes and takes decisions)
 
 " WHY DON'T TRY NEOVIM
-" 1. Save as sudo with :W don't work    -> https://github.com/neovim/neovim/issues/1716
-" 2. Encryption don't exist :X          -> https://github.com/neovim/neovim/issues/701
-" n. Don't need installation :O
+" 1. :W command -> Save as sudo don't work      -> https://github.com/neovim/neovim/issues/1716
+" 2. :X command -> Encryption don't exist       -> https://github.com/neovim/neovim/issues/701
+" 3. :R command -> Command with sudo don't work -> @see #1
+" n. Don't need installation
+" @see https://vimhelp.org/version9.txt.html#new-9
 
 " WHY TRY NEOVIM
 " 1. Jump between hunk keeps position :0
@@ -110,10 +112,12 @@
 " 3. No brake changes :(vim9script, yeah):
 " 4. Better separator in vertical split :@
 " n. Faster, it's really (Of course, my setup) :D
-"           Version                     BARE    NO LSP(NC)  NO LSP(C)   LSP (CoC)
-"   Vim:    8.2.4949                    3.702ms 82.131ms    88.110ms    319.519ms
+"           Version                     BARE    NO LSP(NC)  NO LSP(C)   LSP (NC CoC)
+"   Vim:    8.2.1-4949                  3.702ms 82.131ms    88.110ms    319.519ms
+"   Vim9:   9.0.1-105                   5.039ms 80.240ms    83.352ms    291.892ms
+"   Diff:                               +136.1% -6.4%       - 5.4%      - 8.6%      = 25.20 minutes/year save open 15 times by day
 "   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  9.563ms 74.382ms    78.913ms    233.283ms
-"   Diff:                               -158.3% +9.5%       +10.5%      +33.1%    = 78.69 minutes/year open 15 times by day
+"   Diff:                               +158.3% -9.5%       -10.5%      -33.1%      = 78.69 minutes/year save open 15 times by day
 " @see https://neovim.io/doc/user/vim_diff.html
 
 " Registers and marks special used here
@@ -254,6 +258,7 @@ set splitright                                                  " :vsplit opens 
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
 set pumheight=15                                                " Maximum options showed in popup menu (default: 0)
 set cursorline                                                  " Highligth current line (default: off)
+set cmdheight=2                                                 " More spaces, less "Enter to continue..." messages
 
 if has('mouse')
     set mouse=a                                                 " Mouse exist always (default: "")
@@ -901,6 +906,8 @@ function s:escape(string, ...) abort
     let l:escaped = index(l:ignorechars, "'") >= 0 ? l:escaped : substitute(l:escaped, "'", "\\\\'", 'g')
     " Escape dollar sign ($)
     let l:escaped = index(l:ignorechars, '$') >= 0 ? l:escaped : substitute(l:escaped, '\$', '\\\$', 'g')
+    " Escape pipe (|)
+    " let l:escaped = index(l:ignorechars, '|') >= 0 ? l:escaped : substitute(l:escaped, '|', '\\|', 'g')
 
     return l:escaped
 endfunction
@@ -1645,7 +1652,7 @@ function! s:run(range, interactive, ...) abort
         endif
     endif
 
-    let l:result = system(trim(join([l:execute, (l:command !=# '' ? '"' . <SID>escape(l:command, l:ignorechars) . '"' : '')], ' ')))
+    let l:result = system(join([l:execute, (l:command !=# '' ? '"' . <SID>escape(l:command, l:ignorechars) . '"' : '')], ' '))
 
     if v:shell_error
         echohl WarningMsg
@@ -1655,7 +1662,7 @@ function! s:run(range, interactive, ...) abort
         return 1
     endif
 
-    let @+ = l:result
+    let @+ = trim(l:result)
 
     echo @+
 
