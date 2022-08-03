@@ -543,8 +543,10 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 " Improve search in fuzzy finder
 nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
+nnoremap <silent> <Leader>G :call <SID>find_filter('grep')<Enter>
 xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
+xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter('grep')<Enter>
 
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
@@ -713,6 +715,8 @@ function! s:find_filter(type, ...)
 
     if a:type ==# 'file'
         silent call fzf#vim#files(getcwd(), fzf#vim#with_preview({'options': ['--query', l:filter]}))
+    elseif a:type ==# 'grep'
+        silent call <SID>rgfzf(l:filter, 0, '', 1)
     else
         silent call <SID>rgfzf(l:filter, 0)
     endif
@@ -2146,10 +2150,11 @@ augroup AutoCommands
     " @see :help :function
     " @see :help function-argument
     " @see http://www.adp-gmbh.ch/vim/user_commands.html
-    " query (string), fullscreen (0/1), [dir (string)] : void
+    " query (string), fullscreen (0/1), [dir (string), fixed (0/1)] : void
     function! s:rgfzf(query, fullscreen, ...) abort
         let l:dir = a:0 > 0 && isdirectory(a:1) ? a:1 : ''
-        let l:finder_command = "rg --glob '!{*.log,*-lock.json,*.lock}' --column --line-number --no-heading --color=always --fixed-strings -- %s " . l:dir . ' || true'
+        let l:usegrep = a:0 > 1 && a:2 == 1 ? '--no-fixed-strings' : '--fixed-strings'
+        let l:finder_command = "rg --glob '!{*.log,*-lock.json,*.lock}' --column --line-number --no-heading --color=always " . l:usegrep . " -- %s " . l:dir . ' || true'
         let l:initial_command = printf(l:finder_command, shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
         let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
