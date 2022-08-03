@@ -550,7 +550,7 @@ xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter('grep')<Enter>
 
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
-            \ index(['', 'qf', 'netrw', 'help', 'vim-plug'], &filetype) >= 0
+            \ index(['', 'qf', 'netrw', 'help', 'vim-plug', 'GV'], &filetype) >= 0
             \ ? ":bdelete!<Enter>"
             \ : ":update
             \ <Bar> if buflisted(bufnr('#')) == 1 && bufname('#') !=# ''
@@ -1122,8 +1122,10 @@ Plug 'SirVer/ultisnips'                                         " Performance us
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
 
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers
+Plug 'junegunn/gv.vim'                                          " - Commits filter extension (need vim-fugitive) -> :GV[!]
+Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (need vim-fugitive) -> :GBrowse
+Plug 'mark2185/vim-fubitive'                                    " - BitBucket browser extension (need vim-fugitive) -> :GBrowse
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
-Plug 'junegunn/gv.vim'                                          " Commits filter (need vim-fugitive) -> :GV[!]
 
 Plug 'tpope/vim-dadbod'                                         " DB console in Vim
 
@@ -1838,7 +1840,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.tphp setfiletype php
     autocmd BufRead,BufNewFile .php_cs* setfiletype php
     autocmd BufRead,BufNewFile *.conf setfiletype apache
-    autocmd BufRead,BufNewFile *.json.* setfiletype json
+    autocmd BufRead,BufNewFile *.json.*,*.lock setfiletype json
     autocmd BufRead,BufNewFile *.twig setfiletype html | setlocal commentstring=\{#\ %s\ #\}
     autocmd BufRead,BufNewFile *.blade.php setfiletype html | setlocal commentstring=\{\{--\ %s\ --\}\}
     autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
