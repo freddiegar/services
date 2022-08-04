@@ -550,7 +550,7 @@ xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter('grep')<Enter>
 
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
-            \ index(['', 'qf', 'netrw', 'help', 'vim-plug', 'GV'], &filetype) >= 0
+            \ index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
             \ ? ":bdelete!<Enter>"
             \ : ":update
             \ <Bar> if buflisted(bufnr('#')) == 1 && bufname('#') !=# ''

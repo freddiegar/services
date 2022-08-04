@@ -170,3 +170,15 @@ systemctl start supervisord
 > service supervisor status
 > service supervisor start
 > service supervisor stop
+
+Install WP-CLI
+
+[See](https://github.com/wp-cli/wp-cli)
+[See 2](https://wordpress.stackexchange.com/questions/127917/generating-po-mo-translating-files-from-scratch-in-a-wordpress-theme)
+
+```bash
+sudo curl -L https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp
+sudo chmod +x /usr/local/bin/wp
+## Update: wp cli update
+## Generate .mo files from .po files: cd plugin && wp i18n make-mo languages languages
+```
