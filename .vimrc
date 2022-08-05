@@ -107,17 +107,17 @@
 " @see https://vimhelp.org/version9.txt.html#new-9
 
 " WHY TRY NEOVIM
-" 1. Jump between hunk keeps position :0
-" 2. Colors are less painful for my eyes in :terminal :|
+" 1. Jump between hunk keeps position                   -> set nostartofline
+" 2. Colors are less painful for my eyes in :terminal   -> use Vim9
 " 3. No brake changes :(vim9script, yeah):
 " 4. Better separator in vertical split :@
 " n. Faster, it's really (Of course, my setup) :D
 "           Version                     BARE    NO LSP(NC)  NO LSP(C)   LSP (NC CoC)
 "   Vim:    8.2.1-4949                  3.702ms 82.131ms    88.110ms    319.519ms
 "   Vim9:   9.0.1-105                   5.039ms 80.240ms    83.352ms    291.892ms
-"   Diff:                               +136.1% -6.4%       - 5.4%      - 8.6%      = 25.20 minutes/year save open 15 times by day
+"   Diff:                               +136.1% -6.4%       - 5.4%      - 8.6%      = 2.520 minutes/year save open 15 times by day
 "   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  9.563ms 74.382ms    78.913ms    233.283ms
-"   Diff:                               +158.3% -9.5%       -10.5%      -33.1%      = 78.69 minutes/year save open 15 times by day
+"   Diff:                               +158.3% -9.5%       -10.5%      -33.1%      = 7.869 minutes/year save open 15 times by day
 " @see https://neovim.io/doc/user/vim_diff.html
 
 " Registers and marks special used here
@@ -143,9 +143,10 @@ autocmd!
 
 set lazyredraw                                                  " No redraw when macro/script is running (default: off)
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
+set nostartofline                                               " No move to column 0 after some actions: jump between hunk, Ctrl+d, etc (default: on)
 
-set nowritebackup                                               " Not use backup before overwrite a file (default: depends). Use git!
-set noswapfile                                                  " Not swap for new buffer (default: on)
+set nowritebackup                                               " No use backup before overwrite a file (default: depends). Use git!
+set noswapfile                                                  " No swap for new buffer (default: on)
 " Options:
 " Relative or absoluts, explode by , (comma)
 " Spaces must be escape with: \ (backslash)
@@ -1897,7 +1898,7 @@ augroup AutoCommands
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
-                \ if &filetype !=# 'gitcommit' && line("'\"") > 0 && line("'\"") <= line('$') |
+                \ if &filetype !=# '\%(^git\%(config\)\@!\|commit\)' && line("'\"") > 0 && line("'\"") <= line('$') |
                 \   silent execute "normal! g`\"" |
                 \ endif
 
@@ -1909,6 +1910,7 @@ augroup AutoCommands
         autocmd TermOpen * if &buftype ==# 'terminal'
                     \ | setlocal bufhidden=wipe
                     \ | setlocal signcolumn=no
+                    \ | setlocal nolist
                     \ | if getbufvar(bufnr('%'), 'term_title')[-4:] ==# '/zsh'
                         \ | startinsert
                     \ | endif
@@ -1919,13 +1921,14 @@ augroup AutoCommands
                     \ | endif
 
         " Open Terminal Mode splitted (Same to Vim behaviour)
-        for option in ['te', 'ter', 'term', 'termi', 'termin', 'termina', 'terminal']
+        for option in ['ter', 'term', 'termi', 'termin', 'termina', 'terminal']
             silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() ==# '%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
                     \ | setlocal bufhidden=wipe
                     \ | setlocal signcolumn=no
+                    \ | setlocal nolist
                     \ | if expand('%')[-3:] !=? '!sh'
                         \ | tnoremap <silent> <buffer><Esc> <C-\><C-n><Enter>
                     \ | endif
