@@ -350,6 +350,28 @@ function! GetNameCurrentFile() abort
                 \ : ''
 endfunction
 
+function! AleStatuslineFlag() abort
+    let l:counters = ale#statusline#Count(bufnr(''))
+
+    if l:counters.total == 0
+        return ''
+    endif
+
+    let l:error = ale#statusline#FirstProblem(bufnr(''), 'error')
+
+    if !empty(l:error)
+        return printf('%d #%d !', l:error.lnum, l:counters.total)
+    endif
+
+    let l:warning = ale#statusline#FirstProblem(bufnr(''), 'warning')
+
+    if !empty(l:warning)
+        return printf('%d #%d ?', l:warning.lnum, l:counters.total)
+    endif
+
+    return ''
+endfunction
+
 set noruler                                                     " Position is showed in command-line (default: depends)
 set showmode                                                    " Mode is showed in command-line (default: on)
 set showcmd                                                     " Current pending command in command-line and visual
@@ -370,9 +392,9 @@ set laststatus=2                                                " Always show st
 function! s:statusline() abort
     set statusline=                                             " Start from scratch (default: empty)
 
-    if exists('g:loaded_syntastic_plugin')
+    if exists('g:loaded_ale_dont_use_this_in_other_plugins_please')
         set statusline+=%1*                                     " Set custom color
-        set statusline+=%{SyntasticStatuslineFlag()}            " Diagnostic info
+        set statusline+=%{AleStatuslineFlag()}                  " Diagnostic info
         set statusline+=%*                                      " Reset to default colors
     endif
 
@@ -1115,7 +1137,7 @@ Plug 'machakann/vim-swap'                                       " Swap args: g>,
 " Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
-Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly: unmanteined 2022-07-06
+Plug 'dense-analysis/ale'                                       " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
@@ -1168,7 +1190,7 @@ Plug 'freddiegar/miningbox.vim'                                 " Finally colors
 
 call plug#end()
 
-" Use Syntastic to diagnostics
+" Use ALE to diagnostics
 " LSP       ->  Language(s)
 " PHPActor  ->  php
 " CLangd    ->  c, c++
@@ -1320,20 +1342,22 @@ nnoremap <silent> <Leader>ts :TestSuite<Enter>
 nnoremap <silent> <Leader>tl :TestLast<Enter>
 nnoremap <silent> <Leader>tg :TestVisit<Enter>
 
-" Syntastic
-" @see https://github.com/vim-syntastic/syntastic
-let g:syntastic_stl_format = "%E{%fe #%e !}%B{,}%W{%fw #%w ?}"
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_enable_balloons = 0
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_enable_highlighting = 1
-let g:syntastic_error_symbol = 'E'
-let g:syntastic_warning_symbol = 'W'
-let g:syntastic_style_error_symbol = 'S'
-let g:syntastic_style_warning_symbol = 's'
+" ALE
+" @see https://github.com/dense-analysis/ale
+let g:ale_disable_lsp = 1
+let g:ale_linters_explicit = 1
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+let g:ale_set_balloons = 0
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_set_highlights = 1
+let g:ale_sign_error = 'E'
+let g:ale_sign_warning = 'W'
+let g:ale_echo_msg_format = '%s'
 
-" COC Completion
+" CoC Completion
 " @see https://github.com/neoclide/coc.nvim
 let g:coc_global_extensions = [
     \ 'coc-clangd',
@@ -1942,8 +1966,8 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>tS :TestSuite --testdox -vvv<Enter>
 
     " PHP Linter
-    autocmd FileType php let g:syntastic_php_checkers = ['php', 'phpmd']
-    autocmd FileType php let g:syntastic_php_phpmd_post_args = 'unusedcode'
+    autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
+    autocmd FileType php let g:ale_php_phpmd_ruleset = 'unusedcode'
 
     " PHP Refactor
     " @see https://github.com/phpactor/phpactor
