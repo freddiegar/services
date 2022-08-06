@@ -351,6 +351,16 @@ function! GetNameCurrentFile() abort
                 \ : ''
 endfunction
 
+function! GetNameBranch() abort
+    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
+        return ''
+    endif
+
+    let l:branchname = fugitive#Head(8)
+
+    return strlen(l:branchname) > 0 ? '  ' . split(l:branchname, '/')[0] . ' |' : ''
+endfunction
+
 function! AleStatuslineFlag() abort
     let l:counters = ale#statusline#Count(bufnr(''))
 
@@ -407,10 +417,12 @@ function! s:statusline() abort
 
     set statusline+=%=                                          " New group
     set statusline+=\%m                                         " Modified flag
+    set statusline+=\%r                                         " Read-only flag
+    set statusline+=%{GetNameBranch()}                          " Branch name repository
     set statusline+=\ %3{&filetype!=#''?&filetype.'\ \\|':''}   " Is it require description?
-    set statusline+=\ %{&fileencoding.'\ \\|'}                  " Is it require description?
-    set statusline+=\%<                                         " Truncate long statusline here
 
+    set statusline+=\%<                                         " Truncate long statusline here
+    set statusline+=\ %{&fileencoding.'\ \\|'}                  " Is it require description?
     set statusline+=\ c:%3c                                     " Cursor [c]olumn
 
     set statusline+=\                                           " Extra space
@@ -463,6 +475,7 @@ xnoremap <silent> Q :normal! @@<Enter>gv
 " Don't works as expected. Works append chars
 " xnoremap <silent> . :normal! .<Enter>gv
 nnoremap <silent> Y y$
+xnoremap <silent> Y y$
 " 'x    Jump to the beginning of the line of mark 'x'
 " `x    Jump to the cursor position of mark 'x'
 nnoremap <silent> gl `.
@@ -1213,7 +1226,7 @@ call plug#end()
 "    "suggest.enablePreselect": false,
 "    "suggest.languageSourcePriority": 99,
 "    "suggest.maxCompleteItemCount": 20,
-"    "suggest.minTriggerInputLength": 3,
+"    "suggest.minTriggerInputLength": 2,
 "    "suggest.noselect": true,
 "    "suggest.removeDuplicateItems": true,
 "    "suggest.selection": "recentlyUsed",
@@ -1858,7 +1871,7 @@ augroup AutoCommands
     autocmd!
 
     " Reload after save
-    autocmd BufWritePost .vimrc nested source ~/.vimrc
+    autocmd BufWritePost .vimrc,.vimrc.local nested source ~/.vimrc
 
     " Customization
     autocmd BufRead,BufNewFile .env.* setfiletype sh
