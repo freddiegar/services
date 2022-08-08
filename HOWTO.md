@@ -79,7 +79,7 @@ sudo su
 dd if=/path/yo/file.iso of=/dev/sda status="progress"
 # dd if=/home/freddie/Downloads/ISO/archlinux-2022.02.01-x86_64.iso of=/dev/sda status="progress"
 ```
-> [YT](https://www.youtube.com/watch?v=4PBqpX0_UOchttps://www.youtube.com/watch?v=4PBqpX0_UOc)
+> [YT](https://www.youtube.com/watch?v=4PBqpX0_UOc)
 
 Format USB stick
 

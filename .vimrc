@@ -101,7 +101,7 @@
 
 " WHY DON'T TRY NEOVIM
 " 1. :W command -> Save as sudo don't work      -> https://github.com/neovim/neovim/issues/1716
-" 2. :X command -> Encryption don't exist       -> https://github.com/neovim/neovim/issues/701
+" 2. :X command -> Encryption don't exist       -> https://github.com/neovim/neovim/issues/701 -> use GnuPG
 " 3. :R command -> Command with sudo don't work -> @see #1
 " n. Don't need installation
 " @see https://vimhelp.org/version9.txt.html#new-9
@@ -1177,6 +1177,7 @@ Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Perfor
 
 Plug 'machakann/vim-highlightedyank'                            " See yank preview
 Plug 'markonm/traces.vim'                                       " See range, substitution and global preview
+Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
