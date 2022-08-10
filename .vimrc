@@ -1404,6 +1404,7 @@ endif
 inoremap <silent> <expr> <Tab>
             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
+            \ pumvisible() ? "\<C-n>" :
             \ coc#pum#visible() ? coc#pum#next(1) :
             \ "\<Tab>"
 
@@ -1411,6 +1412,7 @@ inoremap <silent> <expr> <Tab>
 " snoremap <silent> <expr> <Tab>
 "             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
 "             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
+"             \ pumvisible() ? "\<C-n>" :
 "             \ coc#pum#visible() ? coc#pum#next(1) :
 "             \ "\<Tab>"
 
@@ -1419,18 +1421,32 @@ inoremap <silent> <expr> <Tab>
 " @see https://vim.fandom.com/wiki/Smart_mapping_for_tab_completion
 inoremap <silent> <expr> <Esc>[Z
             \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
+            \ pumvisible() ? "\<C-p>" :
             \ coc#pum#visible() ? coc#pum#prev(1) :
             \ "\<C-d>"
 
 " Make <Esc> close popup menu, keep pending (Conflict with <Esc>[Z aka <S-Tab>)
 " Use <nowait> is required
 inoremap <silent> <nowait> <expr> <Esc>
+            \ pumvisible() ? "\<C-e>" :
             \ coc#pum#visible() ? coc#pum#cancel() :
             \ "\<Esc>"
 
 " Make <Enter> auto-select the first completion item
 inoremap <silent> <expr> <Enter>
-            \ coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
+            \ pumvisible() ? "\<C-r>=<SID>pum_on_enter()\<Enter>" :
+            \ coc#pum#visible() ? coc#_select_confirm() :
+            \ "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
+
+function! s:pum_on_enter() abort
+    if len(v:completed_item) > 0
+        " Keep and confirm
+        return "\<C-y>"
+    endif
+
+    " Select and confirm
+    return "\<C-n>\<C-y>"
+endfunction
 
 " Code navigation
 nmap <silent> gd <Plug>(coc-definition)
