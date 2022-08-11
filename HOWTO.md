@@ -182,3 +182,32 @@ sudo chmod +x /usr/local/bin/wp
 ## Update: wp cli update
 ## Generate .mo files from .po files: cd plugin && wp i18n make-mo languages languages
 ```
+
+Install gh-CLI
+
+[See](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+
+```bash
+# Install
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y gh
+
+# Auth (need token from: https://github.com/settings/tokens)
+## Interactive
+gh auth login
+## or
+gh config set -h github.com git_protocol ssh
+```
+
+Test Localy PR from GitHub with gh
+
+[See](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/checking-out-pull-requests-locally)
+
+```bash
+cd /git/project
+gh pr checkout pull-request
+## gh pr checkout 43
+```

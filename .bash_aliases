@@ -128,7 +128,6 @@ alias gfhf="git flow hotfix finish"
 alias gfrs="git flow release start"
 alias gfrf="git flow release finish"
 
-alias gh="git blame --date=relative -w -L1"
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias glop="glog -p"
 alias glol="git show --name-only"
