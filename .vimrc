@@ -611,6 +611,12 @@ nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
 nnoremap <silent> ]q :<C-u>cnext<Enter>zzzv
 nnoremap <silent> [Q :<C-u>cfirst<Enter>zzzv
 nnoremap <silent> ]Q :<C-u>clast<Enter>zzzv
+
+nnoremap <silent> [l :<C-u>lprevious<Enter>zzzv
+nnoremap <silent> ]l :<C-u>lnext<Enter>zzzv
+nnoremap <silent> [L :<C-u>lfirst<Enter>zzzv
+nnoremap <silent> ]L :<C-u>llast<Enter>zzzv
+
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
@@ -1366,8 +1372,8 @@ let g:ale_lint_on_enter = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
 let g:ale_set_balloons = 0
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
+let g:ale_set_loclist = 1
+let g:ale_set_quickfix = 0
 let g:ale_set_highlights = 1
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
@@ -1860,6 +1866,7 @@ function! s:exception() abort
 endfunction
 
 noremap <silent> <F9> :call <SID>notes()<Enter>
+noremap <silent> <S-F9> :vsplit <Bar> call <SID>notes()<Enter>
 
 function! s:notes() abort
     let l:matches = []
