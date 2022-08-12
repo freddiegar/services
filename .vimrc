@@ -122,7 +122,7 @@
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
-" - @z  Save temp content used to yank in search using :Filter
+" - @z  Save temp content used to yank in search using :[F]ilter and anoter mappings
 " - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
 let g:isneovim = has('nvim')
@@ -522,8 +522,9 @@ command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
 
+" [F]ilter data in logs files easily
 " @see https://vim.fandom.com/wiki/Redirect_g_search_output
-" command! -nargs=? Filter let @z='' <Bar> execute 'g/<args>/y Z' <Bar> new <Bar> setlocal buftype=nofile <Bar> put<Bang> z
+command! -nargs=? F let @z='' <Bar> execute 'g/<args>/y Z' <Bar> new <Bar> setlocal buftype=nofile <Bar> put<Bang> z <Bar> call setreg('z', [])
 
 " Set file type fast
 cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'setfiletype php' : 'php'
