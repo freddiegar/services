@@ -137,6 +137,7 @@ set omnifunc=syntaxcomplete#Complete                            " Default comple
 set completefunc=syntaxcomplete#Complete                        " Default complete function in buffers (default: empty)
 set fileencoding=utf-8                                          " Output encoding of the file that is written
                                                                 " (default: empty, but fzf.vim: utf-8)
+
 " ALL in one BIG autocmd
 execute 'augroup ALL1BIG'
 autocmd!
@@ -613,7 +614,7 @@ nnoremap <silent> ]Q :<C-u>clast<Enter>zzzv
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
-nnoremap <silent> yov :<C-U>set <C-r>=(&virtualedit =~# 'all')
+nnoremap <silent> yov :<C-u>set <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all'<Enter><Enter>
 
@@ -1557,6 +1558,10 @@ augroup LargeFile
 augroup END
 
 function! s:check_large_file(file) abort
+    if a:file ==# '' || index(['jpg', 'jpeg', 'png', 'gif', 'svg', 'pdf'], expand(a:file . ':t'))
+        return
+    endif
+
     " File is large from 2MB
     let l:maxsize = 1024 * 1024 * 2
     let l:fsize = getfsize(a:file)
@@ -2203,8 +2208,8 @@ augroup AutoCommands
     endfunction
 
     " Open files with external application
-    autocmd BufEnter *.jpg,*.jpeg,*.png,*.gif,*.svg call <SID>go_url(expand('%')) | bwipeout
-    autocmd BufEnter *.pdf call <SID>go_url(expand('%')) | bwipeout
+    autocmd BufEnter *.jpg,*.jpeg,*.png,*.gif,*.svg call <SID>go_url(expand('<afile>')) | bwipeout
+    autocmd BufEnter *.pdf call <SID>go_url(expand('<afile>')) | bwipeout
 
     " @see :help :function
     " @see :help function-argument
