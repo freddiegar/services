@@ -2424,8 +2424,17 @@ augroup AutoCommands
         endfor
     endfunction
 
+    function! s:settitle(title) abort
+        if expand('%')[-3:] ==? '!sh' || (g:isneovim && getbufvar(bufnr('%'), 'term_title')[-3:] ==? 'fzf')
+            return
+        endif
+
+        silent execute '!echo -ne "\033]30;' . a:title . '\007"'
+    endfunction
+
     autocmd VimEnter * nested call <SID>sessionload() | call <SID>cleanregistes()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
+    autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
     " Cursorline only in window active, not on Insert Mode
     autocmd WinEnter,VimEnter,BufWinEnter * setlocal cursorline
     autocmd WinLeave * setlocal nocursorline
@@ -2434,6 +2443,7 @@ augroup AutoCommands
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
     autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
+    autocmd VimLeave * call <SID>settitle('$USER@$HOST')
     " " Auto-source syntax in *.vpm
     " autocmd BufNewFile,BufRead *.vpm
     "     \ if filereadable(expand('syntax.vim')) |
