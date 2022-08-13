@@ -914,7 +914,7 @@ function! s:get_masked(type) abort
     let l:type = confirm('Select mask:', "&symbols\n&rot13", 1, 'Q')
 
     if l:type ==# 0
-        " Cancelled
+        " Canceled
     elseif l:type ==# 1
         " Replaced symbols -> * (no spaces)
         silent execute "s/\\%V[^a-zA-Z0-9 ]/*/ge"
@@ -1721,24 +1721,43 @@ function! s:run(range, interactive, ...) abort
 
     let l:execute = ''
     let l:ignorechars = []
+    let l:runner = &filetype
 
-    if &filetype ==# 'markdown'
-        let l:execute = 'bash -c'
+    if l:runner ==# ''
+        let l:runner = confirm('Select runner:', "&bash\n&php", 2, 'Q')
+    endif
+
+    if l:runner ==# ''
+        echo 'Run canceled.'
+
+        return 0
+    elseif l:runner ==# 1 || index(['markdown', 'sh'], l:runner) >= 0
+        let l:execute = 'bash -c "%s"'
         let l:ignorechars = ["'", '\']
-    else
-        let l:execute = 'php --run'
+    elseif l:runner ==# 2 ||  index(['php'], l:runner) >= 0
+        let l:execute = 'php --run "%s"'
         let l:ignorechars = ["'"]
 
         if filereadable('artisan')
-            let l:execute = 'php artisan tinker --execute'
+            let l:execute = 'php artisan tinker --execute "dump(%s)"'
         endif
+    else
+        echohl ErrorMsg
+        echo 'Run ' . l:runner . ' unsupported.'
+        echohl None
+
+        return 2
     endif
 
-    let l:result = system(join([l:execute, (l:command !=# '' ? '"' . <SID>escape(l:command, l:ignorechars) . '"' : '')], ' '))
+    let l:run = printf(l:execute, l:command)
+    let l:result = system(l:run)
 
     if v:shell_error
+        let @+ = l:run
+
+        echo l:run
         echohl WarningMsg
-        echo 'Run ' . &filetype . ' failed [' . v:shell_error . ']: ' . l:result
+        echo 'Run ' . l:runner . ' failed [' . v:shell_error . ']: ' . l:result
         echohl None
 
         return 1
