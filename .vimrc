@@ -524,7 +524,7 @@ cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' :
 
 " [F]ilter data in logs files easily
 " @see https://vim.fandom.com/wiki/Redirect_g_search_output
-command! -nargs=? F let @z='' <Bar> execute 'g/<args>/y Z' <Bar> new <Bar> setlocal buftype=nofile <Bar> put<Bang> z <Bar> call setreg('z', [])
+command! -nargs=? F let @z='' <Bar> execute 'g/<args>/y Z' <Bar> new <Bar> setlocal buftype=nofile noswapfile<Bar> put<Bang> z <Bar> call setreg('z', [])
 
 " Set file type fast
 cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'setfiletype php' : 'php'
@@ -1508,8 +1508,14 @@ function! s:go_url(url) abort
 
     let l:uri = substitute(l:uri, '"', '', 'ge')
     let l:uri = substitute(l:uri, "'", '', 'ge')
-    " let l:uri = substitute(l:uri, '?', '\\?', 'ge')
-    let l:uri = substitute(l:uri, ' ', '\\ ', 'ge')
+
+    if match(l:uri, '\\') < 0
+        " No escape yet
+        let l:uri = substitute(l:uri, '?', '\\?', 'ge')
+        let l:uri = substitute(l:uri, '&', '\\&', 'ge')
+        let l:uri = substitute(l:uri, ' ', '\\ ', 'ge')
+    endif
+
     let l:uri = trim(l:uri, ',')
 
     if l:uri !=# ''
@@ -1920,7 +1926,7 @@ augroup AutoCommands
     autocmd!
 
     " Reload after save
-    autocmd BufWritePost .vimrc,.vimrc.local nested source ~/.vimrc
+    autocmd BufWritePost .vimrc nested source ~/.vimrc
 
     " Customization
     autocmd BufRead,BufNewFile .env.* setfiletype sh
