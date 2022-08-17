@@ -419,8 +419,9 @@ function! s:statusline() abort
     set statusline+=%=                                          " New group
     set statusline+=\%m                                         " Modified flag
     set statusline+=\%r                                         " Read-only flag
+    set statusline+=%{&wrapscan==0?'[nw]':''}                   " Wrapscan flag
     set statusline+=%{GetNameBranch()}                          " Branch name repository
-    set statusline+=\ %3{&filetype!=#''?&filetype.'\ \\|':''}   " Is it require description?
+    set statusline+=%3{&filetype!=#''?'\ \ '.&filetype.'\ \\|':''} " Is it require description?
 
     set statusline+=\%<                                         " Truncate long statusline here
     set statusline+=\ %{&fileencoding.'\ \\|'}                  " Is it require description?
@@ -620,8 +621,9 @@ nnoremap <silent> ]L :<C-u>llast<Enter>zzzv
 
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
+nnoremap <silent> yos :<C-u>set wrapscan!<Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
-nnoremap <silent> yov :<C-u>set <C-r>=(&virtualedit =~# 'all')
+nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all'<Enter><Enter>
 
@@ -1075,6 +1077,9 @@ cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
+" Auto-complete files in command line
+" @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
+cnoremap <C-x><C-a> <C-a>
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
@@ -2024,7 +2029,6 @@ augroup AutoCommands
     " autocmd FileType vpm nnoremap <silent> <buffer>.b :.!toilet -w 200 -f term -F border<Enter>
 
     " PHP Customization
-    autocmd FileType php inoremap <silent> <buffer><Leader>uu <Esc>:call phpactor#UseAdd()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
 
     " PHP Testing
