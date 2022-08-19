@@ -133,6 +133,7 @@ set nomodeline                                                  " Security!: Not
 set secure                                                      " Security!: Not autocmd in .vimrc file (default: off)
 set exrc                                                        " Always search config in .vimrc file (default: off)
 set hidden                                                      " Allow change between buffer without save (default: off)
+set viminfofile="NONE"                                          " Inactivate out git repositories
 set omnifunc=syntaxcomplete#Complete                            " Default complete function global (default: empty)
 set completefunc=syntaxcomplete#Complete                        " Default complete function in buffers (default: empty)
 set fileencoding=utf-8                                          " Output encoding of the file that is written
@@ -2371,6 +2372,28 @@ augroup AutoCommands
 
     command! -bar -bang -nargs=? -complete=file Dotenv call <SID>envload(<bang>0, <f-args>)
 
+    function! s:viminfo() abort
+        if !g:hasgit
+            return
+        endif
+
+        if g:isneovim
+            let l:infofile = '.git/.shada'
+            set shadafile=.git/.shada
+        else
+            let l:infofile = '.git/.viminfo'
+            set viminfofile=.git/.viminfo
+        endif
+
+        if !filereadable(l:infofile)
+            return
+        endif
+
+        silent execute (g:isneovim ? 'rshada! ' : 'rviminfo! ') . l:infofile
+
+        echomsg 'Loaded ' . l:infofile . ' info.'
+    endfunction
+
     " Save|Load sessions
     let g:session_file =  expand('~/.vim/sessions/' . join(split(getcwd(), '/')[-2:], '@') . (g:isneovim ? '.nvim' : '.vim'))
 
@@ -2462,7 +2485,7 @@ augroup AutoCommands
         silent execute '!echo -ne "\033]30;' . a:title . '\007"'
     endfunction
 
-    autocmd VimEnter * nested call <SID>sessionload() | call <SID>cleanregistes()
+    autocmd VimEnter * nested call <SID>viminfo() | call <SID>sessionload() | call <SID>cleanregistes()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
     " Cursorline only in window active, not on Insert Mode
