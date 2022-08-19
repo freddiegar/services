@@ -125,6 +125,7 @@
 " - @z  Save temp content used to yank in search using :[F]ilter and anoter mappings
 " - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
+let g:infofile = ''
 let g:isneovim = has('nvim')
 let g:hasgit = isdirectory('.git')
 
@@ -133,7 +134,6 @@ set nomodeline                                                  " Security!: Not
 set secure                                                      " Security!: Not autocmd in .vimrc file (default: off)
 set exrc                                                        " Always search config in .vimrc file (default: off)
 set hidden                                                      " Allow change between buffer without save (default: off)
-set viminfofile="NONE"                                          " Inactivate out git repositories
 set omnifunc=syntaxcomplete#Complete                            " Default complete function global (default: empty)
 set completefunc=syntaxcomplete#Complete                        " Default complete function in buffers (default: empty)
 set fileencoding=utf-8                                          " Output encoding of the file that is written
@@ -342,13 +342,13 @@ let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some exte
 let g:netrw_sizestyle = 'H'                                     " Human-readable: 5K, 4M, uses 1024 base (default: [b]ytes)
 
 function! GetNameCurrentPath() abort
-    return index(['quickfix', 'terminal', 'help'], &buftype) == -1 && &filetype !=# 'netrw'
+    return index(['quickfix', 'terminal', 'help'], &buftype) == -1 && index(['netrw', 'vim-plug', 'fugitive'], &filetype) < 0
                 \ ? split(getcwd(), '/')[-1] . (expand('%:t') !=# '' ? ' -> ' : '')
                 \ : ''
 endfunction
 
 function! GetNameCurrentFile() abort
-    return &buftype !=# 'terminal' && &filetype !=# 'netrw'
+    return &buftype !=# 'terminal' && index(['netrw', 'vim-plug', 'fugitive'], &filetype) < 0
                 \ ? expand('%:~')
                 \ : ''
 endfunction
@@ -445,7 +445,7 @@ noremap <Space> <Nop>
 xmap < <gv
 xmap > >gv
 
-" Purify!
+" Purify! in Normal|Select|Operator Mode
 noremap <Up> <Nop>
 noremap <Down> <Nop>
 noremap <Left> <Nop>
@@ -465,7 +465,7 @@ cnoremap <Right> <Nop>
 
 " Moving between windows fast, except in Terminal Mode!
 " @see https://www.reddit.com/r/vim/comments/hrlric/comment/fy58mvp
-" Then: Resize windows
+" Then: Resize windows <- Fails from netrw buffer :/
 nnoremap <silent> <C-k> :resize -5<Enter>
 nnoremap <silent> <C-j> :resize +5<Enter>
 nnoremap <silent> <C-h> :vertical resize -5<Enter>
@@ -584,6 +584,7 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
 nnoremap <silent> <Leader>G :call <SID>find_filter('grep')<Enter>
+
 xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter('grep')<Enter>
@@ -1897,6 +1898,7 @@ function! s:exception() abort
     return join(split(v:exception, ' ')[1:-1], ' ')
 endfunction
 
+" Open notes in Normal|Select|Operator Mode
 noremap <silent> <F9> :call <SID>notes()<Enter>
 noremap <silent> <S-F9> :vsplit <Bar> call <SID>notes()<Enter>
 
@@ -2378,20 +2380,20 @@ augroup AutoCommands
         endif
 
         if g:isneovim
-            let l:infofile = '.git/.shada'
-            set shadafile=.git/.shada
+            let g:infofile = '.git/.shada'
+            let &shadafile = g:infofile
         else
-            let l:infofile = '.git/.viminfo'
-            set viminfofile=.git/.viminfo
+            let g:infofile = '.git/.viminfo'
+            let &viminfofile = g:infofile
         endif
 
-        if !filereadable(l:infofile)
+        if !filereadable(g:infofile)
+            let g:infofile = ''
+
             return
         endif
 
-        silent execute (g:isneovim ? 'rshada! ' : 'rviminfo! ') . l:infofile
-
-        echomsg 'Loaded ' . l:infofile . ' info.'
+        silent execute (g:isneovim ? 'rshada! ' : 'rviminfo! ') . g:infofile
     endfunction
 
     " Save|Load sessions
@@ -2405,9 +2407,9 @@ augroup AutoCommands
         if !argc() && g:hasgit && empty(v:this_session) && filereadable(g:session_file) && !&modified
             silent execute 'source ' . g:session_file
 
-            let l:message = 'Loaded ' . l:session . ' session##ENV##.'
+            let l:message = 'Loaded ' . l:session . ' session##ENV####INF##.'
         elseif !argc() && g:hasgit
-            let l:message = 'None ' . l:session . ' session##ENV##.'
+            let l:message = 'None ' . l:session . ' session##ENV####INF##.'
         endif
 
         if l:envfile !=# ''
@@ -2416,8 +2418,15 @@ augroup AutoCommands
             let l:message = l:message ==# '' ? 'Loaded ' . l:envfile . ' vars.' : substitute(l:message, '##ENV##', ' with ' . l:envfile . ' file', '')
         endif
 
+        if g:infofile !=# ''
+            let l:message = l:message ==# '' ? 'Loaded ' . g:infofile . ' setup.' : substitute(l:message, '##INF##', ' and ' . g:infofile . ' setup', '')
+        endif
+
         if l:message !=# ''
-            echomsg substitute(l:message, '##ENV##', '' , '')
+            let l:message = substitute(l:message, '##ENV##', '' , '')
+            let l:message = substitute(l:message, '##INF##', '' , '')
+
+            echomsg l:message
         endif
     endfunction
 
