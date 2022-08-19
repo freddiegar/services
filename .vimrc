@@ -582,11 +582,12 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 
 " Improve search in fuzzy finder
 nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
-nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
-nnoremap <silent> <Leader>G :call <SID>find_filter('grep')<Enter>
-
 xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
+
+nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
 xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
+
+nnoremap <silent> <Leader>G :call <SID>find_filter('grep')<Enter>
 xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter('grep')<Enter>
 
 " Close current buffer (saving changes and buffer space)
@@ -1346,14 +1347,18 @@ let g:highlightedyank_highlight_duration = 250
 let g:fzf_buffers_jump = 1
 
 " String in current file directory (by default: current cursor word)
-nnoremap <silent> <Leader>I :silent call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
+nnoremap <silent> <Leader>I :call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
+xnoremap <silent> <Leader>I :<C-u>call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
 " Files in current file directory
-nnoremap <silent> <Leader>i :silent execute 'Files ' . expand('%:p:h')<Enter>
+nnoremap <silent> <Leader>i :execute 'Files ' . expand('%:p:h')<Enter>
+xnoremap <silent> <Leader>i :<C-u>execute 'Files ' . expand('%:p:h')<Enter>
 " Files in current work directory
-nnoremap <silent> <Leader>p :silent Files<Enter>
+nnoremap <silent> <Leader>p :Files<Enter>
+xnoremap <silent> <Leader>p :<C-u>Files<Enter>
 " GFiles or Files in current work directory
-nnoremap <silent> <expr> <Leader>o
-            \ g:hasgit ? ":silent execute 'GFiles'<Enter>" : ":silent execute 'Files'<Enter>"
+nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'GFiles' : 'Files') . "<Enter>"
+xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'GFiles' : 'Files') . "<Enter>"
+
 
 " Tests
 " https://github.com/vim-test/vim-test
