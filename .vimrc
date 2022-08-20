@@ -145,6 +145,7 @@ autocmd!
 set lazyredraw                                                  " No redraw when macro/script is running (default: off)
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
 set nostartofline                                               " No move to column 0 after some actions: jump between hunk, Ctrl+d, etc (default: on)
+set viminfofile="NONE"                                          " No viminfofile if out .git
 
 set nowritebackup                                               " No use backup before overwrite a file (default: depends). Use git!
 set noswapfile                                                  " No swap for new buffer (default: on)
@@ -2480,7 +2481,7 @@ augroup AutoCommands
             return
         endif
 
-        silent execute (g:isneovim ? 'rshada! ' : 'rviminfo! ') . g:infofile
+        silent execute (g:isneovim ? 'rshada ' : 'rviminfo ') . g:infofile
     endfunction
 
     " Save|Load sessions
