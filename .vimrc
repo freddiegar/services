@@ -177,7 +177,7 @@ set diffopt+=indent-heuristic                                   " Use same inden
 set diffopt+=algorithm:histogram                                " Mayers Linear++
 
 if g:isneovim
-    set wildoptions-=pum                                        " Don't use popupmenu for wildmode completion
+    set wildoptions-=pum                                        " Don't use popup menu for wildmode completion
     set inccommand=nosplit                                      " Preview substitute command
 endif
 
@@ -374,7 +374,7 @@ function! AleStatuslineFlag() abort
     let l:error = ale#statusline#FirstProblem(bufnr(''), 'error')
 
     if !empty(l:error)
-        silent call <SID>popup_show(printf(' Error %s:%d ', expand('%:p:t'), l:error.lnum), l:error.text)
+        silent call <SID>popup_show(printf(' %s:%d ', expand('%:p:t'), l:error.lnum), l:error.text)
 
         return printf('%d #%d !', l:error.lnum, l:counters.total)
     endif
@@ -1411,9 +1411,6 @@ function! s:popup_show(title, message) abort
     if !exists('w:winpopup') || index(popup_list(), w:winpopup.id) < 0
         let l:popupid = popup_create([], #{
                     \ pos: 'center',
-                    \ minwidth: 80,
-                    \ maxwidth: 100,
-                    \ title: a:title,
                     \ close: 'click',
                     \ zindex: 300,
                     \ padding: [1, 2, 1, 2],
@@ -1425,8 +1422,12 @@ function! s:popup_show(title, message) abort
         let w:winpopup = { 'id': l:popupid }
     endif
 
+    call popup_setoptions(w:winpopup.id, #{
+                \ title: a:title,
+                \ })
     call popup_settext(w:winpopup.id, a:message)
     call popup_show(w:winpopup.id)
+    call <SID>popup_resize()
 endfunction
 
 function! s:popup_hide() abort
@@ -1435,6 +1436,39 @@ function! s:popup_hide() abort
     endif
 
     call popup_hide(w:winpopup.id)
+endfunction
+
+function! s:popup_resize() abort
+    if !exists('w:winpopup')
+        return
+    endif
+
+    let l:winwidth = winwidth(0)
+    let l:winheight = winheight(0)
+    let l:winpopuppos = popup_getpos(w:winpopup.id)
+
+    if l:winwidth < 100 || l:winheight < 15 || !l:winpopuppos.visible
+        call <SID>popup_hide()
+
+        return
+    endif
+
+    " [T]op [R]ight
+    " let l:coordinates = #{ pos: 'topright', col: l:winwidth, line: 1 }
+
+    " [C]enter
+    " let l:coordinates = #{ pos: 'center' }
+
+    " [B]ottom
+    " let l:coordinates = #{ pos: 'botleft', col: (l:winwidth / 2) - (l:winpopuppos.width / 2), line: l:winheight }
+
+    " [B]ottom [L]eft
+    " let l:coordinates = #{ pos: 'botleft', col: 6, line: l:winheight }
+
+    " [B]ottom [R]ight
+    let l:coordinates = #{ pos: 'botright', col: l:winwidth, line: l:winheight }
+
+    call popup_move(w:winpopup.id, l:coordinates)
 endfunction
 
 " CoC Completion
