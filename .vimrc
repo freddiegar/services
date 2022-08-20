@@ -363,6 +363,8 @@ function! GetNameBranch() abort
 endfunction
 
 function! AleStatuslineFlag() abort
+    silent call <SID>popup_hide()
+
     let l:counters = ale#statusline#Count(bufnr(''))
 
     if l:counters.total == 0
@@ -372,6 +374,8 @@ function! AleStatuslineFlag() abort
     let l:error = ale#statusline#FirstProblem(bufnr(''), 'error')
 
     if !empty(l:error)
+        silent call <SID>popup_show(printf(' Error %s:%d ', expand('%:p:t'), l:error.lnum), l:error.text)
+
         return printf('%d #%d !', l:error.lnum, l:counters.total)
     endif
 
@@ -1398,6 +1402,40 @@ let g:ale_set_highlights = 1
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
 let g:ale_echo_msg_format = '%s'
+
+function! s:popup_show(title, message) abort
+    if g:isneovim
+        return
+    endif
+
+    if !exists('w:winpopup') || index(popup_list(), w:winpopup.id) < 0
+        let l:popupid = popup_create([], #{
+                    \ pos: 'center',
+                    \ minwidth: 80,
+                    \ maxwidth: 100,
+                    \ title: a:title,
+                    \ close: 'click',
+                    \ zindex: 300,
+                    \ padding: [1, 2, 1, 2],
+                    \ border: [],
+                    \ hidden: 1,
+                    \ highlight: 'WarningMsg',
+                    \ })
+
+        let w:winpopup = { 'id': l:popupid }
+    endif
+
+    call popup_settext(w:winpopup.id, a:message)
+    call popup_show(w:winpopup.id)
+endfunction
+
+function! s:popup_hide() abort
+    if !exists('w:winpopup')
+        return
+    endif
+
+    call popup_hide(w:winpopup.id)
+endfunction
 
 " CoC Completion
 " @see https://github.com/neoclide/coc.nvim
