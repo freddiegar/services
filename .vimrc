@@ -125,7 +125,6 @@
 " - @z  Save temp content used to yank in search using :[F]ilter and anoter mappings
 " - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
-let g:infofile = ''
 let g:isneovim = has('nvim')
 let g:hasgit = isdirectory('.git')
 
@@ -482,6 +481,12 @@ xnoremap <silent> Y y$
 " 'x    Jump to the beginning of the line of mark 'x'
 " `x    Jump to the cursor position of mark 'x'
 nnoremap <silent> gl `.
+
+" Marks using exact position in Normal|Select|Operator Mode
+noremap ` '
+noremap ' `
+noremap '' ``
+noremap `` ''
 
 " Not use [*|#]``zzzv, error on 1 ocurrence
 " Center screen (zz) after each search and open folds (zv)
@@ -1358,7 +1363,9 @@ xnoremap <silent> <Leader>p :<C-u>Files<Enter>
 " GFiles or Files in current work directory
 nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'GFiles' : 'Files') . "<Enter>"
 xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'GFiles' : 'Files') . "<Enter>"
-
+" Marks in current project directory
+nnoremap <silent> <Leader>J :Marks<Enter>
+xnoremap <silent> <Leader>J :<C-u>Marks<Enter>
 
 " Tests
 " https://github.com/vim-test/vim-test
@@ -2378,6 +2385,9 @@ augroup AutoCommands
     endfunction
 
     command! -bar -bang -nargs=? -complete=file Dotenv call <SID>envload(<bang>0, <f-args>)
+
+    " Viminfofile setup
+    let g:infofile = ''
 
     function! s:viminfo() abort
         if !g:hasgit
