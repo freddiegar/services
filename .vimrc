@@ -417,13 +417,14 @@ function! s:statusline() abort
 
     set statusline+=\                                           " Extra space
 
-    " This expressions redraw statusline after save file always
+    " This expressions redraw statusline after save file always (slower)
     set statusline+=%{GetNameCurrentPath()}                     " Relative folder
     set statusline+=%{GetNameCurrentFile()}                     " Relative filename
 
     set statusline+=%=                                          " New group
     set statusline+=\%m                                         " Modified flag
     set statusline+=\%r                                         " Read-only flag
+    set statusline+=%{&virtualedit=~#'all'?'[v]':''}            " Virtual edit flag
     set statusline+=%{&wrapscan==0?'[nw]':''}                   " Wrapscan flag
     set statusline+=%{GetNameBranch()}                          " Branch name repository
     set statusline+=%3{&filetype!=#''?'\ \ '.&filetype.'\ \\|':''} " Is it require description?
@@ -632,8 +633,14 @@ nnoremap <silent> ]l :<C-u>lnext<Enter>zzzv
 nnoremap <silent> [L :<C-u>lfirst<Enter>zzzv
 nnoremap <silent> ]L :<C-u>llast<Enter>zzzv
 
+nnoremap <silent> [b :<C-u>bprevious<Enter>
+nnoremap <silent> ]b :<C-u>bnext<Enter>
+nnoremap <silent> [B :<C-u>bfirst<Enter>
+nnoremap <silent> ]B :<C-u>blast<Enter>
+
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
+nnoremap <silent> yor :<C-u>set relativenumber!<Enter>
 nnoremap <silent> yos :<C-u>set wrapscan!<Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
 nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
@@ -2617,7 +2624,7 @@ function! s:get_hlinfo() abort
 endfunction
 
 " nmap <silent> <F5> :call <SID>presentation_mode()<Enter>
-nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
+" nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
 
 " let g:presentation_mode = 0
 
