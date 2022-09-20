@@ -424,8 +424,9 @@ function! s:statusline() abort
     set statusline+=%=                                          " New group
     set statusline+=\%m                                         " Modified flag
     set statusline+=\%r                                         " Read-only flag
+    set statusline+=%{&wrap==0?'':'[w]'}                        " Wrap flag
+    set statusline+=%{&wrapscan==0?'[s]':''}                    " Wrapscan flag
     set statusline+=%{&virtualedit=~#'all'?'[v]':''}            " Virtual edit flag
-    set statusline+=%{&wrapscan==0?'[nw]':''}                   " Wrapscan flag
     set statusline+=%{GetNameBranch()}                          " Branch name repository
     set statusline+=%3{&filetype!=#''?'\ \ '.&filetype.'\ \\|':''} " Is it require description?
 
