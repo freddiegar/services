@@ -16,4 +16,6 @@
 
 #     RequestHeader set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME}
 #     RequestHeader set "X-Forwarded-SSL" expr=%{HTTPS}
+
+#     Header always set Content-Security-Policy: "frame-ancestors https://*.development.local"
 # </VirtualHost>
