@@ -656,17 +656,17 @@ nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
 " Shorcuts for Date/Times in Insert Mode
 " <F18> === Shift + F6
 " <F19> === Shift + F7
-inoremap <silent> <F6> <C-r>=strftime('%Y-%m-%d')<Enter>
-inoremap <silent> <F18> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
-inoremap <silent> <F7> <C-r>='Y-m-d'<Enter>
-inoremap <silent> <F19> <C-r>='Y-m-d H:i:s'<Enter>
+inoremap <silent> <F6> <C-r>='Y-m-d'<Enter>
+inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d')<Enter>
+inoremap <silent> <F7> <C-r>='Y-m-d H:i:s'<Enter>
+inoremap <silent> <S-F7> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
 
 " Same!, but in Normal Mode
 " Not use normal! <Bang>, it uses remaps
 nnoremap <silent> <F6> :execute "normal a\<F6>\e"<Enter>
-nnoremap <silent> <F18> :execute "normal a\<S-F6>\e"<Enter>
+nnoremap <silent> <S-F6> :execute "normal a\<S-F6>\e"<Enter>
 nnoremap <silent> <F7> :execute "normal a\<F7>\e"<Enter>
-nnoremap <silent> <F19> :execute "normal a\<S-F7>\e"<Enter>
+nnoremap <silent> <S-F7> :execute "normal a\<S-F7>\e"<Enter>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
