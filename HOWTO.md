@@ -211,3 +211,25 @@ cd /git/project
 gh pr checkout pull-request
 ## gh pr checkout 43
 ```
+
+Rollback WordPress version and avoid automatic updates
+
+```bash
+# Backups
+cp -pr wordpress wordpress-backup
+
+# Download version rollback from https://wordpress.org/download/releases/
+cd /var/www/html/wordpress
+sudo rm -Rf 5.9
+sudo unzip ~/Downloads/wordpress-5.9.3.zip -d /var/www/html/wordpress/
+sudo mv wordpress 5.9
+sudo rm -Rf 5.9/wp-content
+sudo cp -pr /var/www/html/wordpress-backup/5.9/wp-content /var/www/html/wordpress/5.9
+sudo cp -pr /var/www/html/wordpress-backup/5.9/wp-config.php /var/www/html/wordpress/5.9/
+sudo chown www-data:www-data /var/www/html/wordpress/5.9 -Rf
+
+# In wp-config.php adds
+
+define( 'AUTOMATIC_UPDATER_DISABLED', true );
+define( 'WP_AUTO_UPDATE_CORE', false );
+```
