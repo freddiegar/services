@@ -168,6 +168,7 @@ assign [class="Microsoft Teams - Preview"]  $workspace3
 assign [class="Mysql-workbench-bin"]        $workspace4
 assign [class="jetbrains-phpstorm"]         $workspace5
 assign [class="(?i)postman"]                $workspace6
+assign [class="AWS VPN Client"]             $workspace7
 assign [class="VirtualBox Manager"]         $workspace8
 assign [class="VirtualBox Machine"]         $workspace8
 assign [class="^VirtualBox$"]               $workspace8
@@ -313,6 +314,7 @@ focus_follows_mouse no
 # workspace_auto_back_and_forth yes
 
 # @see https://www.youtube.com/watch?v=8-S0cWnLBKg&list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf&index=2
+bindsym $mod+Shift+a exec --no-startup-id /opt/awsvpnclient/AWS\ VPN\ Client
 bindsym $mod+Shift+f exec --no-startup-id firefox
 bindsym $mod+Shift+t exec --no-startup-id teams
 bindsym $mod+Shift+m exec --no-startup-id mysql-workbench
