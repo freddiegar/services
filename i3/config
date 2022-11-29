@@ -376,8 +376,11 @@ bindsym --release XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volum
 bindsym --release XF86AudioMute        exec --no-startup-id pactl set-sink-mute   $output toggle
 
 # Sreen brightness controls
-# bindsym XF86MonBrightnessUp   exec xbacklight -inc 20 # increase screen brightness
-# bindsym XF85MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
+# @see https://blog.vilhelm.nu/2016/06/screen-brightness-in-i3wm-on-thinkpad-x260/
+# cat /sys/class/backlight/intel_backlight/max_brightness
+# sudo echo VALUE > /sys/class/backlight/intel_backlight/brightness
+# bindsym XF86MonBrightnessUp   exec --no-startup-id xbacklight -inc 20
+# bindsym XF85MonBrightnessDown exec --no-startup-id xbacklight -dec 20
 
 # Shorcut controls
 bindsym --release XF86Mail      exec  $browser outlook.live.com, workspace $workspace2

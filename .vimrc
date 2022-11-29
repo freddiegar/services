@@ -247,7 +247,8 @@ endif
 set complete=                                                   " Reset option (default: .,w,b,u,t,i)
 set complete+=.                                                 " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
-set complete+=b                                                 " Buffers in [b]uffers list
+set complete+=b                                                 " Buffers loaded in [b]uffers list (aka use RAM)
+" set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM)
 set completeopt=longest,menuone,preview                         " Show preview in popup menu (default: menu,preview)
 
 " Custom Interface
@@ -514,6 +515,8 @@ inoremap <silent> ! !<C-g>u
 inoremap <silent> ? ?<C-g>u
 inoremap <silent> ( (<C-g>u
 inoremap <silent> ) )<C-g>u
+inoremap <silent> <C-w> <C-w><C-g>u
+inoremap <silent> <C-u> <C-u><C-g>u
 inoremap <silent> <Enter> <Enter><C-g>u
 
 " Keep cursor position after join
@@ -1779,8 +1782,8 @@ if executable('rg')
     let g:gitgutter_grep = 'rg'
 endif
 
-nmap <silent> <Leader>k  :GitGutterPrevHunk<Enter>zzzv
-nmap <silent> <Leader>j  :GitGutterNextHunk<Enter>zzzv
+nmap <silent> <expr> <Leader>k &diff ? "[czzzv" : ":GitGutterPrevHunk<Enter>zzzv"
+nmap <silent> <expr> <Leader>j &diff ? "]czzzv" : ":GitGutterNextHunk<Enter>zzzv"
 nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
 nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
 nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
@@ -2015,7 +2018,7 @@ function! s:notes() abort
         silent execute "normal! Go\e"
     endif
 
-    silent execute "normal! Gzto== " . strftime('%H:%M:%S') . " ==\r- \e"
+    silent execute "normal! Gzto== " . strftime('%H:%M') . " ==\r- \e"
 
     silent call setreg('/', l:lsearch)
     silent call histdel('/', -1)
