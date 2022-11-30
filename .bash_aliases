@@ -54,6 +54,7 @@ alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-
 
 alias pex="sudo phpenmod xdebug"
 alias pdx="sudo phpdismod xdebug"
+alias psw="sudo update-alternatives --config php"
 
 alias vt="vendor/bin/phpunit --stop-on-failure --no-coverage"
 alias vtu="vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
