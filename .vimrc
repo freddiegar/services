@@ -1187,7 +1187,7 @@ Plug 'wellle/targets.vim'                                       " {operator}ia, 
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 " Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'dense-analysis/ale'                                       " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
@@ -1483,12 +1483,12 @@ function! s:popup_resize() abort
     call popup_move(w:winpopup.id, l:coordinates)
 endfunction
 
-" CoC Completion
-" @see https://github.com/neoclide/coc.nvim
-let g:coc_global_extensions = [
-    \ 'coc-clangd',
-    \ 'coc-phpactor',
-\]
+" " CoC Completion
+" " @see https://github.com/neoclide/coc.nvim
+" let g:coc_global_extensions = [
+"     \ 'coc-clangd',
+"     \ 'coc-phpactor',
+" \]
 
     " \ 'coc-eslint',
     " \ 'coc-tslint',
@@ -1504,19 +1504,18 @@ let g:coc_global_extensions = [
     " \ 'coc-rust-analyzer',
     " \ 'coc-tailwindcss', Change class in HTML Files (blade included)
 
-" Use <Ctrl-Space> to trigger completion.
-if g:isneovim
-    inoremap <silent> <expr> <c-space> coc#refresh()
-else
-    inoremap <silent> <expr> <C-@> coc#refresh()
-endif
+" " Use <Ctrl-Space> to trigger completion.
+" if g:isneovim
+"     inoremap <silent> <expr> <c-space> coc#refresh()
+" else
+"     inoremap <silent> <expr> <C-@> coc#refresh()
+" endif
 
 " Use <Tab> to select pum value or jump between placeholder in snippets
 inoremap <silent> <expr> <Tab>
             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
             \ pumvisible() ? "\<C-n>" :
-            \ coc#pum#visible() ? coc#pum#next(1) :
             \ "\<Tab>"
 
 " In snippets with predefined values|content it uses Select Mode. WIP
@@ -1524,7 +1523,6 @@ inoremap <silent> <expr> <Tab>
 "             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
 "             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
 "             \ pumvisible() ? "\<C-n>" :
-"             \ coc#pum#visible() ? coc#pum#next(1) :
 "             \ "\<Tab>"
 
 " Make <S-Tab> for complete and snippet navigation
@@ -1533,21 +1531,18 @@ inoremap <silent> <expr> <Tab>
 inoremap <silent> <expr> <Esc>[Z
             \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
             \ pumvisible() ? "\<C-p>" :
-            \ coc#pum#visible() ? coc#pum#prev(1) :
             \ "\<C-d>"
 
 " Make <Esc> close popup menu, keep pending (Conflict with <Esc>[Z aka <S-Tab>)
 " Use <nowait> is required
 inoremap <silent> <nowait> <expr> <Esc>
             \ pumvisible() ? "\<C-e>" :
-            \ coc#pum#visible() ? coc#pum#cancel() :
             \ "\<Esc>"
 
 " Make <Enter> auto-select the first completion item
 inoremap <silent> <expr> <Enter>
             \ pumvisible() ? "\<C-r>=<SID>pum_on_enter()\<Enter>" :
-            \ coc#pum#visible() ? coc#_select_confirm() :
-            \ "\<C-g>u\<Enter>\<C-r>=coc#on_enter()\<Enter>"
+            \ "\<Enter>"
 
 function! s:pum_on_enter() abort
     if len(v:completed_item) > 0
@@ -1559,10 +1554,10 @@ function! s:pum_on_enter() abort
     return "\<C-n>\<C-y>"
 endfunction
 
-" Code navigation
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+" " Code navigation
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<Enter>
@@ -1582,18 +1577,18 @@ function! s:show_documentation() abort
             echo 'Not found: ' . l:word . '.'
             echohl None
         endtry
-    elseif coc#rpc#ready()
-        silent call CocActionAsync('doHover')
+    " elseif coc#rpc#ready()
+    "     silent call CocActionAsync('doHover')
     else
         silent execute '!' . &keywordprg . ' ' . l:word
     endif
 endfunction
 
 " Remap <C-f> and <C-b> for scroll float windows/popups. (Used in long file definitions)
-if has('patch-8.2.0750') || has('nvim-0.4.0')
-    nnoremap <silent> <nowait> <expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-    nnoremap <silent> <nowait> <expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-endif
+" if has('patch-8.2.0750') || has('nvim-0.4.0')
+    " nnoremap <silent> <nowait> <expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+    " nnoremap <silent> <nowait> <expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+" endif
 
 " @see https://github.com/vim/vim/issues/4738
 nnoremap <silent> gx :call <SID>go_url(expand('<cWORD>'))<Enter>
@@ -2061,7 +2056,7 @@ augroup AutoCommands
     autocmd FileType vim setlocal keywordprg=:help
     autocmd FileType git setlocal foldmethod=syntax foldlevel=1
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
-    autocmd FileType markdown,log,csv let b:coc_suggest_disable = 1
+    " autocmd FileType markdown,log,csv let b:coc_suggest_disable = 1
 
     " autocmd FileType html,css,javascript,vue EmmetInstall
 
