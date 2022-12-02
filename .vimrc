@@ -1197,7 +1197,7 @@ Plug 'sniphpets/sniphpets'                                      " PHP snippet wi
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers
 Plug 'junegunn/gv.vim'                                          " - Commits filter extension (need vim-fugitive) -> :GV[!]
 Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (need vim-fugitive) -> :GBrowse
-Plug 'mark2185/vim-fubitive'                                    " - BitBucket browser extension (need vim-fugitive) -> :GBrowse
+Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (need vim-fugitive) -> :GBrowse
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 
 Plug 'tpope/vim-dadbod'                                         " DB console in Vim
