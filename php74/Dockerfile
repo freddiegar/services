@@ -60,6 +60,7 @@ RUN set -eux \
     # PHP
     # Web services
     && docker-php-ext-install -j$(nproc) soap \
+    && docker-php-ext-install -j$(nproc) xsl \
     # Database connection
     && docker-php-ext-install -j$(nproc) mysqli \
     && docker-php-ext-install -j$(nproc) pdo_mysql \
