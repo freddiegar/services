@@ -965,6 +965,14 @@ sudo apt-get install -y kazam
 ## sudo apt-get remove kazam && sudo apt-get autoremove
 ```
 
+## ScreenKey -> only X11
+
+```bash
+sudo apt-get update
+sudo apt-get install -y screenkey
+## sudo apt-get remove screenkey && sudo apt-get autoremove
+```
+
 ## Ubuntu: CPU Usage Bar
 
 ```bash

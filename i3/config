@@ -5,6 +5,10 @@
 # Running i3wm command from terminal, it don't allow variables
 # i3-msg "exec --no-startup-id konsole -p tabtitle='::scratchpad::'"
 
+# Shortcuts base available:
+#   Shifted:      B, D, E, G, T, Y, Z
+#   Unshifted:    c, g, i, n, o, p, t, u, x, y z
+
 # Detect keys pressed
 # xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'
 
@@ -443,9 +447,11 @@ mode "$mode_system" {
 bindsym $mod+Escape mode "$mode_system"
 
 # Controls
-set $mode_control Control (n)etwork, (s)ound, (r)esources
+set $mode_control Control (k)eys, (n)etwork, (s)ound, (r)esources
 
 mode "$mode_control" {
+    # Control Keys
+    bindsym k exec          --no-startup-id [ "`pgrep screenkey`" = "" ] && screenkey --no-systray --font-size small || pkill -f screenkey, mode "default"
     # Control Network
     bindsym n exec          $emulator --nofork --fullscreen -e 'nmtui', mode "default"
     # Control Volume
