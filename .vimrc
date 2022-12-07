@@ -504,6 +504,8 @@ nnoremap <silent> n nzzzv
 nnoremap <silent> N Nzzzv
 nnoremap <silent> <C-o> <C-o>zzzv
 nnoremap <silent> <C-i> <C-i>zzzv
+nnoremap <silent> <C-d> <C-d>zzzv
+nnoremap <silent> <C-u> <C-u>zzzv
 
 " Undo break points (<C-g>u = Start new change)
 inoremap <silent> , ,<C-g>u
@@ -1859,9 +1861,8 @@ function! s:run(range, interactive, ...) abort
     if v:shell_error
         let @+ = l:run
 
-        echo l:run
         echohl WarningMsg
-        echo 'Run ' . l:runner . ' failed [' . v:shell_error . ']: ' . l:result
+        echo l:result
         echohl None
 
         return 1
@@ -1869,7 +1870,7 @@ function! s:run(range, interactive, ...) abort
 
     let @+ = trim(l:result)
 
-    echo @+
+    echo len(@+) ? @+ : l:command
 
     return 0
 endfunction
