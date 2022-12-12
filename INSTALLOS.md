@@ -370,25 +370,25 @@ if [ -f ~/.bash_aliases ]; then
 fi' >> ~/.zshenv
 ```
 
-# PHP 7.4
+# PHP 8.1
 
 ```bash
 echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only Ubuntu
-sudo apt-get install -y php7.4-cli
-sudo apt-get install -y php7.4-dev
-sudo apt-get install -y php7.4-mbstring
-sudo apt-get install -y php7.4-mysql
-sudo apt-get install -y php7.4-curl
-sudo apt-get install -y php7.4-zip
-sudo apt-get install -y php7.4-soap
-sudo apt-get install -y php7.4-gd
-sudo apt-get install -y php7.4-sqlite3
-sudo apt-get install -y php7.4-intl
-sudo apt-get install -y php7.4-memcached
-sudo apt-get install -y php7.4-redis
-sudo apt-get install -y php7.4-bcmath
-sudo apt-get install -y php7.4-gmp
-## sudo apt-get remove php7.4\* && sudo apt-get autoremove
+sudo apt-get install -y php8.1-cli
+sudo apt-get install -y php8.1-dev
+sudo apt-get install -y php8.1-mbstring
+sudo apt-get install -y php8.1-mysql
+sudo apt-get install -y php8.1-curl
+sudo apt-get install -y php8.1-zip
+sudo apt-get install -y php8.1-soap
+sudo apt-get install -y php8.1-gd
+sudo apt-get install -y php8.1-sqlite3
+sudo apt-get install -y php8.1-intl
+sudo apt-get install -y php8.1-memcached
+sudo apt-get install -y php8.1-redis
+sudo apt-get install -y php8.1-bcmath
+sudo apt-get install -y php8.1-gmp
+## sudo apt-get remove php8.1\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php # Only Ubuntu
 ```
 

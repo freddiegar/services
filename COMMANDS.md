@@ -1506,9 +1506,9 @@ Install [NeoVim](https://neovim.io/)
 mkdir -p ~/.config/nvim
 
 # Setup
-echo 'set runtimepath+=~/.vim,~/vim/after
+echo 'set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
-source ~/.vimrc' >> ~/.config/nvim/init.vim
+source ~/.vimrc' > ~/.config/nvim/init.vim
 
 # Install (Latest)
 echo "\n" | sudo add-apt-repository ppa:neovim-ppa/stable

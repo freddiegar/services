@@ -1292,6 +1292,10 @@ call plug#end()
 "  ]
 "}
 
+" PHPActor
+" @see https://github.com/phpactor/phpactor
+let g:phpactorPhpBin = "/usr/bin/php8.1"
+
 " LSP Vue
 " npm -g install vls eslint eslint-plugin-vue -D
 
