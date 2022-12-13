@@ -553,6 +553,9 @@ cnoreabbrev <expr> ts (getcmdtype() ==# ':' && getcmdline() ==# 'ts' && &filetyp
 cnoreabbrev <expr> vue (getcmdtype() ==# ':' && getcmdline() ==# 'vue' && &filetype ==# '') ? 'setfiletype vue' : 'vue'
 cnoreabbrev <expr> sql (getcmdtype() ==# ':' && getcmdline() ==# 'sql' && &filetype ==# '') ? 'setfiletype sql' : 'sql'
 
+" Sorry but :help is better
+nnoremap <F1> <Nop>
+
 " Open explore in current work directory (toggle)
 nnoremap <silent> <expr> <F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd()<Enter>"
