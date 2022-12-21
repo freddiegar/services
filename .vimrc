@@ -49,7 +49,7 @@
 " s  Select mode map                    :smap or :snoremap      :sunmap
 " c  Command-line mode map              :cmap or :cnoremap      :cunmap
 " o  Operator pending mode map          :omap or :onoremap      :ounmap
-"
+
 " The following characters may be displayed before the {rhs} of the map:
 " -> *  The {rhs} of the map is not re-mappable. Defined using the ':noremap', ':nnoremap', ':inoremap', etc. commands.
 " -> &  Only script local mappings are re-mappable in the {rhs} of the map. The map command has the <script> attribute.
@@ -69,9 +69,9 @@
 " different instance    isnot           isnot#          isnot?
 
 " Examples:
-" "abc" ==# "Abc"         evaluates to 0
-" "abc" ==? "Abc"         evaluates to 1
-" "abc" ==  "Abc"         evaluates to 1 if 'ignorecase' is set, 0 otherwise
+"   "abc" ==# "Abc"         evaluates to 0
+"   "abc" ==? "Abc"         evaluates to 1
+"   "abc" ==  "Abc"         evaluates to 1 if 'ignorecase' is set, 0 otherwise
 
 " SEARCHING
 "     \v    \m       \M       \V         matches ~
@@ -254,7 +254,7 @@ set completeopt=longest,menuone,preview                         " Show preview i
 " Custom Interface
 set autoread                                                    " Reload after external changes (default: off)
 set autowrite                                                   " Save on lost focus (cycling buffers) (default: off)
-set autoindent                                                  " Same indent in new line, if Esc indent is deleted (default: off)
+set autoindent                                                  " Same indent after Enter, if Esc indent is deleted, less Spaces (default: off)
 set backspace=indent,eol,start                                  " Allow backspacing over everything (default: depends)
 set clipboard=unnamedplus                                       " Shared SO clipboard
 set splitbelow                                                  " :split  opens window below (default: off)
@@ -344,7 +344,7 @@ let g:netrw_sizestyle = 'H'                                     " Human-readable
 
 function! GetNameCurrentPath() abort
     return index(['quickfix', 'terminal', 'help'], &buftype) == -1 && index(['netrw', 'vim-plug', 'fugitive'], &filetype) < 0
-                \ ? split(getcwd(), '/')[-1] . (expand('%:t') !=# '' ? ' -> ' : '')
+                \ ? split(getcwd(), '/')[-1] . (expand('%:t') !=# '' ? ' ' : '')
                 \ : ''
 endfunction
 
@@ -361,7 +361,7 @@ function! GetNameBranch() abort
 
     let l:branchname = fugitive#Head(8)
 
-    return strlen(l:branchname) > 0 ? '  ' . split(l:branchname, '/')[0] . ' |' : ''
+    return strlen(l:branchname) > 0 ? '  ' . tolower(split(l:branchname, '/')[0]) . ' ' : ''
 endfunction
 
 function! AleStatuslineFlag() abort
@@ -429,11 +429,11 @@ function! s:statusline() abort
     set statusline+=%{&wrapscan==0?'[s]':''}                    " Wrapscan flag
     set statusline+=%{&virtualedit=~#'all'?'[v]':''}            " Virtual edit flag
     set statusline+=%{GetNameBranch()}                          " Branch name repository
-    set statusline+=%3{&filetype!=#''?'\ \ '.&filetype.'\ \\|':''} " Is it require description?
+    set statusline+=%3{&filetype!=#''?'\ '.&filetype:''}        " Is it require description?
 
     set statusline+=\%<                                         " Truncate long statusline here
-    set statusline+=\ %{&fileencoding.'\ \\|'}                  " Is it require description?
-    set statusline+=\ c:%3c                                     " Cursor [c]olumn
+    set statusline+=\ %{&fileencoding.''}                       " Is it require description?
+    " set statusline+=\ c:%3c                                     " Cursor [c]olumn
 
     set statusline+=\                                           " Extra space
 endfunction
@@ -529,7 +529,7 @@ xnoremap <silent> J :move '>+1<Enter>gv=gv
 xnoremap <silent> K :move '<-2<Enter>gv=gv
 
 " Save previous position in mark ', (<C-o> not works as expected)
-" Using screen rows (g option)
+" Using screen rows (g option), wrap works as you expect!
 nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
 nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
 xnoremap <silent> j gj
@@ -1187,7 +1187,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete)
-Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
+Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 " Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
@@ -1589,7 +1589,8 @@ function! s:show_documentation() abort
     " elseif coc#rpc#ready()
     "     silent call CocActionAsync('doHover')
     else
-        silent execute '!' . &keywordprg . ' ' . l:word
+        " Don't add silent
+        execute '!' . &keywordprg . ' ' . l:word
     endif
 endfunction
 
@@ -2169,7 +2170,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
 
     autocmd FileType php nmap <silent> <buffer>gd :call phpactor#GotoDefinition()<Enter>
-    autocmd FileType php nmap <silent> <buffer><C-]> :call phpactor#GotoDefinition()<Enter>
+    " autocmd FileType php nmap <silent> <buffer><C-]> :call phpactor#GotoDefinition()<Enter>
     " autocmd FileType php nmap <silent> <buffer>gy :call phpactor#GotoImplementations()<Enter>
     autocmd FileType php nmap <silent> <buffer>gr :call phpactor#FindReferences()<Enter>
 
