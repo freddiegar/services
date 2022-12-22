@@ -250,6 +250,7 @@ set complete+=w                                                 " Buffers in oth
 set complete+=b                                                 " Buffers loaded in [b]uffers list (aka use RAM)
 " set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM)
 set completeopt=longest,menuone,preview                         " Show preview in popup menu (default: menu,preview)
+set pumheight=10                                                " Maximum options showed in popup menu (default: 0)
 
 " Custom Interface
 set autoread                                                    " Reload after external changes (default: off)
@@ -260,9 +261,8 @@ set clipboard=unnamedplus                                       " Shared SO clip
 set splitbelow                                                  " :split  opens window below (default: off)
 set splitright                                                  " :vsplit opens window right (default: off)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
-set pumheight=15                                                " Maximum options showed in popup menu (default: 0)
 set cursorline                                                  " Highligth current line (default: off)
-set cmdheight=2                                                 " More spaces, less "Enter to continue..." messages
+set cmdheight=2                                                 " More spaces, less "Enter to continue..." messages (default: 1)
 
 if has('mouse')
     set mouse=a                                                 " Mouse exist always (default: "")
@@ -393,7 +393,7 @@ endfunction
 set noruler                                                     " Position is showed in command-line (default: depends)
 set showmode                                                    " Mode is showed in command-line (default: on)
 set showcmd                                                     " Current pending command in command-line and visual
-                                                                " selection (default: on, Debian: off) (slower)
+                                                                " selection (default: depends) (slower)
 
 set shortmess=                                                  " Reset option (default: filnxtToOS)
 set shortmess+=W                                                " Don't give "written" or "[w]" when writing a file
@@ -537,6 +537,36 @@ xnoremap <silent> k gk
 
 " Sudo rescue
 command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
+
+" Backup rescue
+command! -bang -nargs=? -complete=file BB call <SID>backup(<bang>0, <f-args>)
+
+" bang (1/0), [path (string)]: void
+function! s:backup(bang, ...) abort
+    let l:path = !a:0 ? expand('%') : a:1
+
+    if l:path ==# ''
+        echohl WarningMsg
+        echo 'Nothing to do.'
+        echohl None
+
+        return 1
+    endif
+
+    let l:result = system('cp -p ' . l:path . ' ' . l:path . '.' . strftime('%Y%m%d%H%M%S'))
+
+    if v:shell_error
+        echohl WarningMsg
+        echo l:result
+        echohl None
+
+        return 1
+    endif
+
+    echo 'Backup:   ' . l:path
+
+    return 0
+endfunction
 
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
@@ -956,7 +986,7 @@ function! s:get_masked(type) abort
     elseif l:type ==# 2
         let l:masked = system("php --run \"echo str_rot13('" . <SID>escape(@@) . "');\"")
 
-        silent execute "sno/\\%V" . substitute(getreg('z'), '\/', '\\/', 'g') . "/" . substitute(l:masked, '\/', '\\/', 'g') . "/e"
+        silent execute "sno/\\%V" . substitute(getreg('z'), '\/', '\\/', 'g') . '/' . substitute(l:masked, '\/', '\\/', 'g') . "/e"
     endif
 
     silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
@@ -1199,10 +1229,10 @@ Plug 'junegunn/fzf.vim'                                         " Using a fuzzy 
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
 
-Plug 'tpope/vim-fugitive'                                       " Git with superpowers
-Plug 'junegunn/gv.vim'                                          " - Commits filter extension (need vim-fugitive) -> :GV[!]
-Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (need vim-fugitive) -> :GBrowse
-Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (need vim-fugitive) -> :GBrowse
+Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GB and GBrowse commands, etc)
+Plug 'junegunn/gv.vim'                                          " - Commits filter extension (needs vim-fugitive) -> :GV[!]
+Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (needs vim-fugitive) -> :GBrowse
+Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (needs vim-fugitive) -> :GBrowse
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 
 Plug 'tpope/vim-dadbod'                                         " DB console in Vim
@@ -2436,6 +2466,7 @@ augroup AutoCommands
             silent execute 'let $' . l:name ' = ' . shellescape(l:value)
         endfor
 
+        " aka :verbose Dotenv
         if &verbose
             for l:name in sort(keys(s:env))
                 call <SID>envecho(l:name, s:env[l:name])
