@@ -284,7 +284,7 @@ set number                                                      " Number in curs
 set relativenumber                                              " Relative number (slower) (default: off)
 " @see https://utf8-icons.com/
 set listchars=space:·,tab:»\ ,trail:+,eol:↲                     " Chars used for invisible chars
-set textwidth=120                                               " Breakline in Insert Mode (default: 0 => off)
+set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
 set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
@@ -908,9 +908,18 @@ function! s:append_char(type) abort
 endfunction
 
 function! s:generate_password() abort
-    let l:password = system('openssl rand -base64 15 | tr -d "\n"')
+    let l:password = system('openssl passwd -apr1 `openssl rand -base64 16` | tr -d "\n"')
 
-    return strlen(l:password) > 0 ? l:password : 'Retry!'
+    if strlen(l:password) ==# 0
+        return 'Retry!'
+    endif
+
+    let l:password = split(l:password, '\$')[2]
+    let l:password = substitute(l:password, '[4-6]', '\!', 'g')
+    let l:password = substitute(l:password, '[air]', '\*', 'g')
+    let l:password = substitute(l:password, '[HQZ]', '\@', 'g')
+
+    return l:password[0:15]
 endfunction
 
 function! s:generate_hash() abort
@@ -1136,7 +1145,7 @@ cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
-" Auto-complete files in command line
+" Auto-complete files in command line using RegEx
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
 cnoremap <C-x><C-a> <C-a>
 
