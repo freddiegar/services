@@ -3,6 +3,7 @@
 " @see http://www.viemu.com/a-why-vi-vim.html
 " @see https://blog.sanctum.geek.nz/vim-koans/
 " @see https://rwx.gg/tools/editors/vi/how/magic/
+" @see https://whyisitsogood.wiki/Vim
 
 " QUICKREF
 " @see https://quickref.me/vim
@@ -122,7 +123,7 @@
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
-" - @z  Save temp content used to yank in search using :[F]ilter and anoter mappings
+" - @z  Save temp content used in mappings
 " - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
 let g:isneovim = has('nvim')
@@ -524,9 +525,9 @@ inoremap <silent> <Enter> <Enter><C-g>u
 " Keep cursor position after join
 " nnoremap <silent> J maJ`a
 
-" Move complete lines selected (:move) and indent (gv=gv). Don't add <C-u>
-xnoremap <silent> J :move '>+1<Enter>gv=gv
-xnoremap <silent> K :move '<-2<Enter>gv=gv
+" Move complete (n) lines selected (:move) and indent (gv=gv). Don't add <C-u>
+xnoremap <silent> <expr> J ":move '>+" . (v:count1) . "\<Enter>gv=gv"
+xnoremap <silent> <expr> K ":move '<-" . (v:count1 + 1) . "\<Enter>gv=gv"
 
 " Save previous position in mark ', (<C-o> not works as expected)
 " Using screen rows (g option), wrap works as you expect!
@@ -572,8 +573,8 @@ endfunction
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
 
 " [F]ilter data in logs files easily
-" @see https://vim.fandom.com/wiki/Redirect_g_search_output
-command! -nargs=? F let @z='' <Bar> execute 'g/<args>/y Z' <Bar> new <Bar> setlocal buftype=nofile noswapfile<Bar> put<Bang> z <Bar> call setreg('z', [])
+" @see https://vimways.org/2019/vim-and-the-shell/
+command! -nargs=? F new <Bar> setlocal buftype=nofile noswapfile <Bar> execute '0read !cat # <Bar> grep <args>'
 
 " Set file type fast
 cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'setfiletype php' : 'php'
@@ -1201,9 +1202,9 @@ function! s:cycling_buffers(incr) abort
     endwhile
 endfunction
 
-set notimeout                                                   " For mappings (default: on)
-set ttimeout                                                    " For key codes (default: off)
-set ttimeoutlen=10                                              " Wait 10ms after Esc for special key (default: -1)
+set notimeout                                                   " Wait for key mappings sequence to complete (default: on)
+set ttimeout                                                    " Wait for key code sequence to complete (default: off)
+set ttimeoutlen=10                                              " Wait 10ms after Esc for special key (aka: preview fzf) (default: -1)
 
 augroup FastEscape
     autocmd!
