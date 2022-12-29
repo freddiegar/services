@@ -643,31 +643,31 @@ nnoremap <silent> ]q :<C-u>cnext<Enter>zzzv
 nnoremap <silent> [Q :<C-u>cfirst<Enter>zzzv
 nnoremap <silent> ]Q :<C-u>clast<Enter>zzzv
 
-nnoremap <silent> [l :<C-u>lprevious<Enter>zzzv
-nnoremap <silent> ]l :<C-u>lnext<Enter>zzzv
-nnoremap <silent> [L :<C-u>lfirst<Enter>zzzv
-nnoremap <silent> ]L :<C-u>llast<Enter>zzzv
+" nnoremap <silent> [l :<C-u>lprevious<Enter>zzzv
+" nnoremap <silent> ]l :<C-u>lnext<Enter>zzzv
+" nnoremap <silent> [L :<C-u>lfirst<Enter>zzzv
+" nnoremap <silent> ]L :<C-u>llast<Enter>zzzv
 
-nnoremap <silent> [b :<C-u>bprevious<Enter>
-nnoremap <silent> ]b :<C-u>bnext<Enter>
-nnoremap <silent> [B :<C-u>bfirst<Enter>
-nnoremap <silent> ]B :<C-u>blast<Enter>
+" nnoremap <silent> [b :<C-u>bprevious<Enter>
+" nnoremap <silent> ]b :<C-u>bnext<Enter>
+" nnoremap <silent> [B :<C-u>bfirst<Enter>
+" nnoremap <silent> ]B :<C-u>blast<Enter>
 
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
 nnoremap <silent> yor :<C-u>set relativenumber!<Enter>
 nnoremap <silent> yos :<C-u>set wrapscan!<Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
-nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
-            \ ? 'virtualedit-=all'
-            \ : 'virtualedit+=all'<Enter><Enter>
+" nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
+"             \ ? 'virtualedit-=all'
+"             \ : 'virtualedit+=all'<Enter><Enter>
 
 nnoremap <silent> <Leader>gC :call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
 
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
-" Shorcuts for Date/Times in Insert Mode
+" Shortcuts for Date/Times in Insert Mode
 " <F18> === Shift + F6
 " <F19> === Shift + F7
 inoremap <silent> <F6> <C-r>='Y-m-d'<Enter>
@@ -1117,7 +1117,9 @@ cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
 " Auto-complete files in command line using RegEx
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
-cnoremap <C-x><C-a> <C-a>
+" cnoremap <C-x><C-a> <C-a>
+" Shortcuts to common directories
+cnoremap <C-x><C-d> ~/Downloads/
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
@@ -1398,8 +1400,8 @@ xnoremap <silent> <Leader>p :<C-u>Files<Enter>
 nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'GFiles' : 'Files') . "<Enter>"
 xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'GFiles' : 'Files') . "<Enter>"
 " Marks in current project directory
-nnoremap <silent> <Leader>J :Marks<Enter>
-xnoremap <silent> <Leader>J :<C-u>Marks<Enter>
+nnoremap <silent> <Leader>M :Marks<Enter>
+xnoremap <silent> <Leader>M :<C-u>Marks<Enter>
 
 " Tests
 " https://github.com/vim-test/vim-test
@@ -2616,7 +2618,7 @@ augroup AutoCommands
     autocmd VimEnter * nested call <SID>viminfo() | call <SID>sessionload() | call <SID>cleanregistes()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
-    " Cursorline only in window active, not on Insert Mode
+    " Cursorline only in window active
     autocmd WinEnter,VimEnter,BufWinEnter * setlocal cursorline
     autocmd WinLeave * setlocal nocursorline
     " Relative numbers on Insert Mode
