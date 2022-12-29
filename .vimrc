@@ -134,8 +134,8 @@ set nomodeline                                                  " Security!: Not
 set secure                                                      " Security!: Not autocmd in .vimrc file (default: off)
 set exrc                                                        " Always search config in .vimrc file (default: off)
 set hidden                                                      " Allow change between buffer without save (default: off)
-set omnifunc=syntaxcomplete#Complete                            " Default complete function global (default: empty)
-set completefunc=syntaxcomplete#Complete                        " Default complete function in buffers (default: empty)
+set omnifunc=syntaxcomplete#Complete                            " Default complete function global (aka: i_CTRL-X_CTRL-O) (default: empty)
+set completefunc=syntaxcomplete#Complete                        " Default complete function in buffers (aka: i_CTRL-X_CTRL-U) (default: empty)
 set fileencoding=utf-8                                          " Output encoding of the file that is written
                                                                 " (default: empty, but fzf.vim: utf-8)
 
@@ -159,13 +159,9 @@ set noswapfile                                                  " No swap for ne
 set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind
                                                                 " Skip /usr/include, it's slow (default: .,/usr/include,,)
 
-" Used in mksession command                                     " Default: blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal
-set sessionoptions+=globals                                     " Save global vars (g:), error after changes
-set sessionoptions-=options                                     " No save local mappings
-set sessionoptions-=terminal                                    " No save terminal buffers
-set sessionoptions-=folds                                       " No save folds create manually
-set sessionoptions-=help                                        " No save help windows
-set sessionoptions-=blank                                       " No save blank windows
+set sessionoptions=                                             " (default: blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal)
+set sessionoptions+=buffers                                     " Save buffers
+set sessionoptions+=curdir                                      " Save current directory
 
 " Better Search
 set hlsearch                                                    " Highligth match results with /, ?, *, # (default: off)
@@ -266,11 +262,11 @@ set cursorline                                                  " Highligth curr
 set cmdheight=2                                                 " More spaces, less "Enter to continue..." messages (default: 1)
 
 if has('mouse')
-    set mouse=a                                                 " Mouse exist always (default: "")
+    set mouse=a                                                 " Mouse exists always (default: "")
 endif
 
 " Custom Render
-syntax on                                                       " Enable syntax
+syntax on                                                       " Enable syntax highlighting
 
 set nowrap                                                      " No cut lines (default: on)
 set linebreak                                                   " No cut words on wrap enable (default: off)
@@ -2598,10 +2594,13 @@ augroup AutoCommands
 
     function! s:poststart() abort
         " @see https://stackoverflow.com/questions/6076592/vim-set-formatoptions-being-lost#8748154
+        set formatoptions=                                      " (default: croql)
+        set formatoptions+=c                                    " Auto-wrap [c]omments using textwidth
+        set formatoptions+=r                                    " Insert automatically comment char after Ente[r]
+        set formatoptions+=q                                    " Allow formatting comments whit "gq"
+        set formatoptions+=l                                    " Don't broken [l]ong lines comments
         set formatoptions+=j                                    " Remove comment string in [j]oining comments
-        set formatoptions+=n                                    " Detect list of [n]umbers
-        set formatoptions-=o                                    " No append auto comment in o/O from Normal Mode
-        set formatoptions-=t                                    " No auto-wrap text in Insert Mode
+        set formatoptions+=n                                    " Detect list of [n]umbers (require autoindent enable)
     endfunction
 
     command! -nargs=0 CleanSpaces call <SID>cleanspaces()
