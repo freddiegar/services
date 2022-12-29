@@ -245,8 +245,7 @@ set complete=                                                   " Reset option (
 set complete+=.                                                 " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
 set complete+=b                                                 " Buffers loaded in [b]uffers list (aka use RAM)
-" set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM)
-set completeopt=longest,menuone,preview                         " Show preview in popup menu (default: menu,preview)
+set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM)
 set pumheight=10                                                " Maximum options showed in popup menu (default: 0)
 
 " Custom Interface
@@ -274,7 +273,6 @@ set breakindent                                                 " Indent wrap li
 set showbreak=↪                                                 " Visual char on wrap line (default: empty)
 set display=lastline                                            " Show as much as possible of the last line (default: empty)
 set sidescroll=5                                                " Better horizontally scroll (default: 0 => half-screen)
-set nojoinspaces                                                " No insert two spaces after a ., ? and ! (default: on)
 
 " Custom View
 set number                                                      " Number in cursorline, no zero (default: off)
@@ -292,9 +290,6 @@ set shiftwidth=4                                                " 1 tab === 4 sp
 set shiftround                                                  " Indentation to multiples of &shiftwidth 3>4>8 (default: off)
 set expandtab                                                   " Don't use tabs please (default: off)
 set fileformat=unix                                             " End of line as Unix format. Always! (default: depends)
-
-" Utils
-set nrformats-=octal                                            " I don't use octal numbers (default: bin,octal,hex)
 
 " Avoid (unused) built-in plugins
 let g:loaded_2html_plugin = 1
@@ -435,19 +430,10 @@ function! s:statusline() abort
     set statusline+=\                                           " Extra space
 endfunction
 
-" RAW Modes Fixed
-" @see https://github.com/vim/vim/issues/5200
-let &t_TI = ''
-let &t_TE = ''
-
 " Maps
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 noremap <Space> <Nop>
-
-" Indent without kill the selection in Visual Mode
-xmap < <gv
-xmap > >gv
 
 " Purify! in Normal|Select|Operator Mode
 noremap <Up> <Nop>
@@ -572,14 +558,6 @@ cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' :
 " @see https://vimways.org/2019/vim-and-the-shell/
 command! -nargs=? F new <Bar> setlocal noswapfile <Bar> execute '0read !cat # <Bar> grep -F ' . shellescape('<args>')
 
-" Set file type fast
-cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'setfiletype php' : 'php'
-cnoreabbrev <expr> json (getcmdtype() ==# ':' && getcmdline() ==# 'json' && &filetype ==# '') ? 'setfiletype json' : 'json'
-cnoreabbrev <expr> js (getcmdtype() ==# ':' && getcmdline() ==# 'js' && &filetype ==# '') ? 'setfiletype javascript' : 'js'
-cnoreabbrev <expr> ts (getcmdtype() ==# ':' && getcmdline() ==# 'ts' && &filetype ==# '') ? 'setfiletype typecript' : 'ts'
-cnoreabbrev <expr> vue (getcmdtype() ==# ':' && getcmdline() ==# 'vue' && &filetype ==# '') ? 'setfiletype vue' : 'vue'
-cnoreabbrev <expr> sql (getcmdtype() ==# ':' && getcmdline() ==# 'sql' && &filetype ==# '') ? 'setfiletype sql' : 'sql'
-
 " Sorry but :help is better
 nnoremap <F1> <Nop>
 
@@ -597,6 +575,7 @@ nnoremap <silent> <expr> <F10>
             \ &filetype ==# 'vim-plug' ? ":silent execute \"normal! :bdelete!\\r\"<Enter>" :
             \ filereadable('.vimrc') ? ":silent execute 'edit .vimrc'<Enter>" :
             \ ":silent execute 'edit ~/.vimrc'<Enter>"
+
 nnoremap <silent> <S-F10> :PlugClean<Enter>
 
 " Turn-off highlighting
@@ -1227,7 +1206,7 @@ Plug 'dense-analysis/ale'                                       " Diagnostic cod
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
-Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
+Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve (needs ultisnips)
 
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GB and GBrowse commands, etc)
 Plug 'junegunn/gv.vim'                                          " - Commits filter extension (needs vim-fugitive) -> :GV[!]
