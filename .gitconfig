@@ -20,3 +20,4 @@
 	; conflictstyle = zdiff3
 [diff]
 	algorithm = histogram
+        trustExitCode = true

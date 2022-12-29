@@ -318,6 +318,8 @@ lxqt-leave
 
 ```bash
 echo "
+export EDITOR=vim
+
 # Vi mode
 bindkey -v
 
