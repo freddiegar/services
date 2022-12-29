@@ -572,9 +572,9 @@ endfunction
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
 
-" [F]ilter data in logs files easily
+" [F]ilter data in files easily
 " @see https://vimways.org/2019/vim-and-the-shell/
-command! -nargs=? F new <Bar> setlocal buftype=nofile noswapfile <Bar> execute '0read !cat # <Bar> grep <args>'
+command! -nargs=? F new <Bar> setlocal noswapfile <Bar> execute '0read !cat # <Bar> grep -F ' . shellescape('<args>')
 
 " Set file type fast
 cnoreabbrev <expr> php (getcmdtype() ==# ':' && getcmdline() ==# 'php' && &filetype ==# '') ? 'setfiletype php' : 'php'
@@ -1107,12 +1107,6 @@ function s:go_docs(word) abort
 
     silent call <SID>go_url(l:docsurl . l:word)
 endfunction
-
-nnoremap <silent> <Plug>AddIncompleteMarkRepeatable :call <SID>append_char('i')<Enter>
-nmap <silent> <i <Plug>AddIncompleteMarkRepeatable
-
-nnoremap <silent> <Plug>DropIncompleteMarkRepeatable :call <SID>append_char('I')<Enter>
-nmap <silent> >i <Plug>DropIncompleteMarkRepeatable
 
 nnoremap <silent> <Plug>GetMaskedRepeatable :call <SID>get_masked('word')<Enter>
 nmap <silent> <Leader>gm <Plug>GetMaskedRepeatable
@@ -1814,7 +1808,7 @@ endfor
 " @see https://github.com/airblade/vim-gitgutter
 " let g:gitgutter_enabled = 1 (default)
 " let g:gitgutter_eager = 1 (¿?)
-let g:gitgutter_realtime = 0
+" let g:gitgutter_realtime = 0 (¿?)
 let g:gitgutter_map_keys = 0
 let g:gitgutter_max_signs = 500
 let g:gitgutter_sign_priority = 100000
@@ -2040,7 +2034,6 @@ endfunction
 
 " Open notes in Normal|Select|Operator Mode
 noremap <silent> <F9> :call <SID>notes()<Enter>
-noremap <silent> <S-F9> :vsplit <Bar> call <SID>notes()<Enter>
 
 function! s:notes() abort
     let l:matches = []
@@ -2173,6 +2166,10 @@ augroup AutoCommands
 
     " PHP Customization
     autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Plug>AddIncompleteMarkRepeatable :call <SID>append_char('i')<Enter>
+    autocmd FileType php nmap     <silent> <buffer><i <Plug>AddIncompleteMarkRepeatable
+    autocmd FileType php nnoremap <silent> <buffer><Plug>DropIncompleteMarkRepeatable :call <SID>append_char('I')<Enter>
+    autocmd FileType php nmap     <silent> <buffer>>i <Plug>DropIncompleteMarkRepeatable
 
     " PHP Testing
     autocmd FileType php let g:test#php#phpunit#options = {
@@ -2709,15 +2706,15 @@ endfunction
 " endfunction
 
 " Themes
-" Allowed 24 bit colors, by default only accept 8 bit
+" Allowed 24 bit colors, by default only accept 8 bit, require in tty
 " @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 " @see https://github.com/vim/vim/issues/993#issuecomment-255651605
 if has('termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-    set t_Co=256
-    set termguicolors
+    set t_Co=256                                                " Number colors, require in tty (default: tty=8, konsole=256)
+    set termguicolors                                           " Vivid colours? Please! (default: off)
 endif
 
 set background=dark                                             " (default: depends)
