@@ -401,7 +401,7 @@ bindsym --release Ctrl+Print    exec maim -st 9999999 -p 10 | xclip -selection c
 set $external_output HDMI-2 --auto
 set $internal_auto eDP-1 --auto
 set $internal_mode eDP-1 --mode 1440x810_60.00
-set $mode_display Display e(x)ternal, (i)nternal, (c)lone, (r)ight or (l)eft presentation, (h)igh internal
+set $mode_display Display e(x)ternal, (i)nternal, (c)lone, (r)ight|(l)eft presentation, (h)igh internal
 
 mode "$mode_display" {
     bindsym x exec --no-startup-id xrandr --output $external_output --primary    --output eDP-1 --auto      --off,                      mode "default"

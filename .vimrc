@@ -146,7 +146,6 @@ autocmd!
 set lazyredraw                                                  " No redraw when macro/script is running (default: off)
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
 set nostartofline                                               " No move to column 0 after some actions: jump between hunk, Ctrl+d, etc (default: on)
-set viminfofile="NONE"                                          " No viminfofile if out .git
 
 set nowritebackup                                               " No use backup before overwrite a file (default: depends). Use git!
 set noswapfile                                                  " No swap for new buffer (default: on)
@@ -525,7 +524,7 @@ command! -bang -nargs=? -complete=file BB call <SID>backup(<bang>0, <f-args>)
 
 " bang (1/0), [path (string)]: void
 function! s:backup(bang, ...) abort
-    let l:path = !a:0 ? expand('%') : a:1
+    let l:path = a:0 ==# 0 ? expand('%') : a:1
 
     if l:path ==# ''
         echohl WarningMsg
@@ -2430,7 +2429,7 @@ augroup AutoCommands
     " bang (1/0), [envfile (string)]: void
     function! s:envload(bang, ...) abort
         let l:message = ''
-        let l:envfile = !a:0 ? <SID>envfile() : a:1
+        let l:envfile = a:0 ==# 0 ? <SID>envfile() : a:1
 
         if l:envfile ==# ''
             return
@@ -2503,6 +2502,12 @@ augroup AutoCommands
 
     function! s:viminfo() abort
         if !g:hasgit
+            if g:isneovim
+                let &shadafile = 'NONE'
+            else
+                let &viminfofile = 'NONE'
+            endif
+
             return
         endif
 
@@ -2534,19 +2539,19 @@ augroup AutoCommands
         if !argc() && g:hasgit && empty(v:this_session) && filereadable(g:session_file) && !&modified
             silent execute 'source ' . g:session_file
 
-            let l:message = 'Loaded ' . l:session . ' session##ENV####INF##.'
+            let l:message = 'Loaded ' . l:session . '##ENV####INF##.'
         elseif !argc() && g:hasgit
-            let l:message = 'None ' . l:session . ' session##ENV####INF##.'
+            let l:message = 'Created ' . l:session . '##ENV####INF##.'
         endif
 
         if l:envfile !=# ''
             silent execute 'Dotenv ' . l:envfile
 
-            let l:message = l:message ==# '' ? 'Loaded ' . l:envfile . ' vars.' : substitute(l:message, '##ENV##', ' with ' . l:envfile . ' file', '')
+            let l:message = l:message ==# '' ? 'Loaded ' . l:envfile . ' vars.' : substitute(l:message, '##ENV##', ' with ' . l:envfile, '')
         endif
 
         if g:infofile !=# ''
-            let l:message = l:message ==# '' ? 'Loaded ' . g:infofile . ' setup.' : substitute(l:message, '##INF##', ' and ' . g:infofile . ' setup', '')
+            let l:message = l:message ==# '' ? 'Loaded ' . g:infofile . ' setup.' : substitute(l:message, '##INF##', ' and ' . g:infofile, '')
         endif
 
         if l:message !=# ''
@@ -2593,9 +2598,9 @@ augroup AutoCommands
         set formatoptions+=n                                    " Detect list of [n]umbers (require autoindent enable)
     endfunction
 
-    command! -nargs=0 CleanSpaces call <SID>cleanspaces()
+    command! -nargs=0 CS call <SID>cleanspaces(1)
 
-    function! s:cleanspaces() abort
+    function! s:cleanspaces(...) abort
         let l:ccursor = getpos('.')
         let l:lsearch = getreg('/')
 
@@ -2606,14 +2611,22 @@ augroup AutoCommands
         silent call setpos('.', l:ccursor)
         silent call setreg('/', l:lsearch)
         silent call histdel('/', -1)
+
+        if a:0 > 0
+            echo 'Spaces cleaned!'
+        endif
     endfunction
 
-    function! s:cleanregistes() abort
+    command! -nargs=0 CR call <SID>cleanregisters()
+
+    function! s:cleanregisters() abort
         let l:registers = split('abcdefghijklmnopqrstuvwxyz0123456789/-"', '\zs')
 
         for register in l:registers
             call setreg(register, [])
         endfor
+
+        echo 'Registers cleaned!'
     endfunction
 
     function! s:settitle(title) abort
@@ -2624,7 +2637,7 @@ augroup AutoCommands
         silent execute '!echo -ne "\033]30;' . a:title . '\007"'
     endfunction
 
-    autocmd VimEnter * nested call <SID>viminfo() | call <SID>sessionload() | call <SID>cleanregistes()
+    autocmd VimEnter * nested call <SID>viminfo() | call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
     " Cursorline only in window active
