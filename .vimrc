@@ -246,6 +246,7 @@ set complete+=w                                                 " Buffers in oth
 set complete+=b                                                 " Buffers loaded in [b]uffers list (aka use RAM)
 set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM)
 set pumheight=10                                                " Maximum options showed in popup menu (default: 0)
+" set completeopt=longest,menuone,preview                         " Show preview in popup menu (default: menu,preview)
 
 " Custom Interface
 set autoread                                                    " Reload after external changes (default: off)
@@ -635,7 +636,7 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>sa <Plug>DeleteFinalRepeatable
 
-" @thanks https://github.com/tpope/vim-unimpaired
+" @simple https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
 nnoremap <silent> ]q :<C-u>cnext<Enter>zzzv
 nnoremap <silent> [Q :<C-u>cfirst<Enter>zzzv
@@ -1097,6 +1098,7 @@ xnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
 " Snippets using $VISUAL with :vnoremap fails!
 xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 
+" @simple https://github.com/tpope/vim-rsi
 " Insert Mode navigation (Forget Arrows)
 inoremap <silent> <C-a> <C-o>^
 inoremap <silent> <C-e> <C-o>$
@@ -1436,6 +1438,7 @@ let g:ale_set_highlights = 1
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
 let g:ale_echo_msg_format = '%s'
+let g:ale_virtualtext_cursor = 'disabled'
 
 function! s:popup_show(title, message) abort
     if g:isneovim
@@ -1768,6 +1771,15 @@ nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<En
 " Resolve conflicts
 " @see https://vim.fandom.com/wiki/A_better_Vimdiff_Git_mergetool
 " @see https://gist.github.com/karenyyng/f19ff75c60f18b4b8149
+" Using path in vim-fugitive:
+"   =   -> [=]toggle [>]show|[<]hide inline changes
+"   -   -> [-]toggle [u]n|[s]tage file
+"   U   -> [U]nstage everything
+"   I   -> [I]include [P]atch from file
+"   dd  -> [d]iff view (in horizontal)
+"   dq  -> [d]iff [q]uit
+"   [c  -> Preview change (not conflict!)
+"   ]c  -> Next change (not conflict!)
 nnoremap <silent> <Leader>hh /\v[<\|>\|=]{7}<Enter>
 
 if &diff
@@ -1862,6 +1874,7 @@ function! s:run(range, interactive, ...) abort
         let l:execute = 'bash -c "%s"'
         let l:ignorechars = ["'", '\']
     elseif l:runner ==# 2 ||  index(['php'], l:runner) >= 0
+        " requires end with semicolon (;)
         let l:execute = 'php --run "%s"'
         let l:ignorechars = ["'"]
 
@@ -2255,7 +2268,7 @@ augroup AutoCommands
 
     " Search current file(R) or funtion(r) references
     autocmd FileType php nmap <silent> <buffer>gR :call <SID>get_references('file')<Enter>
-    autocmd FileType php nmap <silent> <buffer>gr :call <SID>get_references('call')<Enter>
+    autocmd FileType php nmap <silent> <buffer>gr :call <SID>get_references('word')<Enter>
 
     function! s:get_references(type) abort
         " Files like:
