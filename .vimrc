@@ -1049,6 +1049,9 @@ function s:go_docs(word) abort
 
     if &filetype ==# 'php'
         let l:docsurl = 'https://www.php.net/'
+    elseif &filetype ==# 'vim-plug'
+        let l:docsurl = substitute(g:plugs[l:word].uri, 'git::@', '', 'g')
+        let l:word = ''
     elseif expand('%:t') ==# 'composer.json'
         let l:docsurl = 'https://github.com/'
     elseif expand('%:t') ==# 'package.json'
@@ -2346,6 +2349,8 @@ augroup AutoCommands
 
         echo 'Fixer ' . l:fixertype . ' v' . l:fixerversion . ' applied.'
     endfunction
+
+    autocmd FileType vim-plug nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
     autocmd FileType json nnoremap <silent> <buffer><F1> :call <SID>jsonfixer()<Enter>
     autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
