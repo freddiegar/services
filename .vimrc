@@ -383,7 +383,6 @@ function! AleStatuslineFlag() abort
 endfunction
 
 set noruler                                                     " Position is showed in command-line (default: depends)
-set showmode                                                    " Mode is showed in command-line (default: on)
 set showcmd                                                     " Current pending command in command-line and visual
                                                                 " selection (default: depends) (slower)
 
@@ -1180,6 +1179,7 @@ set ttimeoutlen=10                                              " Wait 10ms afte
 augroup FastEscape
     autocmd!
 
+    " Don't await after Esc in Insert Mode
     autocmd InsertEnter * set timeoutlen=0
     autocmd InsertLeave * set timeoutlen=1000
 augroup END
@@ -1545,7 +1545,7 @@ inoremap <silent> <expr> <Tab>
 "             \ pumvisible() ? "\<C-n>" :
 "             \ "\<Tab>"
 
-" Make <S-Tab> for complete and snippet navigation
+" Make <S-Tab> for snippet navigation (and complete)
 " Konsole change shortcut <S-Tab> to <C-S-Tab>
 " @see https://vim.fandom.com/wiki/Smart_mapping_for_tab_completion
 inoremap <silent> <expr> <Esc>[Z
@@ -1788,8 +1788,8 @@ endfor
 " let g:gitgutter_realtime = 0 (¿?)
 let g:gitgutter_map_keys = 0
 let g:gitgutter_max_signs = 500
-let g:gitgutter_sign_priority = 100000
-let g:gitgutter_sign_allow_clobber = 0
+" let g:gitgutter_sign_priority = 100000
+" let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_preview_win_floating = 1
 let g:gitgutter_close_preview_on_escape = 1
 let g:gitgutter_show_msg_on_hunk_jumping = 0
@@ -1929,6 +1929,7 @@ endfunction
 nnoremap <silent> <Plug>SplitRepeatable :<C-u>call <SID>split()<Enter>
 nmap <silent> gS <Plug>SplitRepeatable
 
+" @see https://github.com/AndrewRadev/splitjoin.vim
 function! s:split() abort
     let l:saved_search_register = @/
     let l:saved_unnamed_register = @@
@@ -2178,11 +2179,11 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>rfg :call setreg('z', "orfg\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rfs :call setreg('z', "orfs\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
 
-    " autocmd FileType php nnoremap <silent> <buffer><Leader>rei :call phpactor#ClassInflect()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rci :call phpactor#ClassInflect()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
-    " autocmd FileType php nnoremap <silent> <buffer><Leader>rec :call phpactor#ExtractConstant()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rec :call phpactor#ExtractConstant()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>ree :<C-u>call phpactor#ExtractExpression(v:true)<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>R   :call phpactor#ContextMenu()<Enter>
 
     autocmd FileType php nmap <silent> <buffer>gd :call phpactor#GotoDefinition()<Enter>
     " autocmd FileType php nmap <silent> <buffer>gy :call phpactor#GotoImplementations()<Enter>
