@@ -241,7 +241,7 @@ if executable('rg')
 endif
 
 " Better Completion
-set complete=                                                   " Reset option (default: .,w,b,u,t,i)
+set complete=                                                   " (default: .,w,b,u,t,i)
 set complete+=.                                                 " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
 set complete+=b                                                 " Buffers loaded in [b]uffers list (aka use RAM)
@@ -2124,6 +2124,7 @@ augroup AutoCommands
     " Ominifunctions
     autocmd FileType c setlocal omnifunc=ccomplete#CompleteCpp
     autocmd FileType php setlocal omnifunc=phpactor#Complete
+    autocmd FileType php setlocal completefunc=phpactor#Complete
     " autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
     autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
     autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
@@ -2184,9 +2185,8 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>R :call phpactor#ContextMenu()<Enter>
 
     autocmd FileType php nmap <silent> <buffer>gd :call phpactor#GotoDefinition()<Enter>
-    " autocmd FileType php nmap <silent> <buffer><C-]> :call phpactor#GotoDefinition()<Enter>
     " autocmd FileType php nmap <silent> <buffer>gy :call phpactor#GotoImplementations()<Enter>
-    autocmd FileType php nmap <silent> <buffer>gr :call phpactor#FindReferences()<Enter>
+    " autocmd FileType php nmap <silent> <buffer>gr :call phpactor#FindReferences()<Enter>
 
     function! s:phpactor(transformer) abort
         silent update!
@@ -2213,21 +2213,23 @@ augroup AutoCommands
         endif
     endfunction
 
-    " Search file(Y) or call(y) implementations
+    " Search current file(Y) or function(y) implementations
     autocmd FileType php nmap <silent> <buffer>gY :call <SID>get_implementations('file')<Enter>
-    autocmd FileType php nmap <silent> <buffer>gy :call <SID>get_implementations('call')<Enter>
+    autocmd FileType php nmap <silent> <buffer>gy :call <SID>get_implementations('word')<Enter>
 
     function! s:get_implementations(type) abort
-        " Files likes:
+        " Searching Name, then
+        " Files like:
         "   class Name
         "   trait Name
         "   interface Name
         "   class Name extends Parent
-        " but doesn't likes:
+        " but doesn't like:
         "   interface NameLarge
         "   interface LargeName
-        " Call likes: Files and:
+        " Call likes: as Files and:
         "   function name(
+        "   function Name(
         " but doesn't likes:
         "   function nameLarge(
         let l:string = a:type ==# 'file'
@@ -2240,27 +2242,28 @@ augroup AutoCommands
             return
         endif
 
+        " @see https://regex101.com/r/Py4xXG/1
         let l:pattern = a:type ==# 'file'
-                    \ ? '(class|trait|interface) ' . l:string . '(\s?\w*)'
-                    \ : '(class|trait|interface|function) ' . l:string . '(\(|\s?\w*)'
+                    \ ? '(class|trait|interface) \b' . l:string . '\b(\s?\w*)'
+                    \ : '(class|trait|interface|function) \b' . l:string . '\b(\(?|\s?)'
 
-        silent execute "Grep --glob '*.php' '" . <SID>rg_escape(l:pattern) . "'"
+        silent execute "Grep --glob '*.php' --ignore-case '" . <SID>rg_escape(l:pattern) . "'"
     endfunction
 
-    " Search file(R) or call(r) references
+    " Search current file(R) or funtion(r) references
     autocmd FileType php nmap <silent> <buffer>gR :call <SID>get_references('file')<Enter>
-    autocmd FileType php nmap <silent> <buffer><Leader>gr :call <SID>get_references('call')<Enter>
+    autocmd FileType php nmap <silent> <buffer>gr :call <SID>get_references('call')<Enter>
 
     function! s:get_references(type) abort
-        " Files likes:
+        " Files like:
         "   Name::
         "   Name(
-        " Call likes: Files and:
+        " Call likes: as Files and:
         "   name(
         "   ->name(
         "   ::name(
         "   new name(
-        " but doesn't likes:
+        " but doesn't like:
         "   _name(
         "   -name(
         let l:string = a:type ==# 'file'
@@ -2274,10 +2277,10 @@ augroup AutoCommands
         endif
 
         let l:pattern = a:type ==# 'file'
-                    \ ? l:string . '(::|\()'
-                    \ : '(->|::|new )?[^_-]' . l:string . '(\()'
+                    \ ? '\b' . l:string . '\b(::|\()'
+                    \ : '(->|::|new )?[^_-]\b' . l:string . '\b(\()'
 
-        silent execute "Grep --glob '*.php' '" . <SID>rg_escape(l:pattern) . "'"
+        silent execute "Grep --glob '*.php' --ignore-case '" . <SID>rg_escape(l:pattern) . "'"
     endfunction
 
     " PHP Fixer
