@@ -178,6 +178,11 @@ if g:isneovim
     set inccommand=nosplit                                      " Preview substitute command
 endif
 
+" Sanity?
+set nrformats=                                                  " (default: bin,octal,hex)
+set nrformats+=octal                                            " Incremente/Decrement binary numbers
+set nrformats+=unsigned                                         " @see https://utcc.utoronto.ca/~cks/space/blog/unix/VimHandlingDashedNumbers
+
 if executable('rg')
     " Replace built-in grep's Vim, options:
     " @see https://github.com/BurntSushi/ripgrep
@@ -1886,7 +1891,8 @@ function! s:run(range, interactive, ...) abort
         let l:ignorechars = ["'"]
 
         if filereadable('artisan')
-            let l:execute = 'php artisan tinker --execute "dump(%s)"'
+            " dump() doesn't allow multiple sentences split by semicolon (;) :(
+            let l:execute = 'echo "%s" | php artisan tinker --no-interaction'
         endif
     else
         echohl ErrorMsg
@@ -1896,14 +1902,14 @@ function! s:run(range, interactive, ...) abort
         return 2
     endif
 
-    let l:run = printf(l:execute, l:command)
+    let l:run = printf(l:execute, <SID>escape(l:command, l:ignorechars))
     let l:result = system(l:run)
 
-    if v:shell_error
+    if v:shell_error " <-- $? @see https://www.gnu.org/software/bash/manual/bash.html
         let @+ = l:run
 
         echohl WarningMsg
-        echo l:result
+        echo len(l:result) ? l:result : 'Return:   ' . v:shell_error
         echohl None
 
         return 1
