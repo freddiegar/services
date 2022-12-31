@@ -1250,6 +1250,7 @@ Plug 'jamessan/vim-gnupg'                                       " Transparent ed
 
 " Plug 'junegunn/goyo.vim'                                        " Zen mode
 " Plug 'junegunn/limelight.vim'                                   " Zen mode ++
+Plug 'wakatime/vim-wakatime'                                    " Zen mode #
 
 " Plug 'ap/vim-css-color',  {'for': [
 "             \ 'html',
@@ -2306,8 +2307,8 @@ augroup AutoCommands
         endif
 
         let l:pattern = a:type ==# 'file'
-                    \ ? '\b' . l:string . '\b(::|\()'
-                    \ : '(->|::|new )?[^_-]\b' . l:string . '\b(\()'
+                    \ ? '\b' . l:string . '\b(::|\(|;)'
+                    \ : '(->|::|new )?[^_-]\b' . l:string . '\b(\(|;)'
 
         silent execute "Grep --glob '*.php' --ignore-case '" . <SID>rg_escape(l:pattern) . "'"
     endfunction
