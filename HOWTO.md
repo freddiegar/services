@@ -233,3 +233,6 @@ sudo chown www-data:www-data /var/www/html/wordpress/5.9 -Rf
 define( 'AUTOMATIC_UPDATER_DISABLED', true );
 define( 'WP_AUTO_UPDATE_CORE', false );
 ```
+
+PDF Drive (free?)
+[See](https://www.pdfdrive.com/)

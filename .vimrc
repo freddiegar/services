@@ -223,6 +223,8 @@ if executable('rg')
     command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
     " Location List
     command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
+    " Update Quickfix List
+    command! -nargs=0 -bar UP call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
 
     " No learn new command, use :grep and :lgrep with superpowers
     cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
@@ -1775,6 +1777,7 @@ nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<En
 " @see https://vim.fandom.com/wiki/A_better_Vimdiff_Git_mergetool
 " @see https://gist.github.com/karenyyng/f19ff75c60f18b4b8149
 " Using path in vim-fugitive:
+"   .   -> Ready to command
 "   =   -> [=]toggle [>]show|[<]hide inline changes
 "   -   -> [-]toggle [u]n|[s]tage file
 "   U   -> [U]nstage everything
@@ -1783,13 +1786,14 @@ nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<En
 "   dq  -> [d]iff [q]uit
 "   [c  -> Preview change (not conflict!)
 "   ]c  -> Next change (not conflict!)
+"   \r  -> Go to file
 nnoremap <silent> <Leader>hh /\v[<\|>\|=]{7}<Enter>
 
-if &diff
+" if &diff <-- fails with diff mode opens from vim-fugitive
     nnoremap <silent> <Leader>gf :diffget //2<Enter>
     nnoremap <silent> <Leader>gj :diffget //3<Enter>
     nnoremap <silent> <Leader>gg :Gwrite <Bar> edit %<Enter>
-endif
+" endif
 
 " I don't want to learn (or write) new aliases
 cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' : 'git'
