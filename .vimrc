@@ -661,6 +661,7 @@ nnoremap <silent> ]Q :<C-u>clast<Enter>zzzv
 
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
+nnoremap <silent> you :<C-u>set cursorcolumn!<Enter>
 nnoremap <silent> yor :<C-u>set relativenumber!<Enter>
 nnoremap <silent> yos :<C-u>set wrapscan!<Enter>
 nnoremap <silent> yot :<C-u>set <C-r>=(&colorcolumn > 0)
@@ -1248,8 +1249,8 @@ Plug 'jamessan/vim-gnupg'                                       " Transparent ed
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
-" Plug 'junegunn/goyo.vim'                                        " Zen mode
-" Plug 'junegunn/limelight.vim'                                   " Zen mode ++
+Plug 'junegunn/goyo.vim'                                        " Zen mode
+Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 Plug 'wakatime/vim-wakatime'                                    " Zen mode #
 
 " Plug 'ap/vim-css-color',  {'for': [
@@ -1375,14 +1376,19 @@ let g:UltiSnipsUsePythonVersion = 3
 " let g:user_emmet_leader_key = ','
 " let g:user_emmet_install_global = 0
 
-" " Goyo
-" " @see https://github.com/junegunn/goyo.vim
-" let g:goyo_linenr = 1
-" let g:goyo_width = 120
-" let g:goyo_height = '100%'
-" let g:goyo_bg = '#1D2021'
+" Goyo
+" @see https://github.com/junegunn/goyo.vim
+let g:goyo_linenr = 1
+let g:goyo_width = 123
+let g:goyo_height = '100%'
+let g:goyo_bg = '#1D2021'
 
-" nnoremap <silent> <F12> :Goyo<Enter>
+nnoremap <silent> <F12> :Goyo<Enter>
+
+" Limelight
+" @see https://github.com/junegunn/limelight.vim
+" Number of preceding/following paragraphs to include (default: 0)
+let g:limelight_paragraph_span = 2
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
