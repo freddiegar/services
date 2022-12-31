@@ -656,10 +656,13 @@ nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
 nnoremap <silent> yor :<C-u>set relativenumber!<Enter>
 nnoremap <silent> yos :<C-u>set wrapscan!<Enter>
+nnoremap <silent> yot :<C-u>set <C-r>=(&colorcolumn > 0)
+            \ ? 'colorcolumn=0'
+            \ : 'colorcolumn=121'<Enter><Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
-" nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
-"             \ ? 'virtualedit-=all'
-"             \ : 'virtualedit+=all'<Enter><Enter>
+nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
+            \ ? 'virtualedit-=all'
+            \ : 'virtualedit+=all'<Enter><Enter>
 
 nnoremap <silent> <Leader>gC :call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
 
