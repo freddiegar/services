@@ -364,12 +364,21 @@ function! GetNameBranch() abort
     return strlen(l:branchname) > 0 ? '  ' . tolower(split(l:branchname, '/')[0]) . ' ' : ' '
 endfunction
 
-function! VimTestStatuslineFlag() abort
+function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
         return ''
     endif
 
-    return get(g:, 'test_status', '')
+    if get(g:, 'asyncrun_status', '') ==# 'success' && get(g:, 'asyncrun_icon', '') !=# ''
+        let l:asyncrun_icon = g:asyncrun_icon
+        let g:asyncrun_icon = ''
+
+        echo 'Task:     ' . g:asyncrun_status
+
+        return l:asyncrun_icon
+    endif
+
+    return get(g:, 'asyncrun_icon', '')
 endfunction
 
 function! AleStatuslineFlag() abort
@@ -438,7 +447,7 @@ function! s:statusline() abort
 
     if exists('g:loaded_test')
         set statusline+=\                                       " Extra space
-        set statusline+=%{VimTestStatuslineFlag()}              " Testing process info
+        set statusline+=%{AsyncStatuslineFlag()}                " Async process info
     endif
 
     set statusline+=%{GetNameBranch()}                          " Branch name repository
@@ -1442,60 +1451,68 @@ xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'GFiles' : 'Files') . 
 nnoremap <silent> <Leader>M :Marks<Enter>
 xnoremap <silent> <Leader>M :<C-u>Marks<Enter>
 
-augroup VimTest
-    autocmd!
+" AsyncRun
+" @see https://github.com/skywind3000/asyncrun.vim
+" Skip message added in asyncrun (default: 0)
+let g:asyncrun_skip = 1
+" Disable local errorformats (default: 1)
+let g:asyncrun_local = 0
+" Action to run on stop job (default: empty)
+let g:asyncrun_exit = "call\ AsyncRunFinished()"
+" Icon used in statusline
+let g:asyncrun_icon = ''
 
-    function! s:test_strategy() abort
-        if index(['vimterminal', 'neovim'], g:test_strategy) >= 0
-            let g:test_strategy = 'background'
-        else
-            let g:test_strategy = (g:isneovim ? 'neovim' : 'vimterminal')
-        endif
+function! AsyncRunCommand(command) abort
+    let g:asyncrun_icon = '▷'
 
-        echo 'Strategy: ' . g:test_strategy
-    endfunction
+    call asyncrun#run(v:true, #{
+                \ raw: 1,
+                \ strip: 1,
+                \ silent: 1,
+                \ once: 1,
+                \ }, a:command)
 
-    function! VimTestRunner(command) abort
-        let g:test_status = '▷'
+    echo 'Task:     ' . g:asyncrun_status
+endfunction
 
-        call asyncrun#run(v:true, #{
-                    \ raw: 1,
-                    \ strip: 1,
-                    \ silent: 1,
-                    \ once: 1,
-                    \ post: "call\ VimTestFinished()",
-                    \ }, a:command)
-    endfunction
+" Required CamelCase to use asyncrun_exit option
+function! AsyncRunFinished() abort
+    if g:asyncrun_code > 0
+        let g:asyncrun_icon = '✗'
+        copen
 
-    " required CamelCase to use function in -post
-    function! VimTestFinished() abort
-        if g:asyncrun_code > 0
-            let g:test_status = '✗'
-            copen
+        return
+    endif
 
-            return
-        endif
+    let g:asyncrun_icon = '✓'
+    cclose
+endfunction
 
-        let g:test_status = '✓'
-        cclose
-    endfunction
+" Vim Tests
+" https://github.com/vim-test/vim-test
+let g:test_strategy = get(g:, 'test_strategy', (g:isneovim ? 'neovim' : 'vimterminal'))
+let g:test#echo_command = 0
+let g:test#neovim#start_normal = 1
+let g:test#custom_strategies = {'background': function('AsyncRunCommand')}
 
-    " Vim Tests
-    " https://github.com/vim-test/vim-test
-    let g:test_strategy = get(g:, 'test_strategy', (g:isneovim ? 'neovim' : 'vimterminal'))
-    let g:test#echo_command = 0
-    let g:test#neovim#start_normal = 1
-    let g:test#custom_strategies = {'background': function('VimTestRunner')}
+function! s:test_strategy() abort
+    if index(['vimterminal', 'neovim'], g:test_strategy) >= 0
+        let g:test_strategy = 'background'
+        let g:asyncrun_icon = '◎'
+    else
+        let g:test_strategy = (g:isneovim ? 'neovim' : 'vimterminal')
+        let g:asyncrun_icon = ''
+    endif
 
-    nnoremap <silent> <Leader>tt :execute ":TestNearest -strategy=" . g:test_strategy<Enter>
-    nnoremap <silent> <Leader>tf :execute ":TestFile -strategy=" . g:test_strategy<Enter>
-    nnoremap <silent> <Leader>ts :execute ":TestSuite -strategy=" . g:test_strategy<Enter>
-    nnoremap <silent> <Leader>tl :execute ":TestLast -strategy=" . g:test_strategy<Enter>
-    nnoremap <silent> <Leader>tg :execute ":TestVisit -strategy=" . g:test_strategy<Enter>
-    nnoremap <silent> <Leader>tq :call <SID>test_strategy()<Enter>
+    echo 'Strategy: ' . g:test_strategy
+endfunction
 
-    autocmd User AsyncRunStop call VimTestFinished()
-augroup END
+nnoremap <silent> <Leader>tt :execute ":TestNearest -strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tf :execute ":TestFile -strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>ts :execute ":TestSuite -strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tl :execute ":TestLast -strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tg :execute ":TestVisit -strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tq :call <SID>test_strategy()<Enter>
 
 " ALE
 " @see https://github.com/dense-analysis/ale
@@ -1672,7 +1689,7 @@ function! s:show_documentation() abort
             silent execute 'help ' . l:word
         catch
             echohl WarningMsg
-            echo 'Not found: ' . l:word . '.'
+            echo 'Not found: ' . l:word
             echohl None
         endtry
     " elseif coc#rpc#ready()
