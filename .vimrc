@@ -229,6 +229,7 @@ if executable('rg')
     " Location List
     command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
     " Update Quickfix List
+    " @see https://vi.stackexchange.com/questions/13662/is-there-a-way-to-update-the-quickfix-entries-after-running-cdo-cfdo
     command! -nargs=0 -bar UP call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
 
     " No learn new command, use :grep and :lgrep with superpowers
@@ -360,7 +361,15 @@ function! GetNameBranch() abort
 
     let l:branchname = fugitive#Head(8)
 
-    return strlen(l:branchname) > 0 ? '  ' . tolower(split(l:branchname, '/')[0]) . ' ' : ''
+    return strlen(l:branchname) > 0 ? '  ' . tolower(split(l:branchname, '/')[0]) . ' ' : ' '
+endfunction
+
+function! VimTestStatuslineFlag() abort
+    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
+        return ''
+    endif
+
+    return get(g:, 'test_status', '')
 endfunction
 
 function! AleStatuslineFlag() abort
@@ -426,6 +435,12 @@ function! s:statusline() abort
     set statusline+=%{&wrap==0?'':'[w]'}                        " Wrap flag
     set statusline+=%{&wrapscan==0?'[s]':''}                    " Wrapscan flag
     set statusline+=%{&virtualedit=~#'all'?'[v]':''}            " Virtual edit flag
+
+    if exists('g:loaded_test')
+        set statusline+=\                                       " Extra space
+        set statusline+=%{VimTestStatuslineFlag()}              " Testing process info
+    endif
+
     set statusline+=%{GetNameBranch()}                          " Branch name repository
     set statusline+=%3{&filetype!=#''?'\ '.&filetype:''}        " Is it require description?
 
@@ -1035,7 +1050,7 @@ function! s:go_line() abort
             silent execute 'edit +' . l:line . ' ' . fnameescape(l:file)
         endif
 
-        if index(['php'], &filetype) >= 0 && getbufvar(l:lbuffer, '&buftype') ==# 'terminal'
+        if index(['php'], &filetype) >= 0 && index(['terminal', 'quickfix'], getbufvar(l:lbuffer, '&buftype')) >= 0
             silent execute l:lbuffer . 'bdelete!'
         endif
     catch /^Nothing/
@@ -1235,7 +1250,10 @@ Plug 'tpope/vim-dadbod'                                         " DB console in 
 
 " Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 " Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
-Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
+
+Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
+Plug 'skywind3000/asyncrun.vim', {'for': 'php'}                 " Run async tasks: tests, commits, etc in background
+
 Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
@@ -1424,22 +1442,60 @@ xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'GFiles' : 'Files') . 
 nnoremap <silent> <Leader>M :Marks<Enter>
 xnoremap <silent> <Leader>M :<C-u>Marks<Enter>
 
-" Tests
-" https://github.com/vim-test/vim-test
-let g:test_strategy = g:isneovim ? 'neovim' : 'vimterminal'
-let g:test#echo_command = 0
-let g:test#neovim#start_normal = 1
-let g:test#strategy = {
-    \ 'nearest': g:test_strategy,
-    \ 'file':    g:test_strategy,
-    \ 'suite':   g:test_strategy,
-\}
+augroup VimTest
+    autocmd!
 
-nnoremap <silent> <Leader>tt :TestNearest<Enter>
-nnoremap <silent> <Leader>tf :TestFile<Enter>
-nnoremap <silent> <Leader>ts :TestSuite<Enter>
-nnoremap <silent> <Leader>tl :TestLast<Enter>
-nnoremap <silent> <Leader>tg :TestVisit<Enter>
+    function! s:test_strategy() abort
+        if index(['vimterminal', 'neovim'], g:test_strategy) >= 0
+            let g:test_strategy = 'background'
+        else
+            let g:test_strategy = (g:isneovim ? 'neovim' : 'vimterminal')
+        endif
+
+        echo 'Strategy: ' . g:test_strategy
+    endfunction
+
+    function! VimTestRunner(command) abort
+        let g:test_status = '▷'
+
+        call asyncrun#run(v:true, #{
+                    \ raw: 1,
+                    \ strip: 1,
+                    \ silent: 1,
+                    \ once: 1,
+                    \ post: "call\ VimTestFinished()",
+                    \ }, a:command)
+    endfunction
+
+    " required CamelCase to use function in -post
+    function! VimTestFinished() abort
+        if g:asyncrun_code > 0
+            let g:test_status = '✗'
+            copen
+
+            return
+        endif
+
+        let g:test_status = '✓'
+        cclose
+    endfunction
+
+    " Vim Tests
+    " https://github.com/vim-test/vim-test
+    let g:test_strategy = get(g:, 'test_strategy', (g:isneovim ? 'neovim' : 'vimterminal'))
+    let g:test#echo_command = 0
+    let g:test#neovim#start_normal = 1
+    let g:test#custom_strategies = {'background': function('VimTestRunner')}
+
+    nnoremap <silent> <Leader>tt :execute ":TestNearest -strategy=" . g:test_strategy<Enter>
+    nnoremap <silent> <Leader>tf :execute ":TestFile -strategy=" . g:test_strategy<Enter>
+    nnoremap <silent> <Leader>ts :execute ":TestSuite -strategy=" . g:test_strategy<Enter>
+    nnoremap <silent> <Leader>tl :execute ":TestLast -strategy=" . g:test_strategy<Enter>
+    nnoremap <silent> <Leader>tg :execute ":TestVisit -strategy=" . g:test_strategy<Enter>
+    nnoremap <silent> <Leader>tq :call <SID>test_strategy()<Enter>
+
+    autocmd User AsyncRunStop call VimTestFinished()
+augroup END
 
 " ALE
 " @see https://github.com/dense-analysis/ale
@@ -1790,10 +1846,13 @@ nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<En
 " @see https://gist.github.com/karenyyng/f19ff75c60f18b4b8149
 " Using path in vim-fugitive:
 "   .   -> Ready to command
+"   o   -> [o]pen file
 "   =   -> [=]toggle [>]show|[<]hide inline changes
 "   -   -> [-]toggle [u]n|[s]tage file
 "   U   -> [U]nstage everything
 "   I   -> [I]include [P]atch from file
+"   (   -> Preview file
+"   )   -> Next file
 "   dd  -> [d]iff view (in horizontal)
 "   dq  -> [d]iff [q]uit
 "   [c  -> Preview change (not conflict!)
@@ -2562,7 +2621,7 @@ augroup AutoCommands
     endfunction
 
     " Save|Load sessions
-    let g:session_file =  expand('~/.vim/sessions/' . join(split(getcwd(), '/')[-2:], '@') . (g:isneovim ? '.nvim' : '.vim'))
+    let g:session_file = expand('~/.vim/sessions/' . join(split(getcwd(), '/')[-2:], '@') . (g:isneovim ? '.nvim' : '.vim'))
 
     function! s:sessionload() abort
         let l:message = ''
