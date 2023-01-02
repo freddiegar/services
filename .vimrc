@@ -365,18 +365,34 @@ function! GetNameBranch() abort
 endfunction
 
 function! AsyncStatuslineFlag() abort
-    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
-        return ''
+    if &buftype ==# 'terminal'
+                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
+                \ || get(g:, 'asyncrun_hide', 0) ==# 1
+        return g:test_strategy ==# 'background' ? '◎' : ''
     endif
 
-    if get(g:, 'asyncrun_status', '') ==# 'success' && get(g:, 'asyncrun_icon', '') !=# ''
-        let l:asyncrun_icon = g:asyncrun_icon
-        let g:asyncrun_icon = ''
-
-        echo 'Task:     ' . g:asyncrun_status
-
-        return l:asyncrun_icon
+    if index(['', 'running', 'stopped'], get(g:, 'asyncrun_status', '')) > 0
+        return get(g:, 'asyncrun_icon', '')
     endif
+
+    if get(g:, 'asyncrun_status', '') ==# 'success'
+        let g:asyncrun_hide = 1
+    endif
+
+    if get(g:, 'asyncrun_play', 0) ==# 1
+        let g:asyncrun_play = 0
+        let l:command = 'aplay /usr/share/sounds/sound-icons/trumpet-12.wav'
+
+        if get(g:, 'asyncrun_status', '') ==# 'failure'
+            let l:command = 'aplay /usr/share/sounds/sound-icons/pipe.wav'
+        endif
+
+        silent call system(l:command . ' &')
+    endif
+
+    echo 'Task:     ' . g:asyncrun_status
+
+    let g:asyncrun_status = 'stopped'
 
     return get(g:, 'asyncrun_icon', '')
 endfunction
@@ -509,7 +525,7 @@ noremap ' `
 noremap '' ``
 noremap `` ''
 
-" Not use [*|#]``zzzv, error on 1 ocurrence
+" Not use [*|#]``zzzv, it throws error on 1 ocurrence
 " Center screen (zz) after each search and open folds (zv)
 nnoremap <silent> * *zzzv
 nnoremap <silent> # #zzzv
@@ -1459,18 +1475,21 @@ let g:asyncrun_skip = 1
 let g:asyncrun_local = 0
 " Action to run on stop job (default: empty)
 let g:asyncrun_exit = "call\ AsyncRunFinished()"
-" Icon used in statusline
+" Icon used in statusline (custom setup)
 let g:asyncrun_icon = ''
 
 function! AsyncRunCommand(command) abort
     let g:asyncrun_icon = '▷'
+    let g:asyncrun_hide = 0
+    let g:asyncrun_play = match(a:command, '-sound') >= 0
+    let l:command = substitute(a:command, '-sound', '', 'g')
 
     call asyncrun#run(v:true, #{
                 \ raw: 1,
                 \ strip: 1,
                 \ silent: 1,
                 \ once: 1,
-                \ }, a:command)
+                \ }, l:command)
 
     echo 'Task:     ' . g:asyncrun_status
 endfunction
@@ -1494,6 +1513,11 @@ let g:test_strategy = get(g:, 'test_strategy', (g:isneovim ? 'neovim' : 'vimterm
 let g:test#echo_command = 0
 let g:test#neovim#start_normal = 1
 let g:test#custom_strategies = {'background': function('AsyncRunCommand')}
+let g:test#strategy = {
+    \ 'nearest': g:test_strategy,
+    \ 'file':    g:test_strategy,
+    \ 'suite':   g:test_strategy,
+\}
 
 function! s:test_strategy() abort
     if index(['vimterminal', 'neovim'], g:test_strategy) >= 0
@@ -1509,9 +1533,9 @@ endfunction
 
 nnoremap <silent> <Leader>tt :execute ":TestNearest -strategy=" . g:test_strategy<Enter>
 nnoremap <silent> <Leader>tf :execute ":TestFile -strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>ts :execute ":TestSuite -strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tl :execute ":TestLast -strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tg :execute ":TestVisit -strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>ts :execute ":TestSuite " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tl :TestLast<Enter>
+nnoremap <silent> <Leader>tg :TestVisit<Enter>
 nnoremap <silent> <Leader>tq :call <SID>test_strategy()<Enter>
 
 " ALE
@@ -2266,9 +2290,9 @@ augroup AutoCommands
         \ 'all': '--no-coverage --stop-on-failure',
     \}
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tT :TestNearest --testdox -vvv<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tF :TestFile --testdox -vvv<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tS :TestSuite --testdox -vvv<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tT :execute ":TestNearest -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tF :execute ":TestFile -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tS :execute ":TestSuite -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
 
     " PHP Linter
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
