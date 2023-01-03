@@ -494,7 +494,7 @@ mode "move" {
 bindsym $mod+m mode "move" focus floating
 
 # Open tab in browser
-set $mode_browser (b)itbucket, (g)ithub, (l)inkedin, tra(n)slate, (o)utlook, (r)eddit, (s)earch, (t)witch, (u)rban, (w)reference, (y|Y)outube
+set $mode_browser (b)itbucket, (g)ithub, (l)inkedin, tra(n)slate, (o)utlook, (r)eddit, (S|s)earch, (T|t)witch, (u)rban, (w)reference, (Y|y)outube
 
 mode "$mode_browser" {
     bindsym b exec  $browser bitbucket.org, workspace $workspace2,              mode "default"
@@ -510,7 +510,9 @@ mode "$mode_browser" {
     bindsym w exec  $browser wordreference.com, workspace $workspace2,          mode "default"
     bindsym y exec  $browser youtube.com, workspace $workspace2,                mode "default"
 
-    bindsym Shift+y exec $browser-private youtube.com, workspace $workspace2,   mode "default"
+    bindsym Shift+s exec    $browser-private duckduckgo.com, workspace $workspace2, mode "default"
+    bindsym Shift+t exec    $browser-private twitch.tv, workspace $workspace2,      mode "default"
+    bindsym Shift+y exec    $browser-private youtube.com, workspace $workspace2,    mode "default"
 
     # back to normal
     bindsym Return      mode "default"
