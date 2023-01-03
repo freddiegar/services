@@ -106,7 +106,7 @@ get_battery_perc() {
 }
 
 show_message(){
-    i3-msg "exec i3-nagbar -m \"${1}\""
+    i3-msg --quiet "exec i3-nagbar --message \"${1}\", fullscreen disable"
 } >&2
 
 debug(){
