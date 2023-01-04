@@ -1,20 +1,27 @@
-Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
-Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete)
-Plug 'tpope/vim-repeat'                                         " Repeat: surround and other more
-Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
-Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
-Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
-Plug 'vim-syntastic/syntastic'                                  " Diagnostic code on-the-fly: unmanteined 2022-07-06
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
-Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
-Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
-Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve
-Plug 'tpope/vim-fugitive'                                       " Git with superpowers
-Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
-Plug 'junegunn/gv.vim'                                          " Commits filter (need vim-fugitive) -> :GV[!]
-Plug 'tpope/vim-dadbod'                                         " DB console in Vim
-Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tg}
-Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
-Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
-Plug 'machakann/vim-highlightedyank'                            " See yank preview
-Plug 'markonm/traces.vim'                                       " See range, substitution and global preview
+2023-01-03 16:50:54
+Plug 'airblade/vim-gitgutter'
+Plug 'dense-analysis/ale'
+Plug 'freddiegar/miningbox.vim'
+Plug 'jamessan/vim-gnupg'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/gv.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'machakann/vim-highlightedyank'
+Plug 'machakann/vim-swap'
+Plug 'markonm/traces.vim'
+Plug 'phpactor/phpactor'
+Plug 'SirVer/ultisnips'
+Plug 'skywind3000/asyncrun.vim'
+Plug 'sniphpets/sniphpets'
+Plug 'tommcdo/vim-fubitive'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-dadbod'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-surround'
+Plug 'vim-test/vim-test'
+Plug 'wakatime/vim-wakatime'
+Plug 'wellle/targets.vim'

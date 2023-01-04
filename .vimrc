@@ -113,12 +113,11 @@
 " 3. No brake changes :(vim9script, yeah):
 " 4. Better separator in vertical split :@
 " n. Faster, it's really (Of course, my setup) :D
-"           Version                     BARE    NO LSP(NC)  NO LSP(C)   LSP (NC CoC)
-"   Vim:    8.2.1-4949                  3.702ms 82.131ms    88.110ms    319.519ms
-"   Vim9:   9.0.1-105                   5.039ms 80.240ms    83.352ms    291.892ms
-"   Diff:                               +136.1% -6.4%       - 5.4%      - 8.6%      = 2.520 minutes/year save open 15 times by day
-"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  9.563ms 74.382ms    78.913ms    233.283ms
-"   Diff:                               +158.3% -9.5%       -10.5%      -33.1%      = 7.869 minutes/year save open 15 times by day
+" STARTUP TIME (plugins.time)
+"           Version                     BARE        PLUG-NC     PLUG-C
+"   Vim9:   9.0.1-749                   5.578ms     167.416ms   175.369ms
+"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  27.480ms    124.382ms   126.659ms
+"   Diff:                               +492.6%     -25.8%      -27.8%
 " @see https://neovim.io/doc/user/vim_diff.html
 
 " Registers and marks special used here
