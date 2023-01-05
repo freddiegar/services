@@ -370,7 +370,7 @@ function! AsyncStatuslineFlag() abort
         return g:test_strategy ==# 'background' ? '◎' : ''
     endif
 
-    if index(['', 'running', 'stopped'], get(g:, 'asyncrun_status', '')) > 0
+    if index(['', 'running', 'stopped'], get(g:, 'asyncrun_status', '')) >= 0
         return get(g:, 'asyncrun_icon', '')
     endif
 
@@ -1808,7 +1808,7 @@ augroup LargeFile
 augroup END
 
 function! s:check_large_file(file) abort
-    if a:file ==# '' || index(['jpg', 'jpeg', 'png', 'gif', 'svg', 'pdf'], expand(a:file . ':t'))
+    if a:file ==# '' || index(['jpg', 'jpeg', 'png', 'gif', 'svg', 'pdf'], expand(a:file . ':t')) >= 0
         return
     endif
 
@@ -1828,6 +1828,7 @@ function! s:check_large_file(file) abort
         setlocal noswapfile
         setlocal nocursorline
         setlocal nocursorcolumn
+        setlocal colorcolumn=0
         setlocal norelativenumber
         setlocal bufhidden=unload
         " setlocal buftype=nowrite " No allowed changes in same file, it's annoyoning!
@@ -2778,7 +2779,7 @@ augroup AutoCommands
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile :call <SID>cleanspaces()
+    autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
     " " Auto-source syntax in *.vpm
