@@ -104,6 +104,7 @@
 " 1. :W command -> Save as sudo don't work      -> https://github.com/neovim/neovim/issues/1716
 " 2. :X command -> Encryption don't exist       -> https://github.com/neovim/neovim/issues/701 -> use GnuPG
 " 3. :R command -> Command with sudo don't work -> @see #1
+" 4. Mappings using <S-F#> don't work
 " n. Don't need installation
 " @see https://vimhelp.org/version9.txt.html#new-9
 
@@ -125,6 +126,7 @@
 " - @z  Save temp content used in mappings
 " - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
+let g:cache = {}
 let g:isneovim = has('nvim')
 let g:hasgit = isdirectory('.git')
 
@@ -363,11 +365,31 @@ function! GetNameBranch() abort
     return strlen(l:branchname) > 0 ? '  ' . tolower(split(l:branchname, '/')[0]) . ' ' : ' '
 endfunction
 
+function! GetVersion(executable) abort
+    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
+        return ''
+    endif
+
+    let l:ftime = getftime(fnamemodify(a:executable, ':p'))
+
+    if l:ftime < 0
+        return ''
+    endif
+
+    let [l:ctime, l:version] = get(g:cache, a:executable, [-2, ''])
+
+    if l:ftime != l:ctime
+        let g:cache[a:executable] = [l:ftime, system("php --version | grep -e \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0:2]]
+    endif
+
+    return '  ' . l:version
+endfunction
+
 function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
                 \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
-        return g:test_strategy ==# 'background' ? '◎' : ''
+        return g:test_strategy ==# 'background' ? '  ◎' : ''
     endif
 
     if index(['', 'running', 'stopped'], get(g:, 'asyncrun_status', '')) >= 0
@@ -461,16 +483,18 @@ function! s:statusline() abort
     set statusline+=%{&virtualedit=~#'all'?'[v]':''}            " Virtual edit flag
 
     if exists('g:loaded_test')
-        set statusline+=\                                       " Extra space
         set statusline+=%{AsyncStatuslineFlag()}                " Async process info
     endif
 
     set statusline+=%{GetNameBranch()}                          " Branch name repository
     set statusline+=%3{&filetype!=#''?'\ '.&filetype:''}        " Is it require description?
+    set statusline+=%{GetVersion('/etc/alternatives/php')}      " PHP version
 
     set statusline+=\%<                                         " Truncate long statusline here
-    set statusline+=\ %{&fileencoding.''}                       " Is it require description?
-    " set statusline+=\ c:%3c                                     " Cursor [c]olumn
+    set statusline+=\                                           " Extra space
+    set statusline+=%{&fileencoding.''}                         " Is it require description?
+    " set statusline+=\                                           " Extra space
+    " set statusline+=c:%3c                                       " Cursor [c]olumn
 
     set statusline+=\                                           " Extra space
 endfunction
@@ -1521,7 +1545,7 @@ let g:test#strategy = {
 function! s:test_strategy() abort
     if index(['vimterminal', 'neovim'], g:test_strategy) >= 0
         let g:test_strategy = 'background'
-        let g:asyncrun_icon = '◎'
+        let g:asyncrun_icon = '  ◎'
     else
         let g:test_strategy = (g:isneovim ? 'neovim' : 'vimterminal')
         let g:asyncrun_icon = ''
@@ -2539,7 +2563,6 @@ augroup AutoCommands
 
     " Load env vars
     let s:env = {}
-    let s:envcache = {}
 
     function! s:envfile() abort
         let l:envfile = ''
@@ -2574,11 +2597,11 @@ augroup AutoCommands
             return
         endif
 
-        let [l:ctime, l:lines] = get(s:envcache, l:envfile, [-2, []])
+        let [l:ctime, l:lines] = get(g:cache, l:envfile, [-2, []])
 
         if l:ftime != l:ctime || a:bang
             let l:lines = systemlist('cat ' . l:envfile . ' | grep -e "^\(DB_\|DATABASE_URL\)" | sed "s/^D/VIM_D/"')
-            let s:envcache[l:envfile] = [l:ftime, l:lines]
+            let g:cache[l:envfile] = [l:ftime, l:lines]
 
             let l:message = 'Loaded ' . l:envfile . ' vars.'
         endif
