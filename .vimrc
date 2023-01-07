@@ -356,7 +356,7 @@ function! GetNameCurrentFile() abort
 endfunction
 
 function! GetNameBranch() abort
-    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
+    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
         return ''
     endif
 
@@ -366,7 +366,7 @@ function! GetNameBranch() abort
 endfunction
 
 function! GetVersion(executable) abort
-    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
+    if &filetype !=# 'php' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
         return ''
     endif
 
@@ -1681,17 +1681,22 @@ inoremap <silent> <expr> <Tab>
             \ "\<Tab>"
 
 " In snippets with predefined values|content it uses Select Mode. WIP
-" snoremap <silent> <expr> <Tab>
-"             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
-"             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
-"             \ pumvisible() ? "\<C-n>" :
-"             \ "\<Tab>"
+snoremap <silent> <expr> <Tab>
+            \ UltiSnips#CanExpandSnippet() ? "\<Esc>i\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
+            \ UltiSnips#CanJumpForwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
+            \ pumvisible() ? "\<C-n>" :
+            \ "\<Tab>"
 
 " Make <S-Tab> for snippet navigation (and complete)
 " Konsole change shortcut <S-Tab> to <C-S-Tab>
 " @see https://vim.fandom.com/wiki/Smart_mapping_for_tab_completion
 inoremap <silent> <expr> <Esc>[Z
             \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
+            \ pumvisible() ? "\<C-p>" :
+            \ "\<C-d>"
+
+snoremap <silent> <expr> <Esc>[Z
+            \ UltiSnips#CanJumpBackwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
             \ pumvisible() ? "\<C-p>" :
             \ "\<C-d>"
 
