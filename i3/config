@@ -7,7 +7,7 @@
 
 # Shortcuts base available:
 #   Shifted:      B, D, E, G, T, Y, Z
-#   Unshifted:    c, g, i, n, o, p, t, u, x, y z
+#   Unshifted:    c, g, i, n, o, p, t, u, x, y, z
 
 # Detect keys pressed
 # xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'
@@ -167,18 +167,18 @@ default_orientation auto
 # type      ->  _NET_WM_WINDOW_TYPE
 # title     ->  _NET_WM_NAME (WM_NAME as fallback)
 
-assign [class="(?i)firefox"]                $workspace2
-assign [class="Microsoft Teams - Preview"]  $workspace3
-assign [class="Mysql-workbench-bin"]        $workspace4
-assign [class="jetbrains-phpstorm"]         $workspace5
-assign [class="(?i)postman"]                $workspace6
-assign [class="AWS VPN Client"]             $workspace7
-assign [class="VirtualBox Manager"]         $workspace8
-assign [class="VirtualBox Machine"]         $workspace8
-assign [class="^VirtualBox$"]               $workspace8
-assign [class="^Virt-manager$"]             $workspace8
-assign [class="Nautilus"]                   $workspace9
-assign [class="Opera"]                      $workspace10
+assign [class="(?i)firefox" title="^((?!(?i)private).)*$"]  $workspace2
+assign [class="Microsoft Teams - Preview"]                  $workspace3
+assign [class="Mysql-workbench-bin"]                        $workspace4
+assign [class="(?i)firefox" title="(?=(?i)private).*"]      $workspace5
+assign [class="(?i)postman"]                                $workspace6
+assign [class="AWS VPN Client"]                             $workspace7
+assign [class="VirtualBox Manager"]                         $workspace8
+assign [class="VirtualBox Machine"]                         $workspace8
+assign [class="^VirtualBox$"]                               $workspace8
+assign [class="^Virt-manager$"]                             $workspace8
+assign [class="Nautilus"]                                   $workspace9
+assign [class="Opera"]                                      $workspace10
 
 # Enable floating
 for_window [window_role="(?i)pop-up"]       floating enable
@@ -201,6 +201,8 @@ for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]       floa
 for_window [instance="^virt-manager$" title="[^Virtual Machine Manager]"]   floating enable, move position center
 for_window [instance="^virt-manager$" title="KVM$"]                         floating enable, resize set 1026 795, move position center
 
+# Open new tab is focus in current Firefox workspace
+for_window [urgent="latest" class="(?i)firefox"]                        focus
 # PiP in Firefox
 for_window [instance="Toolkit" class="(?i)firefox"]                     floating enable, sticky enable
 # Downloads
@@ -236,12 +238,7 @@ bindsym $mod+Shift+r restart
 # resize window (you can also use the mouse for that)
 mode "resize" {
     bindsym Tab focus right
-    # These bindings trigger as soon as you enter the resize mode
 
-    # Pressing left will shrink the window’s width.
-    # Pressing right will grow the window’s width.
-    # Pressing up will shrink the window’s height.
-    # Pressing down will grow the window’s height.
     bindsym h resize shrink width   5 px or 5 ppt
     bindsym j resize grow   height  5 px or 5 ppt
     bindsym k resize shrink height  5 px or 5 ppt
@@ -252,21 +249,21 @@ mode "resize" {
     bindsym Shift+k resize shrink height  10 px or 10 ppt
     bindsym Shift+l resize grow   width   10 px or 10 ppt
 
-    # Borders                                                           -20 -25
-    bindsym a       floating enable, resize set 1024 576,   move position 876 479
-    bindsym s       floating enable, resize set 854 480,    move position 1046 575
-    bindsym d       floating enable, resize set 640 360,    move position 1260 695
-    bindsym f       floating enable, resize set 426 240,    move position 1474 815
-    bindsym g       floating enable, resize set 256 144,    move position 1644 911
+    # Borders                                                                 -20 -25
+    bindsym a           floating enable, resize set 1024 576,   move position 876 479
+    bindsym s           floating enable, resize set 854 480,    move position 1046 575
+    bindsym d           floating enable, resize set 640 360,    move position 1260 695
+    bindsym f           floating enable, resize set 426 240,    move position 1474 815
+    bindsym g           floating enable, resize set 256 144,    move position 1644 911
 
-    bindsym Shift+a       floating enable, resize set 1024 576, move position 20 479
-    bindsym Shift+s       floating enable, resize set 854 480,  move position 20 575
-    bindsym Shift+d       floating enable, resize set 640 360,  move position 20 695
-    bindsym Shift+f       floating enable, resize set 426 240,  move position 20 815
-    bindsym Shift+g       floating enable, resize set 256 144,  move position 20 911
+    bindsym Shift+a     floating enable, resize set 1024 576,   move position 20 479
+    bindsym Shift+s     floating enable, resize set 854 480,    move position 20 575
+    bindsym Shift+d     floating enable, resize set 640 360,    move position 20 695
+    bindsym Shift+f     floating enable, resize set 426 240,    move position 20 815
+    bindsym Shift+g     floating enable, resize set 256 144,    move position 20 911
 
-    bindsym v       floating enable, resize set 854 540, move position 1046 515, sticky enable
-    bindsym t       floating enable, resize set 720 500, move position 1180 555, sticky enable
+    bindsym v           floating enable, resize set 854 540,    move position 1046 515, sticky enable
+    bindsym t           floating enable, resize set 720 500,    move position 1180 555, sticky enable
 
     # back to normal
     bindsym Return mode "default"
@@ -494,25 +491,26 @@ mode "move" {
 bindsym $mod+m mode "move" focus floating
 
 # Open tab in browser
-set $mode_browser (b)itbucket, (g)ithub, (l)inkedin, tra(n)slate, (o)utlook, (r)eddit, (S|s)earch, (T|t)witch, (u)rban, (w)reference, (Y|y)outube
+set $mode_browser (b)itbucket, (G|g)ithub, (l)inkedin, tra(n)slate, (o)utlook, (r)eddit, (S|s)earch, (T|t)witch, (u)rban, (w)reference, (Y|y)outube
 
 mode "$mode_browser" {
-    bindsym b exec  $browser bitbucket.org, workspace $workspace2,              mode "default"
-    bindsym g exec  $browser github.com, workspace $workspace2,                 mode "default"
-    bindsym l exec  $browser linkedin.com, workspace $workspace2,               mode "default"
+    bindsym b exec  $browser bitbucket.org,         mode "default"
+    bindsym g exec  $browser github.com,            mode "default"
+    bindsym l exec  $browser linkedin.com,          mode "default"
 
-    bindsym n exec  $browser translate.google.com, workspace $workspace2,       mode "default"
-    bindsym o exec  $browser outlook.live.com, workspace $workspace2,           mode "default"
-    bindsym r exec  $browser reddit.com, workspace $workspace2,                 mode "default"
-    bindsym s exec  $browser duckduckgo.com, workspace $workspace2,             mode "default"
-    bindsym t exec  $browser twitch.tv, workspace $workspace2,                  mode "default"
-    bindsym u exec  $browser urbandictionary.com, workspace $workspace2,        mode "default"
-    bindsym w exec  $browser wordreference.com, workspace $workspace2,          mode "default"
-    bindsym y exec  $browser youtube.com, workspace $workspace2,                mode "default"
+    bindsym n exec  $browser translate.google.com,  mode "default"
+    bindsym o exec  $browser outlook.live.com,      mode "default"
+    bindsym r exec  $browser reddit.com,            mode "default"
+    bindsym s exec  $browser duckduckgo.com,        mode "default"
+    bindsym t exec  $browser twitch.tv,             mode "default"
+    bindsym u exec  $browser urbandictionary.com,   mode "default"
+    bindsym w exec  $browser wordreference.com,     mode "default"
+    bindsym y exec  $browser youtube.com,           mode "default"
 
-    bindsym Shift+s exec    $browser-private duckduckgo.com, workspace $workspace2, mode "default"
-    bindsym Shift+t exec    $browser-private twitch.tv, workspace $workspace2,      mode "default"
-    bindsym Shift+y exec    $browser-private youtube.com, workspace $workspace2,    mode "default"
+    bindsym Shift+g exec    $browser-private github.com,        mode "default"
+    bindsym Shift+s exec    $browser-private duckduckgo.com,    mode "default"
+    bindsym Shift+t exec    $browser-private twitch.tv,         mode "default"
+    bindsym Shift+y exec    $browser-private youtube.com,       mode "default"
 
     # back to normal
     bindsym Return      mode "default"
