@@ -129,6 +129,7 @@
 let g:cache = {}
 let g:isneovim = has('nvim')
 let g:hasgit = isdirectory('.git')
+let g:working = split(getcwd(), '/')[-2:]
 
 set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */
                                                                 " (default: Vim: on, Debian: off) (why nvim why!)
@@ -625,7 +626,18 @@ cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' :
 
 " [F]ilter data in files easily
 " @see https://vimways.org/2019/vim-and-the-shell/
-command! -nargs=? F new <Bar> setlocal noswapfile <Bar> execute '0read !cat # <Bar> grep -F ' . shellescape('<args>')
+command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
+
+" bang (1/0), [filter (string)]: void
+function! s:file_filter(isregex, file, filter) abort
+    if a:file ==# ''
+        echo 'Nothing to do.'
+    endif
+
+    new
+    setlocal noswapfile
+    silent execute '0read !cat ' . a:file . ' | grep ' . (a:isregex ? '' : '-F ') . shellescape(a:filter)
+endfunction
 
 " Sorry but :help is better
 nnoremap <F1> <Nop>
@@ -1195,7 +1207,7 @@ cnoremap <C-f> <C-Right>
 " Auto-complete files in command line using RegEx
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
 " cnoremap <C-x><C-a> <C-a>
-" Shortcuts to common directories
+" Shortcuts to recurrent directories
 cnoremap <C-x><C-d> ~/Downloads/
 
 function! s:cycling_buffers(incr) abort
@@ -2690,7 +2702,7 @@ augroup AutoCommands
     endfunction
 
     " Save|Load sessions
-    let g:session_file = expand('~/.vim/sessions/' . join(split(getcwd(), '/')[-2:], '@') . (g:isneovim ? '.nvim' : '.vim'))
+    let g:session_file = expand('~/.vim/sessions/' . join(g:working, '@') . (g:isneovim ? '.nvim' : '.vim'))
 
     function! s:sessionload() abort
         let l:message = ''
