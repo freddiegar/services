@@ -1209,6 +1209,7 @@ cnoremap <C-f> <C-Right>
 " cnoremap <C-x><C-a> <C-a>
 " Shortcuts to recurrent directories
 cnoremap <C-x><C-d> ~/Downloads/
+cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
@@ -1307,6 +1308,7 @@ Plug 'tommcdo/vim-fubitive'                                     " - BitBucket br
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 
 Plug 'tpope/vim-dadbod'                                         " DB console in Vim
+Plug 'kristijanhusak/vim-dadbod-completion', {'for': ['sql']}   " DB autocompletion (needs vim-dadbod)
 
 " Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
 " Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
@@ -1980,8 +1982,7 @@ nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
 
 " DadBod
 " @see https://github.com/tpope/vim-dadbod
-" range (0,1,2), interactive (0/1), [command (string)]: void
-function! s:query(range, interactive, ...) abort
+function! s:db() abort
     let l:url = <SID>env('DATABASE_URL')
 
     if l:url ==# ''
@@ -1994,9 +1995,19 @@ function! s:query(range, interactive, ...) abort
         let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
     endif
 
+    if l:url ==# '://:@/'
+        return ''
+    endif
+
+    return l:url
+endfunction
+
+" range (0,1,2), interactive (0/1), [command (string)]: void
+function! s:query(range, interactive, ...) abort
+    let l:url = <SID>db()
     let l:command = <SID>get_selection(a:range, a:interactive, a:000)
 
-    if l:command ==# '' && !a:interactive
+    if l:url ==# '' || (l:command ==# '' && !a:interactive)
         echo 'Nothing to do.'
 
         return 0
@@ -2242,6 +2253,11 @@ augroup AutoCommands
     " autocmd BufRead,BufNewFile *.vpm setfiletype vpm
 
     autocmd FileType sql setlocal commentstring=--\ %s
+    autocmd FileType sql let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
+    autocmd FileType sql inoremap <silent> <expr> <buffer><C-n>
+                \ match(getline('.')[col('.') - 2], '\W') >= 0 && match(getline('.')[col('.') - 2], '\.') < 0 ? "\<C-x>\<C-n>" :
+                \ pumvisible() ?  "\<C-n>" :
+                \ "\<C-x>\<C-o>"
     autocmd FileType apache setlocal commentstring=#\ %s
     autocmd FileType crontab setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
@@ -2819,7 +2835,7 @@ augroup AutoCommands
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
-    autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile :call <SID>cleanspaces()
+    autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
     " " Auto-source syntax in *.vpm
