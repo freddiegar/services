@@ -212,9 +212,9 @@ if executable('rg')
     " Better integration's rg. Only Vim (or nvim 0.5+)
     " @thanks https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
     function! Grep(...)
-        let s:grep_command = join([&grepprg] + [expandcmd(join(a:000, ' '))], ' ')
+        let s:regex_command = join([&grepprg] + [expandcmd(join(a:000, ' '))], ' ')
 
-        return system(s:grep_command)
+        return system(s:regex_command)
     endfunction
 
     function! s:rg_escape(string) abort
@@ -238,14 +238,14 @@ if executable('rg')
     cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
     cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'LGrep' : 'lgrep'
 
-    " Open quickfix on finish grep command automatically
+    " Open quickfix on finish command automatically
     augroup Quickfix
         autocmd!
 
         autocmd QuickFixCmdPost cgetexpr cwindow
-                    \ | call setqflist([], 'a', {'title': ':' . s:grep_command})
+                    \ | call setqflist([], 'a', {'title': ':' . s:regex_command})
         autocmd QuickFixCmdPost lgetexpr lwindow
-                    \ | call setloclist(0, [], 'a', {'title': ':' . s:grep_command})
+                    \ | call setloclist(0, [], 'a', {'title': ':' . s:regex_command})
     augroup END
 endif
 
@@ -344,6 +344,10 @@ let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recu
 let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles
 let g:netrw_sizestyle = 'H'                                     " Human-readable: 5K, 4M, uses 1024 base (default: [b]ytes)
 
+let g:filterprg = split(&grepprg)[0] ==# 'rg'
+            \ ? split(&grepprg)[0] . ' -N'
+            \ : split(&grepprg)[0] . ' -E'
+
 function! GetNameCurrentPath() abort
     return index(['quickfix', 'terminal', 'help'], &buftype) == -1 && index(['netrw', 'vim-plug', 'fugitive'], &filetype) < 0
                 \ ? split(getcwd(), '/')[-1] . (expand('%:t') !=# '' ? ' ' : '')
@@ -380,7 +384,7 @@ function! GetVersion(executable) abort
     let [l:ctime, l:version] = get(g:cache, a:executable, [-2, ''])
 
     if l:ftime != l:ctime
-        let g:cache[a:executable] = [l:ftime, system("php --version | grep -e \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0:2]]
+        let g:cache[a:executable] = [l:ftime, system("php --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0:2]]
     endif
 
     return '  ' . l:version
@@ -632,11 +636,14 @@ command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
 function! s:file_filter(isregex, file, filter) abort
     if a:file ==# ''
         echo 'Nothing to do.'
+
+        return
     endif
 
     new
     setlocal noswapfile
-    silent execute '0read !cat ' . a:file . ' | grep ' . (a:isregex ? '' : '-F ') . shellescape(a:filter)
+    silent execute join(['0read', '!' . (a:isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') . ' -F'), shellescape(a:filter), a:file])
+    normal gg
 endfunction
 
 " Sorry but :help is better
@@ -694,8 +701,8 @@ xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
 nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
 xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 
-nnoremap <silent> <Leader>G :call <SID>find_filter('grep')<Enter>
-xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter('grep')<Enter>
+nnoremap <silent> <Leader>G :call <SID>find_filter('regex')<Enter>
+xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter('regex')<Enter>
 
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
@@ -881,7 +888,7 @@ function! s:find_filter(type, ...)
 
     if a:type ==# 'file'
         silent call fzf#vim#files(getcwd(), fzf#vim#with_preview({'options': ['--query', l:filter]}))
-    elseif a:type ==# 'grep'
+    elseif a:type ==# 'regex'
         silent call <SID>rgfzf(l:filter, 0, '', 1)
     else
         silent call <SID>rgfzf(l:filter, 0)
@@ -1912,7 +1919,7 @@ let g:fugitive_no_maps = 1
 
 function! s:git_alias() abort
     let l:aliases = []
-    let l:lines = systemlist('cat ~/.bash_aliases | grep -e "^alias\(.*\)=\"git " | grep -v "log\|blame\||" | sed "s/alias \|\"//gi"')
+    let l:lines = systemlist(g:filterprg . ' "^alias(.*)=\"git " ~/.bash_aliases | ' . g:filterprg . ' --invert-match "log|blame|\|" | sed "s/alias \|\"//gi"')
 
     for l:line in l:lines
         let [l:shortcut, l:command] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
@@ -1969,10 +1976,7 @@ let g:gitgutter_max_signs = 500
 let g:gitgutter_preview_win_floating = 1
 let g:gitgutter_close_preview_on_escape = 1
 let g:gitgutter_show_msg_on_hunk_jumping = 0
-
-if executable('rg')
-    let g:gitgutter_grep = 'rg'
-endif
+let g:gitgutter_grep = g:filterprg
 
 nmap <silent> <expr> <Leader>k &diff ? "[czzzv" : ":GitGutterPrevHunk<Enter>zzzv"
 nmap <silent> <expr> <Leader>j &diff ? "]czzzv" : ":GitGutterNextHunk<Enter>zzzv"
@@ -2554,7 +2558,7 @@ augroup AutoCommands
     endfunction
 
     function! s:composer(command, ...) abort
-        let l:version = system('composer ' . a:command . ' 2>/dev/null | grep -e "' . a:1 . '" | sed "s#\s\+# #g" | cut -d " " -f 2 | tr -d "\n"')
+        let l:version = system('composer ' . a:command . ' 2>/dev/null | ' . g:filterprg . ' "' . a:1 . '" | sed "s#\s\+# #g" | cut -d " " -f 2 | tr -d "\n"')
 
         return len(l:version) > 0 ? l:version : 'None'
     endfunction
@@ -2569,8 +2573,8 @@ augroup AutoCommands
     " query (string), fullscreen (0/1), [dir (string), fixed (0/1)] : void
     function! s:rgfzf(query, fullscreen, ...) abort
         let l:dir = a:0 > 0 && isdirectory(a:1) ? a:1 : ''
-        let l:usegrep = a:0 > 1 && a:2 == 1 ? '--no-fixed-strings' : '--fixed-strings'
-        let l:finder_command = "rg --glob '!{*.log,*-lock.json,*.lock}' --column --line-number --no-heading --color=always " . l:usegrep . " -- %s " . l:dir . ' || true'
+        let l:filter_type = a:0 > 1 && a:2 == 1 ? '--no-fixed-strings' : '--fixed-strings'
+        let l:finder_command = "rg --glob '!{*.log,*-lock.json,*.lock}' --column --line-number --no-heading --color=always " . l:filter_type . " -- %s " . l:dir . ' || true'
         let l:initial_command = printf(l:finder_command, shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
         let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
@@ -2633,7 +2637,7 @@ augroup AutoCommands
         let [l:ctime, l:lines] = get(g:cache, l:envfile, [-2, []])
 
         if l:ftime != l:ctime || a:bang
-            let l:lines = systemlist('cat ' . l:envfile . ' | grep -e "^\(DB_\|DATABASE_URL\)" | sed "s/^D/VIM_D/"')
+            let l:lines = systemlist(g:filterprg . ' "^(DB_|DATABASE_URL)" ' . l:envfile . ' | sed "s/^D/VIM_D/"')
             let g:cache[l:envfile] = [l:ftime, l:lines]
 
             let l:message = 'Loaded ' . l:envfile . ' vars.'
