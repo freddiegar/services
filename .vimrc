@@ -89,6 +89,15 @@
 "     \\    \\       \\       \\         literal backslash
 "     \{    {        {        {          literal curly brace
 
+" REGEX
+" Quantifiers::
+"   *       ->  0 or more
+"   +       ->  1 or more
+"   ?       ->  0 or one
+"   {#}     ->  Exact number
+"   {#,#}   ->  Range of numbers {min,max}
+" @regex https://www.youtube.com/watch?v=sa-TUpSx1JA
+
 " THE WAY
 " 1. Team Comprehension (Understand another code, yes: juniors)
 " 2. Reduce Interruptions (Try different ways)
@@ -105,6 +114,7 @@
 " 2. :X command -> Encryption don't exist       -> https://github.com/neovim/neovim/issues/701 -> use GnuPG
 " 3. :R command -> Command with sudo don't work -> @see #1
 " 4. Mappings using <S-F#> don't work
+" 5. Colorschemes built-in have weird colors
 " n. Don't need installation
 " @see https://vimhelp.org/version9.txt.html#new-9
 
@@ -130,6 +140,8 @@ let g:cache = {}
 let g:isneovim = has('nvim')
 let g:hasgit = isdirectory('.git')
 let g:working = split(getcwd(), '/')[-2:]
+
+syntax off                                                      " Disabled while is processing...
 
 set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */
                                                                 " (default: Vim: on, Debian: off) (why nvim why!)
@@ -274,9 +286,6 @@ if has('mouse')
     set mouse=a                                                 " Mouse exists always (default: "")
 endif
 
-" Custom Render
-syntax on                                                       " Enable syntax highlighting
-
 set nowrap                                                      " No cut lines (default: on)
 set linebreak                                                   " No cut words on wrap enable (default: off)
 set breakindent                                                 " Indent wrap lines better (default: off)
@@ -292,7 +301,26 @@ set listchars=space:·,tab:»\ ,trail:+,eol:↲                     " Chars used
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
 set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
+
 set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
+
+if has('gui_running')
+    set guioptions=                                             " Reset option (default: aegimrLrT)
+    set guioptions+=M                                           " Not sourced system [M]enu
+    set guioptions+=g                                           " Show inactive items as inactive, [g]ray color (default: hide)
+    set guioptions+=c                                           " Confirmations in [c]onsole (as Terminal)
+    set guioptions+=k                                           " Windows [k]eep size after change GUI
+    set guioptions+=!                                           " Use terminal with external commands, no simulate
+
+    augroup GUIOptions
+        autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'FiraCode Retina 14', '')
+        " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 14', '')
+        " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'JetBrains Mono 14', '')
+
+        nnoremap <silent> <A--> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)-1','')<Enter>
+        nnoremap <silent> <A-+> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)+1','')<Enter>
+    augroup END
+endif
 
 " Custom identation
 set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
@@ -413,7 +441,13 @@ function! AsyncStatuslineFlag() abort
             let l:command = 'aplay /usr/share/sounds/sound-icons/pipe.wav'
         endif
 
-        silent call system(l:command . ' &')
+        if exists('*job_start')
+            silent call job_start(l:command)
+        elseif exists('*jobstart') " (why nvim why!)
+            silent call jobstart(l:command)
+        else
+            silent call system(l:command . ' &')
+        endif
     endif
 
     echo 'Task:     ' . g:asyncrun_status
@@ -975,6 +1009,7 @@ function! s:append_char(type) abort
     endif
 endfunction
 
+" @see https://www.hivesystems.io/blog/are-your-passwords-in-the-green
 function! s:generate_password() abort
     let l:password = system('openssl passwd -apr1 `openssl rand -base64 16` | tr -d "\n"')
 
@@ -1214,7 +1249,7 @@ cnoremap <C-f> <C-Right>
 " Auto-complete files in command line using RegEx
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
 " cnoremap <C-x><C-a> <C-a>
-" Shortcuts to recurrent directories
+" Shortcuts to recurrent files or directories
 cnoremap <C-x><C-d> ~/Downloads/
 cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')
 
@@ -1303,7 +1338,7 @@ Plug 'machakann/vim-swap'                                       " Swap args: g>,
 
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'dense-analysis/ale'                                       " Diagnostic code on-the-fly
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }             " Open and find files
+Plug 'junegunn/fzf', {'do': { -> fzf#install() }}               " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve (needs ultisnips)
@@ -1336,7 +1371,7 @@ Plug 'jamessan/vim-gnupg'                                       " Transparent ed
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
-Plug 'junegunn/goyo.vim'                                        " Zen mode
+Plug 'junegunn/goyo.vim'                                        " Zen mode +
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
 Plug 'wakatime/vim-wakatime'                                    " Zen mode #
 
@@ -2830,6 +2865,26 @@ augroup AutoCommands
         silent execute '!echo -ne "\033]30;' . a:title . '\007"'
     endfunction
 
+    function! s:postcolorscheme() abort
+        if g:colors_name !=# 'miningbox'
+            highlight! CursorLine cterm=NONE
+            highlight! CursorLineNR cterm=NONE
+
+            highlight! link VertSplit LineNr
+            highlight! link SignColumn LineNr
+            highlight! link EndOfBuffer LineNr
+            highlight! link CursorLineSign LineNr
+
+            highlight! link GitGutterAdd LineNr
+            highlight! link GitGutterChange LineNr
+            highlight! link GitGutterDelete LineNr
+            highlight! link GitGutterChangeDelete LineNr
+
+            highlight! link User1 ErrorMsg
+            highlight! link ExtraWhitespace Error
+        endif
+    endfunction
+
     autocmd VimEnter * nested call <SID>viminfo() | call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
@@ -2839,6 +2894,7 @@ augroup AutoCommands
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
+    autocmd ColorScheme * call <SID>postcolorscheme()
     autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanspaces()
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
@@ -2904,31 +2960,43 @@ endfunction
 " Allowed 24 bit colors, by default only accept 8 bit, require in tty
 " @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 " @see https://github.com/vim/vim/issues/993#issuecomment-255651605
-if has('termguicolors')
+if has('termguicolors') && !has('gui_running')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-    set t_Co=256                                                " Number colors, require in tty (default: tty=8, konsole=256)
+    set t_Co=256                                                " Number colors, require in tty (default: tty=8, konsole=256, gvim=16777216)
     set termguicolors                                           " Vivid colours? Please! (default: off)
 endif
 
-set background=dark                                             " (default: depends)
-
 try
-    colorscheme miningbox
+    silent execute 'colorscheme ' . get(g:, 'colors_name', (index(range(6, 18), str2nr(strftime('%H'))) >= 0 ? 'shine' : 'miningbox'))
 catch /^Vim\%((\a\+)\)\=:E185/
+    " Light:
+    " - delek       <- +++++
+    " - morning     <- +++
+    " - lunaperche  <- ++
+    " - peachpuff   <- ++++
+    " - shine       <- +
+    " - zellner     <- +++
+
+    " Dark:
+    " - blue        <- ++++++
+    " - darkblue    <- ++++++++++++++
+    " - default     <- +
+    " - desert
+    " - elford
+    " - evening
+    " - habamax     <- ++
+    " - industry
+    " - koehler
+    " - murphy
+    " - pablo
+    " - quiet       <- +++
+    " - ron
+    " - slate       <- ++++
+    " - torte
+
     colorscheme default
-
-    highlight! CursorLine cterm=NONE
-    highlight! CursorLineNR cterm=NONE
-
-    highlight! link SignColumn LineNr
-    highlight! link EndOfBuffer LineNr
-
-    highlight! link GitGutterAdd LineNr
-    highlight! link GitGutterChange LineNr
-    highlight! link GitGutterDelete LineNr
-    highlight! link GitGutterChangeDelete LineNr
 endtry
 
 if filereadable(expand('~/.vimrc.local'))
@@ -2936,3 +3004,5 @@ if filereadable(expand('~/.vimrc.local'))
 endif
 
 execute 'augroup END'
+
+syntax on                                                      " Enable syntax highlighting

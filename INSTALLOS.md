@@ -671,6 +671,15 @@ sudo apt-get install -y fonts-firacode
 ## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
 ```
 
+# JetBrains Mono
+
+[See](https://www.jetbrains.com/lp/mono/)
+[See 2](https://github.com/JetBrains/JetBrainsMono)
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
+```
+
 # Clean installation
 sudo apt-get clean
 sudo apt-get autoclean
