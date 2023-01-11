@@ -136,12 +136,25 @@
 " - @z  Save temp content used in mappings
 " - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
-let g:cache = {}
-let g:isneovim = has('nvim')
-let g:hasgit = isdirectory('.git')
-let g:working = split(getcwd(), '/')[-2:]
+if !get(v:, 'vim_did_enter', !has('vim_starting'))
+    function! s:initialize(cwd) abort
+        let g:cwd = a:cwd
+        let g:cache = {}
+        let g:isneovim = has('nvim')
+        let g:hasgit = isdirectory('.git')
+        let g:working = split(g:cwd, '/')[-2:]
 
-syntax off                                                      " Disabled while is processing...
+        " Viminfofile setup
+        let g:infofile = ''
+
+        " Save|Load sessions
+        let g:session_file = expand('~/.vim/sessions/' . join(g:working, '@') . (g:isneovim ? '.nvim' : '.vim'))
+    endfunction
+
+    silent call <SID>initialize(getcwd())                         " Initialize global variables
+
+    syntax off                                                  " Disabled while is processing...
+endif
 
 set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */
                                                                 " (default: Vim: on, Debian: off) (why nvim why!)
@@ -377,8 +390,8 @@ let g:filterprg = split(&grepprg)[0] ==# 'rg'
             \ : split(&grepprg)[0] . ' -E'
 
 function! GetNameCurrentPath() abort
-    return index(['quickfix', 'terminal', 'help'], &buftype) == -1 && index(['netrw', 'vim-plug', 'fugitive'], &filetype) < 0
-                \ ? split(getcwd(), '/')[-1] . (expand('%:t') !=# '' ? ' ' : '')
+    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive'], &filetype) < 0
+                \ ? split(g:cwd, '/')[-1] . (expand('%:t') !=# '' ? ' ' : '')
                 \ : ''
 endfunction
 
@@ -926,7 +939,7 @@ function! s:find_filter(type, ...)
     let @@ = l:saved_unnamed_register
 
     if a:type ==# 'file'
-        silent call fzf#vim#files(getcwd(), fzf#vim#with_preview({'options': ['--query', l:filter]}))
+        silent call fzf#vim#files(g:cwd, fzf#vim#with_preview({'options': ['--query', l:filter]}))
     elseif a:type ==# 'regex'
         silent call <SID>rgfzf(l:filter, 0, '', 1)
     else
@@ -1870,7 +1883,7 @@ nnoremap <silent> gf :call <SID>go_file(expand('<cfile>'))<Enter>
 nnoremap <silent> gF :call <SID>go_line()<Enter>
 
 function! s:go_file(ffile) abort
-    let l:cdir = getcwd()
+    let l:cdir = g:cwd
     let l:cext = expand('%:e')
     let l:ffile = a:ffile
     " Used in:     Symfony      Laravel
@@ -2742,9 +2755,6 @@ augroup AutoCommands
 
     command! -bar -bang -nargs=? -complete=file Dotenv call <SID>envload(<bang>0, <f-args>)
 
-    " Viminfofile setup
-    let g:infofile = ''
-
     function! s:viminfo() abort
         if !g:hasgit
             if g:isneovim
@@ -2773,10 +2783,9 @@ augroup AutoCommands
         silent execute (g:isneovim ? 'rshada ' : 'rviminfo ') . g:infofile
     endfunction
 
-    " Save|Load sessions
-    let g:session_file = expand('~/.vim/sessions/' . join(g:working, '@') . (g:isneovim ? '.nvim' : '.vim'))
-
     function! s:sessionload() abort
+        silent messages clear
+
         let l:message = ''
         let l:envfile = <SID>envfile()
         let l:session = split(g:session_file, '/')[-1]
@@ -2903,6 +2912,9 @@ augroup AutoCommands
     endfunction
 
     autocmd VimEnter * nested call <SID>viminfo() | call <SID>sessionload()
+    " Load session when :cd command is executed
+    " @thanks https://github.com/valacar/vimfiles/commit/4d0b79096fd1b2b6f5fc0c7225f7de7751fada64
+    autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload()
     autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
     " Cursorline only in window active
