@@ -390,7 +390,7 @@ endfunction
 
 function! GetNameBranch() abort
     if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
-        return ''
+        return ' '
     endif
 
     let l:branchname = fugitive#Head(8)
@@ -491,7 +491,7 @@ set shortmess=                                                  " Reset option (
 set shortmess+=W                                                " Don't give "written" or "[w]" when writing a file
 set shortmess+=F                                                " Don't give the file info when editing a file
 set shortmess+=A                                                " Don't give the "ATTENTION" message when swap is found
-set shortmess+=I                                                " Don't give the intro message when starting Vim
+set shortmess+=I                                                " Don't give the intro message when starts
 set shortmess+=c                                                " Don't give ins-completion-menu messages
 set shortmess+=s                                                " Don't give "search hit BOTTOM, continuing at TOP"
 set shortmess+=T                                                " Truncate others message [...]
@@ -523,6 +523,11 @@ function! s:statusline() abort
 
     if exists('g:loaded_test')
         set statusline+=%{AsyncStatuslineFlag()}                " Async process info
+    endif
+
+    if exists('g:loaded_pomodoro') && !has('gui_running') && &buftype !=# 'terminal' && index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) < 0
+        set statusline+=\                                       " Extra space
+        set statusline+=%{pomo#remaining_time().'m'}            " Pomodoro time
     endif
 
     set statusline+=%{GetNameBranch()}                          " Branch name repository
@@ -688,7 +693,7 @@ nnoremap <silent> <expr> <F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd()<Enter>"
 
 " Open explore in current file directory (toggle)
-nnoremap <silent> <expr> <F3>
+nnoremap <silent> <expr> <S-F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":20Vexplore<Enter>"
 
 " Fast Vim configuration (and plugins)
@@ -1373,7 +1378,8 @@ Plug 'jamessan/vim-gnupg'                                       " Transparent ed
 
 Plug 'junegunn/goyo.vim'                                        " Zen mode +
 Plug 'junegunn/limelight.vim'                                   " Zen mode ++
-Plug 'wakatime/vim-wakatime'                                    " Zen mode #
+Plug 'tricktux/pomodoro.vim'                                    " Zen mode +++
+Plug 'wakatime/vim-wakatime'                                    " Zen mode ++++
 
 " Plug 'ap/vim-css-color',  {'for': [
 "             \ 'html',
@@ -1473,9 +1479,11 @@ let g:phpactorPhpBin = "/usr/bin/php8.1"
 
 " nmap <silent> <Leader>gt <Plug>(Translate)
 " xmap <silent> <Leader>gt <Plug>(VTranslate)
+
 " nmap <silent> <Leader>gT :Translate!<Enter>
 " " Don't use <C-u>
 " xmap <silent> <Leader>gT :Translate!<Enter>
+
 " " Sound of silence
 " nnoremap <silent> <Leader>gW :call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<Enter>
 
@@ -1511,6 +1519,15 @@ nnoremap <silent> <F12> :Goyo<Enter>
 " @see https://github.com/junegunn/limelight.vim
 " Number of preceding/following paragraphs to include (default: 0)
 let g:limelight_paragraph_span = 2
+
+" Pomodoro
+" @see https://github.com/tricktux/pomodoro.vim
+let g:pomodoro_time_work = 50
+let g:pomodoro_time_slack = 10
+let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav'
+
+nnoremap <silent> <F3> :execute "PomodoroStart in " . g:working[1]<Enter>
+nnoremap <silent> <S-F3> :PomodoroStatus<Enter>
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
@@ -2841,7 +2858,7 @@ augroup AutoCommands
         silent call histdel('/', -1)
 
         if a:0 > 0
-            echo 'Spaces cleaned!'
+            echo 'Spaces cleaned-up!'
         endif
     endfunction
 
@@ -2854,7 +2871,7 @@ augroup AutoCommands
             call setreg(register, [])
         endfor
 
-        echo 'Registers cleaned!'
+        echo 'Registers cleaned-up!'
     endfunction
 
     function! s:settitle(title) abort
@@ -2932,8 +2949,8 @@ endfunction
 "     if g:presentation_mode == 0
 "         let g:presentation_mode = 1
 
-"         silent set colorcolumn=81
-"         silent set virtualedit+=all
+"         silent setlocal colorcolumn=81
+"         silent setlocal virtualedit+=all
 
 "         if l:show_button_line
 "             silent execute 'normal! mz' . l:maximum_column . 'G' . (&colorcolumn - 1) . "i-\e`z"
@@ -2949,8 +2966,8 @@ endfunction
 "             silent execute 'normal! mz' . l:maximum_column . "G\"_D`z"
 "         endif
 
-"         silent set virtualedit-=all
-"         silent set colorcolumn=
+"         silent setlocal virtualedit-=all
+"         silent setlocal colorcolumn=
 
 "         let g:presentation_mode = 0
 "     endif
@@ -2969,7 +2986,7 @@ if has('termguicolors') && !has('gui_running')
 endif
 
 try
-    silent execute 'colorscheme ' . get(g:, 'colors_name', (index(range(6, 18), str2nr(strftime('%H'))) >= 0 ? 'shine' : 'miningbox'))
+    silent execute 'colorscheme ' . get(g:, 'colors_name', (index(range(7, 15), str2nr(strftime('%H'))) >= 0 ? 'shine' : 'miningbox'))
 catch /^Vim\%((\a\+)\)\=:E185/
     " Light:
     " - delek       <- +++++
