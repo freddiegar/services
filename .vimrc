@@ -153,7 +153,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:session_file = expand('~/.vim/sessions/' . join(g:working, '@') . (g:isneovim ? '.nvim' : '.vim'))
     endfunction
 
-    silent call <SID>initialize(getcwd())                         " Initialize global variables
+    silent call <SID>initialize(getcwd())                       " Initialize global variables
 
     syntax off                                                  " Disabled while is processing...
 endif
@@ -181,9 +181,9 @@ set noswapfile                                                  " No swap for ne
 " Options:
 " Relative or absoluts, explode by , (comma)
 " Spaces must be escape with: \ (backslash)
-" .     Relative to the directory of current file
-" ,,    Current directory
-" **    Any where, ex: /var/**
+" .     Relative to the directory of current file (non-recursively)
+" ,,    Empty value = current work directory
+" **    Any where, ex: /var/** (slower)
 set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind
                                                                 " Skip /usr/include, it's slow (default: .,/usr/include,,)
 
@@ -230,10 +230,11 @@ if executable('rg')
     "  --glob               Include or exclude dirs or files (-g). Examples: -g '!{.git,.svn}'
     set grepprg=rg\ --no-messages\ --vimgrep\ --follow          " Used in :grep command (default: grep -n $* /dev/null)
 
-    " %f    file name (finds a string)
-    " %l    line number (finds a number)
-    " %c    column number (finds a number)
-    " %m    error message (finds a string)
+    "               ┌ %f file name (finds a string)
+    "               │  ┌ %l line number (finds a number)
+    "               │  │  ┌ %c column number (finds a number)
+    "               │  │  │  ┌ %m error message (finds a string)
+    "               │  │  │  │
     set grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m      " (default: %f:%l:%m,%f:%l%m,%f %l%m)
 
     " Better integration's rg. Only Vim (or nvim 0.5+)
@@ -344,6 +345,7 @@ if has('gui_running')
         autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'FiraCode Retina 14', '')
         " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 14', '')
         " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'JetBrains Mono 14', '')
+        " @see https://vimhelp.org/autocmd.txt.html#GUIFailed
         autocmd GUIFailed * qall
 
         " @thanks https://stackoverflow.com/questions/10259366/gvim-auto-copy-selected-text-to-system-clipboard-to-share-it-with-apps
@@ -362,7 +364,7 @@ set shiftround                                                  " Indentation to
 set expandtab                                                   " Don't use tabs please (default: off)
 set fileformat=unix                                             " End of line as Unix format. Always! (default: depends)
 
-" Avoid (unused) built-in plugins
+" Avoid (unused) built-in plugins and: less code, fewer bugs
 let g:loaded_2html_plugin = 1
 let g:loaded_gzip = 1
 let g:loaded_logiPat = 1
@@ -398,8 +400,8 @@ let g:netrw_keepdir = 1                                         " Keep current d
 let g:netrw_preview = 1                                         " Preview in vertical mode (default: horizontal)
 let g:netrw_alto = 1                                            " Change from above to below splitting (default: depends)
 let g:netrw_altv = 1                                            " Change from left to right splitting (default: depends)
-let g:netrw_browse_split = 4                                    " Open file vertically (default: 0 => same window)
-let g:netrw_winsize = 20                                        " Keep same size after open file in previews (default: 50 => 50%)
+let g:netrw_browse_split = 4                                    " Open file vertically (default: 0=same window)
+let g:netrw_winsize = 20                                        " Keep same size after open file in previews (default: 50=50%)
 let g:netrw_liststyle = 3                                       " Show as tree: folders and files always. Cycling: i
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive (default: cp)
 let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles
@@ -515,59 +517,92 @@ set showcmd                                                     " Current pendin
                                                                 " selection (default: depends) (slower)
 
 set shortmess=                                                  " Reset option (default: filnxtToOS)
-set shortmess+=W                                                " Don't give "written" or "[w]" when writing a file
-set shortmess+=F                                                " Don't give the file info when editing a file
-set shortmess+=A                                                " Don't give the "ATTENTION" message when swap is found
-set shortmess+=I                                                " Don't give the intro message when starts
-set shortmess+=c                                                " Don't give ins-completion-menu messages
-set shortmess+=s                                                " Don't give "search hit BOTTOM, continuing at TOP"
-set shortmess+=T                                                " Truncate others message [...]
-set shortmess+=t                                                " Truncate file message [<]
+set shortmess+=a                                                " Enable [a]ll abbreviations
+set shortmess+=W                                                " Don't give the "written" or "[w]" when [W]riting a file
+set shortmess+=F                                                " Don't give the file in[F]o when editing a file
+set shortmess+=A                                                " Don't give the "[A]TTENTION" message when swap is found
+set shortmess+=I                                                " Don't give the [I]ntro message when starting Vim
+set shortmess+=C                                                " Don't give the "S[C]anning ..." messages
+set shortmess+=c                                                " Don't give ins-[c]ompletion-menu messages
+                                                                "   - "-- XXX completion (YYY)"
+                                                                "   - "match 1 of 2"
+                                                                "   - "The only match"
+                                                                "   - "Pattern not found"
+                                                                "   - "Back at original"
+set shortmess+=s                                                " Don't give "[s]earch hit BOTTOM, continuing at TOP"
+set shortmess+=T                                                " Truncate o[T]hers message [...]
+set shortmess+=t                                                " [t]runcate file message [<]
 
-set laststatus=2                                                " Always show statusline (default: 1 => if windows > 1)
+set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
 
 function! s:statusline() abort
+    if &previewwindow || pumvisible()
+        return
+    endif
+
     set statusline=                                             " Start from scratch (default: empty)
 
-    if exists('g:loaded_ale_dont_use_this_in_other_plugins_please')
-        set statusline+=%1*                                     " Set custom color
-        set statusline+=%{AleStatuslineFlag()}                  " Diagnostic info
-        set statusline+=%*                                      " Reset to default colors
+    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
+        setlocal statusline+=\                                  " Extra space
+
+        return
     endif
 
-    set statusline+=\                                           " Extra space
+    " Each window once time, ignore others events please
+    " @thanks https://github.com/vim-airline/vim-airline/blob/4f5b641710bc8cffddb28c6821b2ee7abaafefe6/plugin/airline.vim#L62
+    let l:uniqueid = [bufnr('%'), winnr(), winnr('$'), tabpagenr(), &filetype]
+
+    if get(g:, 'statusline_unique', []) ==# l:uniqueid && &filetype !~? 'gitcommit'
+        return
+    endif
+
+    let g:statusline_unique = l:uniqueid
+
+    if index(['popup', 'help', 'man',], &buftype) >= 0
+        setlocal statusline+=\                                  " Extra space
+        setlocal statusline+=%f                                 " Relative filename
+
+        return
+    endif
+
+    if exists('g:loaded_ale_dont_use_this_in_other_plugins_please')
+        setlocal statusline+=%1*                                " Set custom color User1
+        setlocal statusline+=%{AleStatuslineFlag()}             " Diagnostic info
+        setlocal statusline+=%*                                 " Reset to default colors
+        setlocal statusline+=\                                  " Extra space
+    endif
 
     " This expressions redraw statusline after save file always (slower)
-    set statusline+=%{GetNameCurrentPath()}                     " Relative folder
-    set statusline+=%{GetNameCurrentFile()}                     " Relative filename
+    setlocal statusline+=%{GetNameCurrentPath()}                " Relative folder
+    setlocal statusline+=%{GetNameCurrentFile()}                " Relative filename
 
-    set statusline+=%=                                          " New group
-    set statusline+=\%m                                         " Modified flag
-    set statusline+=\%r                                         " Read-only flag
-    set statusline+=%{&wrap==0?'':'[w]'}                        " Wrap flag
-    set statusline+=%{&wrapscan==0?'[s]':''}                    " Wrapscan flag
-    set statusline+=%{&virtualedit=~#'all'?'[v]':''}            " Virtual edit flag
+    setlocal statusline+=%=                                     " New group (align right)
+    setlocal statusline+=\%m                                    " Modified flag
+    setlocal statusline+=\%r                                    " Read-only flag
+    setlocal statusline+=%{&wrap==0?'':'[w]'}                   " Wrap flag
+    setlocal statusline+=%{&wrapscan==0?'[s]':''}               " Wrapscan flag
+    setlocal statusline+=%{&virtualedit=~#'all'?'[v]':''}       " Virtual edit flag
 
     if exists('g:loaded_test')
-        set statusline+=%{AsyncStatuslineFlag()}                " Async process info
+        setlocal statusline+=%{AsyncStatuslineFlag()}           " Async process info
     endif
 
-    if exists('g:loaded_pomodoro') && !has('gui_running') && &buftype !=# 'terminal' && index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) < 0
-        set statusline+=\                                       " Extra space
-        set statusline+=%{pomo#remaining_time().'m'}            " Pomodoro time
+    if exists('g:loaded_pomodoro') && !has('gui_running')
+        setlocal statusline+=\                                  " Extra space
+        setlocal statusline+=%{pomo#remaining_time().'m'}       " Pomodoro time
     endif
 
-    set statusline+=%{GetNameBranch()}                          " Branch name repository
-    set statusline+=%3{&filetype!=#''?'\ '.&filetype:''}        " Is it require description?
-    set statusline+=%{GetVersion('/etc/alternatives/php')}      " PHP version
+    setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
+    setlocal statusline+=%3{&filetype!=#''?'\ '.&filetype:''}   " Is it require description?
+    setlocal statusline+=%{GetVersion('/etc/alternatives/php')} " PHP version
 
-    set statusline+=\%<                                         " Truncate long statusline here
-    set statusline+=\                                           " Extra space
-    set statusline+=%{&fileencoding.''}                         " Is it require description?
-    " set statusline+=\                                           " Extra space
-    " set statusline+=c:%3c                                       " Cursor [c]olumn
+    setlocal statusline+=\%<                                    " Truncate long statusline here
+    setlocal statusline+=\                                      " Extra space
+    setlocal statusline+=%{&fileencoding.''}                    " Is it require description?
+    " setlocal statusline+=\                                      " Extra space
+    " setlocal statusline+=c:%3c                                  " Cursor [c]olumn
 
-    set statusline+=\                                           " Extra space
+    setlocal statusline+=\                                      " Extra space
 endfunction
 
 " Maps
@@ -713,18 +748,18 @@ function! s:file_filter(isregex, file, filter) abort
 endfunction
 
 " Sorry but :help is better
-nnoremap <F1> <Nop>
+nmap <silent> <F1> <Nop>
 
 " Open explore in current work directory (toggle)
-nnoremap <silent> <expr> <F2>
-            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd()<Enter>"
+nmap <silent> <expr> <F2>
+            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd() <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
 
 " Open explore in current file directory (toggle)
-nnoremap <silent> <expr> <S-F2>
-            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":20Vexplore<Enter>"
+nmap <silent> <expr> <S-F2>
+            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
 
 " Fast Vim configuration (and plugins)
-nnoremap <silent> <expr> <F10>
+nmap <silent> <expr> <F10>
             \ expand('%:t') ==# '.vimrc' ? ":PlugUpdate<Enter>" :
             \ &filetype ==# 'vim-plug' ? ":silent execute \"normal! :bdelete!\\r\"<Enter>" :
             \ filereadable('.vimrc') ? ":silent execute 'edit .vimrc'<Enter>" :
@@ -1376,12 +1411,12 @@ Plug 'SirVer/ultisnips'                                         " Performance us
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve (needs ultisnips)
 
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GB and GBrowse commands, etc)
-Plug 'junegunn/gv.vim'                                          " - Commits filter extension (needs vim-fugitive) -> :GV[!]
+Plug 'junegunn/gv.vim', {'on': 'GV'}                            " - Commits filter extension (needs vim-fugitive) -> :GV[!], GV?
 Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (needs vim-fugitive) -> :GBrowse
 Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (needs vim-fugitive) -> :GBrowse
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 
-Plug 'tpope/vim-dadbod'                                         " DB console in Vim
+Plug 'tpope/vim-dadbod', {'on': 'DB'}                           " DB console in Vim
 Plug 'kristijanhusak/vim-dadbod-completion', {'for': ['sql']}   " DB autocompletion (needs vim-dadbod)
 
 " Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
@@ -1403,9 +1438,9 @@ Plug 'jamessan/vim-gnupg'                                       " Transparent ed
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
-Plug 'junegunn/goyo.vim'                                        " Zen mode +
-Plug 'junegunn/limelight.vim'                                   " Zen mode ++
-Plug 'tricktux/pomodoro.vim'                                    " Zen mode +++
+Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
+Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++
+Plug 'tricktux/pomodoro.vim', {'on': 'PomodoroStart'}           " Zen mode +++
 Plug 'wakatime/vim-wakatime'                                    " Zen mode ++++
 
 " Plug 'ap/vim-css-color',  {'for': [
@@ -1540,7 +1575,7 @@ let g:goyo_width = 123
 let g:goyo_height = '100%'
 let g:goyo_bg = '#1D2021'
 
-nnoremap <silent> <F12> :Goyo<Enter>
+nmap <silent> <F12> :Goyo<Enter>
 
 " Limelight
 " @see https://github.com/junegunn/limelight.vim
@@ -1553,8 +1588,8 @@ let g:pomodoro_time_work = 50
 let g:pomodoro_time_slack = 10
 let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav'
 
-nnoremap <silent> <F3> :execute "PomodoroStart in " . g:working[1]<Enter>
-nnoremap <silent> <S-F3> :PomodoroStatus<Enter>
+nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1]<Enter>
+nmap <silent> <S-F3> :PomodoroStatus<Enter>
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
@@ -1566,7 +1601,7 @@ let g:highlightedyank_highlight_duration = 250
 " let g:tagbar_compact = 1
 " let g:tagbar_autofocus = 1
 
-" nnoremap <silent> <F8> :TagbarToggle<Enter>
+" nmap <silent> <F8> :TagbarToggle<Enter>
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
@@ -1701,6 +1736,7 @@ function! s:popup_show(title, message) abort
                 \ })
     call popup_settext(w:winpopup.id, a:message)
     call popup_show(w:winpopup.id)
+
     call <SID>popup_resize()
 endfunction
 
@@ -1710,6 +1746,8 @@ function! s:popup_hide() abort
     endif
 
     call popup_hide(w:winpopup.id)
+
+    unlet w:winpopup
 endfunction
 
 function! s:popup_resize() abort
@@ -2297,7 +2335,7 @@ function! s:startjob(command) abort
 endfunction
 
 " Open notes in Normal|Select|Operator Mode
-noremap <silent> <F9> :call <SID>notes()<Enter>
+nmap <silent> <F9> :call <SID>notes()<Enter>
 
 function! s:notes() abort
     let l:matches = []
@@ -2376,6 +2414,8 @@ augroup AutoCommands
 
     " @see https://github.com/tpope/vim-vinegar/issues/13#issuecomment-47133890
     autocmd FileType netrw setlocal bufhidden=delete
+    " Weird behaviour using this mapping
+    autocmd FileType netrw map <silent> <buffer><C-l> <Nop>
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
@@ -2944,16 +2984,21 @@ augroup AutoCommands
         endif
     endfunction
 
+    " Avoid SafeState, VimEnter, BufEnter events!
     autocmd VimEnter * nested call <SID>viminfo() | call <SID>sessionload()
 
     " Load session when :cd command is executed
     " @thanks https://github.com/valacar/vimfiles/commit/4d0b79096fd1b2b6f5fc0c7225f7de7751fada64
     autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload()
-    autocmd BufEnter * call <SID>poststart() | call <SID>statusline()
+
+    autocmd BufEnter * call <SID>poststart()
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
-    " Cursorline only in window active
-    autocmd WinEnter,VimEnter,BufWinEnter * setlocal cursorline
-    autocmd WinLeave * setlocal nocursorline
+
+    autocmd WinEnter,BufWinEnter * call <SID>statusline()
+    autocmd User OpenNetrw call <SID>statusline()
+
+    autocmd WinEnter,BufWinEnter * setlocal cursorline
+    autocmd WinLeave,BufWinLeave * setlocal nocursorline
 
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
@@ -3030,7 +3075,7 @@ if has('termguicolors') && !has('gui_running')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-    set t_Co=256                                                " Number colors, tty! (default: tty=8, konsole=256, gvim=16777216)
+    set t_Co=256                                                " Number colors, tty! (default: tty=8 konsole=256 gvim=16777216)
     set termguicolors                                           " Vivid colours? Please! (default: off)
 endif
 
