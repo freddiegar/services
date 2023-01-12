@@ -130,6 +130,7 @@
 "   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  27.480ms    124.382ms   126.659ms
 "   Diff:                               +492.6%     -25.8%      -27.8%
 " @see https://neovim.io/doc/user/vim_diff.html
+" @see https://www.murilopereira.com/the-values-of-emacs-the-neovim-revolution-and-the-vscode-gorilla/
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
@@ -143,6 +144,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
         let g:working = split(g:cwd, '/')[-2:]
+        let g:istty = $TERM ==# 'linux' && !has('gui_running')
 
         " Viminfofile setup
         let g:infofile = ''
@@ -202,7 +204,7 @@ set diffopt+=algorithm:histogram                                " Mayers Linear+
 
 if g:isneovim
     set wildoptions-=pum                                        " Don't use popup menu for wildmode completion
-    set inccommand=nosplit                                      " Preview substitute command
+    set inccommand=nosplit                                      " Preview substitute command (aka: traces.vim)
 endif
 
 " Sanity?
@@ -294,6 +296,7 @@ set splitright                                                  " :vsplit opens 
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
 set cursorline                                                  " Highligth current line (default: off)
 set cmdheight=2                                                 " More spaces, less "Enter to continue..." messages (default: 1)
+set report=5                                                    " Less verbose (default: 2)
 
 if has('mouse')
     set mouse=a                                                 " Mouse exists always (default: "")
@@ -309,15 +312,27 @@ set sidescroll=5                                                " Better horizon
 " Custom View
 set number                                                      " Number in cursorline, no zero (default: off)
 set relativenumber                                              " Relative number (slower) (default: off)
-" @see https://utf8-icons.com/
-set listchars=space:·,tab:»\ ,trail:+,eol:↲                     " Chars used for invisible chars
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
 set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
 
-set guicursor=                                                  " Always cursor has same block: block (why nvim why!)
+" @see https://utf8-icons.com/
+set fillchars+=vert:│                                           " Better vertical split char
+
+if !g:istty
+    set listchars=space:·,eol:↲                                 " Chars used for invisible chars
+    set listchars+=tab:⇥\ ,trail:␣,precedes:⇇,extends:⇉
+else
+    set ttyfast
+    set listchars=space:\ ,eol:$                                " tty!
+    set listchars+=tab:>\ ,trail:+,extends:>,precedes:<
+endif
+
+set guicursor=a:block                                           " Always cursor has same shape: block (why nvim why!)
 
 if has('gui_running')
+    set guicursor+=a:blinkon0                                   " Never blink the cursor (default: on)
+
     set guioptions=                                             " Reset option (default: aegimrLrT)
     set guioptions+=M                                           " Not sourced system [M]enu
     set guioptions+=g                                           " Show inactive items as inactive, [g]ray color (default: hide)
@@ -329,7 +344,12 @@ if has('gui_running')
         autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'FiraCode Retina 14', '')
         " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 14', '')
         " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'JetBrains Mono 14', '')
+        autocmd GUIFailed * qall
 
+        " @thanks https://stackoverflow.com/questions/10259366/gvim-auto-copy-selected-text-to-system-clipboard-to-share-it-with-apps
+        cnoremap <S-Insert> <C-r>+
+
+        " @thanks https://github.com/tpope/dotfiles/blob/c31d6515e126ce2e52dbb11a7b01f4ac4cc2bd0c/.vimrc#L139
         nnoremap <silent> <A--> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)-1','')<Enter>
         nnoremap <silent> <A-+> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)+1','')<Enter>
     augroup END
@@ -454,13 +474,7 @@ function! AsyncStatuslineFlag() abort
             let l:command = 'aplay /usr/share/sounds/sound-icons/pipe.wav'
         endif
 
-        if exists('*job_start')
-            silent call job_start(l:command)
-        elseif exists('*jobstart') " (why nvim why!)
-            silent call jobstart(l:command)
-        else
-            silent call system(l:command . ' &')
-        endif
+        silent call <SID>startjob(l:command)
     endif
 
     echo 'Task:     ' . g:asyncrun_status
@@ -2266,6 +2280,22 @@ function! s:exception() abort
     return join(split(v:exception, ' ')[1:-1], ' ')
 endfunction
 
+function! s:startjob(command) abort
+    if exists('*job_start')
+        silent call job_start(a:command)
+
+        return
+    elseif exists('*jobstart') " (why nvim why!)
+        silent call jobstart(a:command)
+
+        return
+    endif
+
+    silent call system(a:command . ' &')
+
+    return
+endfunction
+
 " Open notes in Normal|Select|Operator Mode
 noremap <silent> <F9> :call <SID>notes()<Enter>
 
@@ -2300,8 +2330,11 @@ endfunction
 augroup AutoCommands
     autocmd!
 
-    " Reload after save
-    autocmd BufWritePost .vimrc nested source ~/.vimrc
+    " Reload after save and run PlugInstall if there are missing plugins
+    autocmd BufWritePost .vimrc nested source $MYVIMRC
+                \ | if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+                \ |     PlugInstall
+                \ | endif
 
     " Customization
     autocmd BufRead,BufNewFile .env.* setfiletype sh
@@ -2884,11 +2917,11 @@ augroup AutoCommands
     endfunction
 
     function! s:settitle(title) abort
-        if expand('%')[-3:] ==? '!sh' || (g:isneovim && getbufvar(bufnr('%'), 'term_title')[-3:] ==? 'fzf')
+        if expand('%')[-3:] ==? '!sh' || (g:isneovim && getbufvar(bufnr('%'), 'term_title')[-3:] ==? 'fzf') || has('gui_running')
             return
         endif
 
-        silent execute '!echo -ne "\033]30;' . a:title . '\007"'
+        silent call <SID>startjob('echo -ne "\033]30;' . a:title . '\007"')
     endfunction
 
     function! s:postcolorscheme() abort
@@ -2912,6 +2945,7 @@ augroup AutoCommands
     endfunction
 
     autocmd VimEnter * nested call <SID>viminfo() | call <SID>sessionload()
+
     " Load session when :cd command is executed
     " @thanks https://github.com/valacar/vimfiles/commit/4d0b79096fd1b2b6f5fc0c7225f7de7751fada64
     autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload()
@@ -2920,11 +2954,14 @@ augroup AutoCommands
     " Cursorline only in window active
     autocmd WinEnter,VimEnter,BufWinEnter * setlocal cursorline
     autocmd WinLeave * setlocal nocursorline
+
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
+
     autocmd ColorScheme * call <SID>postcolorscheme()
     autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanspaces()
+
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
     " " Auto-source syntax in *.vpm
@@ -2986,23 +3023,28 @@ endfunction
 " endfunction
 
 " Themes
-" Allowed 24 bit colors, by default only accept 8 bit, require in tty
+" Allowed 24 bit colors, by default only accept 8 bit, tty!
 " @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 " @see https://github.com/vim/vim/issues/993#issuecomment-255651605
 if has('termguicolors') && !has('gui_running')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-    set t_Co=256                                                " Number colors, require in tty (default: tty=8, konsole=256, gvim=16777216)
+    set t_Co=256                                                " Number colors, tty! (default: tty=8, konsole=256, gvim=16777216)
     set termguicolors                                           " Vivid colours? Please! (default: off)
 endif
 
 try
-    silent execute 'colorscheme ' . get(g:, 'colors_name', (index(range(7, 15), str2nr(strftime('%H'))) >= 0 ? 'shine' : 'miningbox'))
+    " @timezone https://24timezones.com/time-zone/est
+    let g:colorscheme = !g:istty
+                \ ? (index(range(7, 15), str2nr(strftime('%H'))) >= 0 ? 'morning' : 'miningbox')
+                \ : 'default'
+
+    silent execute 'colorscheme ' . get(g:, 'colors_name', g:colorscheme)
 catch /^Vim\%((\a\+)\)\=:E185/
     " Light:
     " - delek       <- +++++
-    " - morning     <- +++
+    " - morning     <- +
     " - lunaperche  <- ++
     " - peachpuff   <- ++++
     " - shine       <- +
