@@ -155,26 +155,35 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
 
     silent call <SID>initialize(getcwd())                       " Initialize global variables
 
-    syntax off                                                  " Disabled while is processing...
-endif
+    filetype off                                                " Disabled while is processing...
+    syntax off                                                  " ...
 
-set nomodeline                                                  " Security!: Not read: /* vim: set filetype=idl */
+    set nomodeline                                              " Security!: Not read: /* vim: set filetype=idl */
                                                                 " (default: Vim: on, Debian: off) (why nvim why!)
-set secure                                                      " Security!: Not autocmd in .vimrc file (default: off)
-set exrc                                                        " Always search config in .vimrc file (default: off)
-set hidden                                                      " Allow change between buffer without save (default: off)
-set omnifunc=syntaxcomplete#Complete                            " Default complete function global (aka: i_CTRL-X_CTRL-O) (default: empty)
-set completefunc=syntaxcomplete#Complete                        " Default complete function in buffers (aka: i_CTRL-X_CTRL-U) (default: empty)
-set fileencoding=utf-8                                          " Output encoding of the file that is written
-                                                                " (default: empty, but fzf.vim: utf-8)
+    set modelines=0                                             " Security!: None line is read it (default: 5)
+    set secure                                                  " Security!: Not autocmd in .vimrc file (default: off)
+    set exrc                                                    " Always search config in .vimrc file (default: off)
+    set hidden                                                  " Allow change between buffer without save (default: off)
+
+    " Maybe $LANG isn't set, then
+    set encoding=utf-8                                          " Viminfo file encoding, but, I don't another (default: utf-8)
+    set termencoding=utf-8                                      " Terminal encoding used in keyboard keys (default: tty=utf-8 konsole=empty)
+    set fileencoding=utf-8                                      " Output encoding of the file that is written
+                                                                " (default: empty, but fzf.vim=utf-8)
+
+    set omnifunc=syntaxcomplete#Complete                        " Default complete function global (aka: i_CTRL-X_CTRL-O) (default: empty)
+    set completefunc=syntaxcomplete#Complete                    " Default complete function in buffers (aka: i_CTRL-X_CTRL-U) (default: empty)
+endif
 
 " ALL in one BIG autocmd
 execute 'augroup ALL1BIG'
 autocmd!
 
+set cpoptions-=a                                                " After :read <file> command NO set <file> as alternate buffer
+set cpoptions-=A                                                " After :write <file> command NO set <file> as alternate buffer
 set lazyredraw                                                  " No redraw when macro/script is running (default: off)
 set redrawtime=3000                                             " Time for highlighting: +size need +time (default: 2000)
-set nostartofline                                               " No move to column 0 after some actions: jump between hunk, Ctrl+d, etc (default: on)
+set nostartofline                                               " No move to column 0 after some actions: jump between hunk, Ctrl+d, dd, etc (default: on)
 
 set nowritebackup                                               " No use backup before overwrite a file (default: depends). Use git!
 set noswapfile                                                  " No swap for new buffer (default: on)
@@ -197,13 +206,24 @@ set incsearch                                                   " Search first m
 
 " @see https://blog.jcoglan.com/2017/05/08/merging-with-diff3/
 set diffopt+=iwhite                                             " Ignore white spaces in diff mode
-set diffopt+=vertical                                           " Start with vertical splits
+set diffopt+=vertical                                           " Start with vertical splits always
 set diffopt+=indent-heuristic                                   " Use same indent of file
 " @see https://deepai.org/publication/how-different-are-different-diff-algorithms-in-git-use-histogram-for-code-changes
 set diffopt+=algorithm:histogram                                " Mayers Linear++
+" @see https://github.com/lacygoill/config/blob/b76e5f3c57822d126b0bfcc327a8a27d3b8778ca/.vim/vimrc#L1206
+set diffopt+=context:3                                          " Only 3 lines of context above/below a changed line (instead of 6)
+set diffopt+=foldcolumn:1                                       " Use only 1 column for the foldcolumn, instead of 2 (vertical space is precious)
+set diffopt+=followwrap                                         " Follow the 'wrap' option and leave as it is
+set diffopt+=hiddenoff                                          " Turn off diff mode automatically for a buffer which becomes hidden
+" @see https://vimhelp.org/diff.txt.html#diff_translations
+let g:diff_translations = 0
+
+set wildmenu                                                    " Better command tab-completion (default: off)
+set wildignore=                                                 " We never want to see them in command tab-completion (default: empty)
+set wildignore+=*.gif,*.jpeg,*.jpg,*.mp3,*.mp4,*.png            " Media files aren't usable here
 
 if g:isneovim
-    set wildoptions-=pum                                        " Don't use popup menu for wildmode completion
+    set wildoptions-=pum                                        " Don't use popup menu for wildmode in command tab-completion
     set inccommand=nosplit                                      " Preview substitute command (aka: traces.vim)
 endif
 
@@ -283,8 +303,11 @@ set complete+=.                                                 " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
 set complete+=b                                                 " Buffers loaded in [b]uffers list (aka use RAM)
 set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM)
-set pumheight=10                                                " Maximum options showed in popup menu (default: 0)
-" set completeopt=longest,menuone,preview                         " Show preview in popup menu (default: menu,preview)
+set completeopt=                                                " Show preview in popup menu (default: menu,preview)
+set completeopt+=menu                                           " Show list if items > 1
+set completeopt+=noinsert                                       " No insert any text, user must be select a match, needs extra <C-n> with once option :|
+set completeopt+=noselect                                       " No select any text, force user to select a match, needs extra <C-n> with once option :|
+set pumheight=10                                                " Maximum options showed in popup menu (default: 0=all)
 
 " Custom Interface
 set autoread                                                    " Reload after external changes (default: off)
@@ -305,16 +328,20 @@ endif
 
 set nowrap                                                      " No cut lines (default: on)
 set linebreak                                                   " No cut words on wrap enable (default: off)
-set breakindent                                                 " Indent wrap lines better (default: off)
 set showbreak=↪                                                 " Visual char on wrap line (default: empty)
-set display=lastline                                            " Show as much as possible of the last line (default: empty)
-set sidescroll=5                                                " Better horizontally scroll (default: 0 => half-screen)
+set breakindent                                                 " Indent wrap lines better (default: off)
+set display+=lastline                                           " Show as much as possible of the last line (default: empty)
+set scrolloff=3                                                 " Preview before/after cursor (default: depends)
+set sidescroll=3                                                " Scroll horizontally (default: 0=half-screen)
+set sidescrolloff=5                                             " Preview horizontally scroll (default: 0=edge)
 
 " Custom View
 set number                                                      " Number in cursorline, no zero (default: off)
+set numberwidth=5                                               " Number size, aka: 9999␣ (default: 4=999␣)
 set relativenumber                                              " Relative number (slower) (default: off)
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
 set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
+"              └ weight in bytes
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
 
 " @see https://utf8-icons.com/
@@ -329,6 +356,7 @@ else
     set listchars+=tab:>\ ,trail:+,extends:>,precedes:<
 endif
 
+set winaltkeys=no                                               " Never use alt-keys for GUI menus (default: menu)
 set guicursor=a:block                                           " Always cursor has same shape: block (why nvim why!)
 
 if has('gui_running')
@@ -377,7 +405,10 @@ let g:loaded_vimballPlugin = 1
 let g:loaded_zip = 1
 let g:loaded_zipPlugin = 1
 
-" Netrw
+" Annoyoning (and distracting) behaviour with brakets, parenthesis, etc
+let g:loaded_matchparen = 1
+
+" Netrw (require by :GBrowse command) allow edit remote files: <C-w>f, :edit, etc
 " Key   Action
 " enter Open files/directories
 " o     Open file/directory in new horizontal split
@@ -522,7 +553,6 @@ set shortmess+=W                                                " Don't give the
 set shortmess+=F                                                " Don't give the file in[F]o when editing a file
 set shortmess+=A                                                " Don't give the "[A]TTENTION" message when swap is found
 set shortmess+=I                                                " Don't give the [I]ntro message when starting Vim
-set shortmess+=C                                                " Don't give the "S[C]anning ..." messages
 set shortmess+=c                                                " Don't give ins-[c]ompletion-menu messages
                                                                 "   - "-- XXX completion (YYY)"
                                                                 "   - "match 1 of 2"
@@ -532,6 +562,10 @@ set shortmess+=c                                                " Don't give ins
 set shortmess+=s                                                " Don't give "[s]earch hit BOTTOM, continuing at TOP"
 set shortmess+=T                                                " Truncate o[T]hers message [...]
 set shortmess+=t                                                " [t]runcate file message [<]
+
+if !g:isneovim
+    set shortmess+=C                                            " Don't give the "s[C]anning" message
+endif
 
 set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
 
@@ -1709,6 +1743,7 @@ let g:ale_set_quickfix = 0
 let g:ale_set_highlights = 1
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
+let g:ale_echo_cursor = 0
 let g:ale_echo_msg_format = '%s'
 let g:ale_virtualtext_cursor = 'disabled'
 
@@ -2431,6 +2466,7 @@ augroup AutoCommands
         autocmd TermOpen * if &buftype ==# 'terminal'
                     \ | setlocal bufhidden=wipe
                     \ | setlocal signcolumn=no
+                    \ | setlocal colorcolumn=0
                     \ | setlocal nolist
                     \ | if getbufvar(bufnr('%'), 'term_title')[-4:] ==# '/zsh'
                         \ | startinsert
@@ -2449,6 +2485,7 @@ augroup AutoCommands
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
                     \ | setlocal bufhidden=wipe
                     \ | setlocal signcolumn=no
+                    \ | setlocal colorcolumn=0
                     \ | setlocal nolist
                     \ | if expand('%')[-3:] !=? '!sh'
                         \ | tnoremap <silent> <buffer><Esc> <C-\><C-n><Enter>
@@ -3014,7 +3051,7 @@ augroup AutoCommands
     "     \ if filereadable(expand('syntax.vim')) |
     "     \   silent execute 'source ' . expand('syntax.vim') |
     "     \ endif
-    " No resize in i3
+    " " No resize in i3
     " autocmd VimResized * wincmd =
 augroup END
 
@@ -3121,4 +3158,5 @@ endif
 
 execute 'augroup END'
 
-syntax on                                                      " Enable syntax highlighting
+filetype plugin indent on                                       " Enable filetype detection and auto-indent after processing
+syntax enable                                                   " Enable syntax highlighting as is (enable != on)
