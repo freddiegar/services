@@ -321,7 +321,9 @@ set autoread                                                    " Reload after e
 set autowrite                                                   " Save on lost focus (cycling buffers) (default: off)
 set autoindent                                                  " Same indent after Enter, if Esc indent is deleted, less Spaces (default: off)
 set backspace=indent,eol,start                                  " Allow backspacing over everything (default: depends)
-set clipboard=unnamedplus                                       " Shared SO clipboard
+set clipboard^=unnamedplus                                      " Shared SO clipboard (slower?)
+                                                                "     then: buffer -> (no vim) => "+yy
+                                                                "     then: (no vim) -> buffer => "+p or <S-Insert>
 set splitbelow                                                  " :split  opens window below (default: off)
 set splitright                                                  " :vsplit opens window right (default: off)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
@@ -330,7 +332,7 @@ set cmdheight=2                                                 " More spaces, l
 set report=5                                                    " Less verbose (default: 2)
 
 if has('mouse')
-    set mouse=a                                                 " Mouse exists always (default: "")
+    set mouse=                                                  " Mouse disable always, allows copying from cmdline (default: "")
 endif
 
 set nowrap                                                      " No cut lines (default: on)
@@ -508,13 +510,13 @@ function! AsyncStatuslineFlag() abort
 
     if get(g:, 'asyncrun_play', 0) ==# 1
         let g:asyncrun_play = 0
-        let l:command = 'aplay /usr/share/sounds/sound-icons/trumpet-12.wav'
+        let l:command = 'aplay /usr/share/sounds/sound-icons/' . (g:isneovim ? 'xylofon.wav' : 'trumpet-12.wav')
 
         if get(g:, 'asyncrun_status', '') ==# 'failure'
-            let l:command = 'aplay /usr/share/sounds/sound-icons/pipe.wav'
+            let l:command = 'aplay /usr/share/sounds/sound-icons/' . (g:isneovim ? 'klavichord-4.wav' : 'pipe.wav')
         endif
 
-        silent call <SID>startjob(l:command)
+        silent call system(l:command)
     endif
 
     echo 'Task:     ' . g:asyncrun_status
@@ -576,7 +578,7 @@ endif
 
 set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
 
-function! s:statusline() abort
+function! s:statusline(lastmode) abort
     if &previewwindow || pumvisible()
         return
     endif
@@ -589,9 +591,9 @@ function! s:statusline() abort
         return
     endif
 
-    " Each window once time, ignore others events please
+    " Each window once time, ignore others events please, opening fzf kill statusline...
     " @thanks https://github.com/vim-airline/vim-airline/blob/4f5b641710bc8cffddb28c6821b2ee7abaafefe6/plugin/airline.vim#L62
-    let l:uniqueid = [bufnr('%'), winnr(), winnr('$'), tabpagenr(), &filetype]
+    let l:uniqueid = [bufnr('%'), winnr(), winnr('$'), tabpagenr(), &filetype, a:lastmode]
 
     if get(g:, 'statusline_unique', []) ==# l:uniqueid && &filetype !~? 'gitcommit'
         return
@@ -628,7 +630,7 @@ function! s:statusline() abort
         setlocal statusline+=%{AsyncStatuslineFlag()}           " Async process info
     endif
 
-    if exists('g:loaded_pomodoro') && !has('gui_running')
+    if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
         setlocal statusline+=\                                  " Extra space
         setlocal statusline+=%{pomo#remaining_time().'m'}       " Pomodoro time
     endif
@@ -1627,9 +1629,9 @@ let g:limelight_paragraph_span = 2
 " @see https://github.com/tricktux/pomodoro.vim
 let g:pomodoro_time_work = 50
 let g:pomodoro_time_slack = 10
-let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav'
+let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/' . (g:isneovim ? 'canary-long.wav' : 'prompt.wav')
 
-nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1]<Enter>
+nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User AsyncRunFinished<Enter>
 nmap <silent> <S-F3> :PomodoroStatus<Enter>
 
 " HighlightedYank
@@ -1673,7 +1675,7 @@ let g:asyncrun_skip = 1
 " Disable local errorformats (default: 1)
 let g:asyncrun_local = 0
 " Action to run on stop job (default: empty)
-let g:asyncrun_exit = "call\ AsyncRunFinished()"
+let g:asyncrun_exit = "silent\ call\ AsyncRunFinished()"
 " Icon used in statusline (custom setup)
 let g:asyncrun_icon = ''
 
@@ -1695,6 +1697,8 @@ endfunction
 
 " Required CamelCase to use asyncrun_exit option
 function! AsyncRunFinished() abort
+    doautocmd <nomodeline> User AsyncRunFinished
+
     if g:asyncrun_code > 0
         let g:asyncrun_icon = '✗'
         copen
@@ -1807,22 +1811,7 @@ function! s:popup_resize() abort
         return
     endif
 
-    " [T]op [R]ight
-    " let l:coordinates = #{ pos: 'topright', col: l:winwidth, line: 1 }
-
-    " [C]enter
-    " let l:coordinates = #{ pos: 'center' }
-
-    " [B]ottom
-    " let l:coordinates = #{ pos: 'botleft', col: (l:winwidth / 2) - (l:winpopuppos.width / 2), line: l:winheight }
-
-    " [B]ottom [L]eft
-    " let l:coordinates = #{ pos: 'botleft', col: 6, line: l:winheight }
-
-    " [B]ottom [R]ight
-    let l:coordinates = #{ pos: 'botright', col: l:winwidth, line: l:winheight }
-
-    call popup_move(w:winpopup.id, l:coordinates)
+    call popup_move(w:winpopup.id, #{ pos: 'botright', col: l:winwidth, line: l:winheight })
 endfunction
 
 " " CoC Completion
@@ -2358,22 +2347,6 @@ endfunction
 
 function! s:exception() abort
     return join(split(v:exception, ' ')[1:-1], ' ')
-endfunction
-
-function! s:startjob(command) abort
-    if exists('*job_start')
-        silent call job_start(a:command)
-
-        return
-    elseif exists('*jobstart') " (why nvim why!)
-        silent call jobstart(a:command)
-
-        return
-    endif
-
-    silent call system(a:command . ' &')
-
-    return
 endfunction
 
 " Open notes in Normal|Select|Operator Mode
@@ -3005,7 +2978,7 @@ augroup AutoCommands
             return
         endif
 
-        silent call <SID>startjob('echo -ne "\033]30;' . a:title . '\007"')
+        silent execute '!echo -ne "\033]30;' . a:title . '\007"'
     endfunction
 
     function! s:postcolorscheme() abort
@@ -3041,11 +3014,18 @@ augroup AutoCommands
     autocmd BufEnter * call <SID>poststart()
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
 
-    autocmd WinEnter,BufWinEnter * call <SID>statusline()
-    autocmd User OpenNetrw call <SID>statusline()
-
-    autocmd WinEnter,BufWinEnter * setlocal cursorline
+    " BufWinEnter:  After cycling between buffers
+    " BufHidden:    After close CTRL-W o
+    autocmd WinEnter,BufWinEnter,BufHidden * call <SID>statusline(mode()) | setlocal cursorline
     autocmd WinLeave,BufWinLeave * setlocal nocursorline
+    " After open netrw
+    autocmd User OpenNetrw call <SID>statusline(mode())
+    " After finished job with AsyncRun ([t]erminal mode to throws system command as it's expect)
+    autocmd User AsyncRunFinished call <SID>statusline('t')
+    " After open terminal with fzf
+    if exists("##ModeChanged") " (why nvim why!)
+        autocmd ModeChanged *t:* call <SID>statusline(v:event.old_mode) | setlocal cursorline
+    endif
 
     " Relative numbers on Insert Mode
     " autocmd WinLeave,InsertEnter * setlocal relativenumber
@@ -3118,7 +3098,7 @@ endfunction
 " Allowed 24 bit colors, by default only accept 8 bit, tty!
 " @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 " @see https://github.com/vim/vim/issues/993#issuecomment-255651605
-if has('termguicolors') && !has('gui_running')
+if has('termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
