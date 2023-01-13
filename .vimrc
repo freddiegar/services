@@ -146,6 +146,13 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:working = split(g:cwd, '/')[-2:]
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
 
+        " Day/Night
+        " @see https://uxpickle.com/dark-or-light-mode-for-the-eyes/
+        " @timezone https://24timezones.com/time-zone/est
+        let g:colorscheme = !g:istty
+                    \ ? (index(range(7, 17), str2nr(strftime('%H'))) >= 0 ? 'morning' : 'miningbox')
+                    \ : 'default'
+
         " Viminfofile setup
         let g:infofile = ''
 
@@ -3019,6 +3026,9 @@ augroup AutoCommands
             highlight! link User1 ErrorMsg
             highlight! link ExtraWhitespace Error
         endif
+
+        " @thanks https://github.com/junegunn/fzf.vim/issues/969
+        let $BAT_THEME = &background ==# 'light' ? 'gruvbox-light' : 'gruvbox-dark'
     endfunction
 
     " Avoid SafeState, VimEnter, BufEnter events!
@@ -3117,11 +3127,6 @@ if has('termguicolors') && !has('gui_running')
 endif
 
 try
-    " @timezone https://24timezones.com/time-zone/est
-    let g:colorscheme = !g:istty
-                \ ? (index(range(7, 15), str2nr(strftime('%H'))) >= 0 ? 'morning' : 'miningbox')
-                \ : 'default'
-
     silent execute 'colorscheme ' . get(g:, 'colors_name', g:colorscheme)
 catch /^Vim\%((\a\+)\)\=:E185/
     " Light:
