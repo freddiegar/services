@@ -113,7 +113,7 @@
 " 1. :W command -> Save as sudo don't work      -> https://github.com/neovim/neovim/issues/1716
 " 2. :X command -> Encryption don't exist       -> https://github.com/neovim/neovim/issues/701 -> use GnuPG
 " 3. :R command -> Command with sudo don't work -> @see #1
-" 4. Mappings using <S-F#> don't work
+" 4. Mappings using <S-F#> don't work nativaly  -> @see https://github.com/neovim/neovim/issues/7384
 " 5. Colorschemes built-in have weird colors
 " n. Don't need installation
 " @see https://vimhelp.org/version9.txt.html#new-9
@@ -769,6 +769,9 @@ nmap <silent> <expr> <F2>
 " Open explore in current file directory (toggle)
 nmap <silent> <expr> <S-F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
+" Same to ... (why nvim why!)
+nmap <silent> <expr> <Esc>O2Q
+            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
 
 " Fast Vim configuration (and plugins)
 nmap <silent> <expr> <F10>
@@ -778,6 +781,8 @@ nmap <silent> <expr> <F10>
             \ ":silent execute 'edit ~/.vimrc'<Enter>"
 
 nnoremap <silent> <S-F10> :PlugClean<Enter>
+" Same to ... (why nvim why!)
+nnoremap <silent> <F22> :PlugClean<Enter>
 
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
@@ -873,12 +878,13 @@ nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
 " Shortcuts for Date/Times in Insert Mode
-" <F18> === Shift + F6
-" <F19> === Shift + F7
 inoremap <silent> <F6> <C-r>='Y-m-d'<Enter>
 inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d')<Enter>
 inoremap <silent> <F7> <C-r>='Y-m-d H:i:s'<Enter>
 inoremap <silent> <S-F7> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
+" Same to ... (why nvin why!)
+inoremap <silent> <F18> <C-r>=strftime('%Y-%m-%d')<Enter>
+inoremap <silent> <F19> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
 
 " Same!, but in Normal Mode
 " Not use normal! <Bang>, it uses remaps
@@ -886,6 +892,9 @@ nnoremap <silent> <F6> :execute "normal a\<F6>\e"<Enter>
 nnoremap <silent> <S-F6> :execute "normal a\<S-F6>\e"<Enter>
 nnoremap <silent> <F7> :execute "normal a\<F7>\e"<Enter>
 nnoremap <silent> <S-F7> :execute "normal a\<S-F7>\e"<Enter>
+" Same to ... (why nvin why!)
+nnoremap <silent> <F18> :execute "normal a\<F18>\e"<Enter>
+nnoremap <silent> <F19> :execute "normal a\<F19>\e"<Enter>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
@@ -1602,6 +1611,8 @@ let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/' . (g:is
 
 nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User AsyncRunFinished<Enter>
 nmap <silent> <S-F3> :PomodoroStatus<Enter>
+" Same to ... (why nvim why!)
+nmap <silent> <Esc>O2R :PomodoroStatus<Enter>
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
