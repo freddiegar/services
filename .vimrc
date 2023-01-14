@@ -158,6 +158,14 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
 
         " Save|Load sessions
         let g:session_file = expand('~/.vim/sessions/' . join(g:working, '@') . (g:isneovim ? '.nvim' : '.vim'))
+
+        " Plugins
+        " @see https://github.com/junegunn/vim-plug
+        if empty(glob('~/.vim/autoload/plug.vim'))
+                    \ || (fmod(str2float(strftime('%d')), 14.0) == 0.0 && strftime('%d') !=# strftime('%d', getftime(expand('~/.vim/autoload/plug.vim'))))
+            " Try each n days to  update
+            silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        endif
     endfunction
 
     silent call <SID>initialize(getcwd())                       " Initialize global variables
@@ -516,6 +524,7 @@ function! AsyncStatuslineFlag() abort
             let l:command = 'aplay /usr/share/sounds/sound-icons/' . (g:isneovim ? 'klavichord-4.wav' : 'pipe.wav')
         endif
 
+        " Don't work using jobs :(
         silent call system(l:command)
     endif
 
@@ -1405,16 +1414,6 @@ augroup FastEscape
     autocmd InsertLeave * set timeoutlen=1000
 augroup END
 
-" Plugins
-" @see https://github.com/junegunn/vim-plug
-if empty(glob('~/.vim/autoload/plug.vim'))
-            \ || (fmod(str2float(strftime('%d')), 14.0) == 0.0 && strftime('%d') !=# strftime('%d', getftime(expand('~/.vim/autoload/plug.vim'))))
-    " Each n days it is updated
-    echomsg "Synchronizing junegunn/vim-plug version ..."
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-endif
-
 call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
@@ -2132,10 +2131,15 @@ let g:fugitive_no_maps = 1
 
 function! s:git_alias() abort
     let l:aliases = []
-    let l:lines = systemlist(g:filterprg . ' "^alias(.*)=\"git " ~/.bash_aliases | ' . g:filterprg . ' --invert-match "log|blame|\|" | sed "s/alias \|\"//gi"')
+    " Ignore some alias with "special" chars like: pipe, ampersand
+    let l:lines = systemlist(g:filterprg . ' "^alias(.*)=\"git " ~/.bash_aliases | ' . g:filterprg . ' --invert-match "log|blame|\||&" | sed "s/alias \|\"//gi"')
 
     for l:line in l:lines
-        let [l:shortcut, l:command] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
+        try
+            let [l:shortcut, l:command] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
+        catch
+            continue
+        endtry
 
         let l:aliases += [[trim(l:shortcut), trim(substitute(substitute(l:command, 'git ', 'Git ', ''), ' -w', '', ''))]]
     endfor
@@ -2150,7 +2154,6 @@ nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<En
 " @see https://gist.github.com/karenyyng/f19ff75c60f18b4b8149
 " Using path in vim-fugitive:
 "   .   -> Ready to command
-"   o   -> [o]pen file
 "   =   -> [=]toggle [>]show|[<]hide inline changes
 "   -   -> [-]toggle [u]n|[s]tage file
 "   U   -> [U]nstage everything
@@ -2864,7 +2867,11 @@ augroup AutoCommands
         endif
 
         for l:line in l:lines
-            let [l:name, l:value] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
+            try
+                let [l:name, l:value] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
+            catch
+                continue
+            endtry
 
             let s:env[l:name] = shellescape(l:value)
 
@@ -3129,6 +3136,8 @@ endfunction
 
 " nmap <silent> <F5> :call <SID>presentation_mode()<Enter>
 " nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
+" Same to ... (why nvim why!)
+" nmap <silent> <F17> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
 
 " let g:presentation_mode = 0
 
