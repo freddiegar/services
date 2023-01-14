@@ -526,32 +526,6 @@ function! AsyncStatuslineFlag() abort
     return get(g:, 'asyncrun_icon', '')
 endfunction
 
-function! AleStatuslineFlag() abort
-    silent call <SID>popup_hide()
-
-    let l:counters = ale#statusline#Count(bufnr(''))
-
-    if l:counters.total == 0
-        return ''
-    endif
-
-    let l:error = ale#statusline#FirstProblem(bufnr(''), 'error')
-
-    if !empty(l:error)
-        silent call <SID>popup_show(printf(' %s:%d ', expand('%:p:t'), l:error.lnum), l:error.text)
-
-        return printf('%d #%d !', l:error.lnum, l:counters.total)
-    endif
-
-    let l:warning = ale#statusline#FirstProblem(bufnr(''), 'warning')
-
-    if !empty(l:warning)
-        return printf('%d #%d ?', l:warning.lnum, l:counters.total)
-    endif
-
-    return ''
-endfunction
-
 set noruler                                                     " Position is showed in command-line (default: depends)
 set showcmd                                                     " Current pending command in command-line and visual
                                                                 " selection (default: depends) (slower)
@@ -608,12 +582,7 @@ function! s:statusline(lastmode) abort
         return
     endif
 
-    if exists('g:loaded_ale_dont_use_this_in_other_plugins_please')
-        setlocal statusline+=%1*                                " Set custom color User1
-        setlocal statusline+=%{AleStatuslineFlag()}             " Diagnostic info
-        setlocal statusline+=%*                                 " Reset to default colors
-        setlocal statusline+=\                                  " Extra space
-    endif
+    setlocal statusline+=\                                      " Extra space
 
     " This expressions redraw statusline after save file always (slower)
     setlocal statusline+=%{GetNameCurrentPath()}                " Relative folder
@@ -1758,8 +1727,62 @@ let g:ale_echo_cursor = 0
 let g:ale_echo_msg_format = '%s'
 let g:ale_virtualtext_cursor = 'disabled'
 
+function! s:diagnostics() abort
+    call <SID>popup_hide()
+
+    if !exists('g:loaded_ale_dont_use_this_in_other_plugins_please') || &filetype !=# 'php'
+        return
+    endif
+
+    let l:error = ale#statusline#FirstProblem(bufnr(), 'error')
+
+    if !empty(l:error)
+        silent call <SID>popup_show(printf(' %s:%d ', expand('%:p:t'), l:error.lnum), l:error.text)
+
+        return
+    endif
+
+    let l:warning = ale#statusline#FirstProblem(bufnr(), 'warning')
+
+    if !empty(l:warning)
+        silent call <SID>popup_show(printf(' %s:%d ', expand('%:p:t'), l:warning.lnum), l:warning.text)
+
+        return
+    endif
+endfunction
+
 function! s:popup_show(title, message) abort
     if g:isneovim
+        if !exists('w:winpopup') || index(nvim_list_wins(), w:winpopup.id) < 0
+            let l:popupbufid = nvim_create_buf(v:false, v:true)
+            let l:popupid = nvim_open_win(l:popupbufid, v:false, #{
+                        \ zindex: 250,
+                        \ relative: 'win',
+                        \ win: winnr(),
+                        \ width: 1,
+                        \ height: 4,
+                        \ row: -1,
+                        \ col: -1,
+                        \ anchor: 'SE',
+                        \ border: 'double',
+                        \ noautocmd: v:true,
+                        \ style: 'minimal'
+                        \ })
+
+            let w:winpopup = { 'id': l:popupid, 'buffer': l:popupbufid, 'width': len(a:message)  + 4 }
+        endif
+
+        call nvim_win_set_option(w:winpopup.id, 'winhighlight', 'Normal:WarningMsg,FloatBorder:WarningMsg')
+        " call nvim_win_set_config(w:winpopup.id, #{ title: a:title })
+
+        call nvim_buf_set_option(w:winpopup.buffer, 'bufhidden', 'delete')
+        call nvim_buf_set_option(w:winpopup.buffer, 'modified', v:false)
+        call nvim_buf_set_option(w:winpopup.buffer, 'modifiable', v:true)
+        call  nvim_buf_set_lines(w:winpopup.buffer, 0, -1, v:false, [a:title, '', ' ' . a:message . ' ', ''])
+        call nvim_buf_set_option(w:winpopup.buffer, 'modifiable', v:false)
+
+        call <SID>popup_resize()
+
         return
     endif
 
@@ -1791,6 +1814,18 @@ function! s:popup_hide() abort
         return
     endif
 
+    if g:isneovim
+        call setbufvar(w:winpopup.buffer, '&modified', 0)
+
+        if win_id2win(w:winpopup.id) > 0
+            silent execute win_id2win(w:winpopup.id) . 'wincmd c'
+        endif
+
+        unlet w:winpopup
+
+        return
+    endif
+
     call popup_hide(w:winpopup.id)
 
     unlet w:winpopup
@@ -1803,6 +1838,25 @@ function! s:popup_resize() abort
 
     let l:winwidth = winwidth(0)
     let l:winheight = winheight(0)
+
+    if g:isneovim
+        if l:winwidth < 100 || l:winheight < 15
+            call <SID>popup_hide()
+
+            return
+        endif
+
+        call nvim_win_set_width(w:winpopup.id, w:winpopup.width)
+        " call nvim_win_set_height(w:winpopup.id, l:winheight)
+        call nvim_win_set_config(w:winpopup.id, #{
+                    \ relative: 'win',
+                    \ win: winnr(),
+                    \ row: l:winheight,
+                    \ col: l:winwidth
+                    \ })
+        return
+    endif
+
     let l:winpopuppos = popup_getpos(w:winpopup.id)
 
     if l:winwidth < 100 || l:winheight < 15 || !l:winpopuppos.visible
@@ -3012,7 +3066,11 @@ augroup AutoCommands
     autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload()
 
     autocmd BufEnter * call <SID>poststart()
+    " BufEnter:     After changes between buffers (why nvim why!)
+    " BufFilePost:  After changes name's current file (why nvim why!)
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
+
+    autocmd User ALELintPost call <SID>diagnostics()
 
     " BufWinEnter:  After cycling between buffers
     " BufHidden:    After close CTRL-W o
