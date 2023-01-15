@@ -113,19 +113,19 @@
 " 9. Assume Unexpected Change (Makes and takes decisions)
 
 " WHY DON'T TRY NEOVIM
-" 1. :W command -> Save as sudo don't work      -> https://github.com/neovim/neovim/issues/1716
-" 2. :X command -> Encryption don't exist       -> https://github.com/neovim/neovim/issues/701 -> use GnuPG
-" 3. :R command -> Command with sudo don't work -> @see #1
-" 4. Mappings using <S-F#> don't work nativaly  -> @see https://github.com/neovim/neovim/issues/7384
-" 5. Colorschemes built-in have weird colors
+" 1. :W command -> Save as sudo don't work                  -> @see https://github.com/neovim/neovim/issues/1716 -> use suda.vim
+" 2. :X command -> Encryption don't exist                   -> @see https://github.com/neovim/neovim/issues/701 -> use vim-gnupg
+" 3. :R command -> Command with sudo don't work             -> @see #1
+" 4. Mappings using <S-F#> don't work nativaly              -> @see https://github.com/neovim/neovim/issues/7384 -> Add extra mappings
+" 5. Colorscheme built-in have weird colors                 -> @see https://www.reddit.com/r/neovim/comments/4urlge/vim_and_neovim_same_airline_theme_different/
+" 6. Colorscheme in :terminal have weird colors             -> @see #5 (colors are old respect a Vim9) -> links colors in $VIMRUNTIME
+" 7. In Linux terminal shows weird chars                    -> xdpyinfo?
+" 8. Font size is always smaller (11pt)                     -> @see https://github.com/neovim/neovim/issues/6798
 " n. Don't need installation
 " @see https://vimhelp.org/version9.txt.html#new-9
 
 " WHY TRY NEOVIM
-" 1. Jump between hunk keeps position                   -> set nostartofline
-" 2. Colors are less painful for my eyes in :terminal   -> use Vim9
-" 3. No brake changes :(vim9script, yeah):
-" 4. Better separator in vertical split :@
+" 1. No brake changes :(vim9script, yeah):                  -> @see https://www.youtube.com/watch?v=zPQSST-M3fM -> vim9script transpiler
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
 "           Version                     BARE        PLUG-NC     PLUG-C
@@ -723,8 +723,12 @@ nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
 xnoremap <silent> j gj
 xnoremap <silent> k gk
 
-" Sudo rescue
-command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
+" Sud@ rescue
+if g:isneovim
+    command! W SudaWrite
+else
+    command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
+endif
 
 " Backup rescue
 command! -bang -nargs=? -complete=file BB call <SID>backup(<bang>0, <f-args>)
@@ -1498,6 +1502,10 @@ Plug 'wakatime/vim-wakatime'                                    " Zen mode ++++
 " Plug 'ekalinin/dockerfile.vim'                                  " Better highlight dockerfile syntax (better?)
 " Plug 'pangloss/vim-javascript'                                  " Better highlight javascript syntax
 
+if g:isneovim
+    Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
+endif
+
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
 
 call plug#end()
@@ -1895,6 +1903,10 @@ function! s:popup_resize() abort
 
     call popup_move(w:winpopup.id, #{ pos: 'botright', col: l:winwidth, line: l:winheight })
 endfunction
+
+" Suda
+" @see https://github.com/lambdalisue/suda.vim
+let g:suda#prompt = printf('[sudo] password for %s: ', $USER)
 
 " " CoC Completion
 " " @see https://github.com/neoclide/coc.nvim
@@ -3090,6 +3102,20 @@ augroup AutoCommands
 
             highlight! link User1 ErrorMsg
             highlight! link ExtraWhitespace Error
+
+            let g:fzf_colors = {
+                        \ 'fg':      ['fg', 'Normal'],
+                        \ 'bg':      ['bg', 'Normal'],
+                        \ 'hl':      ['fg', 'Comment'],
+                        \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+                        \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+                        \ 'hl+':     ['fg', 'Statement'],
+                        \ 'info':    ['fg', 'PreProc'],
+                        \ 'prompt':  ['fg', 'Conditional'],
+                        \ 'pointer': ['fg', 'Exception'],
+                        \ 'marker':  ['fg', 'Keyword'],
+                        \ 'header':  ['fg', 'Comment']
+                        \ }
         endif
 
         " @thanks https://github.com/junegunn/fzf.vim/issues/969
