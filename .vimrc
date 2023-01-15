@@ -44,19 +44,20 @@
 " @see http://www.vimgenius.com/
 
 " MAPS and MODES
-" @see https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
-" n  Normal mode map                    :nmap or :nnoremap      :nunmap
-" i  Insert mode map                    :imap or :inoremap      :iunmap
-" v  Visual and select mode map         :vmap or :vnoremap      :vunmap
-" x  Visual mode map                    :xmap or :xnoremap      :xunmap
-" s  Select mode map                    :smap or :snoremap      :sunmap
-" c  Command-line mode map              :cmap or :cnoremap      :cunmap
-" o  Operator pending mode map          :omap or :onoremap      :ounmap
+"   n  Normal Mode: When typing commands.
+"   i  Insert Mode.  These are also used in Replace Mode.
+"   v  Visual Mode: When typing commands while the Visual area is highlighted.
+"   s  Select Mode: like Visual but typing text replaces the selection.
+"   x  Visual Mode and Select Mode
+"   c  Command-line Mode: When entering a ":" or "/" command.
+"   o  Operator-pending Mode: When an operator is pending (after "d", "y", "c", etc.).
+"      Terminal Mode: When typing in a |:terminal| buffer.
 
 " The following characters may be displayed before the {rhs} of the map:
-" -> *  The {rhs} of the map is not re-mappable. Defined using the ':noremap', ':nnoremap', ':inoremap', etc. commands.
-" -> &  Only script local mappings are re-mappable in the {rhs} of the map. The map command has the <script> attribute.
-" -> @  A buffer local map command with the <buffer> attribute.
+"    *  The {rhs} of the map is not re-mappable. Defined using the ':noremap', ':nnoremap', ':inoremap', etc. commands.
+"    &  Only script local mappings are re-mappable in the {rhs} of the map. The map command has the <script> attribute.
+"    @  A buffer local map command with the <buffer> attribute.
+" @see https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_1)
 
 " COMPARATIONS
 "              use 'ignorecase'      match case     ignore case ~
@@ -687,6 +688,12 @@ nnoremap <silent> <C-i> <C-i>zzzv
 nnoremap <silent> <C-d> <C-d>zzzv
 nnoremap <silent> <C-u> <C-u>zzzv
 
+" Works as expected in Visual|Select Mode
+xnoremap <silent> p "_dp
+xnoremap <silent> P "_dP
+xnoremap <silent> * y/\V<C-r>"<Enter>
+xnoremap <silent> # y?\V<C-r>"<Enter>
+
 " Undo break points (<C-g>u = Start new change)
 inoremap <silent> , ,<C-g>u
 inoremap <silent> ; ;<C-g>u
@@ -801,15 +808,15 @@ nnoremap <silent> <nowait> <expr> <Enter>
             \ &buftype ==# 'nofile' && index(['vim', ''], &filetype) >= 0 ? "\r" :
             \ ":nohlsearch<Enter>"
 
-" Preserve default register ("x) content
-nnoremap <silent> <Leader>x "_x
-nnoremap <silent> <Leader>X "_X
-nnoremap <silent> <Leader>c "_c
-nnoremap <silent> <Leader>C "_C
-nnoremap <silent> <Leader>d "_d
-nnoremap <silent> <Leader>D "_D
-nnoremap <silent> <Leader>s "_s
-nnoremap <silent> <Leader>S "_S
+" Preserve default register ("x) in Normal|Select|Operator Mode
+noremap <silent> <Leader>x "_x
+noremap <silent> <Leader>X "_X
+noremap <silent> <Leader>c "_c
+noremap <silent> <Leader>C "_C
+noremap <silent> <Leader>d "_d
+noremap <silent> <Leader>D "_D
+noremap <silent> <Leader>s "_s
+noremap <silent> <Leader>S "_S
 
 " Show/Copied current filename (long path)
 nnoremap <silent> <Leader>L :let @+=expand('%:p')
