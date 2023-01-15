@@ -10,6 +10,7 @@
 " @see https://vim.rtorr.com/
 " @see http://www.rayninfo.co.uk/vimtips.html
 " @see http://www.angelwatt.com/coding/notes/vim-commands.html
+" @see https://blog.sanctum.geek.nz/vim-annoyances/
 
 " CVE
 " @see https://www.cvedetails.com/vendor/8218/VIM.html
@@ -24,6 +25,7 @@
 " @see https://www.arp242.net/vimlog/
 " @see https://github.com/mhinz/vim-galore
 " @see https://gilesorr.com/blog/vim-variable-scope.html
+" @see https://skippi.medium.com/ideas-for-non-leader-vim-mappings-fd32a2769c87
 
 " ORIGIN
 " @see https://www.journaldev.com/44623/vim-vs-vi
@@ -649,31 +651,30 @@ cnoremap <Down> <Nop>
 cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
-" Moving between windows fast, except in Terminal Mode!
-" @see https://www.reddit.com/r/vim/comments/hrlric/comment/fy58mvp
-" Then: Resize windows <- Fails from netrw buffer :/
-nnoremap <silent> <C-k> :resize -5<Enter>
-nnoremap <silent> <C-j> :resize +5<Enter>
-nnoremap <silent> <C-h> :vertical resize -5<Enter>
-nnoremap <silent> <C-l> :vertical resize +5<Enter>
-
 " Utility
+" @tip Macro until end of buffer: VG:normal @x
 nnoremap <silent> Q @@
 " Don't add <C-u>
 xnoremap <silent> Q :normal! @@<Enter>gv
-" Don't works as expected. Works append chars
-" xnoremap <silent> . :normal! .<Enter>gv
+" Don't work as expected. Works append chars
+xnoremap <silent> . :normal! .<Enter>gv
 nnoremap <silent> Y y$
-xnoremap <silent> Y y$
+xnoremap <silent> Y y
+xnoremap <silent> $ $h
 " 'x    Jump to the beginning of the line of mark 'x'
 " `x    Jump to the cursor position of mark 'x'
-nnoremap <silent> gl `.
+nnoremap <silent> gl `.zzzv
+" Emphasis in window, like <C-w>o, but don't close others
+nnoremap <silent> <C-w>O :wincmd _ <Bar> wincmd <Bar><Enter>
+tnoremap <silent> <C-w>O <C-\><C-n>:wincmd _ <Bar> wincmd <Bar> <Bar> normal i<Enter>
 
 " Marks using exact position in Normal|Select|Operator Mode
 noremap ` '
 noremap ' `
 noremap '' ``
 noremap `` ''
+" Center screen (zz) after search mark and open folds (zv)
+noremap <expr> ' printf('`%czzzv',getchar())
 
 " Not use [*|#]``zzzv, it throws error on 1 ocurrence
 " Center screen (zz) after each search and open folds (zv)
@@ -700,8 +701,9 @@ inoremap <silent> <C-w> <C-w><C-g>u
 inoremap <silent> <C-u> <C-u><C-g>u
 inoremap <silent> <Enter> <Enter><C-g>u
 
-" Keep cursor position after join
-" nnoremap <silent> J maJ`a
+" Keep cursor position after join....?
+" nnoremap <silent> <expr> J 'mz' . v:count1 . 'J`z'
+" nnoremap <silent> <expr> J v:count1 > 1 ? 'JJ' : 'J'
 
 " Move complete (n) lines selected (:move) and indent (gv=gv). Don't add <C-u>
 xnoremap <silent> <expr> J ":move '>+" . (v:count1) . "\<Enter>gv=gv"
@@ -851,6 +853,12 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>sa <Plug>DeleteFinalRepeatable
+
+" Navigate through QuickFix
+nnoremap <silent> <C-k> :<C-u>copen<Enter>
+nnoremap <silent> <C-j> :<C-u>cclose<Enter>
+nnoremap <silent> <C-h> :<C-u>colder<Enter>
+nnoremap <silent> <C-l> :<C-u>cnewer<Enter>
 
 " @simple https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
@@ -1348,6 +1356,9 @@ cnoremap <C-f> <C-Right>
 " cnoremap <C-x><C-a> <C-a>
 " Shortcuts to recurrent files or directories
 cnoremap <C-x><C-d> ~/Downloads/
+cnoremap <C-x><C-h> /var/www/html/
+cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env'], '/')
+cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')
 cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')
 
 function! s:cycling_buffers(incr) abort
@@ -2568,6 +2579,8 @@ augroup AutoCommands
     autocmd FileType php nmap     <silent> <buffer><i <Plug>AddIncompleteMarkRepeatable
     autocmd FileType php nnoremap <silent> <buffer><Plug>DropIncompleteMarkRepeatable :call <SID>append_char('I')<Enter>
     autocmd FileType php nmap     <silent> <buffer>>i <Plug>DropIncompleteMarkRepeatable
+    autocmd FileType php nnoremap <silent> <buffer>H F$
+    autocmd FileType php nnoremap <silent> <buffer>L f$
 
     " PHP Testing
     autocmd FileType php let g:test#php#phpunit#options = {
