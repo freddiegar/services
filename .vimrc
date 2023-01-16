@@ -792,7 +792,7 @@ nmap <silent> <expr> <F2>
 nmap <silent> <expr> <S-F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
 " Same to ... (why nvim why!)
-nmap <silent> <expr> <Esc>O2Q
+nmap <silent> <nowait> <expr> <Esc>O2Q
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
 
 " Fast Vim configuration (and plugins)
@@ -804,7 +804,7 @@ nmap <silent> <expr> <F10>
 
 nnoremap <silent> <S-F10> :PlugClean<Enter>
 " Same to ... (why nvim why!)
-nnoremap <silent> <F22> :PlugClean<Enter>
+nnoremap <silent> <nowait> <F22> :PlugClean<Enter>
 
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
@@ -1478,7 +1478,6 @@ Plug 'machakann/vim-highlightedyank'                            " See yank previ
 Plug 'markonm/traces.vim'                                       " See range, substitution and global preview
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
-" Plug 'skanehira/translate.vim', {'for': ['help', 'gitcommit']}  " Translator
 
 Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
 Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++
@@ -1581,19 +1580,65 @@ let g:phpactorPhpBin = "/usr/bin/php8.1"
 " let g:delimitMate_expand_inside_quotes = 0
 " let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 
-" " Translate
-" " @see https://github.com/skanehira/translate.vim
-" let g:translate_target = 'es'
+" @thanks https://github.com/skanehira/translate.vim
+function! s:rtranslate(channel, message) abort
+    silent call add(s:result, a:message)
+endfunction
 
-" nmap <silent> <Leader>gt <Plug>(Translate)
-" xmap <silent> <Leader>gt <Plug>(VTranslate)
+function! s:vtranslate(channel, message) abort
+    " Don't add silent
+    call <SID>stranslate()
+endfunction
 
-" nmap <silent> <Leader>gT :Translate!<Enter>
-" " Don't use <C-u>
-" xmap <silent> <Leader>gT :Translate!<Enter>
+function! s:stranslate() abort
+    if g:isneovim
+        " EOF is a single-item list (why nvim why!)
+        call remove(s:result, -1)
+    endif
 
-" " Sound of silence
-" nnoremap <silent> <Leader>gW :call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<Enter>
+    if empty(s:result)
+        echohl WarningMsg
+        echo 'Nothing to do.'
+        echohl None
+
+        return
+    endif
+
+    echo join(s:result)
+endfunction
+
+" range (0,1,2), inverse (0/1), [options (array: source, targe, text)]: void
+function! s:translate(range, inverse, ...) abort
+    let s:result = []
+    let l:source = len(a:000) >= 2 ? a:1 : 'en'
+    let l:target = len(a:000) >= 2 ? a:2 : (len(a:000) >= 1 ? a:1 : 'es')
+    let l:fwords = len(a:000) >= 2 ? a:000[2:] : (len(a:000) >= 1 ? a:000[1:] : (len(a:000) ==# 1 ? a:000 : []))
+    let l:content = <SID>get_selection(a:range, 0, l:fwords)
+    let l:command = ['curl', '-s', '-L', 'https://script.google.com/macros/s/AKfycbywwDmlmQrNPYoxL90NCZYjoEzuzRcnRuUmFCPzEqG7VdWBAhU/exec', '-d']
+
+    if a:inverse ==# '!'
+        let l:command = l:command + [json_encode({'source': l:target, 'target': l:source, 'text': l:content})]
+    else
+        let l:command = l:command + [json_encode({'source': l:source, 'target': l:target, 'text': l:content})]
+    endif
+
+    echo 'Translating...'
+
+    if g:isneovim
+        call jobstart(l:command, {
+                    \ 'on_stdout': { id, data -> extend(s:result, data) },
+                    \ 'on_exit': { -> s:stranslate() },
+                    \ })
+    else
+        call job_start(l:command, {
+                    \ 'out_cb': function('s:rtranslate'),
+                    \ 'err_cb': function('s:rtranslate'),
+                    \ 'exit_cb': function('s:vtranslate'),
+                    \ })
+    endif
+endfunction
+
+command! -nargs=* -range -bang T call <SID>translate(<range>, <bang>0, <f-args>)
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
@@ -1637,7 +1682,7 @@ let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/' . (g:is
 nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User AsyncRunFinished<Enter>
 nmap <silent> <S-F3> :PomodoroStatus<Enter>
 " Same to ... (why nvim why!)
-nmap <silent> <Esc>O2R :PomodoroStatus<Enter>
+nmap <silent> <nowait> <Esc>O2R :PomodoroStatus<Enter>
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
@@ -3183,7 +3228,7 @@ endfunction
 " nmap <silent> <F5> :call <SID>presentation_mode()<Enter>
 " nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
 " Same to ... (why nvim why!)
-" nmap <silent> <F17> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
+" nmap <silent> <nowait> <F17> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
 
 " let g:presentation_mode = 0
 
