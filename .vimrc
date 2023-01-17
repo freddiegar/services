@@ -1468,6 +1468,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 Plug 'machakann/vim-highlightedyank'                            " See yank preview
 Plug 'markonm/traces.vim'                                       " See range, substitution and global preview
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
+Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 
 Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
@@ -3135,6 +3136,9 @@ augroup AutoCommands
             highlight! link GitGutterChange LineNr
             highlight! link GitGutterDelete LineNr
             highlight! link GitGutterChangeDelete LineNr
+
+            highlight! link SignatureMarkText LineNr
+            highlight! link SignatureMarkerText LineNr
 
             highlight! link User1 ErrorMsg
             highlight! link ExtraWhitespace Error
