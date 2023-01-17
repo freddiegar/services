@@ -2059,7 +2059,8 @@ endfunction
 " endif
 
 " @see https://github.com/vim/vim/issues/4738
-nnoremap <silent> gx :call <SID>go_url(expand('<cWORD>'))<Enter>
+nnoremap <silent> <Plug>GoUrlRepeatable :call <SID>go_url(expand('<cWORD>'))<Enter>
+nmap <silent> gx <Plug>GoUrlRepeatable
 
 function! s:go_url(url) abort
     let l:uri = a:url
@@ -2088,6 +2089,8 @@ function! s:go_url(url) abort
         silent execute "!/usr/bin/firefox '" . shellescape(l:uri, 1) . "'"
 
         silent redraw!
+
+        silent! call repeat#set("\<Plug>GoUrlRepeatable")
 
         echo 'Opened:   ' . l:uri
     endif
@@ -2464,12 +2467,29 @@ function! s:split() abort
     elseif match(l:line, '->') > 0
         let l:arguments_list = split(l:line, '->')
 
+        if len(l:arguments_list) <= 2 " Once ocurrence
+            echo 'Nothing to do.'
+
+            return
+        endif
+
+        let l:counter = 1
+
         for l:argument in l:arguments_list
-            let l:command_string .= (len(l:command_string) > '' ? '->' : '') . trim(l:argument) . "\r"
+            if l:counter < 2
+                let l:counter = l:counter + 1
+
+                let l:command_string .= trim(l:argument)
+
+                continue
+            else
+                let l:command_string .= (len(l:command_string) > '' ? '->' : '') . trim(l:argument) . (len(l:arguments_list) > 1 ? "\r" : '')
+            endif
+
             silent call remove(l:arguments_list, 0)
         endfor
 
-        silent execute "normal! \"_ddi" . l:command_string . "\e"
+        silent execute "normal! \"_ddO" . l:command_string . "\e\"_dd=="
     else
         echo 'Nothing to do.'
     endif
