@@ -28,7 +28,6 @@
 " @see https://skippi.medium.com/ideas-for-non-leader-vim-mappings-fd32a2769c87
 
 " ORIGIN
-" @see https://www.journaldev.com/44623/vim-vs-vi
 " @see https://www.reddit.com/r/vim/wiki/why_hjkl
 " @see https://www.fcodelabs.com/2018/12/08/Vim-Cheats/
 " @mailing  https://groups.google.com/g/vim_dev
@@ -559,7 +558,7 @@ set shortmess+=T                                                " Truncate o[T]h
 set shortmess+=t                                                " [t]runcate file message [<]
 
 if !g:isneovim
-    set shortmess+=C                                            " Don't give the "s[C]anning" message
+    set shortmess+=C                                            " Don't give the "s[C]anning" message (Vim: >= 9.0.0738)
 endif
 
 set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
@@ -666,8 +665,8 @@ xnoremap <silent> $ $h
 " `x    Jump to the cursor position of mark 'x'
 nnoremap <silent> gl `.zzzv
 " Emphasis in window, like <C-w>o, but don't close others
-nnoremap <silent> <C-w>O :wincmd _ <Bar> wincmd <Bar><Enter>
-tnoremap <silent> <C-w>O <C-\><C-n>:wincmd _ <Bar> wincmd <Bar> <Bar> normal i<Enter>
+nnoremap <silent> <C-w>O :silent wincmd _ <Bar> silent wincmd <Bar><Enter>
+tnoremap <silent> <C-w>O <C-\><C-n>:silent wincmd _ <Bar> silent wincmd <Bar> <Bar> normal i<Enter>
 
 " Marks using exact position in Normal|Select|Operator Mode
 noremap ` '
@@ -691,8 +690,8 @@ nnoremap <silent> <C-u> <C-u>zzzv
 " Works as expected in Visual|Select Mode
 xnoremap <silent> p "_dp
 xnoremap <silent> P "_dP
-xnoremap <silent> * y/\V<C-r>"<Enter>
-xnoremap <silent> # y?\V<C-r>"<Enter>
+xnoremap <silent> * "zy/\V<C-r>z<Enter>
+xnoremap <silent> # "zy?\V<C-r>z<Enter>
 
 " Undo break points (<C-g>u = Start new change)
 inoremap <silent> , ,<C-g>u
@@ -791,9 +790,6 @@ nmap <silent> <expr> <F2>
 " Open explore in current file directory (toggle)
 nmap <silent> <expr> <S-F2>
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
-" Same to ... (why nvim why!)
-nmap <silent> <nowait> <expr> <Esc>O2Q
-            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
 
 " Fast Vim configuration (and plugins)
 nmap <silent> <expr> <F10>
@@ -803,8 +799,6 @@ nmap <silent> <expr> <F10>
             \ ":silent execute 'edit ~/.vimrc'<Enter>"
 
 nnoremap <silent> <S-F10> :PlugClean<Enter>
-" Same to ... (why nvim why!)
-nnoremap <silent> <nowait> <F22> :PlugClean<Enter>
 
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
@@ -910,9 +904,6 @@ inoremap <silent> <F6> <C-r>='Y-m-d'<Enter>
 inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d')<Enter>
 inoremap <silent> <F7> <C-r>='Y-m-d H:i:s'<Enter>
 inoremap <silent> <S-F7> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
-" Same to ... (why nvin why!)
-inoremap <silent> <F18> <C-r>=strftime('%Y-%m-%d')<Enter>
-inoremap <silent> <F19> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
 
 " Same!, but in Normal Mode
 " Not use normal! <Bang>, it uses remaps
@@ -920,9 +911,6 @@ nnoremap <silent> <F6> :execute "normal a\<F6>\e"<Enter>
 nnoremap <silent> <S-F6> :execute "normal a\<S-F6>\e"<Enter>
 nnoremap <silent> <F7> :execute "normal a\<F7>\e"<Enter>
 nnoremap <silent> <S-F7> :execute "normal a\<S-F7>\e"<Enter>
-" Same to ... (why nvin why!)
-nnoremap <silent> <F18> :execute "normal a\<F18>\e"<Enter>
-nnoremap <silent> <F19> :execute "normal a\<F19>\e"<Enter>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
@@ -1318,7 +1306,9 @@ function s:go_docs(word) abort
         let l:word = trim(@@)
 
         let @@ = l:saved_unnamed_register
-    elseif index(['vim', 'help'], &filetype) >= 0
+    elseif index(['help'], &filetype) >= 0
+        let l:docsurl = 'https://duckduckgo.com/?sites=vimhelp.org&ia=web&q='
+    elseif index(['vim'], &filetype) >= 0
         silent call <SID>show_documentation()
 
         return
@@ -1368,9 +1358,10 @@ cnoremap <C-f> <C-Right>
 " Shortcuts to recurrent files or directories
 cnoremap <C-x><C-d> ~/Downloads/
 cnoremap <C-x><C-h> /var/www/html/
-cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env'], '/')
-cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')
-cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')
+cnoremap <C-x><C-f> <C-u>set filetype=
+cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env'], '/')<Enter>
+cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')<Enter>
+cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<Enter>
 
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
@@ -1458,7 +1449,7 @@ Plug 'tpope/vim-rhubarb'                                        " - GitHub brows
 Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (needs vim-fugitive) -> :GBrowse
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 
-Plug 'tpope/vim-dadbod', {'on': 'DB'}                           " DB console in Vim
+Plug 'tpope/vim-dadbod'                                         " DB console in Vim
 Plug 'kristijanhusak/vim-dadbod-completion', {'for': ['sql']}   " DB autocompletion (needs vim-dadbod)
 
 " Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
@@ -1604,7 +1595,9 @@ function! s:stranslate() abort
         return
     endif
 
-    echo join(s:result)
+    let @+ = join(s:result)
+
+    echo @+
 endfunction
 
 " range (0,1,2), inverse (0/1), [options (array: source, targe, text)]: void
@@ -1681,8 +1674,6 @@ let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/' . (g:is
 
 nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User AsyncRunFinished<Enter>
 nmap <silent> <S-F3> :PomodoroStatus<Enter>
-" Same to ... (why nvim why!)
-nmap <silent> <nowait> <Esc>O2R :PomodoroStatus<Enter>
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
@@ -3227,8 +3218,6 @@ endfunction
 
 " nmap <silent> <F5> :call <SID>presentation_mode()<Enter>
 " nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
-" Same to ... (why nvim why!)
-" nmap <silent> <nowait> <F17> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
 
 " let g:presentation_mode = 0
 
@@ -3275,6 +3264,25 @@ if has('termguicolors')
     set termguicolors                                           " Vivid colours? Please! (default: off)
 endif
 
+if g:isneovim
+    " Same to ... (why nvim why!)
+    " <S-F2>
+    nmap <silent> <nowait> <expr> <Esc>O2Q
+                \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
+    " <S-F10>
+    nnoremap <silent> <nowait> <F22> :PlugClean<Enter>
+    " <S-F6>
+    inoremap <silent> <F18> <C-r>=strftime('%Y-%m-%d')<Enter>
+    inoremap <silent> <F19> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
+    " <S-F7>
+    nnoremap <silent> <F18> :execute "normal a\<F18>\e"<Enter>
+    nnoremap <silent> <F19> :execute "normal a\<F19>\e"<Enter>
+    " <S-F3>
+    nmap <silent> <nowait> <Esc>O2R :PomodoroStatus<Enter>
+    " " <S-F5>
+    " nmap <silent> <nowait> <F17> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
+endif
+
 try
     silent execute 'colorscheme ' . get(g:, 'colors_name', g:colorscheme)
 catch /^Vim\%((\a\+)\)\=:E185/
@@ -3312,5 +3320,11 @@ endif
 
 execute 'augroup END'
 
-filetype plugin indent on                                       " Enable filetype detection and auto-indent after processing
-syntax enable                                                   " Enable syntax highlighting as is (enable != on)
+filetype on                                                     " Enable filetype detection, trigger FileType event (set filetype in buffer)
+filetype plugin on                                              " Enable filetype detection plugin
+filetype indent on                                              " Enable auto-indent detection
+
+" @see https://vimhelp.org/syntax.txt.html#%3Asyntax-on
+syntax enable                                                   " Enable syntax highlighting as is (on != enable), MUST BE after filetype
+                                                                "   on    : Overrule your settings with the defaults
+                                                                "   enable: Will keep most of your current color settings
