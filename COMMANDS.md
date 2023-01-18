@@ -1644,11 +1644,11 @@ find profile_${EXECUTABLE}_*.log -exec grep STARTED {} \; | cut -d' ' -f1 > $EXE
 
 awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' $EXECUTABLE.time
 
-rm -Rf profile_*.log $EXECUTABLE.time
+rm -Rf profile_*.log
 ```
 > BARE:     $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log -u NONE
-> NO LSP:   $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log
-> LSP(CoC): $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log developer.php
+> PLUG-NC:  $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log
+> PLUG-C:   $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log developer.php
 
 Monitor resolution
 

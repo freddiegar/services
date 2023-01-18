@@ -127,10 +127,10 @@
 " 1. No brake changes :(vim9script, yeah):                  -> @see https://www.youtube.com/watch?v=zPQSST-M3fM -> vim9script transpiler
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
-"           Version                     BARE        PLUG-NC     PLUG-C
-"   Vim9:   9.0.1-749                   5.578ms     167.416ms   175.369ms
-"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  27.480ms    124.382ms   126.659ms
-"   Diff:                               +492.6%     -25.8%      -27.8%
+"           Version                     BARE(ms)    PLUG-NC(ms) PLUG-C(ms)
+"   Vim9:   9.0.1-749 (no migrate)      4.336       112.298     221.233
+"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  20.746      80.053      133.630
+"   Diff:                               -378.4%     +28.7%      +39.5%
 " @see https://neovim.io/doc/user/vim_diff.html
 " @see https://www.murilopereira.com/the-values-of-emacs-the-neovim-revolution-and-the-vscode-gorilla/
 
@@ -2663,9 +2663,9 @@ augroup AutoCommands
         \ 'all': '--no-coverage --stop-on-failure',
     \}
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tT :execute ":TestNearest -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tF :execute ":TestFile -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tS :execute ":TestSuite -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tT :execute ":TestNearest --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tF :execute ":TestFile --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tS :execute ":TestSuite --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
 
     " PHP Linter
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
@@ -2874,6 +2874,10 @@ augroup AutoCommands
 
         return len(l:version) > 0 ? l:version : 'None'
     endfunction
+
+    " Custom register by filetype
+    " Diff [t]ime operation
+    autocmd BufRead .vimrc let @t = "\"ayiWj\"byiWj ciW=100-((b*100)/a)\r\e"
 
     " Open files with external application
     autocmd BufEnter *.jpg,*.jpeg,*.png,*.gif,*.svg call <SID>go_url(expand('<afile>')) | bwipeout
@@ -3109,7 +3113,9 @@ augroup AutoCommands
         let l:ccursor = getpos('.')
         let l:lsearch = getreg('/')
 
+        " Space in end of line
         silent! %s/\s\+$//e
+        " New lines in end of file
         silent! %s/\n\+\%$//e
 
         silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
