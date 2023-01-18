@@ -664,9 +664,18 @@ xnoremap <silent> $ $h
 " 'x    Jump to the beginning of the line of mark 'x'
 " `x    Jump to the cursor position of mark 'x'
 nnoremap <silent> gl `.zzzv
+
 " Emphasis in window, like <C-w>o, but don't close others
 nnoremap <silent> <C-w>O :silent wincmd _ <Bar> silent wincmd <Bar><Enter>
 tnoremap <silent> <C-w>O <C-\><C-n>:silent wincmd _ <Bar> silent wincmd <Bar> <Bar> normal i<Enter>
+
+" Quickly resize
+" @thanks https://stackoverflow.com/questions/53670098/vim-using-vcount1-as-argument-of-a-mapping
+" NOTE: <Esc> is used to remove the range that Vim may insert (something like the CTRL-U does)
+nnoremap <silent> <expr> <C-w>- "<Esc>" . (v:count ? v:count : 5) . "<C-w>-"
+nnoremap <silent> <expr> <C-w>+ "<Esc>" . (v:count ? v:count : 5) . "<C-w>+"
+nnoremap <silent> <expr> <C-w>< "<Esc>" . (v:count ? v:count : 5) . "<C-w><"
+nnoremap <silent> <expr> <C-w>> "<Esc>" . (v:count ? v:count : 5) . "<C-w>>"
 
 " Marks using exact position in Normal|Select|Operator Mode
 noremap ` '
@@ -674,7 +683,7 @@ noremap ' `
 noremap '' ``
 noremap `` ''
 " Center screen (zz) after search mark and open folds (zv)
-noremap <expr> ' printf('`%czzzv',getchar())
+noremap <silent> <expr> ' printf('`%czzzv',getchar())
 
 " Not use [*|#]``zzzv, it throws error on 1 ocurrence
 " Center screen (zz) after each search and open folds (zv)
@@ -1343,6 +1352,9 @@ inoremap <silent> <C-l> <C-o>l
 inoremap <silent> <C-b> <C-o>B
 inoremap <silent> <C-f> <C-o>W
 
+" Same behaviour in Insert Mode
+inoremap <silent> <C-z> <Esc><C-z>
+
 " Command Mode navigation (Forget Arrows). Not add <silent> option
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
@@ -1352,9 +1364,10 @@ cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
-" Auto-complete files in command line using RegEx
+
+" Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-a>)
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
-" cnoremap <C-x><C-a> <C-a>
+cnoremap <C-x><C-a> <C-a>
 " Shortcuts to recurrent files or directories
 cnoremap <C-x><C-d> ~/Downloads/
 cnoremap <C-x><C-h> /var/www/html/
