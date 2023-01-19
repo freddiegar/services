@@ -140,6 +140,7 @@
 " - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
 if !get(v:, 'vim_did_enter', !has('vim_starting'))
+    " cwd (string)
     function! s:initialize(cwd) abort
         let g:cwd = a:cwd
         let g:cache = {}
@@ -282,6 +283,7 @@ if executable('rg')
         return system(s:regex_command)
     endfunction
 
+    " string (string)
     function! s:rg_escape(string) abort
         let l:string = a:string
 
@@ -483,6 +485,7 @@ function! GetNameBranch() abort
     return strlen(l:branchname) > 0 ? '  ' . tolower(split(l:branchname, '/')[0]) . ' ' : ' '
 endfunction
 
+" executable (string)
 function! GetVersion(executable) abort
     if &filetype !=# 'php' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
         return ''
@@ -563,6 +566,7 @@ endif
 
 set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
 
+" lastmode (string)
 function! s:statusline(lastmode) abort
     if &previewwindow || pumvisible()
         return
@@ -738,9 +742,6 @@ else
     command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 endif
 
-" Backup rescue
-command! -bang -nargs=? -complete=file BB call <SID>backup(<bang>0, <f-args>)
-
 " bang (1/0), [path (string)]: void
 function! s:backup(bang, ...) abort
     let l:path = a:0 ==# 0 ? expand('%') : a:1
@@ -768,12 +769,11 @@ function! s:backup(bang, ...) abort
     return 0
 endfunction
 
+" Backup rescue
+command! -bang -nargs=? -complete=file BB call <SID>backup(<bang>0, <f-args>)
+
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
-
-" [F]ilter data in files easily
-" @see https://vimways.org/2019/vim-and-the-shell/
-command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
 
 " bang (1/0), [filter (string)]: void
 function! s:file_filter(isregex, file, filter) abort
@@ -788,6 +788,10 @@ function! s:file_filter(isregex, file, filter) abort
     silent execute join(['0read', '!' . (a:isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') . ' -F'), shellescape(a:filter), a:file])
     normal gg
 endfunction
+
+" [F]ilter data in files easily
+" @see https://vimways.org/2019/vim-and-the-shell/
+command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
 
 " Sorry but :help is better
 nmap <silent> <F1> <Nop>
@@ -960,6 +964,7 @@ function! s:delete_call(flags, type) abort
 endfunction
 
 " @thanks https://github.com/romgrk/nvim/blob/master/rc/keymap.vim#L761
+" flags (string)
 function! s:find_function (flags)
     " @see :h search()
     let l:fcursor = a:flags =~# 'c' ? 'c' : ''
@@ -1042,6 +1047,7 @@ function! s:find_filter(type, ...)
     endif
 endfunction
 
+" type (string)
 function! s:append_char(type) abort
     let l:saved_unnamed_register = @@
     let l:repeatable = 'AppendSemicolon'
@@ -1146,6 +1152,7 @@ function! s:generate_hash() abort
     return strlen(l:hash) > 0 && l:password !=# 'Retry!' ? l:hash : 'Retry!'
 endfunction
 
+" type (string)
 function! s:generate_mask(type) abort
     let l:saved_unnamed_register = @@
 
@@ -1181,6 +1188,7 @@ function! s:generate_mask(type) abort
     return [l:passphrase, (v:shell_error == 0 && strlen(l:masked) > 0 ? l:masked : 'Retry!')]
 endfunction
 
+" type (string)
 function! s:get_masked(type) abort
     let l:saved_search_register = @/
     let l:saved_unnamed_register = @@
@@ -1284,6 +1292,7 @@ endfunction
 " @thanks https://github.com/Phantas0s/.dotfiles
 nnoremap <silent> <Leader>gd :call <SID>go_docs(expand('<cword>'))<Enter>
 
+" word (string)
 function s:go_docs(word) abort
     let l:word = a:word
     let l:docsurl = 'https://devdocs.io/#q='
@@ -1376,6 +1385,7 @@ cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.e
 cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')<Enter>
 cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<Enter>
 
+" incr (int)
 function! s:cycling_buffers(incr) abort
     let l:abuffer = bufnr('#')
     let l:cbuffer = bufnr('%')
@@ -1586,10 +1596,12 @@ let g:phpactorPhpBin = "/usr/bin/php8.1"
 " let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
 
 " @thanks https://github.com/skanehira/translate.vim
+" channel (channel), message (string)
 function! s:rtranslate(channel, message) abort
     silent call add(s:result, a:message)
 endfunction
 
+" channel (channel), message (string)
 function! s:vtranslate(channel, message) abort
     " Don't add silent
     call <SID>stranslate()
@@ -1734,6 +1746,7 @@ let g:asyncrun_exit = "silent\ call\ AsyncRunFinished()"
 " Icon used in statusline (custom setup)
 let g:asyncrun_icon = ''
 
+" command (string)
 function! AsyncRunCommand(command) abort
     let g:asyncrun_icon = '▷'
     let g:asyncrun_hide = 0
@@ -1837,6 +1850,7 @@ function! s:diagnostics() abort
     endif
 endfunction
 
+" title (string), message (string)
 function! s:popup_show(title, message) abort
     if g:isneovim
         if !exists('w:winpopup') || index(nvim_list_wins(), w:winpopup.id) < 0
@@ -2075,6 +2089,7 @@ endfunction
 nnoremap <silent> <Plug>GoUrlRepeatable :call <SID>go_url(expand('<cWORD>'))<Enter>
 nmap <silent> gx <Plug>GoUrlRepeatable
 
+" url (string)
 function! s:go_url(url) abort
     let l:uri = a:url
 
@@ -2112,6 +2127,7 @@ endfunction
 nnoremap <silent> gf :call <SID>go_file(expand('<cfile>'))<Enter>
 nnoremap <silent> gF :call <SID>go_line()<Enter>
 
+" ffile (string)
 function! s:go_file(ffile) abort
     let l:cdir = g:cwd
     let l:cext = expand('%:e')
@@ -2152,6 +2168,7 @@ augroup LargeFile
     autocmd BufWinEnter * call <SID>check_large_file(expand('<afile>'))
 augroup END
 
+" file (string)
 function! s:check_large_file(file) abort
     if a:file ==# '' || index(['jpg', 'jpeg', 'png', 'gif', 'svg', 'pdf'], expand(a:file . ':t')) >= 0
         return
@@ -2710,6 +2727,7 @@ augroup AutoCommands
     " autocmd FileType php nmap <silent> <buffer>gy :call phpactor#GotoImplementations()<Enter>
     " autocmd FileType php nmap <silent> <buffer>gr :call phpactor#FindReferences()<Enter>
 
+    " transformer (string)
     function! s:phpactor(transformer) abort
         silent update!
 
@@ -2739,6 +2757,7 @@ augroup AutoCommands
     autocmd FileType php nmap <silent> <buffer>gY :call <SID>get_implementations('file')<Enter>
     autocmd FileType php nmap <silent> <buffer>gy :call <SID>get_implementations('word')<Enter>
 
+    " type (string)
     function! s:get_implementations(type) abort
         " Searching Name, then
         " Files like:
@@ -2776,6 +2795,7 @@ augroup AutoCommands
     autocmd FileType php nmap <silent> <buffer>gR :call <SID>get_references('file')<Enter>
     autocmd FileType php nmap <silent> <buffer>gr :call <SID>get_references('word')<Enter>
 
+    " type (string)
     function! s:get_references(type) abort
         " Files like:
         "   Name::
@@ -2882,6 +2902,7 @@ augroup AutoCommands
         silent execute '%!python3 -m json.tool'
     endfunction
 
+    " command (string), [dependency (string)]
     function! s:composer(command, ...) abort
         let l:version = system('composer ' . a:command . ' 2>/dev/null | ' . g:filterprg . ' "' . a:1 . '" | sed "s#\s\+# #g" | cut -d " " -f 2 | tr -d "\n"')
 
@@ -2915,6 +2936,7 @@ augroup AutoCommands
     " @thanks https://gist.github.com/romainl/5b827f4aafa7ee29bdc70282ecc31640
     command! -range GB call <SID>get_blame(<line1>, <line2>)
 
+    " line1 (int), line2 (int)
     function! s:get_blame(line1, line2) abort
         let l:result = systemlist('git -C ' . shellescape(expand('%:p:h')) . ' blame -L ' . a:line1 . ',' . a:line2 . ' ' . expand('%:t'))
 
@@ -2996,6 +3018,7 @@ augroup AutoCommands
         endif
     endfunction
 
+    " name (string) value (string)
     function! s:envecho(name, value) abort
         echohl VimLet
         echon 'let '
@@ -3120,39 +3143,69 @@ augroup AutoCommands
         set formatoptions+=n                                    " Detect list of [n]umbers (require autoindent enable)
     endfunction
 
-    command! -nargs=0 CS call <SID>cleanspaces(1)
+    " include (string)
+    "   [t]railing spaces in end of line
+    "   [e]nd of file lines
+    "   [d]uplicate blank lines
+    "   [v]erbose
+    function! s:cleanup(include) abort
+        if &diff
+            echohl WarningMsg
+            echo 'Nothing to clean-up in diff mode.'
+            echohl None
 
-    function! s:cleanspaces(...) abort
+            return 1
+        end
+
+        let l:options = split(a:include, '\zs')
         let l:ccursor = getpos('.')
         let l:lsearch = getreg('/')
+        let l:cleanup = []
 
-        " Space in end of line
-        silent! %s/\s\+$//e
-        " New lines in end of file
-        silent! %s/\n\+\%$//e
+        if index(l:options, 't') >= 0
+            silent! %s/\s\+$//e
+
+            silent call add(l:cleanup, 'trailing spaces')
+        endif
+
+        if index(l:options, 'e') >= 0
+            silent! %s/\n\+\%$//e
+
+            silent call add(l:cleanup, 'end of file lines')
+        endif
+
+        if index(l:options, 'd') >= 0
+            " @see https://vi.stackexchange.com/questions/1920/how-does-g-j-reduce-multiple-blank-lines-to-a-single-blank-work-in-vi
+            silent! g/^$/,/./-j
+
+            silent call add(l:cleanup, 'duplicate blank lines')
+        endif
+
+        if index(l:options, 'r') >= 0
+            let l:registers = split('abcdefghijklmnopqrstuvwxyz0123456789/-"', '\zs')
+
+            for register in l:registers
+                call setreg(register, [])
+            endfor
+
+            silent call add(l:cleanup, 'registers')
+        endif
 
         silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
         silent call setpos('.', l:ccursor)
         silent call setreg('/', l:lsearch)
         silent call histdel('/', -1)
 
-        if a:0 > 0
-            echo 'Spaces cleaned-up!'
+        if index(l:options, 'v') >= 0 && len(l:cleanup) > 0
+            echo 'Cleaned-up: ' . join(l:cleanup, ', ')
         endif
     endfunction
 
-    command! -nargs=0 CR call <SID>cleanregisters()
+    command! -nargs=0 CR call <SID>cleanup('vr')
+    command! -nargs=0 CS call <SID>cleanup('vte')
+    command! -nargs=0 CL call <SID>cleanup('vted')
 
-    function! s:cleanregisters() abort
-        let l:registers = split('abcdefghijklmnopqrstuvwxyz0123456789/-"', '\zs')
-
-        for register in l:registers
-            call setreg(register, [])
-        endfor
-
-        echo 'Registers cleaned-up!'
-    endfunction
-
+    " title (string)
     function! s:settitle(title) abort
         if expand('%')[-3:] ==? '!sh' || (g:isneovim && getbufvar(bufnr('%'), 'term_title')[-3:] ==? 'fzf') || has('gui_running')
             return
@@ -3233,7 +3286,7 @@ augroup AutoCommands
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanspaces()
+    autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanup('te')
 
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
