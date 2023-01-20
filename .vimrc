@@ -146,14 +146,14 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:cache = {}
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
-        let g:working = split(g:cwd, '/')[-2:]
+        let g:working = split(g:cwd, '/')[-2 :]
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
 
         " Day/Night
         " @see https://uxpickle.com/dark-or-light-mode-for-the-eyes/
         " @timezone https://24timezones.com/time-zone/est
         let g:colorscheme = !g:istty
-                    \ ? (index(range(7, 17), str2nr(strftime('%H'))) >= 0 ? 'morning' : 'miningbox')
+                    \ ? (index(range(8, 16), str2nr(strftime('%H'))) >= 0 ? 'morning' : 'miningbox')
                     \ : 'default'
 
         " Viminfofile setup
@@ -287,8 +287,8 @@ if executable('rg')
     function! s:rg_escape(string) abort
         let l:string = a:string
 
-        let l:string = substitute(l:string, '\\' ,'\\\\\\', 'g')
-        let l:string = substitute(l:string, '|' ,'\\|', 'g')
+        let l:string = substitute(l:string, '\\', '\\\\\\', 'g')
+        let l:string = substitute(l:string, '|', '\\|', 'g')
 
         return l:string
     endfunction
@@ -500,7 +500,7 @@ function! GetVersion(executable) abort
     let [l:ctime, l:version] = get(g:cache, a:executable, [-2, ''])
 
     if l:ftime != l:ctime
-        let g:cache[a:executable] = [l:ftime, system("php --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0:2]]
+        let g:cache[a:executable] = [l:ftime, system("php --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0 : 2]]
     endif
 
     return '  ' . l:version
@@ -676,10 +676,10 @@ tnoremap <silent> <C-w>O <C-\><C-n>:silent wincmd _ <Bar> silent wincmd <Bar> <B
 " Quickly resize
 " @thanks https://stackoverflow.com/questions/53670098/vim-using-vcount1-as-argument-of-a-mapping
 " NOTE: <Esc> is used to remove the range that Vim may insert (something like the CTRL-U does)
-nnoremap <silent> <expr> <C-w>- "<Esc>" . (v:count ? v:count : 5) . "<C-w>-"
-nnoremap <silent> <expr> <C-w>+ "<Esc>" . (v:count ? v:count : 5) . "<C-w>+"
-nnoremap <silent> <expr> <C-w>< "<Esc>" . (v:count ? v:count : 5) . "<C-w><"
-nnoremap <silent> <expr> <C-w>> "<Esc>" . (v:count ? v:count : 5) . "<C-w>>"
+nnoremap <silent> <expr> <C-w>- "<Esc>" . (v:count > 0 ? v:count : 5) . "<C-w>-"
+nnoremap <silent> <expr> <C-w>+ "<Esc>" . (v:count > 0 ? v:count : 5) . "<C-w>+"
+nnoremap <silent> <expr> <C-w>< "<Esc>" . (v:count > 0 ? v:count : 5) . "<C-w><"
+nnoremap <silent> <expr> <C-w>> "<Esc>" . (v:count > 0 ? v:count : 5) . "<C-w>>"
 
 " Marks using exact position in Normal|Select|Operator Mode
 noremap ` '
@@ -687,7 +687,7 @@ noremap ' `
 noremap '' ``
 noremap `` ''
 " Center screen (zz) after search mark and open folds (zv)
-noremap <silent> <expr> ' printf('`%czzzv',getchar())
+noremap <silent> <expr> ' printf('`%czzzv', getchar())
 
 " Not use [*|#]``zzzv, it throws error on 1 ocurrence
 " Center screen (zz) after each search and open folds (zv)
@@ -742,8 +742,8 @@ else
     command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 endif
 
-" bang (1/0), [path (string)]: void
-function! s:backup(bang, ...) abort
+" path (string): void
+function! s:backup(...) abort
     let l:path = a:0 ==# 0 ? expand('%') : a:1
 
     if l:path ==# ''
@@ -756,7 +756,7 @@ function! s:backup(bang, ...) abort
 
     let l:result = system('cp -p ' . l:path . ' ' . l:path . '.' . strftime('%Y%m%d%H%M%S'))
 
-    if v:shell_error
+    if v:shell_error > 0                                        " <-- $? @see https://www.gnu.org/software/bash/manual/bash.html
         echohl WarningMsg
         echo l:result
         echohl None
@@ -770,12 +770,12 @@ function! s:backup(bang, ...) abort
 endfunction
 
 " Backup rescue
-command! -bang -nargs=? -complete=file BB call <SID>backup(<bang>0, <f-args>)
+command! -nargs=? -complete=file BB call <SID>backup(<f-args>)
 
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
 
-" bang (1/0), [filter (string)]: void
+" isregex (1/0), file (string), [filter (string)]: void
 function! s:file_filter(isregex, file, filter) abort
     if a:file ==# ''
         echo 'Nothing to do.'
@@ -785,7 +785,7 @@ function! s:file_filter(isregex, file, filter) abort
 
     new
     setlocal noswapfile
-    silent execute join(['0read', '!' . (a:isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') . ' -F'), shellescape(a:filter), a:file])
+    silent execute join([':0read', '!' . (a:isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') . ' -F'), shellescape(a:filter), a:file])
     normal gg
 endfunction
 
@@ -950,27 +950,24 @@ nnoremap <silent> <Plug>DeleteInnerCallRepeatable :call <SID>delete_call('vbc', 
 nmap <silent> dc <Plug>DeleteInnerCallRepeatable
 
 function! s:delete_call(flags, type) abort
-    let l:saved_unnamed_register = @@
-
     silent call <SID>find_function(a:flags)
 
     silent execute "normal! \"_dyi)\"_da)P"
 
     silent execute "normal! F("
 
-    let @@ = l:saved_unnamed_register
-
     silent! call repeat#set("\<Plug>Delete" . a:type . 'CallRepeatable')
 endfunction
 
 " @thanks https://github.com/romgrk/nvim/blob/master/rc/keymap.vim#L761
 " flags (string)
-function! s:find_function (flags)
+function! s:find_function(flags)
     " @see :h search()
     let l:fcursor = a:flags =~# 'c' ? 'c' : ''
     let l:fbackward = a:flags =~# 'b' ? 'b' : ''
     let l:fnomove = a:flags =~# 'n' ? 'n' : ''
     let l:visual = a:flags =~# 'v' ? 1 : 0
+    let l:saved_unnamed_register = @@
 
     let l:pattern = '\(\k\|\i\|\f\|<\|>\|:\|\\\)\+\s*\ze('
 
@@ -980,11 +977,11 @@ function! s:find_function (flags)
         silent execute "normal! v"
 
         let l:end = searchpos(l:pattern, 'ce', line('.'))
-
-        return [l:start, l:end]
     else
-        return searchpos(l:pattern, l:fcursor . l:fbackward . l:fnomove)
-    end
+        searchpos(l:pattern, l:fcursor . l:fbackward . l:fnomove)
+    endif
+
+    let @@ = l:saved_unnamed_register
 endfunction
 
 function! s:delete_method() abort
@@ -992,7 +989,7 @@ function! s:delete_method() abort
 
     silent execute "normal! vaB\"_d-\"zyy+$"
 
-    if match(@@, 'function ') >= 0
+    if match(@z, 'function ') >= 0
         silent execute "normal! \"_d-"
     endif
 
@@ -1007,7 +1004,7 @@ function! s:delete_method() abort
     endif
 
     " Has docs (inline too)
-    if trim(getline('.'))[-2:] ==# '*/' || trim(getline(line('.') - 1))[-2:] ==# '*/'
+    if trim(getline('.'))[-2 :] ==# '*/' || trim(getline(line('.') - 1))[-2 :] ==# '*/'
         let l:bsearch = getreg('/')
 
         silent execute "normal! ?\\/\\*\rd/\\*\\/\r\"_dd"
@@ -1021,19 +1018,17 @@ function! s:delete_method() abort
     silent! call repeat#set("\<Plug>DeleteMethodRepeatable")
 endfunction
 
-" type (string), [filter (string)]: void
-function! s:find_filter(type, ...)
+" type (string): void
+function! s:find_filter(type)
     let l:saved_unnamed_register = @@
     let l:filter = ''
 
     if a:type ==# 'word' || a:type ==# 'file'
         let l:filter = expand('<cword>')
-    elseif a:type ==# 'pattern' && len(a:000) > 0
-        let l:filter = a:1
     elseif a:type ==# 'v' || a:type ==# 'V'
         silent execute "normal! `<v`>\"zy"
 
-        let l:filter = trim(@@)
+        let l:filter = trim(@z)
     endif
 
     let @@ = l:saved_unnamed_register
@@ -1056,7 +1051,7 @@ function! s:append_char(type) abort
     let l:ccursor = getpos('.')
 
     silent execute "normal! $v\"zy"
-    let l:lastchar = @@
+    let l:lastchar = @z
 
     try
         if a:type ==# 'd'
@@ -1110,7 +1105,7 @@ function! s:append_char(type) abort
         echohl None
     endtry
 
-    silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
+    silent call cursor(l:ccursor)
     silent call setpos('.', l:ccursor)
 
     if l:changerow != 0
@@ -1141,7 +1136,7 @@ function! s:generate_password() abort
     let l:password = substitute(l:password, '[air]', '\*', 'g')
     let l:password = substitute(l:password, '[HQZ]', '\@', 'g')
 
-    return l:password[0:15]
+    return l:password[0 : 15]
 endfunction
 
 function! s:generate_hash() abort
@@ -1159,7 +1154,7 @@ function! s:generate_mask(type) abort
     if a:type ==# 'v' || a:type ==# 'V'
         silent execute "normal! `<v`>\"zy"
 
-        let l:passphrase = trim(@@)
+        let l:passphrase = trim(@z)
     else
         let l:passphrase = expand('<cword>')
     endif
@@ -1175,11 +1170,11 @@ function! s:generate_mask(type) abort
         let l:command = "php --run \"echo password_hash('" . l:escaped . "', PASSWORD_DEFAULT);\""
     elseif l:type ==# 2
         let l:command = "php --run \"echo hash('sha1', '" . l:escaped . "');\""
-    elseif  l:type ==# 3
+    elseif l:type ==# 3
         let l:command = "php --run \"echo hash('sha256', '" . l:escaped . "');\""
-    elseif  l:type ==# 4
+    elseif l:type ==# 4
         let l:command = "php --run \"echo str_rot13('" . l:escaped . "');\""
-    elseif  l:type ==# 5
+    elseif l:type ==# 5
         let l:command = "php --run \"echo md5('" . l:escaped . "');\""
     endif
 
@@ -1217,12 +1212,12 @@ function! s:get_masked(type) abort
         " Replaced numbers -> #
         silent execute "s/\\%V[0-9]/#/ge"
     elseif l:type ==# 2
-        let l:masked = system("php --run \"echo str_rot13('" . <SID>escape(@@) . "');\"")
+        let l:masked = system("php --run \"echo str_rot13('" . <SID>escape(@z) . "');\"")
 
         silent execute "sno/\\%V" . substitute(getreg('z'), '\/', '\\/', 'g') . '/' . substitute(l:masked, '\/', '\\/', 'g') . "/e"
     endif
 
-    silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
+    silent call cursor(l:ccursor)
     silent call setpos('.', l:ccursor)
     silent call setreg('/', l:lsearch)
     silent call histdel('/', -1)
@@ -1267,7 +1262,7 @@ function! s:go_line() abort
         let l:file = strlen(l:parts[0]) > 0 ? l:parts[0] : ''
         let l:line = strlen(l:parts[1]) > 0 ? substitute(l:parts[1], '\D', '', 'g') : 1
 
-        if filereadable(l:file) && l:line > 0
+        if filereadable(l:file) && len(l:line) > 0
             " Not use normal! <Bang>, it cancel printable char
             silent execute "normal \<C-w>w"
             silent execute 'edit +' . l:line . ' ' . fnameescape(l:file)
@@ -1312,7 +1307,7 @@ function s:go_docs(word) abort
 
         silent execute "normal! 0wviW\"zy"
 
-        let l:word = split(trim(@@), ':')[0]
+        let l:word = split(trim(@z), ':')[0]
 
         let @@ = l:saved_unnamed_register
     elseif index(['vim'], &filetype) >= 0 && match(getline('.'), 'Plug') >= 0
@@ -1321,7 +1316,7 @@ function s:go_docs(word) abort
 
         silent execute "normal! 0vi'\"zy"
 
-        let l:word = trim(@@)
+        let l:word = trim(@z)
 
         let @@ = l:saved_unnamed_register
     elseif index(['help'], &filetype) >= 0
@@ -1631,7 +1626,7 @@ function! s:translate(range, inverse, ...) abort
     let s:result = []
     let l:source = len(a:000) >= 2 ? a:1 : 'en'
     let l:target = len(a:000) >= 2 ? a:2 : (len(a:000) >= 1 ? a:1 : 'es')
-    let l:fwords = len(a:000) >= 2 ? a:000[2:] : (len(a:000) >= 1 ? a:000[1:] : (len(a:000) ==# 1 ? a:000 : []))
+    let l:fwords = len(a:000) >= 2 ? a:000[2 :] : (len(a:000) >= 1 ? a:000[1 :] : (len(a:000) ==# 1 ? a:000 : []))
     let l:content = <SID>get_selection(a:range, 0, l:fwords)
     let l:command = ['curl', '-s', '-L', 'https://script.google.com/macros/s/AKfycbywwDmlmQrNPYoxL90NCZYjoEzuzRcnRuUmFCPzEqG7VdWBAhU/exec', '-d']
 
@@ -1751,14 +1746,13 @@ function! AsyncRunCommand(command) abort
     let g:asyncrun_icon = '▷'
     let g:asyncrun_hide = 0
     let g:asyncrun_play = match(a:command, '-sound') >= 0
-    let l:command = substitute(a:command, '-sound', '', 'g')
 
     call asyncrun#run(v:true, #{
                 \ raw: 1,
                 \ strip: 1,
                 \ silent: 1,
                 \ once: 1,
-                \ }, l:command)
+                \ }, substitute(a:command, '-sound', '', 'g'))
 
     echo 'Task:     ' . g:asyncrun_status
 endfunction
@@ -2237,11 +2231,11 @@ function! s:git_alias() abort
     for l:line in l:lines
         try
             let [l:shortcut, l:command] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
+
+            let l:aliases += [[trim(l:shortcut), trim(substitute(substitute(l:command, 'git ', 'Git ', ''), ' -w', '', ''))]]
         catch
             continue
         endtry
-
-        let l:aliases += [[trim(l:shortcut), trim(substitute(substitute(l:command, 'git ', 'Git ', ''), ' -w', '', ''))]]
     endfor
 
     return l:aliases
@@ -2384,7 +2378,7 @@ function! s:run(range, interactive, ...) abort
     let l:run = printf(l:execute, <SID>escape(l:command, l:ignorechars))
     let l:result = system(l:run)
 
-    if v:shell_error " <-- $? @see https://www.gnu.org/software/bash/manual/bash.html
+    if v:shell_error > 0                                        " <-- $? @see https://www.gnu.org/software/bash/manual/bash.html
         let @+ = l:run
 
         echohl WarningMsg
@@ -2396,7 +2390,7 @@ function! s:run(range, interactive, ...) abort
 
     let @+ = trim(l:result)
 
-    echo len(@+) ? @+ : l:command
+    echo len(@+) > 0 ? @+ : l:command
 
     return 0
 endfunction
@@ -2411,8 +2405,8 @@ function! s:get_selection(range, interactive, args) abort
         let l:selection = join(a:args, ' ')
     elseif a:range == 2
         " @see https://vi.stackexchange.com/a/11028
-        let [l:lnum1, l:col1] = getpos("'<")[1:2]
-        let [l:lnum2, l:col2] = getpos("'>")[1:2]
+        let [l:lnum1, l:col1] = getpos("'<")[1 : 2]
+        let [l:lnum2, l:col2] = getpos("'>")[1 : 2]
 
         let l:lines = getline(l:lnum1, l:lnum2)
 
@@ -2433,7 +2427,7 @@ endfunction
 " " @see https://github.com/AndrewRadev/tagalong.vim
 " let g:tagalong_filetypes = ['html', 'xml']
 
-nnoremap <silent> <Plug>SplitRepeatable :<C-u>call <SID>split()<Enter>
+nnoremap <silent> <Plug>SplitRepeatable <SID>split()<Enter>
 nmap <silent> gS <Plug>SplitRepeatable
 
 " @see https://github.com/AndrewRadev/splitjoin.vim
@@ -2456,7 +2450,7 @@ function! s:split() abort
                 \ && match(l:line, '[') + 1 != match(l:line, ']')
         silent execute 'normal! _f[vi["zy'
 
-        let l:arguments_list = split(@@, ',')
+        let l:arguments_list = split(@z, ',')
 
         for l:argument in l:arguments_list
             let l:command_string .= "\t" . trim(l:argument) . ",\r"
@@ -2469,7 +2463,7 @@ function! s:split() abort
                 \ && match(l:line, ')') > 0
         silent execute 'normal! _f(vi("zy'
 
-        let l:arguments_list = split(@@, ',')
+        let l:arguments_list = split(@z, ',')
 
         for l:argument in l:arguments_list
             let l:command_string .= "\t" . trim(l:argument) . (len(l:arguments_list) > 1 ? ',' : '') . "\r"
@@ -2480,7 +2474,7 @@ function! s:split() abort
 
         silent execute 'normal! jlv"zy'
 
-        if @@ ==# '{'
+        if @z ==# '{'
             silent execute 'normal! kJ'
         endif
     " Is comma list?
@@ -2513,7 +2507,7 @@ function! s:split() abort
 
                 continue
             else
-                let l:command_string .= (len(l:command_string) > '' ? '->' : '') . trim(l:argument) . (len(l:arguments_list) > 1 ? "\r" : '')
+                let l:command_string .= (len(l:command_string) > 0 ? '->' : '') . trim(l:argument) . (len(l:arguments_list) > 1 ? "\r" : '')
             endif
 
             silent call remove(l:arguments_list, 0)
@@ -2633,10 +2627,10 @@ augroup AutoCommands
                     \ | setlocal signcolumn=no
                     \ | setlocal colorcolumn=0
                     \ | setlocal nolist
-                    \ | if getbufvar(bufnr('%'), 'term_title')[-4:] ==# '/zsh'
+                    \ | if getbufvar(bufnr('%'), 'term_title')[-4 :] ==# '/zsh'
                         \ | startinsert
                     \ | endif
-                    \ | if getbufvar(bufnr('%'), 'term_title')[-3:] !=? 'fzf'
+                    \ | if getbufvar(bufnr('%'), 'term_title')[-3 :] !=? 'fzf'
                         \ | tnoremap <silent> <buffer><Esc> <C-\><C-n><Enter>
                         \ | nnoremap <silent> <buffer><Enter> i<Enter>
                     \ | endif
@@ -2652,7 +2646,7 @@ augroup AutoCommands
                     \ | setlocal signcolumn=no
                     \ | setlocal colorcolumn=0
                     \ | setlocal nolist
-                    \ | if expand('%')[-3:] !=? '!sh'
+                    \ | if expand('%')[-3 :] !=? '!sh'
                         \ | tnoremap <silent> <buffer><Esc> <C-\><C-n><Enter>
                     \ | endif
                     \ | endif
@@ -2997,13 +2991,13 @@ augroup AutoCommands
         for l:line in l:lines
             try
                 let [l:name, l:value] = split(substitute(l:line, '=', '@@==@@', ''), '@@==@@')
+
+                let s:env[l:name] = shellescape(l:value)
+
+                silent execute 'let $' . l:name ' = ' . shellescape(l:value)
             catch
                 continue
             endtry
-
-            let s:env[l:name] = shellescape(l:value)
-
-            silent execute 'let $' . l:name ' = ' . shellescape(l:value)
         endfor
 
         " aka :verbose Dotenv
@@ -3075,8 +3069,6 @@ augroup AutoCommands
     endfunction
 
     function! s:sessionload() abort
-        silent messages clear
-
         let l:message = ''
         let l:envfile = <SID>envfile()
         let l:session = split(g:session_file, '/')[-1]
@@ -3100,8 +3092,8 @@ augroup AutoCommands
         endif
 
         if l:message !=# ''
-            let l:message = substitute(l:message, '##ENV##', '' , '')
-            let l:message = substitute(l:message, '##INF##', '' , '')
+            let l:message = substitute(l:message, '##ENV##', '', '')
+            let l:message = substitute(l:message, '##INF##', '', '')
 
             echomsg l:message
         endif
@@ -3129,6 +3121,10 @@ augroup AutoCommands
             call <SID>sessionsavepre()
 
             silent execute 'mksession! ' . g:session_file
+
+            echomsg 'Saved ' . split(g:session_file, '/')[-1]
+
+            let v:this_session = ''
         endif
     endfunction
 
@@ -3155,7 +3151,7 @@ augroup AutoCommands
             echohl None
 
             return 1
-        end
+        endif
 
         let l:options = split(a:include, '\zs')
         let l:ccursor = getpos('.')
@@ -3191,7 +3187,7 @@ augroup AutoCommands
             silent call add(l:cleanup, 'registers')
         endif
 
-        silent call cursor(l:ccursor['lnum'], l:ccursor['col'])
+        silent call cursor(l:ccursor)
         silent call setpos('.', l:ccursor)
         silent call setreg('/', l:lsearch)
         silent call histdel('/', -1)
@@ -3207,7 +3203,7 @@ augroup AutoCommands
 
     " title (string)
     function! s:settitle(title) abort
-        if expand('%')[-3:] ==? '!sh' || (g:isneovim && getbufvar(bufnr('%'), 'term_title')[-3:] ==? 'fzf') || has('gui_running')
+        if expand('%')[-3 :] ==? '!sh' || (g:isneovim && getbufvar(bufnr('%'), 'term_title')[-3 :] ==? 'fzf') || has('gui_running')
             return
         endif
 
