@@ -533,8 +533,6 @@ function! AsyncStatuslineFlag() abort
         silent call system(l:command)
     endif
 
-    echo 'Task:     ' . g:asyncrun_status
-
     let g:asyncrun_status = 'stopped'
 
     return get(g:, 'asyncrun_icon', '')
@@ -798,11 +796,11 @@ nmap <silent> <F1> <Nop>
 
 " Open explore in current work directory (toggle)
 nmap <silent> <expr> <F2>
-            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd() <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
+            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd() <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>"
 
 " Open explore in current file directory (toggle)
 nmap <silent> <expr> <S-F2>
-            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
+            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>"
 
 " Fast Vim configuration (and plugins)
 nmap <silent> <expr> <F10>
@@ -1693,7 +1691,7 @@ let g:pomodoro_time_work = 50
 let g:pomodoro_time_slack = 10
 let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/' . (g:isneovim ? 'canary-long.wav' : 'prompt.wav')
 
-nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User AsyncRunFinished<Enter>
+nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
 nmap <silent> <S-F3> :PomodoroStatus<Enter>
 
 " HighlightedYank
@@ -1755,21 +1753,25 @@ function! AsyncRunCommand(command) abort
                 \ }, substitute(a:command, '-sound', '', 'g'))
 
     echo 'Task:     ' . g:asyncrun_status
+
+    doautocmd <nomodeline> User UpdateStatusline
 endfunction
 
 " Required CamelCase to use asyncrun_exit option
 function! AsyncRunFinished() abort
-    doautocmd <nomodeline> User AsyncRunFinished
-
     if g:asyncrun_code > 0
         let g:asyncrun_icon = '✗'
         copen
+
+        doautocmd <nomodeline> User UpdateStatusline
 
         return
     endif
 
     let g:asyncrun_icon = '✓'
     cclose
+
+    doautocmd <nomodeline> User UpdateStatusline
 endfunction
 
 " Vim Tests
@@ -1794,6 +1796,8 @@ function! s:test_strategy() abort
     endif
 
     echo 'Strategy: ' . g:test_strategy
+
+    doautocmd <nomodeline> User UpdateStatusline
 endfunction
 
 nnoremap <silent> <Leader>tt :execute ":TestNearest -strategy=" . g:test_strategy<Enter>
@@ -3268,10 +3272,7 @@ augroup AutoCommands
     " BufHidden:    After close CTRL-W o
     autocmd WinEnter,BufWinEnter,BufHidden * call <SID>statusline(mode()) | setlocal cursorline
     autocmd WinLeave,BufWinLeave * setlocal nocursorline
-    " After open netrw
-    autocmd User OpenNetrw call <SID>statusline(mode())
-    " After finished job with AsyncRun ([t]erminal mode to throws system command as it's expect)
-    autocmd User AsyncRunFinished call <SID>statusline('t')
+    autocmd User UpdateStatusline call <SID>statusline(mode())
     " After open terminal with fzf
     if exists("##ModeChanged") " (why nvim why!)
         autocmd ModeChanged *t:* call <SID>statusline(v:event.old_mode) | setlocal cursorline
@@ -3360,7 +3361,7 @@ if g:isneovim
     " Same to ... (why nvim why!)
     " <S-F2>
     nmap <silent> <nowait> <expr> <Esc>O2Q
-                \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User OpenNetrw<Enter>"
+                \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>"
     " <S-F10>
     nnoremap <silent> <nowait> <F22> :PlugClean<Enter>
     " <S-F6>
