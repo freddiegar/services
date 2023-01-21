@@ -277,7 +277,7 @@ if executable('rg')
 
     " Better integration's rg. Only Vim (or nvim 0.5+)
     " @thanks https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
-    function! Grep(...)
+    function! Grep(...) abort
         let s:regex_command = join([&grepprg] + [expandcmd(join(a:000, ' '))], ' ')
 
         return system(s:regex_command)
@@ -959,7 +959,7 @@ endfunction
 
 " @thanks https://github.com/romgrk/nvim/blob/master/rc/keymap.vim#L761
 " flags (string)
-function! s:find_function(flags)
+function! s:find_function(flags) abort
     " @see :h search()
     let l:fcursor = a:flags =~# 'c' ? 'c' : ''
     let l:fbackward = a:flags =~# 'b' ? 'b' : ''
@@ -1017,7 +1017,7 @@ function! s:delete_method() abort
 endfunction
 
 " type (string): void
-function! s:find_filter(type)
+function! s:find_filter(type) abort
     let l:saved_unnamed_register = @@
     let l:filter = ''
 
@@ -3259,7 +3259,10 @@ augroup AutoCommands
 
     " Load session when :cd command is executed
     " @thanks https://github.com/valacar/vimfiles/commit/4d0b79096fd1b2b6f5fc0c7225f7de7751fada64
-    autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload()
+    if exists("##DirChangedPre") " (why nvim why!)
+        autocmd DirChangedPre global silent messages clear | call <SID>sessionsave() | silent! execute '1,$bdelete'
+    endif
+    autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | call <SID>statusline('x') | filetype detect
 
     autocmd BufEnter * call <SID>poststart()
     " BufEnter:     After changes between buffers (why nvim why!)
@@ -3284,6 +3287,9 @@ augroup AutoCommands
 
     autocmd ColorScheme * call <SID>postcolorscheme()
     autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanup('te')
+
+    " Create non-existent directories when saving files
+    autocmd BufWritePre *.md if !isdirectory(expand('<afile>:p:h')) | call mkdir(expand('<afile>:p:h'), 'p') | endif
 
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
