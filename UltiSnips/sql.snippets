@@ -1,0 +1,111 @@
+snippet v "Variable" i
+SELECT @$1 := $0;
+endsnippet
+
+snippet s "Select" b
+SELECT ${1:*} FROM $0
+endsnippet
+
+snippet # "Count" b
+SELECT COUNT(${1:1}) FROM $0
+endsnippet
+
+snippet x "Extraxt" iw
+(SELECT ${1:*} FROM $2) $3$0
+endsnippet
+
+snippet j "Join" iw
+JOIN $1 ON $0
+endsnippet
+
+snippet f "Left" iw
+LEFT
+endsnippet
+
+snippet r "Righ" iw
+RIGHT
+endsnippet
+
+snippet w "Where" iw
+WHERE $0
+endsnippet
+
+snippet & "And" iw
+AND $0
+endsnippet
+
+snippet | "Or" iw
+OR $0
+endsnippet
+
+snippet b "Between" iw
+BETWEEN $1 AND $0
+endsnippet
+
+snippet k "Like" iw
+LIKE '%$1%'$0
+endsnippet
+
+snippet n "Null" iw
+IS $1NULL$0
+endsnippet
+
+snippet is "In string" iw
+IN ('$1')$0
+endsnippet
+
+snippet ii "In int" iw
+IN ($1)$0
+endsnippet
+
+snippet iq "In query" iw
+IN (SELECT ${1:id} FROM ${2} WHERE $3)$0
+endsnippet
+
+snippet o "Order by" iw
+ORDER BY ${1:id}$0
+endsnippet
+
+snippet e "Desc" iw
+DESC$0
+endsnippet
+
+snippet l "Limit" iw
+LIMIT $1$0
+endsnippet
+
+snippet . "Concatenate" iw
+CONCAT($1)$0
+endsnippet
+
+snippet p "Update" b
+UPDATE $1 SET $0
+endsnippet
+
+snippet d "Delete" b
+DELETE FROM $1 WHERE $2;$0
+endsnippet
+
+snippet t "Truncate" b
+TRUNCATE TABLE $1;$0
+endsnippet
+
+snippet a "Alter" b
+ALTER TABLE $1;$0
+endsnippet
+
+snippet h "Create database" b
+CREATE DATABASE $1 CHARSET ${2:utf8};$0
+endsnippet
+
+snippet c "Create table" b
+CREATE TABLE $1;$0
+endsnippet
+
+snippet u "Create user" b
+CREATE USER $1@'${2:172.20.0.%}' IDENTIFIED BY '$3';$0
+endsnippet
+
+snippet g "Grant user" b
+GRANT ALL PRIVILEGES $1.${2:*} TO $3@'${4:172.20.0.%}' IDENTIFIED BY '$5';$0
+endsnippet

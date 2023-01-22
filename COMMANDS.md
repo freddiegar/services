@@ -1802,3 +1802,10 @@ vim -x file
 # Remove cipher
 :X <- Let empty
 ```
+
+Install [Zoom](https://zoom.us/download?os=linux)
+
+```bash
+curl -L https://zoom.us/client/5.13.5.431/zoom_amd64.deb -o zoom.deb && sudo apt install ./zoom.deb && rm zoom.deb
+# sudo apt remove zoom
+```
