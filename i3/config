@@ -168,6 +168,7 @@ default_orientation auto
 # type      ->  _NET_WM_WINDOW_TYPE
 # title     ->  _NET_WM_NAME (WM_NAME as fallback)
 
+assign [instance="(?i)gvim"]                                                $workspace1
 assign [class="(?i)firefox" title="^((?!(?i)private).)*$"]                $workspace2
 assign [class="Microsoft Teams - Preview"]                                  $workspace3
 assign [class="zoom" title="Zoom Cloud Meetings"]                           $workspace3
@@ -328,6 +329,7 @@ focus_follows_mouse no
 # @see https://www.youtube.com/watch?v=8-S0cWnLBKg&list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf&index=2
 bindsym $mod+Shift+a exec --no-startup-id /opt/awsvpnclient/AWS\ VPN\ Client
 bindsym $mod+Shift+f exec --no-startup-id firefox
+bindsym $mod+Shift+g exec --no-startup-id gvim
 bindsym $mod+Shift+t exec --no-startup-id teams
 bindsym $mod+Shift+m exec --no-startup-id mysql-workbench
 bindsym $mod+Shift+p exec --no-startup-id postman
@@ -374,7 +376,7 @@ exec_always --no-startup-id xdg-settings set default-web-browser firefox.desktop
 # exec_always --no-startup-id "sleep 1; setxkbmap -option caps:none; xset r off;"
 # Disable Caps Lock to Escape
 # exec_always --no-startup-id "sleep 1; setxkbmap -option caps:escape; xset r off;"
-exec_always --no-startup-id "sleep 1; setxkbmap -option caps:escape;"
+# exec_always --no-startup-id "sleep 1; setxkbmap -option caps:escape;"
 # Swap Caps Lock with Escape
 # exec_always --no-startup-id "sleep 1; setxkbmap -option caps:swapescape; xset r off;"
 
@@ -498,8 +500,8 @@ mode "move" {
 # Move floating windows with keys
 bindsym $mod+m mode "move" focus floating
 
-# Open tab in browser
-set $mode_browser (b)itbucket, (G|g)ithub, (l)inkedin, tra(n)slate, (o)utlook, (r)eddit, (S|s)earch, (T|t)witch, (u)rban, (w)reference, (Y|y)outube
+# Open new tab in browser
+set $mode_browser (b)itbucket, (w)akatime, (G|g)ithub, (l)inkedin, tra(n)slate, (o)utlook, (r)eddit, (S|s)earch, (T|t)witch, (u)rban, (Y|y)outube
 
 mode "$mode_browser" {
     bindsym b exec  $browser bitbucket.org,         mode "default"
@@ -512,7 +514,7 @@ mode "$mode_browser" {
     bindsym s exec  $browser duckduckgo.com,        mode "default"
     bindsym t exec  $browser twitch.tv,             mode "default"
     bindsym u exec  $browser urbandictionary.com,   mode "default"
-    bindsym w exec  $browser wordreference.com,     mode "default"
+    bindsym w exec  $browser wakatime.com,          mode "default"
     bindsym y exec  $browser youtube.com,           mode "default"
 
     bindsym Shift+g exec    $browser-private github.com,        mode "default"
