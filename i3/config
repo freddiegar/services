@@ -4,6 +4,7 @@
 
 # Running i3wm command from terminal, it don't allow variables
 # i3-msg "exec --no-startup-id konsole -p tabtitle='::scratchpad::'"
+# i3-msg "exec --no-startup-id konsole -p tabtitle='::xcratchpad::'"
 
 # Shortcuts base available:
 #   Shifted:      B, D, E, G, T, Y, Z
@@ -221,11 +222,11 @@ for_window [class="^Gimp$" title="^Quit GIMP$"]                         floating
 
 # Scratchpad
 # @see https://youtu.be/q-l7DnDbiiU?t=134
-for_window [title="^::scratchpad::"]                                    floating enable, move scratchpad
-bindsym $mod+minus [title="^::scratchpad::"]                            scratchpad show; [title="^::scratchpad::"] move position center
+for_window [title="^::scratchpad::"]                                        floating enable, move scratchpad
+bindsym $mod+minus [title="^::scratchpad::"]                                scratchpad show; [title="^::scratchpad::"] move position center
 
-for_window [title="^::scratchpad_alt::"]                                floating enable, move scratchpad
-bindsym $mod+Shift+minus [title="^::scratchpad_alt::"]                  scratchpad show; [title="^::scratchpad_alt::"] move position center
+for_window [title="^::xcratchpad::"]                                        floating enable, move scratchpad
+bindsym $mod+Shift+minus [title="^::xcratchpad::"]                          scratchpad show; [title="^::xcratchpad::"] move position center
 
 # @see https://www.reddit.com/r/i3wm/comments/ejn0iz/what_is_the_difference_between_reload_and_restart/
 # reload the configuration file
@@ -350,7 +351,7 @@ exec --no-startup-id xcompmgr -c -C -o.1 &
 exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
 # Init Scratchpad (help: --list-profile-properties)
 exec --no-startup-id $emulator -p tabtitle='::scratchpad::'
-exec --no-startup-id $emulator -p tabtitle='::scratchpad_alt::'
+exec --no-startup-id $emulator -p tabtitle='::xcratchpad::'
 
 # Reload wallpaper
 bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-`ls ~/BG/*.jpeg | wc --lines` -n1).jpeg
