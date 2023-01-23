@@ -168,33 +168,40 @@ default_orientation auto
 # type      ->  _NET_WM_WINDOW_TYPE
 # title     ->  _NET_WM_NAME (WM_NAME as fallback)
 
-assign [class="(?i)firefox" title="^((?!(?i)private).)*$"]  $workspace2
-assign [class="Microsoft Teams - Preview"]                  $workspace3
-assign [class="Mysql-workbench-bin"]                        $workspace4
-assign [class="(?i)firefox" title="(?=(?i)private).*"]      $workspace5
-assign [class="(?i)postman"]                                $workspace6
-assign [class="AWS VPN Client"]                             $workspace7
-assign [class="VirtualBox Manager"]                         $workspace8
-assign [class="VirtualBox Machine"]                         $workspace8
-assign [class="^VirtualBox$"]                               $workspace8
-assign [class="^Virt-manager$"]                             $workspace8
-assign [class="Nautilus"]                                   $workspace9
-assign [class="Opera"]                                      $workspace10
+assign [class="(?i)firefox" title="^((?!(?i)private).)*$"]                $workspace2
+assign [class="Microsoft Teams - Preview"]                                  $workspace3
+assign [class="zoom" title="Zoom Cloud Meetings"]                           $workspace3
+assign [class="Mysql-workbench-bin"]                                        $workspace4
+assign [class="(?i)firefox" title="(?=(?i)private).*"]                    $workspace5
+assign [class="(?i)postman"]                                                $workspace6
+assign [class="AWS VPN Client"]                                             $workspace7
+assign [class="VirtualBox Manager"]                                         $workspace8
+assign [class="VirtualBox Machine"]                                         $workspace8
+assign [class="^VirtualBox$"]                                               $workspace8
+assign [class="^Virt-manager$"]                                             $workspace8
+assign [class="Nautilus"]                                                   $workspace9
+assign [class="Opera"]                                                      $workspace10
 
 # Enable floating
-for_window [window_role="(?i)pop-up"]       floating enable
-for_window [window_role="tooltip"]          floating enable
+for_window [window_role="(?i)pop-up"]                                       floating enable
+for_window [window_role="tooltip"]                                          floating enable
 
-# Meet notifications
-for_window [window_type="notification"]     floating enable, sticky enable
+# Notifications
+for_window [window_type="notification"]                                     floating enable, sticky enable
+
+# Zoom
+for_window [class="zoom" title="zoom"]                                      floating enable
+for_window [class="zoom" title="Zoom Meeting"]                              floating enable
+for_window [class="zoom" title="Meeting Chat"]                              floating enable
+for_window [class="zoom" title="Participants\s\(\d+\)"]                     floating enable
 
 # Programs
-for_window [class="Gnome-calculator"]       floating enable
-for_window [class="obs"]                    floating enable
-for_window [class="Pavucontrol"]            floating enable
+for_window [class="Gnome-calculator"]                                       floating enable
+for_window [class="obs"]                                                    floating enable
+for_window [class="Pavucontrol"]                                            floating enable
 
 # Utilities
-for_window [title="^Event Tester$"]         floating enable
+for_window [title="^Event Tester$"]                                         floating enable
 
 # Virtual Machines
 for_window [instance="^VirtualBox$" class="^VirtualBox$"]                   floating enable, move position center
@@ -203,22 +210,22 @@ for_window [instance="^virt-manager$" title="[^Virtual Machine Manager]"]   floa
 for_window [instance="^virt-manager$" title="KVM$"]                         floating enable, resize set 1026 795, move position center
 
 # Open new tab is focus in current Firefox workspace
-for_window [urgent="latest" class="(?i)firefox"]                        focus
+# for_window [urgent="latest" class="(?i)firefox"]                            focus
 # PiP in Firefox
-for_window [instance="Toolkit" class="(?i)firefox"]                     floating enable, sticky enable
+for_window [instance="Toolkit" class="(?i)firefox"]                       floating enable, resize set 640 360, move position 1260 695, sticky enable
 # Downloads
-for_window [instance="Places" class="(?i)firefox"]                      floating enable
+for_window [instance="Places" class="(?i)firefox"]                        floating enable
 # Certificates information
-for_window [instance="Browser" class="(?i)firefox"]                     floating enable
+for_window [instance="Browser" class="(?i)firefox"]                       floating enable
 
 # PiP in Opera
-# for_window [class="Opera" title="Picture in Picture"]                 floating enable, sticky enable
+# for_window [class="Opera" title="Picture in Picture"]                       floating enable, sticky enable
 
 # GIMP
-for_window [class="^Gimp$" title="^GNU Image Manipulation Program$"]    floating disabled
-for_window [class="^Gimp$" title=" ? GIMP$"]                            floating disabled
-for_window [class="^Gimp$" title="Tool Options$"]                       floating enable
-for_window [class="^Gimp$" title="^Quit GIMP$"]                         floating enable
+for_window [class="^Gimp$" title="^GNU Image Manipulation Program$"]        floating disabled
+for_window [class="^Gimp$" title=" ? GIMP$"]                                floating disabled
+for_window [class="^Gimp$" title="Tool Options$"]                           floating enable
+for_window [class="^Gimp$" title="^Quit GIMP$"]                             floating enable
 
 # Scratchpad
 # @see https://youtu.be/q-l7DnDbiiU?t=134
@@ -264,7 +271,7 @@ mode "resize" {
     bindsym Shift+g     floating enable, resize set 256 144,    move position 20 911
 
     bindsym v           floating enable, resize set 854 540,    move position 1046 515, sticky enable
-    bindsym t           floating enable, resize set 720 500,    move position 1180 555, sticky enable
+    bindsym m           floating enable, resize set 720 500,    move position 1180 555, sticky enable
 
     # back to normal
     bindsym Return mode "default"
