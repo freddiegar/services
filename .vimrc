@@ -619,7 +619,7 @@ function! s:statusline(lastmode) abort
     endif
 
     setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
-    setlocal statusline+=%3{&filetype!=#''?&filetype:''}        " Is it require description?
+    setlocal statusline+=%3{&filetype!=#''?&filetype:'nop'}     " Is it require description?
     setlocal statusline+=%{GetVersion('/etc/alternatives/php')} " PHP version
 
     setlocal statusline+=\%<                                    " Truncate long statusline here
@@ -2197,6 +2197,7 @@ function! s:check_large_file(file) abort
     elseif !exists('g:syntax_on') && bufname('%') !=# ''
         filetype detect
         syntax enable
+        call <SID>postcolorscheme()
 
         echomsg 'The file has ' . l:hfsize . ' MB (<= ' . l:hmaxsize . ' MB), options were restored.'
     endif
@@ -2280,7 +2281,7 @@ endfor
 " let g:gitgutter_eager = 1 (¿?)
 " let g:gitgutter_realtime = 0 (¿?)
 let g:gitgutter_map_keys = 0
-let g:gitgutter_max_signs = 500
+let g:gitgutter_max_signs = 750
 " let g:gitgutter_sign_priority = 100000
 " let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_preview_win_floating = 1
