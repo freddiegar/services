@@ -148,6 +148,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:hasgit = isdirectory('.git')
         let g:working = split(g:cwd, '/')[-2 :]
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
+        let g:qfcommand = get(g:, 'qfcommand', '')
 
         " Day/Night
         " @see https://uxpickle.com/dark-or-light-mode-for-the-eyes/
@@ -278,9 +279,9 @@ if executable('rg')
     " Better integration's rg. Only Vim (or nvim 0.5+)
     " @thanks https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
     function! Grep(...) abort
-        let s:regex_command = join([&grepprg] + [expandcmd(join(a:000, ' '))], ' ')
+        let g:qfcommand = join([&grepprg] + [expandcmd(join(a:000, ' '))], ' ')
 
-        return system(s:regex_command)
+        return system(g:qfcommand)
     endfunction
 
     " string (string)
@@ -309,10 +310,8 @@ if executable('rg')
     augroup Quickfix
         autocmd!
 
-        autocmd QuickFixCmdPost cgetexpr cwindow
-                    \ | call setqflist([], 'a', {'title': ':' . s:regex_command})
-        autocmd QuickFixCmdPost lgetexpr lwindow
-                    \ | call setloclist(0, [], 'a', {'title': ':' . s:regex_command})
+        autocmd QuickFixCmdPost cgetexpr cwindow | call setqflist([], 'a', {'title': ':' . g:qfcommand})
+        autocmd QuickFixCmdPost lgetexpr lwindow | call setloclist(0, [], 'a', {'title': ':' . g:qfcommand})
     augroup END
 endif
 
@@ -510,7 +509,7 @@ function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
                 \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
-        return g:test_strategy ==# 'background' ? '  ◎' : ''
+        return g:test_strategy ==# 'background' ? '[◎]' : ''
     endif
 
     if index(['', 'running', 'stopped'], get(g:, 'asyncrun_status', '')) >= 0
@@ -582,7 +581,8 @@ function! s:statusline(lastmode) abort
     " @thanks https://github.com/vim-airline/vim-airline/blob/4f5b641710bc8cffddb28c6821b2ee7abaafefe6/plugin/airline.vim#L62
     let l:uniqueid = [bufnr('%'), winnr(), winnr('$'), tabpagenr(), &filetype, a:lastmode]
 
-    if get(g:, 'statusline_unique', []) ==# l:uniqueid && &filetype !~? 'gitcommit'
+    " When lastmode doesn't change and action requires set new statusline: use [f]orce mode
+    if (get(g:, 'statusline_unique', []) ==# l:uniqueid && &filetype !~? 'gitcommit') && a:lastmode !=# 'f'
         return
     endif
 
@@ -606,6 +606,7 @@ function! s:statusline(lastmode) abort
     setlocal statusline+=\%r                                    " Read-only flag
     setlocal statusline+=%{&wrap==0?'':'[w]'}                   " Wrap flag
     setlocal statusline+=%{&wrapscan==0?'[s]':''}               " Wrapscan flag
+    setlocal statusline+=%{&paste==0?'':'[p]'}                  " Paste flag
     setlocal statusline+=%{&virtualedit=~#'all'?'[v]':''}       " Virtual edit flag
 
     if exists('g:loaded_test')
@@ -618,7 +619,7 @@ function! s:statusline(lastmode) abort
     endif
 
     setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
-    setlocal statusline+=%3{&filetype!=#''?'\ '.&filetype:''}   " Is it require description?
+    setlocal statusline+=%3{&filetype!=#''?&filetype:''}        " Is it require description?
     setlocal statusline+=%{GetVersion('/etc/alternatives/php')} " PHP version
 
     setlocal statusline+=\%<                                    " Truncate long statusline here
@@ -1741,9 +1742,10 @@ let g:asyncrun_icon = ''
 
 " command (string)
 function! AsyncRunCommand(command) abort
-    let g:asyncrun_icon = '▷'
+    let g:asyncrun_icon = '[▷]'
     let g:asyncrun_hide = 0
     let g:asyncrun_play = match(a:command, '-sound') >= 0
+    let g:qfcommand = a:command
 
     call asyncrun#run(v:true, #{
                 \ raw: 1,
@@ -1752,26 +1754,20 @@ function! AsyncRunCommand(command) abort
                 \ once: 1,
                 \ }, substitute(a:command, '-sound', '', 'g'))
 
-    echo 'Task:     ' . g:asyncrun_status
-
     doautocmd <nomodeline> User UpdateStatusline
 endfunction
 
 " Required CamelCase to use asyncrun_exit option
 function! AsyncRunFinished() abort
     if g:asyncrun_code > 0
-        let g:asyncrun_icon = '✗'
+        let g:asyncrun_icon = '[✗]'
         copen
-
-        doautocmd <nomodeline> User UpdateStatusline
 
         return
     endif
 
-    let g:asyncrun_icon = '✓'
+    let g:asyncrun_icon = '[✓]'
     cclose
-
-    doautocmd <nomodeline> User UpdateStatusline
 endfunction
 
 " Vim Tests
@@ -1789,7 +1785,7 @@ let g:test#strategy = {
 function! s:test_strategy() abort
     if index(['vimterminal', 'neovim'], g:test_strategy) >= 0
         let g:test_strategy = 'background'
-        let g:asyncrun_icon = '  ◎'
+        let g:asyncrun_icon = '[◎]'
     else
         let g:test_strategy = (g:isneovim ? 'neovim' : 'vimterminal')
         let g:asyncrun_icon = ''
@@ -1797,7 +1793,7 @@ function! s:test_strategy() abort
 
     echo 'Strategy: ' . g:test_strategy
 
-    doautocmd <nomodeline> User UpdateStatusline
+    doautocmd <nomodeline> User AsyncRunPre
 endfunction
 
 nnoremap <silent> <Leader>tt :execute ":TestNearest -strategy=" . g:test_strategy<Enter>
@@ -2566,8 +2562,8 @@ endfunction
 augroup AutoCommands
     autocmd!
 
-    " Reload after save and run PlugInstall if there are missing plugins
-    autocmd BufWritePost .vimrc nested source $MYVIMRC
+    " Reload after save (if asyncrun isn't running!) and run PlugInstall if there are missing plugins
+    autocmd BufWritePost .vimrc nested if get(g:, 'asyncrun_status', '') !=# 'running' | source $MYVIMRC | endif
                 \ | if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
                 \ |     PlugInstall
                 \ | endif
@@ -3276,6 +3272,9 @@ augroup AutoCommands
     autocmd WinEnter,BufWinEnter,BufHidden * call <SID>statusline(mode()) | setlocal cursorline
     autocmd WinLeave,BufWinLeave * setlocal nocursorline
     autocmd User UpdateStatusline call <SID>statusline(mode())
+    autocmd User AsyncRunPre call <SID>statusline('f')
+    autocmd User AsyncRunStart call <SID>statusline('f')
+    autocmd User AsyncRunStop call <SID>statusline('f')
     " After open terminal with fzf
     if exists("##ModeChanged") " (why nvim why!)
         autocmd ModeChanged *t:* call <SID>statusline(v:event.old_mode) | setlocal cursorline
