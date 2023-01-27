@@ -150,7 +150,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
         let g:qfcommand = get(g:, 'qfcommand', '')
 
-        " Day/Night
+        " Day/Night Mode
         " @see https://uxpickle.com/dark-or-light-mode-for-the-eyes/
         " @timezone https://24timezones.com/time-zone/est
         let g:colorscheme = !g:istty
@@ -675,10 +675,10 @@ tnoremap <silent> <C-w>O <C-\><C-n>:silent wincmd _ <Bar> silent wincmd <Bar> <B
 " Quickly resize
 " @thanks https://stackoverflow.com/questions/53670098/vim-using-vcount1-as-argument-of-a-mapping
 " NOTE: <Esc> is used to remove the range that Vim may insert (something like the CTRL-U does)
-nnoremap <silent> <expr> <C-w>- "<Esc>" . (v:count > 0 ? v:count : 5) . "<C-w>-"
-nnoremap <silent> <expr> <C-w>+ "<Esc>" . (v:count > 0 ? v:count : 5) . "<C-w>+"
-nnoremap <silent> <expr> <C-w>< "<Esc>" . (v:count > 0 ? v:count : 5) . "<C-w><"
-nnoremap <silent> <expr> <C-w>> "<Esc>" . (v:count > 0 ? v:count : 5) . "<C-w>>"
+nnoremap <silent> <expr> <C-w>- (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>-"
+nnoremap <silent> <expr> <C-w>+ (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>+"
+nnoremap <silent> <expr> <C-w>< (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w><"
+nnoremap <silent> <expr> <C-w>> (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>>"
 
 " Marks using exact position in Normal|Select|Operator Mode
 noremap ` '
@@ -1357,6 +1357,10 @@ inoremap <silent> <C-f> <C-o>W
 
 " Same behaviour in Insert Mode
 inoremap <silent> <C-z> <Esc><C-z>
+" Completions using only current buffer (avoids delay with <C-n> when I open logs files)
+" Also allows 1 char as base completion (<C-n> requires at least two)
+inoremap <silent> <C-n> <C-x><C-n>
+inoremap <silent> <C-x><C-n> <C-n>
 
 " Command Mode navigation (Forget Arrows). Not add <silent> option
 cnoremap <C-a> <Home>
@@ -2680,8 +2684,9 @@ augroup AutoCommands
     autocmd FileType php nmap     <silent> <buffer><i <Plug>AddIncompleteMarkRepeatable
     autocmd FileType php nnoremap <silent> <buffer><Plug>DropIncompleteMarkRepeatable :call <SID>append_char('I')<Enter>
     autocmd FileType php nmap     <silent> <buffer>>i <Plug>DropIncompleteMarkRepeatable
-    autocmd FileType php nnoremap <silent> <buffer>H F$
-    autocmd FileType php nnoremap <silent> <buffer>L f$
+    " NOTE: <Esc> is used to remove the range that Vim may insert (something like the CTRL-U does)
+    autocmd FileType php nnoremap <silent> <expr><buffer>H (v:count > 0 ? "<Esc>" : '') . v:count1 . 'F$'
+    autocmd FileType php nnoremap <silent> <expr><buffer>L (v:count > 0 ? "<Esc>" : '') . v:count1 . 'f$'
 
     " PHP Testing
     autocmd FileType php let g:test#php#phpunit#options = {
