@@ -153,6 +153,12 @@ git commit --amend -S --author="Freddie Gar <freddie@gar.com>" --no-edit
 git rebase --continue
 ```
 
+or, many using N as number's commits before
+
+```bash
+git rebase -i HEAD~N -x "git commit --amend --author 'Freddie Gar <freddie@gar.com>' --no-edit"
+```
+
 Supervisor error
 
 unix:///var/run/supervisor.sock no such file

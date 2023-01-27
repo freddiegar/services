@@ -639,8 +639,11 @@ export NVM_DIR="$HOME/.nvm"
 # Close Terminal to load changes
 # Show version available
 nvm ls-remote
-nvm install v16.14.0
-# nvm alias default v16.14.0
+# Ubuntu 18
+# @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
+# ldd --version
+nvm install v16.19.0
+# nvm alias default v16.19.0
 # nvm current
 ## Enabled to all users in [L|X]Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
@@ -650,6 +653,8 @@ nvm install v16.14.0
 
 ## Install npm
 npm install -g npm
+## npm --version
+## npm install -g npm@latest
 ```
 
 # Profile
@@ -829,7 +834,7 @@ xdebug.client_port=9003
 ;xdebug.log=/var/www/html/xdebug/xdebug.log
 xdebug.file_link_format=xdebug://%f@%l
 zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
-
+zend_extension=/usr/lib/php/20210902/xdebug.so' | sudo tee /etc/php/8.1/mods-available/xdebug.ini <- 3.2.0
 sudo phpenmod xdebug
 ```
 
@@ -1148,6 +1153,7 @@ rg              : 0.9.0
 
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 uname -r
+ldd --version | grep -e "^ldd" | awk '{print $5}'
 gcc --version | grep -e "^gcc" | awk '{print $4}'
 openssl version | awk '{print $2}'
 i3 --version | awk '{print $3}'

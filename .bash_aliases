@@ -137,6 +137,7 @@ alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset
 alias glop="glog -p"
 alias glol="git show --name-only"
 alias glof="git log --decorate=full --pretty=full --graph -b --stat"
+alias glos="git log --show-signature"
 alias gconf="git config --list"
 
 alias cdh="cd /var/www/html"
