@@ -3259,12 +3259,14 @@ augroup AutoCommands
     " Avoid SafeState, VimEnter, BufEnter events!
     autocmd VimEnter * nested call <SID>viminfo() | call <SID>sessionload()
 
-    " Load session when :cd command is executed
-    " @thanks https://github.com/valacar/vimfiles/commit/4d0b79096fd1b2b6f5fc0c7225f7de7751fada64
-    if exists("##DirChangedPre") " (why nvim why!)
-        autocmd DirChangedPre global silent messages clear | call <SID>sessionsave() | silent! execute '1,$bdelete'
+    if has('gui_running')
+        " Load session when :cd command is executed
+        " @thanks https://github.com/valacar/vimfiles/commit/4d0b79096fd1b2b6f5fc0c7225f7de7751fada64
+        if exists("##DirChangedPre") " (why nvim why!)
+            autocmd DirChangedPre global silent messages clear | call <SID>sessionsave() | silent! execute '1,$bdelete'
+        endif
+        autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | call <SID>statusline('x') | filetype detect
     endif
-    autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | call <SID>statusline('x') | filetype detect
 
     autocmd BufEnter * call <SID>poststart()
     " BufEnter:     After changes between buffers (why nvim why!)
