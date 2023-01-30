@@ -169,11 +169,11 @@ default_orientation auto
 # title     ->  _NET_WM_NAME (WM_NAME as fallback)
 
 assign [instance="(?i)gvim"]                                                $workspace1
-assign [class="(?i)firefox" title="^((?!(?i)private).)*$"]                $workspace2
+assign [class="(?i)firefox" title="^((?!(?i)private).)*$"]                  $workspace2
 assign [class="Microsoft Teams - Preview"]                                  $workspace3
 assign [class="zoom" title="Zoom Cloud Meetings"]                           $workspace3
 assign [class="Mysql-workbench-bin"]                                        $workspace4
-assign [class="(?i)firefox" title="(?=(?i)private).*"]                    $workspace5
+assign [class="(?i)firefox" title="(?=(?i)private).*"]                      $workspace5
 assign [class="(?i)postman"]                                                $workspace6
 assign [class="AWS VPN Client"]                                             $workspace7
 assign [class="VirtualBox Manager"]                                         $workspace8
@@ -192,9 +192,10 @@ for_window [window_type="notification"]                                     floa
 
 # Zoom
 for_window [class="zoom" title="zoom"]                                      floating enable
-for_window [class="zoom" title="Zoom Meeting"]                              floating enable
 for_window [class="zoom" title="Meeting Chat"]                              floating enable
 for_window [class="zoom" title="Participants\s\(\d+\)"]                     floating enable
+for_window [class="zoom" title="Settings"]                                  floating enable
+for_window [class="zoom" title="Zoom Meeting"]                              floating enable, resize set 720 500, move position 1180 555
 
 # Programs
 for_window [class="Gnome-calculator"]                                       floating enable
@@ -213,11 +214,11 @@ for_window [instance="^virt-manager$" title="KVM$"]                         floa
 # Open new tab is focus in current Firefox workspace
 # for_window [urgent="latest" class="(?i)firefox"]                            focus
 # PiP in Firefox
-for_window [instance="Toolkit" class="(?i)firefox"]                       floating enable, resize set 640 360, move position 1260 695, sticky enable
+for_window [instance="Toolkit" class="(?i)firefox"]                         floating enable, resize set 640 360, move position 1260 695, sticky enable
 # Downloads
-for_window [instance="Places" class="(?i)firefox"]                        floating enable
+for_window [instance="Places" class="(?i)firefox"]                          floating enable
 # Certificates information
-for_window [instance="Browser" class="(?i)firefox"]                       floating enable
+for_window [instance="Browser" class="(?i)firefox"]                         floating enable
 
 # PiP in Opera
 # for_window [class="Opera" title="Picture in Picture"]                       floating enable, sticky enable
