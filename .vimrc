@@ -1,3 +1,9 @@
+" if has('vim9script')
+"     source /var/www/html/freddiegar/services/.vimrc9
+
+"     finish
+" endif
+
 " PHILOSOPHY
 " @see https://www.moolenaar.net/habits.html
 " @see http://www.viemu.com/a-why-vi-vim.html
@@ -128,7 +134,8 @@
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
 "           Version                     BARE(ms)    PLUG-NC(ms) PLUG-C(ms)
-"   Vim9:   9.0.1-749 (no migrate)      4.336       112.298     221.233
+"   Vim9:   9.0.1-749 (vimscript)       4.336       112.298     221.233
+"                     (vim9script)      5.524       126.238     234.192
 "   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  20.746      80.053      133.630
 "   Diff:                               -378.4%     +28.7%      +39.5%
 " @see https://neovim.io/doc/user/vim_diff.html
