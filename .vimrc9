@@ -785,7 +785,7 @@ def FileFilter(isregex: bool, file: string, filter: string): void
 
     new
     setlocal noswapfile
-    silent execute join([':0read', '!' .. (isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') .. ' -F'), shellescape(filter), file])
+    silent execute join([':0read', '!' .. (isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') .. ' -F'), shellescape(filter), fnameescape(file)])
     normal gg
 enddef
 

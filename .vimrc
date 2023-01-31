@@ -791,7 +791,7 @@ function! s:file_filter(isregex, file, filter) abort
 
     new
     setlocal noswapfile
-    silent execute join([':0read', '!' . (a:isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') . ' -F'), shellescape(a:filter), a:file])
+    silent execute join([':0read', '!' . (a:isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') . ' -F'), shellescape(a:filter), fnameescape(a:file)])
     normal gg
 endfunction
 
