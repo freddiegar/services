@@ -242,3 +242,13 @@ define( 'WP_AUTO_UPDATE_CORE', false );
 
 PDF Drive (free?)
 [See](https://www.pdfdrive.com/)
+
+Get information from PEM file
+
+```bash
+# Get body
+openssl x509 -in filename.pem | sed -e '1d;$d' > body.txt
+
+# Get private key
+openssl pkey -in filename.pem -out key.txt
+```
