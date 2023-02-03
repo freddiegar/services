@@ -339,7 +339,7 @@ set autoread                                                    " Reload after e
 set autowrite                                                   " Save on lost focus (cycling buffers) (default: off)
 set autoindent                                                  " Same indent after Enter, if Esc indent is deleted, less Spaces (default: off)
 set backspace=indent,eol,start                                  " Allow backspacing over everything (default: depends)
-set clipboard^=unnamedplus                                      " Shared SO clipboard (slower?)
+set clipboard^=unnamedplus                                      " Shared SO clipboard (macros are slower)
                                                                 "     then: buffer -> (no vim) => "+yy
                                                                 "     then: (no vim) -> buffer => "+p or <S-Insert>
 set splitbelow                                                  " :split  opens window below (default: off)
@@ -2558,7 +2558,12 @@ function! s:notes() abort
     silent execute '%g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
 
     if !filereadable(l:filename) || len(l:matches) == 0
+        let l:formatoptions = &formatoptions
+        set formatoptions-=r
+
         silent execute "normal! Go\e<<i\r" . l:header . "\r\e"
+
+        let &formatoptions = l:formatoptions
     else
         silent execute "normal! Go\e"
     endif
