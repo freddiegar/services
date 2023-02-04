@@ -464,6 +464,7 @@ let g:netrw_liststyle = 3                                       " Show as tree: 
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive (default: cp)
 let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles
 let g:netrw_sizestyle = 'H'                                     " Human-readable: 5K, 4M, uses 1024 base (default: [b]ytes)
+let g:netrw_altfile = 1                                         " Avoid netrw as alt file # (default: 0)
 
 let g:filterprg = split(&grepprg)[0] ==# 'rg'
             \ ? split(&grepprg)[0] . ' -N'
@@ -2916,7 +2917,12 @@ augroup AutoCommands
 
     " command (string), [dependency (string)]
     function! s:composer(command, ...) abort
-        let l:version = system('composer ' . a:command . ' 2>/dev/null | ' . g:filterprg . ' "' . a:1 . '" | sed "s#\s\+# #g" | cut -d " " -f 2 | tr -d "\n"')
+        let l:version = system('composer ' . a:command . ' 2>/dev/null | ' . g:filterprg . ' "' . a:1 . ' " | sed "s#\s\+# #g" | cut -d " " -f 2 | tr -d "\n"')
+
+        if l:version[0] != 'v' &&  match(split(l:version, '-'), '[master|main|hotfix|release|develop|feature|bugfix]') >= 0
+            let l:commit = system('composer ' . a:command . ' 2>/dev/null | ' . g:filterprg . ' "' . a:1 . '" | sed "s#\s\+# #g" | cut -d " " -f 3 | tr -d "\n"')
+            let l:version = printf('%s (%s)', l:version, l:commit)
+        endif
 
         return len(l:version) > 0 ? l:version : 'None'
     endfunction
