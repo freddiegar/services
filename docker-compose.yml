@@ -5,7 +5,7 @@ services:
     # https://hub.docker.com/_/mysql
     container_name: db
     build:
-      context: .
+      context: ./docker
       dockerfile: ./db/Dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
@@ -64,7 +64,7 @@ services:
   apache81:
     container_name: apache81
     build:
-      context: .
+      context: ./docker
       dockerfile: ./php81/Dockerfile
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
@@ -92,7 +92,7 @@ services:
   apache80:
     container_name: apache80
     build:
-      context: .
+      context: ./docker
       dockerfile: ./php80/Dockerfile
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
@@ -120,7 +120,7 @@ services:
   apache74:
     container_name: apache74
     build:
-      context: .
+      context: ./docker
       dockerfile: ./php74/Dockerfile
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
@@ -148,7 +148,7 @@ services:
   apache73:
     container_name: apache73
     build:
-      context: .
+      context: ./docker
       dockerfile: ./php73/Dockerfile
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
@@ -176,7 +176,7 @@ services:
   apache72:
     container_name: apache72
     build:
-      context: .
+      context: ./docker
       dockerfile: ./php72/Dockerfile
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
@@ -204,7 +204,7 @@ services:
   apache71:
     container_name: apache71
     build:
-      context: .
+      context: ./docker
       dockerfile: ./php71/Dockerfile
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
@@ -232,7 +232,7 @@ services:
   apache70:
     container_name: apache70
     build:
-      context: .
+      context: ./docker
       dockerfile: ./php70/Dockerfile
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
@@ -260,7 +260,7 @@ services:
   apache56:
     container_name: apache56
     build:
-      context: .
+      context: ./docker
       dockerfile: ./php56/Dockerfile
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
@@ -288,7 +288,7 @@ services:
   supervisor:
     container_name: supervisor
     build:
-      context: .
+      context: ./docker
       dockerfile: ./supervisor/Dockerfile
       args:
         - DEV_ENABLE=${DEV_ENABLE:-off}
@@ -308,7 +308,7 @@ services:
   proxy:
     container_name: proxy
     build:
-      context: .
+      context: ./docker
       dockerfile: ./proxy/Dockerfile
     networks:
       development:
@@ -326,7 +326,7 @@ services:
   pentesting:
     container_name: pentesting
     build:
-      context: .
+      context: ./docker
       dockerfile: ./pentesting/Dockerfile
     volumes:
       - $WEB_DOCROOT:/var/www/html
@@ -339,7 +339,7 @@ services:
   zap:
     container_name: zap
     build:
-      context: .
+      context: ./docker
       dockerfile: ./zap/Dockerfile
     volumes:
       - $WEB_DOCROOT:/var/www/html
