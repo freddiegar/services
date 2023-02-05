@@ -10,6 +10,8 @@ ARG PROXY_ENABLE=off
 ENV PROXY_ENABLE="$PROXY_ENABLE"
 ARG XDEBUG_ENABLE=off
 ENV XDEBUG_ENABLE="$XDEBUG_ENABLE"
+ARG XHPROF_ENABLE=off
+ENV XHPROF_ENABLE="$XHPROF_ENABLE"
 ARG PDFTK_ENABLE=off
 ENV PDFTK_ENABLE="$PDFTK_ENABLE"
 ARG GNUPG_ENABLE=off
@@ -100,6 +102,17 @@ RUN set -eux \
         echo "xdebug.file_link_format=xdebug://%f@%l"; \
     } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then docker-php-ext-enable xdebug; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then curl -fsL "http://pecl.php.net/get/xhprof-2.3.9.tgz" -o /tmp/xhprof.tgz; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then mkdir -p /var/www/html/xhprof/82 && tar -xf /tmp/xhprof.tgz -C /var/www/html/xhprof/82; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then cd /var/www/html/xhprof/82/xhprof-2.3.9/extension; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then phpize && ./configure && make && make install && cd /var/www/html; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then \
+    { \
+        echo "extension=xhprof.so"; \
+        echo "xhprof.output_dir=/var/www/html/xhprof/82/logs"; \
+        echo "xhprof.collect_additional_info=1"; \
+    } > /usr/local/etc/php/conf.d/docker-php-ext-xhprof.ini; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then docker-php-ext-enable xhprof; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite localhost; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite development.local; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite development.local-ssl; fi \

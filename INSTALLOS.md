@@ -878,6 +878,17 @@ sudo pecl channel-update pecl.php.net
 # Update certificates, use default_cert_file path
 php -r "print_r(openssl_get_cert_locations());"
 sudo curl -fLo /usr/local/ssl/cert.pem http://curl.haxx.se/ca/cacert.pem
+# in Docker
+# curl -fLo /usr/lib/ssl/cert.pem http://curl.haxx.se/ca/cacert.pem
+```
+
+Or download as old times
+
+```bash
+curl -fsL "http://pecl.php.net/get/xhprof-2.3.9.tgz" -o /tmp/xhprof.tgz
+mkdir -p /var/www/html/xhprof/82 && tar -xf /tmp/xhprof.tgz -C /var/www/html/xhprof/82
+cd /var/www/html/xhprof/82/xhprof-2.3.9/extension
+phpize && ./configure && make && make install && cd /var/www/html
 ```
 
 # Extra (Optionals)
