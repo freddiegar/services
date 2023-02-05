@@ -1152,21 +1152,42 @@ rg              : 0.9.0
 ## Commands
 
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
+# Ubuntu 18.04.5 LTS
 uname -r
+# 5.4.0-137-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
+# 2.27
 gcc --version | grep -e "^gcc" | awk '{print $4}'
+# 7.5.0
 openssl version | awk '{print $2}'
+# 1.1.1k
 i3 --version | awk '{print $3}'
+# 4.14.1
 konsole --version | awk '{print $2}'
+# 17.12.3
 bash --version | grep -e "bash" | awk '{print $4}'
+# 4.4.20(1)-release
 zsh --version | awk '{print $2}'
+# 5.4.2
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included " | awk '{print $3}'`
+# 9.0.1-749
+echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
+# v0.6.1-LuaJIT 2.1.0-beta3
 curl --version | grep -e "^curl " | awk '{print $2}'
+# 7.58.0
 git --version | awk '{print $3}'
+# 2.17.1
 docker --version | awk '{print $3}'
+# 20.10.23
 docker-compose --version | awk '{print $4}'
+# v2.7.0
 feh --version | grep version | awk '{print $3}'
+# 2.23.2
 maim --version | awk '{print $1}'
+# v5.4.68
 bat --version | awk '{print $2}'
+# 0.19.0
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
+# 0.9.0
 php --version | grep -e "^PHP" | awk '{print $2}'
+# 7.4.33
