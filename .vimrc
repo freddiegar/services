@@ -3338,6 +3338,10 @@ augroup AutoCommands
     autocmd ColorScheme * call <SID>postcolorscheme()
     autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanup('te')
 
+    " One <C-x><C-f> to auto-complet files
+    " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories
+    autocmd CompleteDonePre * if complete_info()['mode'] ==# 'files' | call feedkeys("\<C-x>\<C-f>", 'n') | endif
+
     " Create non-existent directories when saving files
     autocmd BufWritePre *.md if !isdirectory(expand('<afile>:p:h')) | call mkdir(expand('<afile>:p:h'), 'p') | endif
 
