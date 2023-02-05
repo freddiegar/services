@@ -380,7 +380,7 @@ if !g:istty
 else
     set ttyfast
     set listchars=space:\ ,eol:$                                " tty!
-    set listchars+=tab:>\ ,trail:+,extends:>,precedes:<
+    set listchars+=tab:>\ ,trail:+,extends:<,precedes:>
 endif
 
 set winaltkeys=no                                               " Never use alt-keys for GUI menus (default: menu)
@@ -688,6 +688,13 @@ nnoremap <silent> <expr> <C-w>+ (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>+"
 nnoremap <silent> <expr> <C-w>< (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w><"
 nnoremap <silent> <expr> <C-w>> (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>>"
 
+" [R]eplace [l]ocal or [g]lobal [a]ll or with [c]onfirmation easily. Don't add silent
+" @thanks https://stackoverflow.com/questions/597687/how-to-quickly-change-variable-names-in-vim
+nnoremap <BS> *``cgn
+nnoremap <Leader>rll *``[{V%::s/<C-r>///g<Left><Left>
+nnoremap <Leader>rlc *``[{V%::s/<C-r>///gc<Left><Left><Left>
+nnoremap <Leader>rgg *``:%s/<C-r>///gc<Left><Left><Left>
+
 " Marks using exact position in Normal|Select|Operator Mode
 noremap ` '
 noremap ' `
@@ -714,18 +721,18 @@ xnoremap <silent> * "zy/\V<C-r>z<Enter>
 xnoremap <silent> # "zy?\V<C-r>z<Enter>
 
 " Undo break points (<C-g>u = Start new change)
-inoremap <silent> , ,<C-g>u
-inoremap <silent> ; ;<C-g>u
-inoremap <silent> . .<C-g>u
-inoremap <silent> : :<C-g>u
-inoremap <silent> = =<C-g>u
-inoremap <silent> ! !<C-g>u
-inoremap <silent> ? ?<C-g>u
-inoremap <silent> ( (<C-g>u
-inoremap <silent> ) )<C-g>u
-inoremap <silent> <C-w> <C-w><C-g>u
-inoremap <silent> <C-u> <C-u><C-g>u
-inoremap <silent> <Enter> <Enter><C-g>u
+inoremap <silent> , <C-g>u,
+inoremap <silent> ; <C-g>u;
+inoremap <silent> . <C-g>u.
+inoremap <silent> : <C-g>u:
+inoremap <silent> = <C-g>u=
+inoremap <silent> ! <C-g>u!
+inoremap <silent> ? <C-g>u?
+inoremap <silent> ( <C-g>u(
+inoremap <silent> ) <C-g>u)
+inoremap <silent> <C-w> <C-g>u<C-w>
+inoremap <silent> <C-u> <C-g>u<C-u>
+" inoremap <silent> <Enter> <C-g>u<Enter> <-- Prefer pum_on_enter()
 
 " Keep cursor position after join....?
 " nnoremap <silent> <expr> J 'mz' . v:count1 . 'J`z'
@@ -1754,7 +1761,7 @@ let g:asyncrun_icon = ''
 
 " command (string)
 function! AsyncRunCommand(command) abort
-    let g:asyncrun_icon = '[▷]'
+    let g:asyncrun_icon = '[>]'
     let g:asyncrun_hide = 0
     let g:asyncrun_play = match(a:command, '-sound') >= 0
     let g:qfcommand = a:command
@@ -1772,13 +1779,13 @@ endfunction
 " Required CamelCase to use asyncrun_exit option
 function! AsyncRunFinished() abort
     if g:asyncrun_code > 0
-        let g:asyncrun_icon = '[✗]'
+        let g:asyncrun_icon = '[X]'
         copen
 
         return
     endif
 
-    let g:asyncrun_icon = '[✓]'
+    let g:asyncrun_icon = '[R]'
     cclose
 endfunction
 
@@ -1797,7 +1804,7 @@ let g:test#strategy = {
 function! s:test_strategy() abort
     if index(['vimterminal', 'neovim'], g:test_strategy) >= 0
         let g:test_strategy = 'background'
-        let g:asyncrun_icon = '[◎]'
+        let g:asyncrun_icon = '[A]'
     else
         let g:test_strategy = (g:isneovim ? 'neovim' : 'vimterminal')
         let g:asyncrun_icon = ''
@@ -2040,9 +2047,9 @@ inoremap <silent> <nowait> <expr> <Esc>
             \ "\<Esc>"
 
 " Make <Enter> auto-select the first completion item
-inoremap <silent> <expr> <Enter>
+inoremap <silent> <nowait> <expr> <Enter>
             \ pumvisible() ? "\<C-r>=<SID>pum_on_enter()\<Enter>" :
-            \ "\<Enter>"
+            \ "\<C-g>u\<Enter>"
 
 function! s:pum_on_enter() abort
     if len(v:completed_item) > 0
@@ -2674,7 +2681,6 @@ augroup AutoCommands
     autocmd FileType c setlocal omnifunc=ccomplete#CompleteCpp
     autocmd FileType php setlocal omnifunc=phpactor#Complete
     autocmd FileType php setlocal completefunc=phpactor#Complete
-    " autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
     autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
     autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
     autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
