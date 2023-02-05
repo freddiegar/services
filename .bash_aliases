@@ -9,6 +9,7 @@ alias d="diff"
 alias di="diff -rq --suppress-common-lines"
 alias ll="ls -lh"
 alias __="ssh-add"
+alias rga="rg --vimgrep --no-ignore"
 alias npkg="dpkg --list | wc --lines"
 
 alias vf="vifm"
