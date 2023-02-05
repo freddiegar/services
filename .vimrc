@@ -934,10 +934,10 @@ inoremap <silent> <S-F7> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
 
 " Same!, but in Normal Mode
 " Not use normal! <Bang>, it uses remaps
-nnoremap <silent> <F6> :execute "normal a\<F6>\e"<Enter>
-nnoremap <silent> <S-F6> :execute "normal a\<S-F6>\e"<Enter>
-nnoremap <silent> <F7> :execute "normal a\<F7>\e"<Enter>
-nnoremap <silent> <S-F7> :execute "normal a\<S-F7>\e"<Enter>
+nnoremap <silent> <F6> :execute "normal i\<F6>\e"<Enter>
+nnoremap <silent> <S-F6> :execute "normal i\<S-F6>\e"<Enter>
+nnoremap <silent> <F7> :execute "normal i\<F7>\e"<Enter>
+nnoremap <silent> <S-F7> :execute "normal i\<S-F7>\e"<Enter>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
@@ -1833,11 +1833,11 @@ function! s:test_strategy() abort
     doautocmd <nomodeline> User AsyncRunPre
 endfunction
 
-nnoremap <silent> <Leader>tt :execute ":TestNearest -strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tf :execute ":TestFile -strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>ts :execute ":TestSuite " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tl :TestLast<Enter>
-nnoremap <silent> <Leader>tg :TestVisit<Enter>
+nnoremap <silent> <Leader>tt :cclose <Bar> execute ":TestNearest -strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tf :cclose <Bar> execute ":TestFile -strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>ts :cclose <Bar> execute ":TestSuite " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tl :cclose <Bar> TestLast<Enter>
+nnoremap <silent> <Leader>tg :cclose <Bar> TestVisit<Enter>
 nnoremap <silent> <Leader>tq :call <SID>test_strategy()<Enter>
 
 " ALE
@@ -2731,9 +2731,9 @@ augroup AutoCommands
         \ 'all': '--no-coverage --stop-on-failure',
     \}
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tT :execute ":TestNearest --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tF :execute ":TestFile --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>tS :execute ":TestSuite --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tT :cclose <Bar> execute ":TestNearest --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tF :cclose <Bar> execute ":TestFile --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>tS :cclose <Bar> execute ":TestSuite --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
 
     " PHP Linter
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
@@ -3428,8 +3428,8 @@ if g:isneovim
     inoremap <silent> <F18> <C-r>=strftime('%Y-%m-%d')<Enter>
     inoremap <silent> <F19> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
     " <S-F7>
-    nnoremap <silent> <F18> :execute "normal a\<F18>\e"<Enter>
-    nnoremap <silent> <F19> :execute "normal a\<F19>\e"<Enter>
+    nnoremap <silent> <F18> :execute "normal i\<F18>\e"<Enter>
+    nnoremap <silent> <F19> :execute "normal i\<F19>\e"<Enter>
     " <S-F3>
     nmap <silent> <nowait> <Esc>O2R :PomodoroStatus<Enter>
     " " <S-F5>
