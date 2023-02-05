@@ -329,9 +329,8 @@ set complete+=w                                                 " Buffers in oth
 set complete+=b                                                 " Buffers loaded in [b]uffers list (aka use RAM)
 set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM)
 set completeopt=                                                " Show preview in popup menu (default: menu,preview)
-set completeopt+=menu                                           " Show list if items > 1
-set completeopt+=noinsert                                       " No insert any text, user must be select a match, needs extra <C-n> with once option :|
-set completeopt+=noselect                                       " No select any text, force user to select a match, needs extra <C-n> with once option :|
+set completeopt+=longest                                        " Don't select the first option, allow insert more words
+set completeopt+=menu                                           " Show list only if items > 1, if only once option is selected
 set pumheight=10                                                " Maximum options showed in popup menu (default: 0=all)
 
 " Custom Interface
@@ -1373,10 +1372,28 @@ inoremap <silent> <C-f> <C-o>W
 
 " Same behaviour in Insert Mode
 inoremap <silent> <C-z> <Esc><C-z>
-" Completions using only current buffer (avoids delay with <C-n> when I open logs files)
-" Also allows 1 char as base completion (<C-n> requires at least two)
-inoremap <silent> <C-n> <C-x><C-n>
-inoremap <silent> <C-x><C-n> <C-n>
+
+" Completions using only current buffer (avoids delay with <C-n> or <C-p> when I open bigger logs files :)
+inoremap <silent> <expr> <C-n>
+            \ pumvisible() ? "\<Down>" :
+            \ "\<C-x>\<C-n>"
+inoremap <silent> <expr> <C-x><C-n>
+            \ pumvisible() ? "\<Down>" :
+            \ "\<C-n>"
+inoremap <silent> <expr> <C-p>
+            \ pumvisible() ? "\<Up>" :
+            \ "\<C-x>\<C-p>"
+inoremap <silent> <expr> <C-x><C-p>
+            \ pumvisible() ? "\<Up>" :
+            \ "\<C-p>"
+
+" Expected behaviour when pum is visible
+inoremap <silent> <expr> <C-d>
+            \ pumvisible() ? "\<PageDown>\<C-p>\<C-n>" :
+            \ "\<C-d>"
+inoremap <silent> <expr> <C-u>
+            \ pumvisible() ? "\<PageUp>\<C-p>\<C-n>" :
+            \ "\<C-u>"
 
 " Command Mode navigation (Forget Arrows). Not add <silent> option
 cnoremap <C-a> <Home>
@@ -2053,7 +2070,8 @@ inoremap <silent> <nowait> <expr> <Enter>
             \ "\<C-g>u\<Enter>"
 
 function! s:pum_on_enter() abort
-    if len(v:completed_item) > 0
+    " Using <C-n>                   Using <C-x><C-n>
+    if len(v:completed_item) > 0 || complete_info()['selected'] >= 0
         " Keep and confirm
         return "\<C-y>"
     endif
