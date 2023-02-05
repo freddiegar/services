@@ -2754,6 +2754,9 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>run :call <SID>phpactor('fix_namespace_class_name')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rfg :call setreg('z', "orfg\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rfs :call setreg('z', "orfs\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rdd :call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rdu :call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rrd :call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
 
     autocmd FileType php nnoremap <silent> <buffer><Leader>rci :call phpactor#ClassInflect()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
