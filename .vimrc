@@ -384,9 +384,10 @@ else
 endif
 
 set winaltkeys=no                                               " Never use alt-keys for GUI menus (default: menu)
-set guicursor=a:block                                           " Always cursor has same shape: block (why nvim why!)
+set guicursor=                                                  " Keep font size in nvim (why nvim why!). See #8
 
 if has('gui_running')
+    set guicursor=a:block                                       " Always cursor has same shape: block
     set guicursor+=a:blinkon0                                   " Never blink the cursor (default: on)
 
     set guioptions=                                             " Reset option (default: aegimrLrT)
