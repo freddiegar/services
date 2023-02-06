@@ -691,6 +691,7 @@ nnoremap <silent> <expr> <C-w>> (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>>"
 " [R]eplace [l]ocal or [g]lobal [a]ll or with [c]onfirmation easily. Don't add silent
 " @thanks https://stackoverflow.com/questions/597687/how-to-quickly-change-variable-names-in-vim
 nnoremap <BS> *``cgn
+nnoremap <Leader><BS> :g/\<\>/
 nnoremap <Leader>rll *``[{V%::s/<C-r>///g<Left><Left>
 nnoremap <Leader>rlc *``[{V%::s/<C-r>///gc<Left><Left><Left>
 nnoremap <Leader>rgg *``:%s/<C-r>///gc<Left><Left><Left>

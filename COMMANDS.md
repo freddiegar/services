@@ -227,6 +227,11 @@ docker run --net=<network-name> ...
 docker network connect <network-name> <container-name>
 ```
 
+runc run failed: unable to start container process: exec: "/bin/sh": stat /bin/sh: no such file or directory
+```bash
+docker system prune -a
+```
+
 Unzip "gz" file
 ```bash
 gunzip -k project.sql.gz
