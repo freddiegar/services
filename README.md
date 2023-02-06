@@ -513,6 +513,17 @@ https://subdomain.development.local/?SPX_KEY=dev&SPX_UI_URI=/
 SPX_ENABLED=1 SPX_REPORT=full php bin/console cache:clear
 ```
 
+### XHProf (and XHGUI)
+
+[See](https://www.alberton.info/profiling_with_xhprof.html)
+
+```bash
+mkdir -p /var/www/html/xhprof
+cd /var/www/html/xhprof
+git clone --depth=1 git@github.com:longxinH/xhprof.git
+git clone --depth=1 git@github.com:perftools/xhgui.git
+```
+
 ## SSL Certificate
 
 Load certificate in browser

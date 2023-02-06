@@ -97,6 +97,7 @@ git reset --soft HEAD^
 ```
 
 Reset add (unstage) from all files
+[See](https://imsadra.me/introduction-to-interactive-rebase-in-git)
 ```bash
 git reset HEAD~
 # Updated files, after
