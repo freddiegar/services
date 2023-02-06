@@ -111,10 +111,11 @@ RUN set -eux \
     && if [ "$XHPROF_ENABLE" = "on" ] ; then \
     { \
         echo "extension=xhprof.so"; \
-        echo "xhprof.output_dir=/var/www/html/xhprof/81/logs"; \
+        echo "xhprof.output_dir=/var/www/html/xhprof/logs"; \
         echo "xhprof.collect_additional_info=1"; \
     } > /usr/local/etc/php/conf.d/docker-php-ext-xhprof.ini; fi \
     && if [ "$XHPROF_ENABLE" = "on" ] ; then docker-php-ext-enable xhprof; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y graphviz; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite localhost; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite development.local; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite development.local-ssl; fi \
@@ -122,8 +123,8 @@ RUN set -eux \
     && if [ "$DEV_ENABLE" = "on" ] ; then update-ca-certificates; fi \
     # Extra tools and options
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
-    && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
-    && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install -y gnupg1; fi \
+    && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y default-jdk pdftk; fi \
+    && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y gnupg1; fi \
     # Clear
     && rm -rf /tmp/pear \
     && rm -rf /var/lib/apt/lists/* \

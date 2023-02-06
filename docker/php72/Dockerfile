@@ -87,7 +87,7 @@ RUN set -eux \
     && if [ "$CACHE_ENABLE" = "on" ] ; then a2enconf cache; fi \
     # Extra for development
     && if [ "$PROXY_ENABLE" = "on" ] ; then a2enmod proxy proxy_http; fi \
-    && if [ "$XDEBUG_ENABLE" = "on" ] ; then pecl install -o -f xdebug; fi \
+    && if [ "$XDEBUG_ENABLE" = "on" ] ; then pecl install -o -f xdebug-3.1.6; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then \
     { \
         echo "xdebug.idekey=PHPSTORM"; \
@@ -106,8 +106,8 @@ RUN set -eux \
     && if [ "$DEV_ENABLE" = "on" ] ; then update-ca-certificates; fi \
     # Extra tools and options
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
-    && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install -y default-jdk pdftk; fi \
-    && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install -y gnupg1; fi \
+    && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y default-jdk pdftk; fi \
+    && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y gnupg1; fi \
     # Clear
     && rm -rf /tmp/pear \
     && rm -rf /var/lib/apt/lists/* \
