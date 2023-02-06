@@ -100,6 +100,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
+        - XHPROF_ENABLE=${XHPROF_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
@@ -128,6 +129,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
+        - XHPROF_ENABLE=${XHPROF_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:
@@ -156,6 +158,7 @@ services:
         - CACHE_ENABLE=${CACHE_ENABLE:-on}
         - PROXY_ENABLE=${PROXY_ENABLE:-off}
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
+        - XHPROF_ENABLE=${XHPROF_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
     volumes:

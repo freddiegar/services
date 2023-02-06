@@ -78,6 +78,7 @@ RUN set -eux \
     # Best math operations
     && docker-php-ext-install -j$(nproc) bcmath \
     && docker-php-ext-install -j$(nproc) gmp \
+    && docker-php-ext-install -j$(nproc) pcntl \
     # Extra information about images: grav
     && docker-php-ext-install -j$(nproc) exif \
     # Cache
@@ -98,13 +99,14 @@ RUN set -eux \
         echo "xdebug.start_with_request=trigger"; \
         echo "xdebug.client_host=host.docker.internal"; \
         echo "xdebug.client_port=9003"; \
-        echo ";xdebug.log=/var/www/html/xdebug/82/xdebug.log"; \
+        echo ";xdebug.log=/var/www/html/xdebug/xdebug_82.log"; \
         echo "xdebug.file_link_format=xdebug://%f@%l"; \
     } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then docker-php-ext-enable xdebug; fi \
     && if [ "$XHPROF_ENABLE" = "on" ] ; then curl -fsL "http://pecl.php.net/get/xhprof-2.3.9.tgz" -o /tmp/xhprof.tgz; fi \
-    && if [ "$XHPROF_ENABLE" = "on" ] ; then mkdir -p /var/www/html/xhprof/82 && tar -xf /tmp/xhprof.tgz -C /var/www/html/xhprof/82; fi \
-    && if [ "$XHPROF_ENABLE" = "on" ] ; then cd /var/www/html/xhprof/82/xhprof-2.3.9/extension; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then mkdir -p /var/www/html/xhprof && tar -xf /tmp/xhprof.tgz -C /var/www/html/xhprof; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then mv /var/www/html/xhprof/xhprof-* /var/www/html/xhprof/xhprof; fi \
+    && if [ "$XHPROF_ENABLE" = "on" ] ; then cd /var/www/html/xhprof/xhprof/extension; fi \
     && if [ "$XHPROF_ENABLE" = "on" ] ; then phpize && ./configure && make && make install && cd /var/www/html; fi \
     && if [ "$XHPROF_ENABLE" = "on" ] ; then \
     { \
@@ -128,6 +130,6 @@ RUN set -eux \
     && apt-get autoremove -y \
     && apt-get autoclean -y
 
-COPY ./php81/php.ini /usr/local/etc/php/
+COPY ./php82/php.ini /usr/local/etc/php/
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
