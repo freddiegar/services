@@ -124,7 +124,7 @@ print '<style>
     table tr:hover td {
         background: #f2f2f2;
         background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f0f0f0));
-        background: -moz-linear-gradient(top,  #f2f2f2,  #f0f0f0);	
+        background: -moz-linear-gradient(top,  #f2f2f2,  #f0f0f0);
     }
     </style>
     </head>

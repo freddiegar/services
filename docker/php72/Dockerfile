@@ -88,7 +88,6 @@ RUN set -eux \
     # Extra for development
     && if [ "$PROXY_ENABLE" = "on" ] ; then a2enmod proxy proxy_http; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then pecl install -o -f xdebug; fi \
-    && if [ "$XDEBUG_ENABLE" = "on" ] ; then docker-php-ext-enable xdebug; fi \
     && if [ "$XDEBUG_ENABLE" = "on" ] ; then \
     { \
         echo "xdebug.idekey=PHPSTORM"; \
@@ -96,9 +95,10 @@ RUN set -eux \
         echo "xdebug.start_with_request=trigger"; \
         echo "xdebug.client_host=host.docker.internal"; \
         echo "xdebug.client_port=9003"; \
-        echo ";xdebug.log=/var/www/html/xdebug/xdebug.log"; \
+        echo ";xdebug.log=/var/www/html/xdebug/xdebug_72.log"; \
         echo "xdebug.file_link_format=xdebug://%f@%l"; \
     } > /usr/local/etc/php/conf.d/xdebug.ini; fi \
+    && if [ "$XDEBUG_ENABLE" = "on" ] ; then docker-php-ext-enable xdebug; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite localhost; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite development.local; fi \
     && if [ "$DEV_ENABLE" = "on" ] ; then a2ensite development.local-ssl; fi \
