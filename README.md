@@ -516,12 +516,15 @@ SPX_ENABLED=1 SPX_REPORT=full php bin/console cache:clear
 ### XHProf (and XHGUI)
 
 [See](https://www.alberton.info/profiling_with_xhprof.html)
+[See 2](https://inviqa.com/blog/profiling-xhprof)
+[See 3](https://www.slideshare.net/postwait/scalable-internet-architecture)
 
 ```bash
 mkdir -p /var/www/html/xhprof
 cd /var/www/html/xhprof
 git clone --depth=1 git@github.com:longxinH/xhprof.git
 git clone --depth=1 git@github.com:perftools/xhgui.git
+git clone --depth=1 git@github.com:perftools/php-profiler.git
 ```
 
 ## SSL Certificate
