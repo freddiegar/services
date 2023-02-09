@@ -226,7 +226,7 @@ set sessionoptions=                                             " (default: blan
 set sessionoptions+=buffers                                     " Save buffers
 set sessionoptions+=curdir                                      " Save current directory
 
-" Better Search
+" Better Search (<C-g> and <C-t> are friends: go next and previous coincidence from search mode)
 set hlsearch                                                    " Highligth match results with /, ?, *, # (default: off)
 set incsearch                                                   " Search first match while typing. On TOP return BOTTOM, on BOTTOM return TOP (default: off)
 
@@ -327,7 +327,7 @@ set complete=                                                   " (default: .,w,
 set complete+=.                                                 " Current buffer
 set complete+=w                                                 " Buffers in other [w]indows
 set complete+=b                                                 " Buffers loaded in [b]uffers list (aka use RAM)
-set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM)
+set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM: open but inactive)
 set completeopt=                                                " Show preview in popup menu (default: menu,preview)
 set completeopt+=longest                                        " Don't select the first option, allow insert more words
 set completeopt+=menu                                           " Show list only if items > 1, if only once option is selected
@@ -615,6 +615,7 @@ function! s:statusline(lastmode) abort
     setlocal statusline+=%{&wrap==0?'':'[w]'}                   " Wrap flag
     setlocal statusline+=%{&wrapscan==0?'[s]':''}               " Wrapscan flag
     setlocal statusline+=%{&paste==0?'':'[p]'}                  " Paste flag
+    setlocal statusline+=%{&diff==0?'':'[d]'}                   " Diff mode flag
     setlocal statusline+=%{&virtualedit=~#'all'?'[v]':''}       " Virtual edit flag
 
     if exists('g:loaded_test')
@@ -756,6 +757,53 @@ if g:isneovim
 else
     command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 endif
+
+function! s:get_reverse(type) abort
+    let l:options = {
+                \ '1': '0',
+                \ 'and': 'or',
+                \ 'AND': 'OR',
+                \ 'on': 'off',
+                \ 'true': 'false',
+                \ '&&': '||',
+                \ }
+
+    " @thanks https://developer.ibm.com/tutorials/l-vim-script-4/
+    let l:inverts = {}
+    for [l:positive, l:negative] in items(l:options)
+        let l:inverts[l:negative] = l:positive
+    endfor
+
+    let l:saved_unnamed_register = @@
+    let l:WORD = ''
+
+    if a:type ==# 'v' || a:type ==# 'V'
+        silent execute "normal! `<v`>\"zy"
+
+        let l:word = trim(@z)
+    else
+        let l:word = expand('<cword>')
+        let l:WORD = expand('<cWORD>')
+    endif
+
+    if l:WORD !=# '' && (get(l:options, l:WORD, '') !=# '' || get(l:inverts, l:WORD, '') !=# '')
+        let l:word =l:WORD
+    endif
+
+    let @@ = l:saved_unnamed_register
+
+    if get(l:options, l:word, '') !=# ''
+        silent execute "normal! ciw" . l:options[l:word] . "\e"
+    elseif get(l:inverts, l:word, '') !=# ''
+        silent execute "normal! ciw" . l:inverts[l:word] . "\e"
+    else
+        echohl WarningMsg
+        echo 'Nothing to do.'
+        echohl None
+    endif
+
+    silent! call repeat#set("\<Plug>GetReverseRepeatable", a:type)
+endfunction
 
 " path (string): void
 function! s:backup(...) abort
@@ -939,6 +987,9 @@ nnoremap <silent> <F6> :execute "normal i\<F6>\e"<Enter>
 nnoremap <silent> <S-F6> :execute "normal i\<S-F6>\e"<Enter>
 nnoremap <silent> <F7> :execute "normal i\<F7>\e"<Enter>
 nnoremap <silent> <S-F7> :execute "normal i\<S-F7>\e"<Enter>
+
+nnoremap <silent> <Plug>GetReverseRepeatable :call <SID>get_reverse('word')<Enter>
+nmap <silent> <Leader>gr <Plug>GetReverseRepeatable
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
@@ -1375,6 +1426,7 @@ inoremap <silent> <C-f> <C-o>W
 inoremap <silent> <C-z> <Esc><C-z>
 
 " Completions using only current buffer (avoids delay with <C-n> or <C-p> when I open bigger logs files :)
+" IMPORTANT: Kill context completion using <C-x><C-p> and <C-x><C-n>
 inoremap <silent> <expr> <C-n>
             \ pumvisible() ? "\<Down>" :
             \ "\<C-x>\<C-n>"
@@ -1898,7 +1950,7 @@ function! s:popup_show(title, message) abort
                         \ anchor: 'SE',
                         \ border: 'double',
                         \ noautocmd: v:true,
-                        \ style: 'minimal'
+                        \ style: 'minimal',
                         \ })
 
             let w:winpopup = { 'id': l:popupid, 'buffer': l:popupbufid, 'width': len(a:message)  + 4 }
@@ -1984,7 +2036,7 @@ function! s:popup_resize() abort
                     \ relative: 'win',
                     \ win: winnr(),
                     \ row: l:winheight,
-                    \ col: l:winwidth
+                    \ col: l:winwidth,
                     \ })
         return
     endif
@@ -2291,6 +2343,7 @@ nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<En
 "   =   -> [=]toggle [>]show|[<]hide inline changes
 "   -   -> [-]toggle [u]n|[s]tage file
 "   U   -> [U]nstage everything
+"   X   -> Di[X]card change
 "   I   -> [I]include [P]atch from file
 "   (   -> Preview file
 "   )   -> Next file
@@ -2627,6 +2680,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log
     autocmd BufRead,BufNewFile *.log setlocal filetype=log
     autocmd BufRead,BufNewFile *.{csv,tsv} setlocal filetype=csv list
+    autocmd BufRead,BufNewFile make setlocal noexpandtab tabstop=4
     autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=4
     autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
     " autocmd BufRead,BufNewFile *.vpm setfiletype vpm
@@ -3184,8 +3238,8 @@ augroup AutoCommands
     function! s:poststart() abort
         " @see https://stackoverflow.com/questions/6076592/vim-set-formatoptions-being-lost#8748154
         set formatoptions=                                      " (default: croql)
-        set formatoptions+=c                                    " Auto-wrap [c]omments using textwidth
-        set formatoptions+=r                                    " Insert automatically comment char after Ente[r]
+        set formatoptions+=c                                    " Auto-wrap [c]omments using textwidth (broken Paste Mode)
+        set formatoptions+=r                                    " Insert automatically comment char after Ente[r] in comments (broken Paste Mode)
         set formatoptions+=q                                    " Allow formatting comments whit "gq"
         set formatoptions+=l                                    " Don't broken [l]ong lines comments
         set formatoptions+=j                                    " Remove comment string in [j]oining comments
