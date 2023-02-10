@@ -935,22 +935,30 @@ nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>sa <Plug>DeleteFinalRepeatable
 
-" Navigate through QuickFix
+" @simple https://github.com/tpope/vim-unimpaired
+nnoremap <silent> <C-1> :<C-u>cfirst<Enter>
 nnoremap <silent> <C-k> :<C-u>copen<Enter>
 nnoremap <silent> <C-j> :<C-u>cclose<Enter>
 nnoremap <silent> <C-h> :<C-u>colder<Enter>
 nnoremap <silent> <C-l> :<C-u>cnewer<Enter>
+" nnoremap <silent> <C-9> :<C-u>clast<Enter>
 
-" @simple https://github.com/tpope/vim-unimpaired
 nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
 nnoremap <silent> ]q :<C-u>cnext<Enter>zzzv
 nnoremap <silent> [Q :<C-u>cfirst<Enter>zzzv
 nnoremap <silent> ]Q :<C-u>clast<Enter>zzzv
 
-" nnoremap <silent> [l :<C-u>lprevious<Enter>zzzv
-" nnoremap <silent> ]l :<C-u>lnext<Enter>zzzv
-" nnoremap <silent> [L :<C-u>lfirst<Enter>zzzv
-" nnoremap <silent> ]L :<C-u>llast<Enter>zzzv
+nnoremap <silent> <A-1> :<C-u>lfirst<Enter>
+nnoremap <silent> <A-k> :<C-u>lopen<Enter>
+nnoremap <silent> <A-j> :<C-u>lclose<Enter>
+nnoremap <silent> <A-h> :<C-u>lolder<Enter>
+nnoremap <silent> <A-l> :<C-u>lnewer<Enter>
+" nnoremap <silent> <A-9> :<C-u>lfirst<Enter>
+
+nnoremap <silent> [l :<C-u>lprevious<Enter>zzzv
+nnoremap <silent> ]l :<C-u>lnext<Enter>zzzv
+nnoremap <silent> [L :<C-u>lfirst<Enter>zzzv
+nnoremap <silent> ]L :<C-u>llast<Enter>zzzv
 
 " nnoremap <silent> [b :<C-u>bprevious<Enter>
 " nnoremap <silent> ]b :<C-u>bnext<Enter>
@@ -1457,17 +1465,28 @@ cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
+cnoremap %% =fnameescape(expand('%'))<Enter>
 
 " Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-a>)
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
 cnoremap <C-x><C-a> <C-a>
+
+" @simple https://github.com/tpope/vim-eunuch
 " Shortcuts to recurrent files or directories
 cnoremap <C-x><C-d> ~/Downloads/
+cnoremap <C-x><C-l> ~/.vimrc.local
 cnoremap <C-x><C-h> /var/www/html/
 cnoremap <C-x><C-f> <C-u>set filetype=
 cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env'], '/')<Enter>
 cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')<Enter>
 cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<Enter>
+
+" Use them from dir project!
+cnoremap <C-x><C-y> <C-u>='!cp -p '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
+cnoremap <C-x><C-m> <C-u>='!mv -i '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
+cnoremap <C-x><C-r> <C-u>saveas =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter> <Bar> ='!rm ' . expand('%')<Enter>
+cnoremap <C-x><C-i> <C-u>='!ln '<Enter>=expand('%:p')<Enter> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<Enter>
+cnoremap <C-x><C-s> <C-u>='!ln -s '<Enter>=expand('%:p')<Enter> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<Enter>
 
 " incr (int)
 function! s:cycling_buffers(incr) abort
@@ -1742,6 +1761,9 @@ function! s:translate(range, inverse, ...) abort
 endfunction
 
 command! -nargs=* -range -bang T call <SID>translate(<range>, <bang>0, <f-args>)
+
+" Sound of silence
+nnoremap <silent> <Leader>gW :call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<Enter>
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
