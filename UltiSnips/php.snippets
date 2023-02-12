@@ -182,6 +182,10 @@ snippet dv "Dump"
 var_dump([$$1, __FILE__ . ':' . __LINE__]);
 endsnippet
 
+snippet dl "Debug Log"
+logger()->debug(__FILE__ . ':' . __LINE__$1);
+endsnippet
+
 snippet dd "Debug Die"
 dd($$1, __FILE__ . ':' . __LINE__);
 endsnippet

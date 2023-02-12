@@ -494,7 +494,7 @@ endfunction
 
 " executable (string)
 function! GetVersion(executable) abort
-    if &filetype !=# 'php' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
+    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
         return ''
     endif
 
@@ -507,7 +507,11 @@ function! GetVersion(executable) abort
     let [l:ctime, l:version] = get(g:cache, a:executable, [-2, ''])
 
     if l:ftime != l:ctime
-        let g:cache[a:executable] = [l:ftime, system("php --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0 : 2]]
+        if filereadable('composer.json')
+            let g:cache[a:executable] = [l:ftime, system("php --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0 : 2]]
+        else
+            return ''
+        endif
     endif
 
     return '  ' . l:version
@@ -2240,10 +2244,12 @@ function! s:go_file(ffile) abort
     let l:cext = expand('%:e')
     let l:ffile = a:ffile
     " Used in:     Symfony      Laravel
-    let l:paths = ['templates', 'resources/views']
+    let l:paths = ['templates', 'resources/views', 'config']
 
     try
-        if l:cext ==# 'php' && match(l:ffile, '\.twig$') <= 0
+        if l:cext ==# 'php' && match(expand('<cWORD>'), 'config(') >= 0
+            let l:ffile = join([split(l:ffile, '\.')[0] . '.php'], '/')
+        elseif l:cext ==# 'php' && match(l:ffile, '\.twig$') <= 0
             let l:ffile = substitute(l:ffile, '\.', '/', 'g') . '.blade.php'
         endif
 
@@ -3341,6 +3347,10 @@ augroup AutoCommands
 
     function! s:postcolorscheme() abort
         if g:colors_name !=# 'miningbox'
+            if index(['morning', 'shine', 'lunaperche', 'zellner', 'peachpuff', 'delek'], g:colors_name) >= 0 && &background !=# 'light'
+                set background=light
+            endif
+
             highlight! CursorLine cterm=NONE
             highlight! CursorLineNR cterm=NONE
 
@@ -3420,10 +3430,10 @@ augroup AutoCommands
 
     " One <C-x><C-f> to auto-complet files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories
-    autocmd CompleteDonePre * if complete_info()['mode'] ==# 'files' | call feedkeys("\<C-x>\<C-f>", 'n') | endif
+    autocmd CompleteDonePre * if complete_info()['mode'] ==# 'files' && len(complete_info()['items']) > 0 && complete_info()['selected'] !=# -1 | call feedkeys("\<C-x>\<C-f>", 'n') | endif
 
     " Create non-existent directories when saving files
-    autocmd BufWritePre *.md if !isdirectory(expand('<afile>:p:h')) | call mkdir(expand('<afile>:p:h'), 'p') | endif
+    autocmd BufWritePre * if !isdirectory(expand('<afile>:p:h')) | call mkdir(expand('<afile>:p:h'), 'p') | endif
 
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
