@@ -477,9 +477,26 @@ function! GetNameCurrentPath() abort
 endfunction
 
 function! GetNameCurrentFile() abort
-    return &buftype !=# 'terminal' && index(['netrw', 'vim-plug', 'fugitive'], &filetype) < 0
-                \ ? expand('%:~')
-                \ : ''
+    " /var/www/html/repo/services
+    "   :terminal                                               -> (empty)
+    "   [No Name]                                               -> (empty)
+    "   /var/www/html/repo/services/.gitignore                  -> .gitignore
+    "   /var/www/html/repo/services/docker/.gitignore           -> docker/.gitignore
+    "   /var/www/html/repo/services/docker/conf/.gitignore      -> docker/conf/.gitignore
+    "   /var/www/html/repo/services/docker/conf/.gitignore > 60 -> d/c/.gitignore
+    "   /home/user/.vimrc                                       -> ~/.vimrc
+    "   /etc/hosts                                              -> /e/hosts
+    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive'], &filetype) > 0 || expand('%') ==# ''
+        return ''
+    elseif match(expand('%:p:h'), g:cwd) >= 0 && len(expand('%:~')) <= 60
+        return expand('%:~')
+    elseif match(expand('%:p:h'), g:cwd) >= 0
+        let l:bpath = expand('%:.:h:gs@\v(/?\w{1})(\w+)@\1@g')
+    else
+        let l:bpath = expand('%:~:h:gs@\v(/?\w{1})(\w+)@\1@g')
+    endif
+
+    return l:bpath ==# '.' ?  expand('%:t') : l:bpath . '/' . expand('%:t')
 endfunction
 
 function! GetNameBranch() abort
