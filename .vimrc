@@ -395,6 +395,7 @@ if has('gui_running')
     set guioptions+=c                                           " Confirmations in [c]onsole (as Terminal)
     set guioptions+=k                                           " Windows [k]eep size after change GUI
     set guioptions+=!                                           " Use terminal with external commands, no simulate
+    set guiligatures=!\"#$%&()*+-./:<=>?@[]^_{\|~               " FiraCode!
 
     augroup GUIOptions
         autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'FiraCode Retina 14', '')
