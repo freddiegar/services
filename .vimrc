@@ -539,7 +539,7 @@ function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
                 \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
-        return g:test_strategy ==# 'background' ? '[◎]' : ''
+        return g:test_strategy ==# 'background' ? '[A]' : ''
     endif
 
     if index(['', 'running', 'stopped'], get(g:, 'asyncrun_status', '')) >= 0
@@ -1499,6 +1499,7 @@ cnoremap <C-x><C-d> ~/Downloads/
 cnoremap <C-x><C-l> ~/.vimrc.local
 cnoremap <C-x><C-h> /var/www/html/
 cnoremap <C-x><C-f> <C-u>set filetype=
+cnoremap <C-x><C-w> =join(['~/working', g:working[0], 'CODE', g:working[1] . '/'], '/')<Enter>
 cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env'], '/')<Enter>
 cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')<Enter>
 cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<Enter>

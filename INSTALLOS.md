@@ -121,8 +121,8 @@ sudo service cups stop && sudo systemctl disable cups
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim toilet figlet
-## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim toilet figlet && sudo apt-get autoremove
+sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim
+## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim && sudo apt-get autoremove
 ```
 
 # i3
@@ -1139,26 +1139,9 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 
 # Summary
 
-date            : 2022-07-28
-so              : Ubuntu 18.04.5 LTS
-kernel          : 5.4.0-122-generic
-gcc             : 7.5.0
-ssl             : 1.1.1k
-i3              : 4.14.1
-konsole         : 17.12.3
-bash            : 4.4.20(1)-release
-zsh             : 5.4.2
-vim             : 8.2.1-4929
-docker-compose  : v2.7.0
-curl            : 7.58.0
-git             : 2.17.1
-docker          : 20.10.17
-feh             : 2.23.2
-maim            : v5.4.68
-bat             : 0.19.0
-rg              : 0.9.0
-
 > Ubuntu 22.04: https://discourse.ubuntu.com/t/jammy-jellyfish-release-notes/24668
+
+date            : 2022-07-28
 
 ## Commands
 
@@ -1184,6 +1167,8 @@ echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep 
 # 9.0.1-749
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
 # v0.6.1-LuaJIT 2.1.0-beta3
+vifm --version | grep -e "^Version" | awk '{print $2}'
+# 0.9.1
 curl --version | grep -e "^curl " | awk '{print $2}'
 # 7.58.0
 git --version | awk '{print $3}'
@@ -1196,9 +1181,27 @@ feh --version | grep version | awk '{print $3}'
 # 2.23.2
 maim --version | awk '{print $1}'
 # v5.4.68
+unzip -v | grep "^UnZip.*\.$" | awk '{print $2}'
+# 6.00
+tree --version | awk '{print $2}'
+# v1.7.0
+nmap --version | grep "^Nmap" | awk '{print $3}'
+# 7.60
+htop --version | grep "^htop" | awk '{print $2}'
+# 2.1.0
+man xcompmgr | grep "^X Version" | awk '{print $5}'
+# 1.1.7
 bat --version | awk '{print $2}'
 # 0.19.0
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 0.9.0
 php --version | grep -e "^PHP" | awk '{print $2}'
 # 7.4.33
+npm --version
+# 9.3.1
+node --version
+# v16.19.0
+mysql --version | awk '{print $3}'
+# 14.14
+dpkg --list | wc --lines
+# 2226
