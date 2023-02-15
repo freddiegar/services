@@ -161,7 +161,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         " @see https://uxpickle.com/dark-or-light-mode-for-the-eyes/
         " @timezone https://24timezones.com/time-zone/est
         let g:colorscheme = !g:istty
-                    \ ? (index(range(8, 16), str2nr(strftime('%H'))) >= 0 ? 'morning' : 'miningbox')
+                    \ ? 'miningbox'
                     \ : 'default'
 
         " Viminfofile setup
@@ -2486,9 +2486,10 @@ function! s:run(range, interactive, ...) abort
     let l:execute = ''
     let l:ignorechars = []
     let l:runner = &filetype
+    let l:runners = ['&bash', '&php', '&sql']
 
     if l:runner ==# ''
-        let l:runner = confirm('Select runner:', "&bash\n&php", 2, 'Q')
+        let l:runner = confirm('Select runner:', join(l:runners, "\n"), 2, 'Q')
     endif
 
     if l:runner ==# ''
@@ -2498,7 +2499,7 @@ function! s:run(range, interactive, ...) abort
     elseif l:runner ==# 1 || index(['markdown', 'sh'], l:runner) >= 0
         let l:execute = 'bash -c "%s"'
         let l:ignorechars = ["'", '\']
-    elseif l:runner ==# 2 ||  index(['php'], l:runner) >= 0
+    elseif l:runner ==# 2 || index(['php'], l:runner) >= 0
         " requires end with semicolon (;)
         let l:execute = 'php --run "%s"'
         let l:ignorechars = ["'"]
@@ -2507,9 +2508,14 @@ function! s:run(range, interactive, ...) abort
             " dump() doesn't allow multiple sentences split by semicolon (;) :(
             let l:execute = 'echo "%s" | php artisan tinker --no-interaction'
         endif
+    elseif (l:runner ==# 3 || index(['sql'], l:runner) >= 0) && <SID>db() !=# ''
+        " Don't add silent
+        execute join(['DB', <SID>db(), l:command], ' ')
+
+        return
     else
         echohl ErrorMsg
-        echo 'Run ' . l:runner . ' unsupported.'
+        echo 'Runner ' . (index(range(1, len(l:runners) + 1), l:runner) >= 0 ? substitute(l:runners[(l:runner - 1)], '&', '', 'g') : l:runner) . ' unsupported.'
         echohl None
 
         return 2
