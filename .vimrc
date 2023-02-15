@@ -1,8 +1,8 @@
-" if has('vim9script')
-"     source /var/www/html/freddiegar/services/.vimrc9
+if has('vim9script') && filereadable(expand('~/.vimrc9'))
+    source ~/.vimrc9
 
-"     finish
-" endif
+    finish
+endif
 
 " PHILOSOPHY
 " @see https://www.moolenaar.net/habits.html
@@ -870,7 +870,9 @@ function! s:file_filter(isregex, file, filter) abort
 
     new
     setlocal noswapfile
+    setlocal noloadplugins
     silent execute join([':0read', '!' . (a:isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') . ' -F'), shellescape(a:filter), fnameescape(a:file)])
+    setlocal nowrap nolist readonly nomodifiable nomodified nobuflisted bufhidden=delete
     normal gg
 endfunction
 
@@ -1851,9 +1853,9 @@ let g:fzf_buffers_jump = 1
 " String in current file directory (by default: current cursor word)
 nnoremap <silent> <Leader>I :call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
 xnoremap <silent> <Leader>I :<C-u>call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
-" Files in current file directory
-nnoremap <silent> <Leader>i :execute 'Files ' . expand('%:p:h')<Enter>
-xnoremap <silent> <Leader>i :<C-u>execute 'Files ' . expand('%:p:h')<Enter>
+" Files in current file directory (show all files in specific directory)
+nnoremap <silent> <Leader>i :call <SID>rgafzf(expand('%:p:h'))<Enter>
+xnoremap <silent> <Leader>i :<C-u>call <SID>rgafzf(expand('%:p:h'))<Enter>
 " Files in current work directory
 nnoremap <silent> <Leader>p :Files<Enter>
 xnoremap <silent> <Leader>p :<C-u>Files<Enter>
@@ -3084,6 +3086,14 @@ augroup AutoCommands
         let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
 
         silent call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
+    endfunction
+
+    function! s:rgafzf(path) abort
+        let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore --hidden'
+
+        execute 'Files ' . a:path
+
+        unlet $FZF_DEFAULT_COMMAND
     endfunction
 
     " Git blame
