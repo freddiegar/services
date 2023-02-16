@@ -1,3 +1,8 @@
+# Dynamic Docker Run (based in current path)
+drun() {
+    docker exec -w `pwd` -it "$@"
+}
+
 # Dynamic PHP Version (based in current composer.json)
 phpx() {
     if [ -f composer.json ]; then
@@ -87,7 +92,6 @@ alias ducks="du -cks * | sort -rn | head"
 alias fo="/opt/firefox/firefox --new-tab"
 
 alias dexec="docker exec -it"
-alias drun="ra && docker exec -w `pwd` -it"
 alias dlogs="docker logs --tail 50 -f"
 alias dstart="docker start"
 alias dstop="docker stop"
