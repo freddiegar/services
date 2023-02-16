@@ -2839,6 +2839,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <expr><buffer>L (v:count > 0 ? "<Esc>" : '') . v:count1 . 'f$'
 
     " PHP Testing
+    autocmd FileType php let g:test#php#phpunit#executable = 'phpx ' . test#php#phpunit#executable()
     autocmd FileType php let g:test#php#phpunit#options = {
         \ 'all': '--no-coverage --stop-on-failure',
     \}
