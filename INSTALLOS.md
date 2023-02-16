@@ -318,6 +318,7 @@ lxqt-leave
 
 ```bash
 echo "
+# Require in tty
 export EDITOR=vim
 
 # Vi mode
@@ -494,7 +495,7 @@ cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
 
 ```bash
 echo '
-if [ -f ~/.ssh/agent.env ] ; then
+if [ -f ~/.ssh/agent.env ]; then
     . ~/.ssh/agent.env > /dev/null
     if ! kill -0 $SSH_AGENT_PID > /dev/null 2>&1; then
         eval `ssh-agent | tee ~/.ssh/agent.env`

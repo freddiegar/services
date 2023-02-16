@@ -2503,12 +2503,12 @@ function! s:run(range, interactive, ...) abort
         let l:ignorechars = ["'", '\']
     elseif l:runner ==# 2 || index(['php'], l:runner) >= 0
         " requires end with semicolon (;)
-        let l:execute = 'php --run "%s"'
+        let l:execute = 'phpx --run "%s"'
         let l:ignorechars = ["'"]
 
         if filereadable('artisan')
             " dump() doesn't allow multiple sentences split by semicolon (;) :(
-            let l:execute = 'echo "%s" | php artisan tinker --no-interaction'
+            let l:execute = 'echo "%s" | phpx artisan tinker --no-interaction'
         endif
     elseif (l:runner ==# 3 || index(['sql'], l:runner) >= 0) && <SID>db() !=# ''
         " Don't add silent
@@ -3461,7 +3461,7 @@ augroup AutoCommands
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanup('te')
+    autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanup('te')
 
     " One <C-x><C-f> to auto-complet files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories

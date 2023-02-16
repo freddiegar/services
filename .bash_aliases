@@ -1,3 +1,14 @@
+# Dynamic PHP Version (based in current composer.json)
+phpx() {
+    if [ -f composer.json ]; then
+        `cat composer.json | rg -F '"php":' | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}'` "$@"
+
+        return
+    fi
+
+    `which php` "$@"
+}
+
 alias x="exit"
 alias v="vim"
 alias g="grep"
@@ -34,41 +45,43 @@ alias sac="sudo apt-get autoremove --purge -y && sudo apt-get clean -y && sudo a
 alias xpa='echo "\n" | sudo add-apt-repository'
 alias xpr='echo "\n" | sudo add-apt-repository --remove'
 
-alias c="composer"
-alias c1="composer_v1"
-alias ci="composer install"
-alias cu="composer update"
-alias ct="composer test"
-alias cda="composer dump-autoload"
-alias cii="composer install --ignore-platform-reqs"
-alias cui="composer update --ignore-platform-reqs"
-alias cip="composer install --no-dev"
-alias cin="composer install --no-cache"
+alias c="phpx `which composer`"
+alias c1="phpx `which composer_v1`"
+alias ci="phpx `which composer` install"
+alias cu="phpx `which composer` update"
+alias ct="phpx `which composer` test"
+alias cda="phpx `which composer` dump-autoload"
+alias cii="phpx `which composer` install --ignore-platform-reqs"
+alias cui="phpx `which composer` update --ignore-platform-reqs"
+alias cip="phpx `which composer` install --no-dev"
+alias cin="phpx `which composer` install --no-cache"
 
-alias pps="php bin/console"
+alias pps="phpx bin/console"
 alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                      && pps cache:clear"
 alias ccm="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                                                && gco var"
-alias ppa="php artisan"
+
+alias ppa="phpx artisan"
 alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && ppa optimize:clear     && gco storage bootstrap"
+
 alias ppv='ppa app-version:create --sha="$(git rev-parse HEAD)" --time="$(date -u +%Y%m%d%H%M%S)" --branch="$(git rev-parse --abbrev-ref HEAD)"'
-alias ppy="export APPLICATION_ENV=dev && php yii"
+alias ppy="export APPLICATION_ENV=dev && phpx yii"
 alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-data -Rf runtime web/assets       && ppy cache/flush-all"
 
 alias pex="sudo phpenmod xdebug"
 alias pdx="sudo phpdismod xdebug"
 alias psw="sudo update-alternatives --config php"
 
-alias vt="vendor/bin/phpunit --stop-on-failure --no-coverage"
-alias vtu="vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
-alias vtf="vendor/bin/phpunit --stop-on-failure --no-coverage --filter"
+alias vt="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
+alias vtu="phpx vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
+alias vtf="phpx vendor/bin/phpunit --stop-on-failure --no-coverage --filter"
 
-alias vp="vendor/bin/pest --stop-on-failure --no-coverage"
-alias vpu="vendor/bin/pest --stop-on-failure --no-coverage --testsuite=unit"
-alias vpf="vendor/bin/pest --stop-on-failure --no-coverage --filter"
+alias vp="phpx vendor/bin/pest --stop-on-failure --no-coverage"
+alias vpu="phpx vendor/bin/pest --stop-on-failure --no-coverage --testsuite=unit"
+alias vpf="phpx vendor/bin/pest --stop-on-failure --no-coverage --filter"
 
-alias st="bin/phpunit --stop-on-failure --no-coverage"
-alias stu="bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
-alias stf="bin/phpunit --stop-on-failure --no-coverage --filter"
+alias st="phpx bin/phpunit --stop-on-failure --no-coverage"
+alias stu="phpx bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
+alias stf="phpx bin/phpunit --stop-on-failure --no-coverage --filter"
 
 alias ducks="du -cks * | sort -rn | head"
 alias fo="/opt/firefox/firefox --new-tab"
@@ -120,7 +133,7 @@ alias gfu="git fetch upstream"
 alias gco="git checkout"
 alias gcp="git cherry-pick"
 alias gcob="git checkout -b"
-alias gcot "git checkout version"
+alias gcot="git checkout version"
 alias gsh="git stash"
 alias gshp="git stash -p"
 alias gsl="git stash list"
