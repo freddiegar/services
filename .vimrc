@@ -1491,15 +1491,17 @@ cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
 cnoremap %% =fnameescape(expand('%'))<Enter>
 
-" Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-a>)
+" Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-x>)
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
-cnoremap <C-x><C-a> <C-a>
+cnoremap <C-x><C-x> <C-a>
 
 " @simple https://github.com/tpope/vim-eunuch
 " Shortcuts to recurrent files or directories
+cnoremap <C-x><C-z> ~/.zshrc
 cnoremap <C-x><C-d> ~/Downloads/
 cnoremap <C-x><C-l> ~/.vimrc.local
 cnoremap <C-x><C-h> /var/www/html/
+cnoremap <C-x><C-a> ~/.bash_aliases
 cnoremap <C-x><C-f> <C-u>set filetype=
 cnoremap <C-x><C-w> =join(['~/working', g:working[0], 'CODE', g:working[1] . '/'], '/')<Enter>
 cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env'], '/')<Enter>
