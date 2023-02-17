@@ -239,7 +239,7 @@ ln -s `pwd`/UltiSnips ~/.vim/UltiSnips
 ## Vim in PHPStorm
 
 ```bash
-ln -s `pwd`/.ideavimrc ~/.ideavimrc
+ln -s `pwd`/editor/phpstorm/.ideavimrc ~/.ideavimrc
 ```
 
 # GIT
