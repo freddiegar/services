@@ -9,16 +9,22 @@
  */
 \set_time_limit(120); // 2 minutes
 
+if (!empty($_GET['f']) && function_exists($_GET['f']) && in_array($_GET['f'], ['test_concat_detail'], true)) {
+    call_user_func_array($_GET['f'], []);
+
+    die;
+}
+
 $options = [];
 
 // Show or hide the server name and IP address
 $showServerName = false;
 
 // Optional: mysql performance test
-$options['db.host'] = '172.20.0.10';
-$options['db.user'] = 'root';
-$options['db.pw'] = 'N3uroSiS';
+$options['db.host'] = 'db';
 $options['db.name'] = 'prestashop';
+$options['db.user'] = 'prestashop';
+$options['db.pass'] = '';
 
 // -----------------------------------------------------------------------------
 // Main
@@ -130,17 +136,18 @@ print '<style>
     </head>
     <body>';
 
-$log = 'benchmark.log';
+$log = getcwd() . DIRECTORY_SEPARATOR . 'benchmark.log';
 
 if (!\file_exists($log) || \file_get_contents($log) === '') {
-    \file_put_contents('benchmark.log', "V\tM\tS\tL\tI\tCT\tMT\tT\n");
+    \file_put_contents($log, "V\tM\tS\tC\tL\tI\tCT\tMT\tT\n");
 }
 
-\file_put_contents('benchmark.log', \sprintf(
-    "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+\file_put_contents($log, \sprintf(
+    "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
     \substr($benchmarkResult['sysinfo']['php_version'], 0, 6),
     $benchmarkResult['benchmark']['math'],
     $benchmarkResult['benchmark']['string'],
+    $benchmarkResult['benchmark']['concat'],
     $benchmarkResult['benchmark']['loops'],
     $benchmarkResult['benchmark']['ifelse'],
     $benchmarkResult['benchmark']['calculation_total'],
@@ -171,12 +178,13 @@ function test_benchmark($settings)
 
     test_math($result);
     test_string($result);
+    test_concat($result);
     test_loops($result);
     test_ifelse($result);
 
     $result['benchmark']['calculation_total'] = timer_diff($timeStart);
 
-    if (\PHP_VERSION_ID >= 70000 && isset($settings['db.host'])) {
+    if (\PHP_VERSION_ID >= 70000 && !empty($settings['db.pass'])) {
         test_mysql($result, $settings);
     }
 
@@ -216,6 +224,76 @@ function test_string(&$result, $count = 99999): void
     $result['benchmark']['string'] = timer_diff($timeStart);
 }
 
+function test_concat_echo_single(): void
+{
+    echo '$name, What is your current age in $year?';
+}
+
+function test_concat_echo_quotes(string $name, int $year): void
+{
+    echo "$name, What is your current age in $year?";
+}
+
+function test_concat_sprintf(string $name, int $year): void
+{
+    echo sprintf("%s,What is your current age in %s?", $name, $year);
+}
+
+function test_concat_sprintf_int(string $name, int $year): void
+{
+    echo sprintf("%s,What is your current age in %d?", $name, $year);
+}
+
+function test_concat_printf(string $name, int $year): void
+{
+    printf('%s,What is your current age in %d?', $name, $year);
+}
+
+function test_concat(&$result, $count = 99999): void
+{
+    $timeStart = \microtime(true);
+    $stringFunctions = ['test_concat_echo_single', 'test_concat_echo_quotes', 'test_concat_sprintf', 'test_concat_sprintf_int', 'test_concat_printf'];
+
+    $name = 'Jon';
+    $year = 2023;
+
+    foreach ($stringFunctions as $function) {
+        for ($i = 0; $i < $count; $i++) {
+            \ob_start();
+            \call_user_func_array($function, [$name, $year]);
+            $content = \ob_get_clean();
+            \ob_flush();
+            unset($content);
+        }
+    }
+
+    $result['benchmark']['concat'] = timer_diff($timeStart);
+}
+
+function test_concat_detail(): void
+{
+    $stringFunctions = ['test_concat_echo_single', 'test_concat_echo_quotes', 'test_concat_sprintf', 'test_concat_sprintf_int', 'test_concat_printf'];
+
+    $name = 'Jon';
+    $year = 2023;
+    $result = [];
+    $count = 99999;
+
+    foreach ($stringFunctions as $function) {
+        $timeStart = \microtime(true);
+        for ($i = 0; $i < $count; $i++) {
+            \ob_start();
+            \call_user_func_array($function, [$name, $year]);
+            $content = \ob_get_clean();
+            \ob_flush();
+            unset($content);
+        }
+        $result[$function] = timer_diff($timeStart);
+    }
+
+    var_dump($result);
+}
+
 function test_loops(&$result, $count = 999999): void
 {
     $timeStart = \microtime(true);
@@ -252,7 +330,7 @@ function test_mysql(&$result, $settings)
 {
     $timeStart = \microtime(true);
 
-    $link = \mysqli_connect($settings['db.host'], $settings['db.user'], $settings['db.pw']);
+    $link = \mysqli_connect($settings['db.host'], $settings['db.user'], $settings['db.pass']);
 
     if (!$link) {
         print 'Unable to connect to mysql';
@@ -282,7 +360,7 @@ function test_mysql(&$result, $settings)
 
 function timer_diff($timeStart)
 {
-    return \number_format(\microtime(true) - $timeStart, 3);
+    return \number_format(\microtime(true) - $timeStart, 9);
 }
 
 function print_benchmark_result($data, $showServerName = true)
@@ -313,9 +391,10 @@ function print_benchmark_result($data, $showServerName = true)
     $result .= '<tbody>';
     $result .= '<tr><td>Math</td><td>' . h($data['benchmark']['math']) . '</td></tr>';
     $result .= '<tr><td>String</td><td>' . h($data['benchmark']['string']) . '</td></tr>';
+    $result .= '<tr><td>Concat</td><td>' . h($data['benchmark']['concat']) . '</td></tr>';
     $result .= '<tr><td>Loops</td><td>' . h($data['benchmark']['loops']) . '</td></tr>';
     $result .= '<tr><td>If Else</td><td>' . h($data['benchmark']['ifelse']) . '</td></tr>';
-    $result .= '<tr class="even"><td>Calculation total</td><td>' . h($data['benchmark']['calculation_total']) . '</td></tr>';
+    $result .= '<tr class="even"><td>Calculation Total</td><td>' . h($data['benchmark']['calculation_total']) . '</td></tr>';
     $result .= '</tbody>';
 
     if (isset($data['sysinfo']['mysql_version'])) {
