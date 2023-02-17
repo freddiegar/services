@@ -46,9 +46,10 @@ ln -s `pwd`/editor/vim/phpactor.json ~/.config/phpactor/phpactor.json
 
 ```bash
 rm -f ~/.local/share/konsole/*.profile
-ln -s `pwd`/konsole.profile ~/.local/share/konsole/konsole.profile
 rm -f ~/.local/share/konsole/*.colorscheme
-ln -s `pwd`/Linux.colorscheme ~/.local/share/konsole/Linux.colorscheme
+
+ln -s `pwd`/emulator/konsole/konsole.profile ~/.local/share/konsole/konsole.profile
+ln -s `pwd`/emulator/konsole/Linux.colorscheme ~/.local/share/konsole/Linux.colorscheme
 ```
 
 # Performance, not use swap while RAM < 90% used
