@@ -1637,8 +1637,8 @@ Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
 Test loading times in Vim
 
 ```bash
-EXECUTABLE=vim
-rm -Rf profile_*.log editor/$EXECUTABLE.time
+EXECUTABLE=nvim
+rm -Rf editor/$EXECUTABLE.time
 
 for i in {1..10}; do
     $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log developer.php
