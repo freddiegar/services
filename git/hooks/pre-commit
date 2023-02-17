@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases > /dev/null
+fi
+
+# Code Sniffer
+if [ -f .php_cs ]; then
+    phpx vendor/bin/php-cs-fixer fix --config=.php_cs
+elif [ -f .php-cs-fixer.php ]; then
+    phpx vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php
+else
+    echo "Fixer not found."
+fi
+
+# Run test before add message to commit
+phpx vendor/bin/phpunit --stop-on-failure --no-coverage

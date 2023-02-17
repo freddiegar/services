@@ -255,7 +255,7 @@ sudo apt-get install -y git-core
 [See](http://git-scm.com/docs/git-mergetool)
 
 ```bash
-ln -s `pwd`/.gitconfig ~/.gitconfig
+ln `pwd`/git/.gitconfig ~/.gitconfig
 ```
 
 ## GIT Flow
