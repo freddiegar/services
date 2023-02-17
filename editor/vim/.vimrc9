@@ -1517,7 +1517,6 @@ Plug 'freddiegar/miningbox.vim'                                 # Finally colors
 
 plug#end()
 
-
 # Use ALE to diagnostics
 # LSP       ->  Language(s)
 # PHPActor  ->  php
@@ -1527,44 +1526,7 @@ plug#end()
 
 # @see https://github.com/neoclide/coc.nvim/blob/master/doc/coc-config.txt
 # ~/.vim/coc-settings.json
-# {
-#    "coc.preferences.extensionUpdateCheck": "weekly",
-#    "coc.preferences.snippetStatusText": "SNIPPET  ",
-#    "coc.source.around.priority": 1,
-#    "coc.source.buffer.priority": 2,
-#    "coc.source.file.priority": 10,
-#    "diagnostic.enable": false,
-#    "diagnostic.enableSign": false,
-#    "diagnostic.signOffset": 9999999,
-#    "notification.disabledProgressSources": ["*"],
-#    "suggest.enablePreselect": false,
-#    "suggest.languageSourcePriority": 99,
-#    "suggest.maxCompleteItemCount": 20,
-#    "suggest.minTriggerInputLength": 2,
-#    "suggest.noselect": true,
-#    "suggest.removeDuplicateItems": true,
-#    "suggest.selection": "recentlyUsed",
-#    "suggest.snippetIndicator": "",
-#    "suggest.triggerCompletionWait": 100,
-#    "phpactor.enable": true,
-#    "phpactor.path": "~/.vim/plugged/phpactor/bin/phpactor",
-#    "clangd.enable": true,
-#    "clangd.path": "/usr/local/clang_9.0.0/bin/clangd",
-#    "vetur.ignoreProjectWarning": true
-# }
-
 # ~/.config/phpactor/phpactor.json
-# {
-#  "language_server_code_transform.import_globals": true,
-#  "language_server_completion.trim_leading_dollar": true,
-#  "file_path_resolver.enable_logging": true,
-#  "indexer.exclude_patterns": [
-#    "\/tests\/coverage\/**\/*",
-#    "\/vendor\/**\/Tests\/**\/*",
-#    "\/vendor\/**\/tests\/**\/*",
-#    "\/vendor\/composer\/**\/*"
-#  ]
-# }
 
 # PHPActor
 # @see https://github.com/phpactor/phpactor

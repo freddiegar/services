@@ -34,6 +34,12 @@ sudo apt-get install -y vim konsole
 sudo update-alternatives --config editor
 
 ln -s `pwd`/editor/vim/.vimrc ~/.vimrc
+
+## CoC Settings
+ln -s `pwd`/editor/vim/coc-settings.json ~/.vim/coc-settings.json
+
+## PHPActor Settings
+ln -s `pwd`/editor/vim/phpactor.json ~/.config/phpactor/phpactor.json
 ```
 
 ## Konsole Profile
