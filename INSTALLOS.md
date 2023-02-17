@@ -239,7 +239,7 @@ sudo chmod +x /usr/local/bin/phpctags
 ## Vim Snippets
 
 ```bash
-ln -s `pwd`/UltiSnips ~/.vim/UltiSnips
+ln -s `pwd`/editor/vim/UltiSnips ~/.vim/UltiSnips
 ```
 
 ## Vim in PHPStorm
