@@ -133,11 +133,11 @@ endif
 " 1. No brake changes :(vim9script, yeah):                  -> @see https://www.youtube.com/watch?v=zPQSST-M3fM -> vim9script transpiler
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
-"           Version                     BARE(ms)    PLUG-NC(ms) PLUG-C(ms)
-"   Vim9:   9.0.1-749 (vimscript)       4.336       112.298     221.233
-"                     (vim9script)      5.524       126.238     234.192
-"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  20.746      80.053      133.630
-"   Diff:                               -378.4%     +28.7%      +39.5%
+"           Version                     BARE(ms)    PLUG-NC(ms) PLUG-C(ms)  DATE
+"   Vim9:   9.0.1-749 (vim9script)      5.524       126.238     234.192     2023-01-17
+"   Vim9:   9.0.1-749 (vimscript)       6.275       107.687     214.535     2023-02-17
+"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  28.620      114.018     120.020     2023-02-17
+"   Diff:                               -356.0%     -5.8%       +44.0%
 " @see https://neovim.io/doc/user/vim_diff.html
 " @see https://www.murilopereira.com/the-values-of-emacs-the-neovim-revolution-and-the-vscode-gorilla/
 

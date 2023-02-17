@@ -1638,15 +1638,15 @@ Test loading times in Vim
 
 ```bash
 EXECUTABLE=vim
-rm -Rf profile_*.log $EXECUTABLE.time
+rm -Rf profile_*.log editor/$EXECUTABLE.time
 
 for i in {1..10}; do
     $EXECUTABLE --startuptime profile_${EXECUTABLE}_${i}_.log developer.php
 done
 
-find profile_${EXECUTABLE}_*.log -exec grep STARTED {} \; | cut -d' ' -f1 > $EXECUTABLE.time
+find profile_${EXECUTABLE}_*.log -exec grep STARTED {} \; | cut -d' ' -f1 > editor/$EXECUTABLE.time
 
-awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' $EXECUTABLE.time
+awk  'BEGIN { total = 0; count = 0 } { total += $1; count += 1; } END { avg = total / count; print avg} ' editor/$EXECUTABLE.time
 
 rm -Rf profile_*.log
 ```
