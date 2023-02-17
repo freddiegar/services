@@ -1557,9 +1557,11 @@ function! s:cycling_buffers(incr) abort
 
             if l:nbuffer == l:cbuffer
                 if g:hasgit
-                    silent execute 'GFiles'
+                    " Don't add silent
+                    execute 'WFiles'
                 else
-                    silent execute 'Files'
+                    " Don't add silent
+                    execute 'Files'
                 endif
 
                 break
@@ -1851,6 +1853,8 @@ let g:highlightedyank_highlight_duration = 250
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
 " Jump to the existing buffer if is possible
 let g:fzf_buffers_jump = 1
+" Hidden preview if visible columns are lesser 70
+let g:fzf_preview_window = ['right,50%,<70(hidden)', 'Ctrl-/']
 
 " String in current file directory (by default: current cursor word)
 nnoremap <silent> <Leader>I :call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
@@ -1861,9 +1865,9 @@ xnoremap <silent> <Leader>i :<C-u>call <SID>rgafzf(expand('%:p:h'))<Enter>
 " Files in current work directory
 nnoremap <silent> <Leader>p :Files<Enter>
 xnoremap <silent> <Leader>p :<C-u>Files<Enter>
-" GFiles or Files in current work directory
-nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'GFiles' : 'Files') . "<Enter>"
-xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'GFiles' : 'Files') . "<Enter>"
+" WFiles or Files in current work directory
+nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
+xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
 " Marks in current project directory
 nnoremap <silent> <Leader>M :Marks<Enter>
 xnoremap <silent> <Leader>M :<C-u>Marks<Enter>
@@ -3091,13 +3095,31 @@ augroup AutoCommands
         silent call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
     endfunction
 
+    " path (string): void
     function! s:rgafzf(path) abort
         let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore --hidden'
 
+        " Don't add silent
         execute 'Files ' . a:path
 
         unlet $FZF_DEFAULT_COMMAND
     endfunction
+
+    " GFiles fails(?) when current file path is out of git repo
+    " @see https://github.com/junegunn/fzf.vim/commit/50707b089b1c61fcdb300ec1ecbc4249ead4af11
+    " path (string), args (string), fullscreen (1/0): void
+    function! s:rgffzf(path, args, fullscreen) abort
+        let l:spec = { 'dir': a:path }
+
+        if a:args ==# '?'
+            let l:spec.placeholder = ''
+        endif
+
+        " Don't add silent
+        call fzf#vim#gitfiles(a:path, fzf#vim#with_preview(l:spec), a:fullscreen)
+    endfunction
+
+    command! -bang -nargs=? WFiles call <SID>rgffzf(g:cwd, <q-args>, <bang>0)
 
     " Git blame
     " @thanks https://gist.github.com/romainl/5b827f4aafa7ee29bdc70282ecc31640
