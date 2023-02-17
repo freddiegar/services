@@ -1511,7 +1511,7 @@ cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:w
 " Use them from dir project!
 cnoremap <C-x><C-y> <C-u>='!cp -p '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
 cnoremap <C-x><C-m> <C-u>='!mv -i '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
-cnoremap <C-x><C-r> <C-u>saveas =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter> <Bar> ='!rm ' . expand('%')<Enter>
+cnoremap <C-x><C-r> <C-u>keepalt saveas =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter> <Bar> ='!rm ' . expand('%')<Enter>
 cnoremap <C-x><C-i> <C-u>='!ln '<Enter>=expand('%:p')<Enter> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<Enter>
 cnoremap <C-x><C-s> <C-u>='!ln -s '<Enter>=expand('%:p')<Enter> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<Enter>
 
@@ -3263,10 +3263,20 @@ augroup AutoCommands
         silent execute (g:isneovim ? 'rshada ' : 'rviminfo ') . g:infofile
     endfunction
 
+    function! s:iscommit() abort
+        return argc() > 0 && index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
+    endfunction
+
     function! s:sessionload() abort
         let l:message = ''
         let l:envfile = <SID>envfile()
         let l:session = split(g:session_file, '/')[-1]
+
+        if <SID>iscommit()
+            echomsg 'Any session was ignored.'
+
+            return
+        endif
 
         if !argc() && g:hasgit && empty(v:this_session) && filereadable(g:session_file) && !&modified
             silent execute 'source ' . g:session_file
@@ -3312,12 +3322,18 @@ augroup AutoCommands
     endfunction
 
     function! s:sessionsave() abort
+        if <SID>iscommit()
+            return
+        endif
+
         if g:hasgit && !(expand('%:h:p') ==# '/tmp' && &filetype ==# 'zsh')
             call <SID>sessionsavepre()
 
             silent execute 'mksession! ' . g:session_file
 
-            echomsg 'Saved ' . split(g:session_file, '/')[-1]
+            if has('gui_running')
+                echomsg 'Saved ' . split(g:session_file, '/')[-1]
+            endif
 
             let v:this_session = ''
         endif
