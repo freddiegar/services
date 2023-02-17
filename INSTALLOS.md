@@ -33,7 +33,7 @@ sudo apt-get install -y vim konsole
 # Set as default editor
 sudo update-alternatives --config editor
 
-ln -s `pwd`/.vimrc ~/.vimrc
+ln -s `pwd`/editor/vim/.vimrc ~/.vimrc
 ```
 
 ## Konsole Profile
@@ -174,7 +174,7 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.c
 # Upgrade plugin manager
 :PlugUpgrade
 ```
-> See .vimrc file in root folder
+> See .vimrc file
 
 ## Vim Copy/Paste (Share SO)
 
@@ -255,7 +255,7 @@ sudo apt-get install -y git-core
 [See](http://git-scm.com/docs/git-mergetool)
 
 ```bash
-ln `pwd`/git/.gitconfig ~/.gitconfig
+ln -s `pwd`/git/.gitconfig ~/.gitconfig
 ```
 
 ## GIT Flow
