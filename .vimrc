@@ -3335,10 +3335,12 @@ augroup AutoCommands
     endfunction
 
     " include (string)
-    "   [t]railing spaces in end of line
-    "   [e]nd of file lines
-    "   [d]uplicate blank lines
-    "   [v]erbose
+    "    [t]railing spaces in end of line
+    "    [e]nd of file lines
+    "    [d]uplicate blank lines
+    " no-[b]reak spaces
+    "    [f]orce
+    "    [v]erbose
     function! s:cleanup(include) abort
         if &diff
             echohl WarningMsg
@@ -3349,6 +3351,11 @@ augroup AutoCommands
         endif
 
         let l:options = split(a:include, '\zs')
+
+        if (!&modifiable || !&modified) && index(l:options, 'f') < 0
+            return 0
+        endif
+
         let l:ccursor = getpos('.')
         let l:lsearch = getreg('/')
         let l:cleanup = []
@@ -3357,6 +3364,12 @@ augroup AutoCommands
             silent! %s/\s\+$//e
 
             silent call add(l:cleanup, 'trailing spaces')
+        endif
+
+        if index(l:options, 'b') >= 0
+            silent! %s/ / /ge
+
+            silent call add(l:cleanup, 'no break spaces')
         endif
 
         if index(l:options, 'e') >= 0
@@ -3390,11 +3403,14 @@ augroup AutoCommands
         if index(l:options, 'v') >= 0 && len(l:cleanup) > 0
             echo 'Cleaned-up: ' . join(l:cleanup, ', ')
         endif
+
+        return 0
     endfunction
 
-    command! -nargs=0 CR call <SID>cleanup('vr')
-    command! -nargs=0 CS call <SID>cleanup('vte')
-    command! -nargs=0 CL call <SID>cleanup('vted')
+    command! -nargs=0 CR call <SID>cleanup('vfr')
+    command! -nargs=0 CS call <SID>cleanup('vfte')
+    command! -nargs=0 CL call <SID>cleanup('vfted')
+    command! -nargs=0 CB call <SID>cleanup('vfb')
 
     " title (string)
     function! s:settitle(title) abort
