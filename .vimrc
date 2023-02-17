@@ -3427,9 +3427,6 @@ augroup AutoCommands
                 set background=light
             endif
 
-            highlight! CursorLine cterm=NONE
-            highlight! CursorLineNR cterm=NONE
-
             highlight! link VertSplit LineNr
             highlight! link SignColumn LineNr
             highlight! link EndOfBuffer LineNr
@@ -3444,7 +3441,6 @@ augroup AutoCommands
             highlight! link SignatureMarkerText LineNr
 
             highlight! link User1 ErrorMsg
-            highlight! link ExtraWhitespace Error
 
             let g:fzf_colors = {
                         \ 'fg':      ['fg', 'Normal'],
@@ -3502,7 +3498,7 @@ augroup AutoCommands
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd FocusLost,BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanup('te')
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanup('te')
 
     " One <C-x><C-f> to auto-complet files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories
