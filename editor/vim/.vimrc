@@ -1349,7 +1349,11 @@ endfunction
 
 function! s:go_line() abort
     try
-        let l:separator = match(getline('.'), '(') > 0 ? '(' : ':'
+        let l:separator = match(expand('<cWORD>'), ':') > 0 ? ':' : ''
+
+        if l:separator ==# ''
+            let l:separator = match(getline('.'), '(') > 0 ? '(' : ':'
+        endif
 
         if match(getline('.'), l:separator) < 0
             throw 'Nothing to do.'
@@ -2233,12 +2237,23 @@ function! s:go_file(ffile) abort
     let l:cdir = g:cwd
     let l:cext = expand('%:e')
     let l:ffile = a:ffile
+    let l:filter = ''
     " Used in:     Symfony      Laravel
-    let l:paths = ['templates', 'resources/views', 'config']
+    let l:paths = ['templates', 'resources/views', 'config', 'routes']
 
     try
-        if l:cext ==# 'php' && match(expand('<cWORD>'), 'config(') >= 0
-            let l:ffile = join([split(l:ffile, '\.')[0] . '.php'], '/')
+        if l:cext ==# 'php' && match(expand('<cWORD>'), 'route(') >= 0
+            let l:filter = l:ffile
+
+            if match(expand('<cWORD>'), "route('api") >= 0
+                let l:ffile = 'api.php'
+            else
+                let l:ffile = 'web.php'
+            endif
+        elseif l:cext ==# 'php' && match(expand('<cWORD>'), 'config(') >= 0
+            let l:parts = split(l:ffile, '\.')
+            let l:ffile = join([l:parts[0] . '.php'], '/')
+            let l:filter = l:parts[-1]
         elseif l:cext ==# 'php' && match(l:ffile, '\.twig$') <= 0
             let l:ffile = substitute(l:ffile, '\.', '/', 'g') . '.blade.php'
         endif
@@ -2248,6 +2263,15 @@ function! s:go_file(ffile) abort
 
             if filereadable(l:file)
                 silent execute 'edit ' . fnameescape(l:file)
+
+                if l:filter !=# ''
+                    let l:hlsearch = &hlsearch
+                    set nohlsearch
+                    silent execute "keepjumps normal! gg/'" . l:filter . "'\r"
+
+                    silent call histdel('/', -1)
+                    let &hlsearch = l:hlsearch
+                endif
 
                 return 0
             endif

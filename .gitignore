@@ -1,7 +1,7 @@
 .php_cs.cache
 .php-cs-fixer.cache
-docker-compose.override.yml
 docker/.env
+docker/docker-compose.override.yml
 docker/conf/alias.conf
 docker/conf/vhost.conf
 docker/conf/crontab
