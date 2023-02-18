@@ -135,9 +135,9 @@ endif
 " STARTUP TIME (plugins.time)
 "           Version                     BARE(ms)    PLUG-NC(ms) PLUG-C(ms)  DATE
 "   Vim9:   9.0.1-749 (vim9script)      5.524       126.238     234.192     2023-01-17
-"   Vim9:   9.0.1-749 (vimscript)       6.275       107.687     214.535     2023-02-17
-"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  28.620      114.018     120.020     2023-02-17
-"   Diff:                               -356.0%     -5.8%       +44.0%
+"   Vim9:   9.0.1-749 (vimscript)       6.275       105.983     205.478     2023-02-17
+"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  28.620      87.598      131.869     2023-02-17
+"   Diff:                               -356.0%     +17.3%      +35.8%
 " @see https://neovim.io/doc/user/vim_diff.html
 " @see https://www.murilopereira.com/the-values-of-emacs-the-neovim-revolution-and-the-vscode-gorilla/
 
@@ -160,9 +160,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         " Day/Night Mode
         " @see https://uxpickle.com/dark-or-light-mode-for-the-eyes/
         " @timezone https://24timezones.com/time-zone/est
-        let g:colorscheme = !g:istty
-                    \ ? 'miningbox'
-                    \ : 'default'
+        let g:colorscheme = !g:istty ? 'miningbox' : 'default'
 
         " Viminfofile setup
         let g:infofile = ''
@@ -944,7 +942,7 @@ nnoremap <silent> <expr> <Leader>z
             \ ? ":bdelete!<Enter>"
             \ : ":update
             \ <Bar> if buflisted(bufnr('#')) == 1 && bufname('#') !=# ''
-            \ <Bar>  edit #
+            \ <Bar>  silent edit #
             \ <Bar>  bdelete #
             \ <Bar> else
             \ <Bar>  bdelete
@@ -3599,6 +3597,15 @@ if g:isneovim
     nmap <silent> <nowait> <Esc>O2R :PomodoroStatus<Enter>
     " " <S-F5>
     " nmap <silent> <nowait> <F17> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
+    inoremap <silent> <expr> <S-Tab>
+                \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
+                \ pumvisible() ? "\<C-p>" :
+                \ "\<C-d>"
+
+    snoremap <silent> <expr> <S-Tab>
+                \ UltiSnips#CanJumpBackwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
+                \ pumvisible() ? "\<C-p>" :
+                \ "\<C-d>"
 endif
 
 try
