@@ -945,7 +945,7 @@ nnoremap <silent> <expr> <Leader>z
             \ <Bar>  silent edit #
             \ <Bar>  bdelete #
             \ <Bar> else
-            \ <Bar>  bdelete
+            \ <Bar>  bdelete %
             \ <Bar> endif<Enter>"
 
 " Close all except current buffer (saving changes)
@@ -1820,6 +1820,8 @@ let g:highlightedyank_highlight_duration = 250
 let g:fzf_buffers_jump = 1
 " Hidden preview if visible columns are lesser 70
 let g:fzf_preview_window = ['right,50%,<70(hidden)', 'Ctrl-/']
+" Extend in preview Ctrl+d and Ctrl+u
+let $FZF_DEFAULT_OPTS = '--bind "ctrl-d:preview-down,ctrl-u:preview-up"'
 
 " String in current file directory (by default: current cursor word)
 nnoremap <silent> <Leader>I :call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
