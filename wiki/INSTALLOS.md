@@ -345,7 +345,6 @@ bindkey -M viins '^A' beginning-of-line
 bindkey -M viins '^B' backward-word
 bindkey -M viins '^F' forward-word
 bindkey -M viins '^E' end-of-line
-bindkey -M viins 'jk' vi-cmd-mode
 
 # Command mode
 bindkey -M vicmd 'vv' edit-command-line
