@@ -1005,6 +1005,9 @@ nnoremap <silent> <Leader>gC :call <SID>go_url('https://www.color-hex.com/color/
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
+nnoremap <silent> <Leader>gS :let @+=system("date +'%Y-%m-%d %H:%M:%S' -ud @" . expand('<cword>'))
+            \ <Bar> echo 'Copied:   ' . @+<Enter>
+
 " Shortcuts for Date/Times in Insert Mode
 inoremap <silent> <F6> <C-r>='Y-m-d'<Enter>
 inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d')<Enter>
