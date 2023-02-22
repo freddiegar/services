@@ -1347,7 +1347,8 @@ endfunction
 
 function! s:go_line() abort
     try
-        let l:separator = match(expand('<cWORD>'), ':') > 0 ? ':' : ''
+        let l:word = expand('<cWORD>')
+        let l:separator = match(l:word, ':') > 0 && match(l:word, ':') + 1 < len(l:word) ? ':' : ''
 
         if l:separator ==# ''
             let l:separator = match(getline('.'), '(') > 0 ? '(' : ':'
@@ -1358,7 +1359,7 @@ function! s:go_line() abort
         endif
 
         let l:lbuffer = bufnr('%')
-        let l:parts = split(trim(expand('<cWORD>'), '"'), l:separator)
+        let l:parts = split(trim(l:word, '"'), l:separator)
         let l:file = strlen(l:parts[0]) > 0 ? l:parts[0] : ''
         let l:line = strlen(l:parts[1]) > 0 ? substitute(l:parts[1], '\D', '', 'g') : 1
 
