@@ -1626,7 +1626,6 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easily
 " Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
 
-Plug 'machakann/vim-highlightedyank'                            " See yank preview
 Plug 'markonm/traces.vim'                                       " See range, substitution and global preview
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
 Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
@@ -1656,6 +1655,8 @@ Plug 'wakatime/vim-wakatime'                                    " Zen mode ++++
 
 if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
+else
+    Plug 'machakann/vim-highlightedyank'                        " See yank preview
 endif
 
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
@@ -2771,6 +2772,9 @@ augroup AutoCommands
     " Hide signcolumn in Terminal Mode
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
+        " @ https://neovim.io/doc/user/lua.html#lua-highlight
+        autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=250}
+
         " Starts :terminal in Insert Mode (Same to Vim behaviour)
         " Enter: Close output view from vim-test (Same to Vim behaviour)
         autocmd TermOpen * if &buftype ==# 'terminal'
