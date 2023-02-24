@@ -550,10 +550,10 @@ function! AsyncStatuslineFlag() abort
 
     if get(g:, 'asyncrun_play', 0) ==# 1
         let g:asyncrun_play = 0
-        let l:command = 'aplay /usr/share/sounds/sound-icons/' . (g:isneovim ? 'xylofon.wav' : 'trumpet-12.wav')
+        let l:command = 'aplay /usr/share/sounds/sound-icons/trumpet-12.wav'
 
         if get(g:, 'asyncrun_status', '') ==# 'failure'
-            let l:command = 'aplay /usr/share/sounds/sound-icons/' . (g:isneovim ? 'klavichord-4.wav' : 'pipe.wav')
+            let l:command = 'aplay /usr/share/sounds/sound-icons/pipe.wav'
         endif
 
         " Don't work using jobs :(
@@ -696,6 +696,8 @@ xnoremap <silent> $ $h
 " 'x    Jump to the beginning of the line of mark 'x'
 " `x    Jump to the cursor position of mark 'x'
 nnoremap <silent> gl `.zzzv
+" Re-select last just paste
+nnoremap <silent> gV `[v`]
 
 " Emphasis in window, like <C-w>o, but don't close others
 nnoremap <silent> <C-w>O :silent wincmd _ <Bar> silent wincmd <Bar><Enter>
@@ -1801,7 +1803,7 @@ let g:limelight_paragraph_span = 2
 " @see https://github.com/tricktux/pomodoro.vim
 let g:pomodoro_time_work = 50
 let g:pomodoro_time_slack = 10
-let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/' . (g:isneovim ? 'canary-long.wav' : 'prompt.wav')
+let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav'
 
 nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
 nmap <silent> <S-F3> :PomodoroStatus<Enter>
