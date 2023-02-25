@@ -62,6 +62,10 @@ ls /sys/firmware/efi/efivars/
 
 Mount ISO image in USB
 
+!!!Disable Secure Boot in BIOS!!!
+
+[See](https://wiki.archlinux.org/title/USB_flash_installation_medium)
+
 ```bash
 # List block devices
 lsblk
@@ -72,12 +76,23 @@ lsblk
 # as sudo
 sudo su
 
+# unmount, MAKE SURE!
+udisksctl unmount -b /dev/sda
+
 # dd: disk and dump (or disk and destroyer :|)
 ## if: Input File
 ## of: Output File
 ## status: Verbose option
-dd if=/path/yo/file.iso of=/dev/sda status="progress"
-# dd if=/home/freddie/Downloads/ISO/archlinux-2022.02.01-x86_64.iso of=/dev/sda status="progress"
+dd bs=4M if=/path/to/file.iso of=/dev/sdb conv=fsync oflag=direct status=progress
+
+# or
+
+cp /path/to/file.iso /dev/sda
+cat /path/to/file.iso > /dev/sda
+nautilus -> right clic on iso file -> open with -> Disk Image Writer
+
+# Detach stick to extract
+udisksctl power-off -b /dev/sda
 ```
 > [YT](https://www.youtube.com/watch?v=4PBqpX0_UOc)
 
@@ -90,9 +105,9 @@ lsblk
 # Connect USB, and run again: lsblk
 lsblk
 
-sudo dd if=/dev/zero of=/dev/sdb bs=4k status="progress"
+sudo dd if=/dev/zero of=/dev/sda bs=4k status=progress
 
-sudo fdisk /dev/sdb
+sudo fdisk /dev/sda
 # After o -> Create DOS partition
 # After n -> Create new partition
 # After w -> Write changes
