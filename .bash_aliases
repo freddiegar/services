@@ -28,7 +28,7 @@ alias o="xargs -t -r -I {}"
 alias di="diff -rq --suppress-common-lines"
 alias ll="ls -lh"
 alias __="ssh-add"
-alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,*/storage/*,*/node_modules/*}'"
+alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}'"
 alias npkg="dpkg --list | wc --lines"
 
 alias vf="vifm"
