@@ -20,7 +20,8 @@ return static function (RectorConfig $configurator): void {
     $configurator->import(SetList::CODE_QUALITY);
     $configurator->import(SetList::CODING_STYLE);
     $configurator->import(SetList::DEAD_CODE);
-    $configurator->import(SetList::PHP_74);
+    // $configurator->import(SetList::PHP_74);
+    $configurator->import(SetList::PHP_81);
 
     $parameters = $configurator->parameters();
 
@@ -45,6 +46,7 @@ return static function (RectorConfig $configurator): void {
         \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
         \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
         \Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class,
+        \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class,
     ]);
 
     $services = $configurator->services();
