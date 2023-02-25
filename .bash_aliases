@@ -107,6 +107,8 @@ alias diclean="docker images | grep ' <none> ' | awk '{print \$3}' | xargs -r -I
 alias dcclean="docker ps -a | grep ' Exited (1) ' | awk '{print \$1}' | xargs -r -I {} docker rm  -f {} && echo 'Containers cleaned'"
 
 alias gs="git summary"
+alias gv="git summary | grep -F ' v' | grep -v -F '/ro-'"
+alias gV="git summary | grep -F ' ^' | grep -v -F '/ro-'"
 alias gi="git init"
 alias gt="git tag"
 alias gst="git status"
