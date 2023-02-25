@@ -2840,7 +2840,9 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <expr><buffer>L (v:count > 0 ? "<Esc>" : '') . v:count1 . 'f$'
 
     " PHP Testing
-    autocmd FileType php let g:test#php#phpunit#executable = '. ~/.bash_aliases && phpx ' . test#php#phpunit#executable()
+    autocmd FileType php let g:test#php#phpunit#executable = get(g:, 'test#php#phpunit#executable', '') !~? '.bash_aliases'
+                \ ? '. ~/.bash_aliases && phpx ' . test#php#phpunit#executable()
+                \ : get(g:, 'test#php#phpunit#executable')
     autocmd FileType php let g:test#php#phpunit#options = {
         \ 'all': '--no-coverage --stop-on-failure',
     \}
@@ -2850,6 +2852,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>tS :cclose <Bar> execute ":TestSuite --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
 
     " PHP Linter
+    autocmd FileType php let g:ale_php_php_executable = 'phpx'
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
     autocmd FileType php let g:ale_php_phpmd_ruleset = 'unusedcode'
 
