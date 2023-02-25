@@ -1628,6 +1628,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easily
 " Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
 
+Plug 'wellle/context.vim'                                       " Show context code
 Plug 'markonm/traces.vim'                                       " See range, substitution and global preview
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
 Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
@@ -1807,6 +1808,31 @@ let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wa
 
 nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
 nmap <silent> <S-F3> :PomodoroStatus<Enter>
+
+" Context
+" @see https://github.com/wellle/context.vim
+let g:context_enabled = 0
+let g:context_max_height = 10
+let g:context_add_mappings = 0
+
+" file (string): void
+function! s:show_context(file) abort
+    if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive'], &filetype) >= 0
+        if exists(':ContextActivate')
+            silent execute 'ContextDisable'
+        endif
+
+        return
+    endif
+
+    if a:file ==# '' || index(['php', 'c', 'vim', 'yaml'], &filetype) < 0
+        silent execute 'ContextDisable'
+
+        return
+    endif
+
+    silent execute 'ContextEnable'
+endfunction
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
@@ -3490,7 +3516,7 @@ augroup AutoCommands
         autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | call <SID>statusline('x') | filetype detect
     endif
 
-    autocmd BufEnter * call <SID>poststart()
+    autocmd BufEnter * call <SID>poststart() | call <SID>show_context(expand('<afile>'))
     " BufEnter:     After changes between buffers (why nvim why!)
     " BufFilePost:  After changes name's current file (why nvim why!)
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
