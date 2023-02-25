@@ -55,14 +55,15 @@ alias xpr='echo "\n" | sudo add-apt-repository --remove'
 
 alias c="phpx `which composer`"
 alias c1="phpx `which composer_v1`"
-alias ci="phpx `which composer` install"
-alias cu="phpx `which composer` update"
+alias ci="phpx `which composer` -vvv install"
+alias cu="phpx `which composer` -vvv update"
 alias ct="phpx `which composer` test"
-alias cda="phpx `which composer` dump-autoload"
-alias cii="phpx `which composer` install --ignore-platform-reqs"
-alias cui="phpx `which composer` update --ignore-platform-reqs"
-alias cip="phpx `which composer` install --no-dev"
-alias cin="phpx `which composer` install --no-cache"
+alias cda="phpx `which composer` -vvv dump-autoload"
+alias cii="phpx `which composer` -vvv install --ignore-platform-reqs"
+alias cui="phpx `which composer` -vvv update --ignore-platform-reqs"
+alias cip="phpx `which composer` -vvv install --no-dev"
+alias cin="phpx `which composer` -vvv install --no-cache"
+alias cipn="phpx `which composer` -vvv install --no-dev --no-cache"
 
 alias pps="phpx bin/console"
 alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                      && pps cache:clear"
@@ -124,6 +125,7 @@ alias gcmn="git commit --no-verify -S"
 alias gcmsg="git commit -S -m"
 alias gcmsgn="git commit --no-verify -S -m"
 alias gcmsga="git commit --amend -S -m"
+alias gcmsgan="git commit --no-verify --amend -S -m"
 alias gcmsgo="git commit --no-edit -C ORIG_HEAD"
 alias gl="git pull"
 alias glo="git pull origin"
@@ -179,3 +181,11 @@ alias cdd="cd /home/$USER/Downloads"
 
 alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
 alias yy="xclip -selection clipboard"
+
+# Last command BUT as sudo, need simple quotes!
+# @see https://unix.stackexchange.com/a/158480
+# alias pls='sudo $(fc -ln -1)'
+
+# Expand alias after sudo
+# @see https://stackoverflow.com/a/37210013
+# alias sudo="sudo "
