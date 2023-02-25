@@ -3263,8 +3263,9 @@ augroup AutoCommands
         silent execute (g:isneovim ? 'rshada ' : 'rviminfo ') . g:infofile
     endfunction
 
-    function! s:iscommit() abort
-        return argc() > 0 && index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
+    function! s:mustbeignore() abort
+        return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
+                    \ || argv()[0] =~ '.bash_aliases\|.vimrc\|.vimrc.local\|.zsh*')
     endfunction
 
     function! s:sessionload() abort
@@ -3272,7 +3273,7 @@ augroup AutoCommands
         let l:envfile = <SID>envfile()
         let l:session = split(g:session_file, '/')[-1]
 
-        if <SID>iscommit()
+        if <SID>mustbeignore()
             echomsg 'Any session was ignored.'
 
             return
@@ -3322,7 +3323,7 @@ augroup AutoCommands
     endfunction
 
     function! s:sessionsave() abort
-        if <SID>iscommit()
+        if <SID>mustbeignore()
             return
         endif
 
