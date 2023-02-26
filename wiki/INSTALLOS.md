@@ -252,8 +252,8 @@ ln -s `pwd`/editor/phpstorm/.ideavimrc ~/.ideavimrc
 # GIT
 
 ```bash
-sudo apt-get install -y git-core
-## sudo apt-get remove git-core && sudo apt-get autoremove
+sudo apt-get install -y git-core git-lfs
+## sudo apt-get remove git-core git-lfs && sudo apt-get autoremove
 ```
 > https://www.howtogeek.com/devops/how-to-completely-reset-a-git-repository-including-untracked-files/
 
@@ -280,6 +280,21 @@ sudo apt-get install -y gawk
 sudo curl -L https://raw.githubusercontent.com/albenik/git-summary/master/git-summary -o /usr/local/bin/git-summary
 sudo chmod +x /usr/local/bin/git-summary
 ## sudo apt-get remove gawk && sudo rm /usr/local/bin/git-summary && sudo apt-get autoremove
+```
+
+## GIT Large File Storage - LFD
+
+[See](https://git-lfs.com/)
+
+```bash
+git lfs install
+
+## On working repository
+git lfs track "*.sql.gz"
+git add .gitattributes
+
+## Undo LFS behaviour
+git lfs migrate export --include="*.sql.gz" --everything
 ```
 
 ## Wallpapers in i3
@@ -1180,6 +1195,8 @@ curl --version | grep -e "^curl " | awk '{print $2}'
 # 7.58.0
 git --version | awk '{print $3}'
 # 2.17.1
+git lfs version
+# git-lfs/2.3.4 (GitHub; linux amd64; go 1.8.3)
 docker --version | awk '{print $3}'
 # 20.10.23
 docker-compose --version | awk '{print $4}'
