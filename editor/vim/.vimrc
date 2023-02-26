@@ -1116,7 +1116,7 @@ function! s:find_filter(type) abort
 
     if a:type ==# 'word' || a:type ==# 'file'
         let l:filter = expand('<cword>')
-    elseif a:type ==# 'v' || a:type ==# 'V'
+    elseif a:type =~? '^v'
         silent execute "normal! `<v`>\"zy"
 
         let l:filter = trim(@z)
@@ -1126,16 +1126,16 @@ function! s:find_filter(type) abort
 
     if a:type ==# 'file'
         silent call fzf#vim#files(g:cwd, fzf#vim#with_preview({'options': ['--query', l:filter]}))
-    elseif a:type ==# 'regex'
-        silent call <SID>rgfzf(l:filter, 0, '', 1)
-    elseif a:type ==# 'aregex'
-        silent call <SID>rgfzf(l:filter, 0, '', 1, 1)
-    elseif a:type ==# 'find'
-        silent call <SID>rgfzf(l:filter, 0, '', 0)
-    elseif a:type ==# 'afind'
-        silent call <SID>rgfzf(l:filter, 0, '', 0, 1)
+    elseif a:type =~ 'afind$'
+        silent call <SID>rgfzf(l:filter, 0, g:cwd, 0, 1)
+    elseif a:type =~ 'aregex$'
+        silent call <SID>rgfzf(l:filter, 0, g:cwd, 1, 1)
+    elseif a:type =~ 'find'
+        silent call <SID>rgfzf(l:filter, 0, g:cwd, 0)
+    elseif a:type =~ 'regex'
+        silent call <SID>rgfzf(l:filter, 0, g:cwd, 1)
     else
-        silent call <SID>rgfzf(l:filter, 0)
+        silent call <SID>rgfzf(l:filter, 0, g:cwd)
     endif
 endfunction
 
@@ -1158,7 +1158,7 @@ function! s:append_char(type) abort
             let l:bsearch = getreg('/')
             let l:changerow = -(1 + &scrolloff)
 
-            silent execute "normal! ?^    {\rj"
+            silent execute "normal! ?^    .*{\rj"
 
             if match(getline('.'), '->mark') < 0
                 silent execute "normal! O$this->markTestIncomplete();\e"
@@ -1171,7 +1171,7 @@ function! s:append_char(type) abort
             let l:bsearch = getreg('/')
             let l:changerow = -(1 + &scrolloff)
 
-            silent execute "normal! ?^    {\rj"
+            silent execute "normal! ?^    .*{\rj"
 
             if match(getline('.'), '->mark') > 0
                 silent execute "normal! \"_dd"
@@ -1855,28 +1855,26 @@ let $FZF_DEFAULT_OPTS = '--bind "ctrl-d:preview-down,ctrl-u:preview-up"'
 " String in current work directory
 nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
 xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
-
-" String in current file directory (by default: current cursor word)
-nnoremap <silent> <Leader>I :call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
-xnoremap <silent> <Leader>I :<C-u>call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
-
-" String in current work directory (by default: current cursor word)
 nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
 xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
 
-" String Regex in current work directory
-nnoremap <silent> <Leader>G :call <SID>find_filter('regex')<Enter>
-xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter('regex')<Enter>
+" String [I]nside current file directory
+nnoremap <silent> <Leader>I :call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
+xnoremap <silent> <Leader>I :<C-u>call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
 
-" String in current work directory (include ignore files)
+" String [A]ll files in current work directory
 nnoremap <silent> <Leader>A :call <SID>find_filter('afind')<Enter>
-xnoremap <silent> <Leader>A :<C-u>call <SID>find_filter('afind')<Enter>
+xnoremap <silent> <Leader>A :<C-u>call <SID>find_filter(visualmode() . 'afind')<Enter>
 
-" String Regex in current work directory (include ignore files)
-nnoremap <silent> <Leader>V :call <SID>find_filter('aregex')<Enter>
-xnoremap <silent> <Leader>V :<C-u>call <SID>find_filter('aregex')<Enter>
+" String re[G]ex in current work directory
+nnoremap <silent> <Leader>G :call <SID>find_filter('regex')<Enter>
+xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter(visualmode() . 'regex')<Enter>
 
-" Files in current file directory (show all files in specific directory)
+" String r[E]gex in all files of current work directory
+nnoremap <silent> <Leader>E :call <SID>find_filter('aregex')<Enter>
+xnoremap <silent> <Leader>E :<C-u>call <SID>find_filter(visualmode() . 'aregex')<Enter>
+
+" Files [i]nside current file directory (show all files in specific directory)
 nnoremap <silent> <Leader>i :call <SID>rgafzf(expand('%:p:h'))<Enter>
 xnoremap <silent> <Leader>i :<C-u>call <SID>rgafzf(expand('%:p:h'))<Enter>
 
@@ -1888,9 +1886,9 @@ xnoremap <silent> <Leader>p :<C-u>Files<Enter>
 nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
 xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
 
-" All files in current work directory (include ignore files)
-nnoremap <silent> <Leader>v :call <SID>rgafzf(g:cwd)<Enter>
-xnoremap <silent> <Leader>v :<C-u>call <SID>rgafzf(g:cwd)<Enter>
+" Files r[e]gex in current work directory
+nnoremap <silent> <Leader>e :call <SID>rgafzf(g:cwd)<Enter>
+xnoremap <silent> <Leader>e :<C-u>call <SID>rgafzf(g:cwd)<Enter>
 
 " Marks in current project directory
 nnoremap <silent> <Leader>M :Marks<Enter>
@@ -3133,12 +3131,11 @@ augroup AutoCommands
     " @see :help :function
     " @see :help function-argument
     " @see http://www.adp-gmbh.ch/vim/user_commands.html
-    " query (string), fullscreen (0/1), [dir (string), fixed (0/1), ignore (0/1)] : void
-    function! s:rgfzf(query, fullscreen, ...) abort
-        let l:dir = a:0 > 0 && isdirectory(a:1) ? a:1 : ''
-        let l:filter_type = a:0 > 1 && a:2 == 1 ? '--no-fixed-strings' : '--fixed-strings'
-        let l:filter_ignore = a:0 > 2 && a:3 == 1 ? ' --no-ignore' : ' --ignore'
-        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . " -- %s " . l:dir . ' || true'
+    " query (string), fullscreen (0/1), directory (string), [fixed (0/1), ignore (0/1)] : void
+    function! s:rgfzf(query, fullscreen, directory, ...) abort
+        let l:filter_type = a:0 > 0 && a:1 == 1 ? '--no-fixed-strings' : '--fixed-strings'
+        let l:filter_ignore = a:0 > 1 && a:2 == 1 ? ' --no-ignore' : ' --ignore'
+        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . " -- %s " . a:directory . ' || true'
         let l:initial_command = printf(l:finder_command, shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
         let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
