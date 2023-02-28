@@ -1109,8 +1109,8 @@ function! s:delete_method() abort
     silent! call repeat#set("\<Plug>DeleteMethodRepeatable")
 endfunction
 
-" type (string): void
-function! s:find_filter(type) abort
+" type (string), path (string): void
+function! s:find_filter(type, path) abort
     let l:saved_unnamed_register = @@
     let l:filter = ''
 
@@ -1124,18 +1124,20 @@ function! s:find_filter(type) abort
 
     let @@ = l:saved_unnamed_register
 
-    if a:type ==# 'file'
-        silent call fzf#vim#files(g:cwd, fzf#vim#with_preview({'options': ['--query', l:filter]}))
+    if a:type =~? 'v\?file'
+        silent call fzf#vim#files(a:path, fzf#vim#with_preview({'options': ['--query', l:filter]}))
     elseif a:type =~ 'afind$'
-        silent call <SID>rgfzf(l:filter, 0, g:cwd, 0, 1)
+        silent call <SID>rgfzf('AFind', l:filter, 0, a:path, 0, 1)
     elseif a:type =~ 'aregex$'
-        silent call <SID>rgfzf(l:filter, 0, g:cwd, 1, 1)
+        silent call <SID>rgfzf('ARegExp', l:filter, 0, a:path, 1, 1)
+    elseif a:type =~ 'ifind'
+        silent call <SID>rgfzf('IFind', l:filter, 0, a:path, 0)
     elseif a:type =~ 'find'
-        silent call <SID>rgfzf(l:filter, 0, g:cwd, 0)
+        silent call <SID>rgfzf('Find', l:filter, 0, a:path, 0)
     elseif a:type =~ 'regex'
-        silent call <SID>rgfzf(l:filter, 0, g:cwd, 1)
+        silent call <SID>rgfzf('RegExp', l:filter, 0, a:path, 1)
     else
-        silent call <SID>rgfzf(l:filter, 0, g:cwd)
+        silent call <SID>rgfzf('Search', l:filter, 0, a:path)
     endif
 endfunction
 
@@ -1853,26 +1855,27 @@ let g:fzf_preview_window = ['right,50%,<70(hidden)', 'Ctrl-/']
 let $FZF_DEFAULT_OPTS = '--bind "ctrl-d:preview-down,ctrl-u:preview-up"'
 
 " String in current work directory
-nnoremap <silent> <Leader>f :call <SID>find_filter('find')<Enter>
-xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode())<Enter>
-nnoremap <silent> <Leader>F :call <SID>find_filter('word')<Enter>
-xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file')<Enter>
+nnoremap <silent> <Leader>f :call <SID>find_filter('find', g:cwd)<Enter>
+xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode() . 'find', g:cwd)<Enter>
+
+nnoremap <silent> <Leader>F :call <SID>find_filter('word', g:cwd)<Enter>
+xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file', g:cwd)<Enter>
 
 " String [I]nside current file directory
-nnoremap <silent> <Leader>I :call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
-xnoremap <silent> <Leader>I :<C-u>call <SID>rgfzf(expand('<cword>'), 0, expand('%:h'))<Enter>
+nnoremap <silent> <Leader>I :call <SID>find_filter('ifind', expand('%:h'))<Enter>
+xnoremap <silent> <Leader>I :<C-u>call <SID>find_filter(visualmode() . 'ifind', expand('%:h'))<Enter>
 
 " String [A]ll files in current work directory
-nnoremap <silent> <Leader>A :call <SID>find_filter('afind')<Enter>
-xnoremap <silent> <Leader>A :<C-u>call <SID>find_filter(visualmode() . 'afind')<Enter>
+nnoremap <silent> <Leader>A :call <SID>find_filter('afind', g:cwd)<Enter>
+xnoremap <silent> <Leader>A :<C-u>call <SID>find_filter(visualmode() . 'afind', g:cwd)<Enter>
 
 " String re[G]ex in current work directory
-nnoremap <silent> <Leader>G :call <SID>find_filter('regex')<Enter>
-xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter(visualmode() . 'regex')<Enter>
+nnoremap <silent> <Leader>G :call <SID>find_filter('regex', g:cwd)<Enter>
+xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter(visualmode() . 'regex', g:cwd)<Enter>
 
 " String r[E]gex in all files of current work directory
-nnoremap <silent> <Leader>E :call <SID>find_filter('aregex')<Enter>
-xnoremap <silent> <Leader>E :<C-u>call <SID>find_filter(visualmode() . 'aregex')<Enter>
+nnoremap <silent> <Leader>E :call <SID>find_filter('aregex', g:cwd)<Enter>
+xnoremap <silent> <Leader>E :<C-u>call <SID>find_filter(visualmode() . 'aregex', g:cwd)<Enter>
 
 " Files [i]nside current file directory (show all files in specific directory)
 nnoremap <silent> <Leader>i :call <SID>rgafzf(expand('%:p:h'))<Enter>
@@ -3131,21 +3134,24 @@ augroup AutoCommands
     " @see :help :function
     " @see :help function-argument
     " @see http://www.adp-gmbh.ch/vim/user_commands.html
-    " query (string), fullscreen (0/1), directory (string), [fixed (0/1), ignore (0/1)] : void
-    function! s:rgfzf(query, fullscreen, directory, ...) abort
+    " prompt (string), query (string), fullscreen (0/1), directory (string), [fixed (0/1), ignore (0/1)] : void
+    function! s:rgfzf(prompt, query, fullscreen, directory, ...) abort
+        let l:prompt = a:prompt . '> '
+        let l:directory = a:directory ==# g:cwd ? '' : a:directory
         let l:filter_type = a:0 > 0 && a:1 == 1 ? '--no-fixed-strings' : '--fixed-strings'
         let l:filter_ignore = a:0 > 1 && a:2 == 1 ? ' --no-ignore' : ' --ignore'
-        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . " -- %s " . a:directory . ' || true'
+        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
         let l:initial_command = printf(l:finder_command, shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
-        let l:spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
+        let l:spec = {'options': ['--phony', '--prompt', l:prompt, '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
 
         silent call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
     endfunction
 
     " path (string): void
+    " NOTE: Don't use rga alias, is stricter on folder with *.log
     function! s:rgafzf(path) abort
-        let $FZF_DEFAULT_COMMAND = 'rga --files'
+        let $FZF_DEFAULT_COMMAND = 'rg --no-ignore --hidden --files'
 
         " Don't add silent
         execute 'Files ' . a:path
