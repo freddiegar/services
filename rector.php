@@ -33,6 +33,7 @@ return static function (RectorConfig $configurator): void {
         \Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector::class,
         \Rector\CodeQuality\Rector\If_\ExplicitBoolCompareRector::class,
         \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
+        \Rector\CodeQuality\Rector\Isset_\IssetOnPropertyObjectToPropertyExistsRector::class, // @see https://github.com/rectorphp/rector/issues/6642
         \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector::class,
         \Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector::class,
         \Rector\CodingStyle\Rector\ClassMethod\RemoveDoubleUnderscoreInMethodNameRector::class,
