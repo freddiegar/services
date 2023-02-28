@@ -267,3 +267,13 @@ openssl x509 -in filename.pem | sed -e '1d;$d' > body.txt
 # Get private key
 openssl pkey -in filename.pem -out key.txt
 ```
+
+Show Video Driver
+
+```bash
+sudo lshw -c video
+
+# or
+
+lspci -nn | grep -E 'VGA|Display'
+```
