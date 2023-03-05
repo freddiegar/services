@@ -9,10 +9,14 @@
  */
 \set_time_limit(120); // 2 minutes
 
-if (!empty($_GET['f']) && function_exists($_GET['f']) && in_array($_GET['f'], ['test_concat_detail'], true)) {
-    call_user_func_array($_GET['f'], []);
+try {
+    if (!empty($_GET['f']) && \function_exists($_GET['f']) && \in_array($_GET['f'], ['test_concat_detail', 'test_array_detail'], true)) {
+        \call_user_func_array($_GET['f'], []);
 
-    die;
+        die;
+    }
+} catch (\Exception $e) {
+    die(\sprintf('%s::%s:%s => %s', \PHP_VERSION, $e->getFile(), $e->getLine(), $e->getMessage()));
 }
 
 $options = [];
@@ -136,20 +140,21 @@ print '<style>
     </head>
     <body>';
 
-$log = getcwd() . DIRECTORY_SEPARATOR . 'benchmark.log';
+$log = \getcwd() . \DIRECTORY_SEPARATOR . 'benchmark.log';
 
 if (!\file_exists($log) || \file_get_contents($log) === '') {
-    \file_put_contents($log, "V\tM\tS\tC\tL\tI\tCT\tMT\tT\n");
+    \file_put_contents($log, "V\tM\tS\tC\tL\tI\tA\tCT\tMT\tT\n");
 }
 
 \file_put_contents($log, \sprintf(
-    "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+    "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
     \substr($benchmarkResult['sysinfo']['php_version'], 0, 6),
     $benchmarkResult['benchmark']['math'],
     $benchmarkResult['benchmark']['string'],
     $benchmarkResult['benchmark']['concat'],
     $benchmarkResult['benchmark']['loops'],
     $benchmarkResult['benchmark']['ifelse'],
+    $benchmarkResult['benchmark']['array'],
     $benchmarkResult['benchmark']['calculation_total'],
     $benchmarkResult['benchmark']['mysql_total'] ?? 0,
     $benchmarkResult['benchmark']['total']
@@ -181,6 +186,7 @@ function test_benchmark($settings)
     test_concat($result);
     test_loops($result);
     test_ifelse($result);
+    test_array($result);
 
     $result['benchmark']['calculation_total'] = timer_diff($timeStart);
 
@@ -226,27 +232,27 @@ function test_string(&$result, $count = 99999): void
 
 function test_concat_echo_single(): void
 {
-    echo '$name, What is your current age in $year?';
+    print '$name, What is your current age in $year?';
 }
 
 function test_concat_echo_quotes(string $name, int $year): void
 {
-    echo "$name, What is your current age in $year?";
+    print "$name, What is your current age in $year?";
 }
 
 function test_concat_sprintf(string $name, int $year): void
 {
-    echo sprintf("%s,What is your current age in %s?", $name, $year);
+    print \sprintf('%s,What is your current age in %s?', $name, $year);
 }
 
 function test_concat_sprintf_int(string $name, int $year): void
 {
-    echo sprintf("%s,What is your current age in %d?", $name, $year);
+    print \sprintf('%s,What is your current age in %d?', $name, $year);
 }
 
 function test_concat_printf(string $name, int $year): void
 {
-    printf('%s,What is your current age in %d?', $name, $year);
+    \printf('%s,What is your current age in %d?', $name, $year);
 }
 
 function test_concat(&$result, $count = 99999): void
@@ -277,10 +283,11 @@ function test_concat_detail(): void
     $name = 'Jon';
     $year = 2023;
     $result = [];
-    $count = 99999;
+    $count = 999999;
 
     foreach ($stringFunctions as $function) {
         $timeStart = \microtime(true);
+
         for ($i = 0; $i < $count; $i++) {
             \ob_start();
             \call_user_func_array($function, [$name, $year]);
@@ -291,7 +298,7 @@ function test_concat_detail(): void
         $result[$function] = timer_diff($timeStart);
     }
 
-    var_dump($result);
+    test_resume($result, $count);
 }
 
 function test_loops(&$result, $count = 999999): void
@@ -324,6 +331,83 @@ function test_ifelse(&$result, $count = 999999): void
     }
 
     $result['benchmark']['ifelse'] = timer_diff($timeStart);
+}
+
+function test_array_push($count = 999999): void
+{
+    $array = [];
+
+    for ($i = 0; $i < $count; $i++) {
+        \array_push($array, $i);
+    }
+
+    unset($array);
+}
+
+function test_array_directly($count = 999999): void
+{
+    $array = [];
+
+    for ($i = 0; $i < $count; $i++) {
+        $array[] = $i;
+    }
+
+    unset($array);
+}
+
+function test_array(&$result, $count = 999999): void
+{
+    $timeStart = \microtime(true);
+    $functions = ['test_array_directly', 'test_array_push'];
+
+    foreach ($functions as $function) {
+        \call_user_func_array($function, [$count]);
+    }
+
+    $result['benchmark']['array'] = timer_diff($timeStart);
+}
+
+function test_array_detail(): void
+{
+    $count = 100;
+    $functions = ['test_array_push', 'test_array_directly'];
+
+    foreach ($functions as $function) {
+        $timeStart = \microtime(true);
+
+        \call_user_func_array($function, [$count]);
+
+        $result[$function] = timer_diff($timeStart);
+    }
+
+    test_resume($result, $count);
+}
+
+function test_resume(array $result, int $count): void
+{
+    \asort($result, \SORT_NUMERIC);
+
+    $slower = \end($result);
+    $results = \count($result);
+    $counter = 1;
+
+    foreach ($result as $name => $time) {
+        $isSlower = $counter === $results;
+
+        $resume = [
+            'name' => \str_replace('test_', '', $name),
+            'time' => $time,
+            'type' => $isSlower ? 'slower' : 'faster',
+            'sign' => $isSlower ? '' : '-',
+            '%' => $isSlower ? 100 : (100 - (($time * 100) / $slower)),
+        ];
+
+        print \sprintf('%s is %s, it took %f seconds (%s%01.2f%%)', $resume['name'], $resume['type'], $resume['time'], $resume['sign'], $resume['%']) . \PHP_EOL;
+
+        ++$counter;
+    }
+
+    die(\sprintf('Run %s with %d iterations on %s ', \PHP_VERSION, $count, \date('Y-m-d H:i:s')));
 }
 
 function test_mysql(&$result, $settings)
@@ -394,6 +478,7 @@ function print_benchmark_result($data, $showServerName = true)
     $result .= '<tr><td>Concat</td><td>' . h($data['benchmark']['concat']) . '</td></tr>';
     $result .= '<tr><td>Loops</td><td>' . h($data['benchmark']['loops']) . '</td></tr>';
     $result .= '<tr><td>If Else</td><td>' . h($data['benchmark']['ifelse']) . '</td></tr>';
+    $result .= '<tr><td>Array</td><td>' . h($data['benchmark']['array']) . '</td></tr>';
     $result .= '<tr class="even"><td>Calculation Total</td><td>' . h($data['benchmark']['calculation_total']) . '</td></tr>';
     $result .= '</tbody>';
 
