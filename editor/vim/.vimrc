@@ -2438,7 +2438,7 @@ function! s:git_alias() abort
     return l:aliases
 endfunction
 
-nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<Enter>
+nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
 
 " Resolve conflicts
 " @see https://vim.fandom.com/wiki/A_better_Vimdiff_Git_mergetool
@@ -3040,7 +3040,7 @@ augroup AutoCommands
     endfunction
 
     " PHP Fixer
-    autocmd FileType php nnoremap <silent> <buffer><F1> :call <SID>phpfixer()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><F1> :call <SID>phpfixer() <Bar> call <SID>statusline('f')<Enter>
 
     function! s:phpfixer() abort
         if bufname('%') ==# ''
@@ -3104,7 +3104,7 @@ augroup AutoCommands
 
     autocmd FileType vim-plug nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
-    autocmd FileType json nnoremap <silent> <buffer><F1> :call <SID>jsonfixer()<Enter>
+    autocmd FileType json nnoremap <silent> <buffer><F1> :call <SID>jsonfixer() <Bar> call <SID>statusline('f')<Enter>
     autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
     autocmd FileType json nnoremap <silent> <buffer><Leader>gi :echo 'Version:  ' . <SID>composer('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
