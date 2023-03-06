@@ -691,7 +691,7 @@ xnoremap <silent> Q :normal! @@<Enter>gv
 " Don't work as expected. Works append chars
 xnoremap <silent> . :normal! .<Enter>gv
 nnoremap <silent> Y y$
-xnoremap <silent> Y y
+xnoremap <silent> Y $y
 xnoremap <silent> $ $h
 " 'x    Jump to the beginning of the line of mark 'x'
 " `x    Jump to the cursor position of mark 'x'
@@ -739,8 +739,9 @@ nnoremap <silent> <C-d> <C-d>zzzv
 nnoremap <silent> <C-u> <C-u>zzzv
 
 " Works as expected in Visual|Select Mode
-xnoremap <silent> p "_dp
-xnoremap <silent> P "_dP
+" @thanks put-Visual-mode
+" xnoremap <silent> p "_dp
+" xnoremap <silent> P "_dP
 xnoremap <silent> * "zy/\V<C-r>z<Enter>
 xnoremap <silent> # "zy?\V<C-r>z<Enter>
 
@@ -1514,12 +1515,16 @@ cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.e
 cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')<Enter>
 cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<Enter>
 
-" Use them from dir project!
+" Use them inside dir project!
 cnoremap <C-x><C-y> <C-u>='!cp -p '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
 cnoremap <C-x><C-m> <C-u>='!mv -i '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
 cnoremap <C-x><C-r> <C-u>keepalt saveas =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter> <Bar> ='!rm ' . expand('%')<Enter>
 cnoremap <C-x><C-i> <C-u>='!ln '<Enter>=expand('%:p')<Enter> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<Enter>
 cnoremap <C-x><C-s> <C-u>='!ln -s '<Enter>=expand('%:p')<Enter> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<Enter>
+
+" Get and Upload files
+cnoremap <C-x><C-g> <C-u>='!curl -L '<Enter>=getreg('"')<Enter>=' > '<Enter>
+cnoremap <C-x><C-u> <C-u>='!curl --upload-file '<Enter>=expand('%:p')<Enter> https://free.keep.sh
 
 " incr (int)
 function! s:cycling_buffers(incr) abort
@@ -1809,7 +1814,7 @@ nmap <silent> <S-F3> :PomodoroStatus<Enter>
 
 " Context
 " @see https://github.com/wellle/context.vim
-let g:context_enabled = 0
+let g:context_enabled = get(g:, 'context_enabled', 0)
 let g:context_max_height = 10
 let g:context_add_mappings = 0
 
@@ -2443,7 +2448,7 @@ nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%')<En
 "   =   -> [=]toggle [>]show|[<]hide inline changes
 "   -   -> [-]toggle [u]n|[s]tage file
 "   U   -> [U]nstage everything
-"   X   -> Di[X]card change
+"   X   -> Di[X]card change (checkout or reset)
 "   I   -> [I]include [P]atch from file
 "   (   -> Preview file
 "   )   -> Next file
@@ -2903,8 +2908,8 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>tS :cclose <Bar> execute ":TestSuite --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
 
     " PHP Linter
-    autocmd FileType php let g:ale_php_php_executable = 'phpx'
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
+    autocmd FileType php let g:ale_php_php_executable = 'phpx'
     autocmd FileType php let g:ale_php_phpmd_ruleset = 'unusedcode'
 
     " PHP Refactor
