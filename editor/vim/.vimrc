@@ -3325,6 +3325,7 @@ augroup AutoCommands
     function! s:mustbeignore() abort
         return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
                     \ || argv()[0] =~ '.bash_aliases\|.vimrc\|.vimrc.local\|.zsh*')
+                    \ || g:working[1][0 : 2] =~? '_\|ro-'
     endfunction
 
     function! s:sessionload() abort
