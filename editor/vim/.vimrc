@@ -2439,6 +2439,7 @@ function! s:git_alias() abort
 endfunction
 
 nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
+nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo 'Assume h: ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
 
 " Resolve conflicts
 " @see https://vim.fandom.com/wiki/A_better_Vimdiff_Git_mergetool

@@ -4,6 +4,7 @@
 	signingkey = B6DA77D432ADED0F
 [core]
 	editor = vim
+	excludesFile = ~/.gitignore
 [commit]
 	gpgsign = true
 [mergetool]

@@ -120,6 +120,7 @@ alias glso="git ls-files --others"
 alias glsf="git ls-files --full-name"
 alias glsu="git ls-files --others --exclude-standard"
 alias glss="git diff --name-only --cached | xargs -r -l echo"
+alias glsa="git ls-files -v | rg '^h ' | awk '{print \$2}'"
 
 alias gd="git diff -w"
 alias gdc="git diff -w --cached"
