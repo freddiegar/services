@@ -2780,6 +2780,7 @@ augroup AutoCommands
 
     " Customization
     autocmd BufRead,BufNewFile .env.* setfiletype sh
+    autocmd BufRead,BufNewFile phplint setfiletype sh
     autocmd BufRead,BufNewFile *.tphp setfiletype php
     autocmd BufRead,BufNewFile .php_cs* setfiletype php
     autocmd BufRead,BufNewFile *.conf setfiletype apache

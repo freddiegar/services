@@ -263,6 +263,7 @@ sudo apt-get install -y git-core git-lfs
 
 ```bash
 ln -s `pwd`/git/.gitconfig ~/.gitconfig
+ln -s `pwd`/git/.gitignore ~/.gitignore
 ```
 
 ## GIT Flow
@@ -439,7 +440,7 @@ sudo chmod +x /usr/local/bin/php-cs-fixer
 ## sudo rm /usr/local/bin/php-cs-fixer
 ```
 
-# Mess Detector for PHP (and Vim)
+## Mess Detector for PHP (and Vim)
 
 ```bash
 cd ~
@@ -450,6 +451,12 @@ sudo chmod +x /usr/local/bin/phpmd
 ## phpmd src ansi cleancode,design,naming,unusedcode
 ## phpmd src ansi cleancode,codesize,controversial,design,naming,unusedcode
 ## sudo rm /usr/local/bin/phpmd
+```
+
+## PHPLint recursive
+
+```bash
+sudo ln -s `pwd`/php/phplint /usr/local/bin/phplint
 ```
 
 # Docker (Container)
