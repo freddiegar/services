@@ -1161,7 +1161,7 @@ function! s:append_char(type) abort
             let l:bsearch = getreg('/')
             let l:changerow = -(1 + &scrolloff)
 
-            silent execute "normal! ?^    .*{\rj"
+            silent execute "normal! ?^    .*{$\rj"
 
             if match(getline('.'), '->mark') < 0
                 silent execute "normal! O$this->markTestIncomplete();\e"
@@ -1174,7 +1174,7 @@ function! s:append_char(type) abort
             let l:bsearch = getreg('/')
             let l:changerow = -(1 + &scrolloff)
 
-            silent execute "normal! ?^    .*{\rj"
+            silent execute "normal! ?^    .*{$\rj"
 
             if match(getline('.'), '->mark') > 0
                 silent execute "normal! \"_dd"
@@ -1523,8 +1523,11 @@ cnoremap <C-x><C-i> <C-u>='!ln '<Enter>=expand('%:p')<Enter> /var/www/html/=j
 cnoremap <C-x><C-s> <C-u>='!ln -s '<Enter>=expand('%:p')<Enter> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<Enter>
 
 " Get and Upload files
-cnoremap <C-x><C-g> <C-u>='!curl -L '<Enter>=getreg('"')<Enter>=' > '<Enter>
+cnoremap <C-x><C-g> <C-u>='!curl -L '<Enter>=getreg('+')<Enter>=' > '<Enter>=split(getreg('+'), '/')[-1]<Enter>
 cnoremap <C-x><C-u> <C-u>='!curl --upload-file '<Enter>=expand('%:p')<Enter> https://free.keep.sh
+
+" gZip (and show dotfiles)
+cnoremap <C-x><C-z> <C-u>='!gzip -k -c '<Enter>=expand('%:p')<Enter>=' > ~/Downloads/'<Enter>=substitute(split(expand('%:p'), '/')[-1], '\.', '', 'g') . '.gz'<Enter>
 
 " incr (int)
 function! s:cycling_buffers(incr) abort
@@ -3520,6 +3523,8 @@ augroup AutoCommands
             highlight! link SignatureMarkerText LineNr
 
             highlight! link User1 ErrorMsg
+            highlight! link ExtraWhitespace Error
+            highlight! link WeirdWhitespace Warning
 
             let g:fzf_colors = {
                         \ 'fg':      ['fg', 'Normal'],
