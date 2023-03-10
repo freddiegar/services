@@ -711,7 +711,7 @@ nnoremap <silent> <expr> <C-w>+ (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>+"
 nnoremap <silent> <expr> <C-w>< (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w><"
 nnoremap <silent> <expr> <C-w>> (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>>"
 
-" [R]eplace [l]ocal or [g]lobal [a]ll or with [c]onfirmation easily. Don't add silent
+" [R]eplace [l]ocal or [g]lobal with [c]onfirmation easily. Don't add silent
 " @thanks https://stackoverflow.com/questions/597687/how-to-quickly-change-variable-names-in-vim
 nnoremap <BS> *``cgn
 nnoremap <Leader><BS> :g/\<\>/
@@ -3329,7 +3329,7 @@ augroup AutoCommands
 
     function! s:mustbeignore() abort
         return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
-                    \ || argv()[0] =~ '.bash_aliases\|.vimrc\|.vimrc.local\|.zsh*')
+                    \ || argv()[0] =~ '.bash_aliases\|.vimrc\|.config*\|.zsh*')
                     \ || g:working[1][0 : 2] =~? '_\|ro-'
     endfunction
 
@@ -3734,5 +3734,5 @@ filetype indent on                                              " Enable auto-in
 
 " @see https://vimhelp.org/syntax.txt.html#%3Asyntax-on
 syntax enable                                                   " Enable syntax highlighting as is (on != enable), MUST BE after filetype
-                                                                "   on    : Overrule your settings with the defaults
-                                                                "   enable: Will keep most of your current color settings
+                                                                "   on    : Overrule your settings with the defaults (overrules existing colors)
+                                                                "   enable: Will keep most of your current color settings (only sets groups that weren't)

@@ -37,6 +37,7 @@ alias vv="nvim"
 alias vn="vim -u NONE"
 alias vz="vim ~/.zshrc"
 alias va="vim ~/.bash_aliases"
+alias v3="vim ~/.config/i3/config"
 alias vl="vim -c \"colorscheme morning\""
 
 alias rz="source ~/.zshrc"

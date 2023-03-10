@@ -413,6 +413,7 @@ sudo apt-get install -y php8.1-memcached
 sudo apt-get install -y php8.1-redis
 sudo apt-get install -y php8.1-bcmath
 sudo apt-get install -y php8.1-gmp
+sudo apt-get install -y php8.1-xml
 ## sudo apt-get remove php8.1\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php # Only Ubuntu
 ```
@@ -681,7 +682,7 @@ nvm install v16.19.0
 ## nvm deactivate && nvm uninstall v16.13.0
 
 ## Install npm
-npm install -g npm
+npm install -g npm@9.6.1
 ## npm --version
 ## npm install -g npm@latest
 ```
@@ -1229,7 +1230,7 @@ rg --version | grep -e "^ripgrep" | awk '{print $2}'
 php --version | grep -e "^PHP" | awk '{print $2}'
 # 7.4.33
 npm --version
-# 9.3.1
+# 9.6.1
 node --version
 # v16.19.0
 mysql --version | awk '{print $3}'
