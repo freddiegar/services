@@ -151,6 +151,8 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
     function! s:initialize(cwd) abort
         let g:cwd = a:cwd
         let g:cache = {}
+        let g:cache['e'] = {}
+        let g:cache['x'] = {}
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
         let g:working = split(g:cwd, '/')[-2 :]
@@ -520,11 +522,11 @@ function! GetVersion(executable) abort
         return ''
     endif
 
-    let [l:ctime, l:version] = get(g:cache, a:executable, [-2, ''])
+    let [l:ctime, l:version] = get(g:cache['x'], a:executable, [-2, ''])
 
     if l:ftime != l:ctime
         if filereadable('composer.json')
-            let g:cache[a:executable] = [l:ftime, system("php --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0 : 2]]
+            let g:cache['x'][a:executable] = [l:ftime, system("php --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0 : 2]]
         else
             return ''
         endif
@@ -648,7 +650,7 @@ function! s:statusline(lastmode) abort
     endif
 
     setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
-    setlocal statusline+=%3{&filetype!=#''?&filetype:'nop'}     " Is it require description?
+    setlocal statusline+=%{&filetype!=#''?&filetype:':\|'}      " Is it require description?
     setlocal statusline+=%{GetVersion('/etc/alternatives/php')} " PHP version
 
     setlocal statusline+=\%<                                    " Truncate long statusline here
@@ -3214,7 +3216,7 @@ augroup AutoCommands
 
         for l:file in l:envfiles
             if filereadable(expand(l:file))
-                let l:envfile = l:file
+                let l:envfile = fnamemodify(l:file, ':p')
 
                 break
             endif
@@ -3232,17 +3234,17 @@ augroup AutoCommands
             return
         endif
 
-        let l:ftime = getftime(fnamemodify(l:envfile, ':p'))
+        let l:ftime = getftime(l:envfile)
 
         if l:ftime < 0
             return
         endif
 
-        let [l:ctime, l:lines] = get(g:cache, l:envfile, [-2, []])
+        let [l:ctime, l:lines] = get(g:cache['e'], l:envfile, [-2, []])
 
         if l:ftime != l:ctime || a:bang
             let l:lines = systemlist(g:filterprg . ' "^(DB_|DATABASE_URL)" ' . l:envfile . ' | sed "s/^D/VIM_D/"')
-            let g:cache[l:envfile] = [l:ftime, l:lines]
+            let g:cache['e'][l:envfile] = [l:ftime, l:lines]
 
             let l:message = 'Loaded ' . l:envfile . ' vars.'
         endif
@@ -3355,7 +3357,7 @@ augroup AutoCommands
         if l:envfile !=# ''
             silent execute 'Dotenv ' . l:envfile
 
-            let l:message = l:message ==# '' ? 'Loaded ' . l:envfile . ' vars.' : substitute(l:message, '##ENV##', ' with ' . l:envfile, '')
+            let l:message = l:message ==# '' ? 'Loaded ' . l:envfile . ' vars.' : substitute(l:message, '##ENV##', ' with ' . split(l:envfile, '/')[-1], '')
         endif
 
         if g:infofile !=# ''
