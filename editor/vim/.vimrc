@@ -3246,7 +3246,7 @@ augroup AutoCommands
             let l:lines = systemlist(g:filterprg . ' "^(DB_|DATABASE_URL)" ' . l:envfile . ' | sed "s/^D/VIM_D/"')
             let g:cache['e'][l:envfile] = [l:ftime, l:lines]
 
-            let l:message = 'Loaded ' . l:envfile . ' vars.'
+            let l:message = 'Loaded ' . split(l:envfile, '/')[-1] . ' vars.'
         endif
 
         for l:line in l:lines
@@ -3357,7 +3357,8 @@ augroup AutoCommands
         if l:envfile !=# ''
             silent execute 'Dotenv ' . l:envfile
 
-            let l:message = l:message ==# '' ? 'Loaded ' . l:envfile . ' vars.' : substitute(l:message, '##ENV##', ' with ' . split(l:envfile, '/')[-1], '')
+            let l:envfile = split(l:envfile, '/')[-1]
+            let l:message = l:message ==# '' ? 'Loaded ' . l:envfile . ' vars.' : substitute(l:message, '##ENV##', ' with ' . l:envfile, '')
         endif
 
         if g:infofile !=# ''
@@ -3372,17 +3373,35 @@ augroup AutoCommands
         endif
     endfunction
 
+    function! s:sessionremoveitem(item) abort
+        return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
+                    \ || buflisted(a:item) == 0
+                    \ || getbufvar(a:item, '&filetype') ==# 'netrw'
+                    \ || split(a:item, '\.')[-1] ==# 'dbout'
+                    \ || isdirectory(a:item)
+    endfunction
+
     function! s:sessionsavepre() abort
         let l:index = 0
 
         while l:index < argc()
             let l:larg = argv(l:index)
 
-            if index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], l:larg) >= 0
-                        \ || buflisted(l:larg) == 0
-                        \ || getbufvar(l:larg, '&filetype') ==# 'netrw'
-                        \ || isdirectory(l:larg)
+            if <SID>sessionremoveitem(l:larg)
                 silent execute 'argdelete! ' . fnameescape(l:larg)
+            endif
+
+            let l:index = l:index + 1
+        endwhile
+
+        let l:index = 0
+        let l:buffers = filter(range(1, bufnr('$')), 'buflisted(v:val)')
+
+        while l:index < len(l:buffers)
+            let l:lbuffer = getbufinfo(buffers[l:index])[0]['name']
+
+            if <SID>sessionremoveitem(l:lbuffer)
+                silent execute 'bdelete! ' . fnameescape(l:lbuffer)
             endif
 
             let l:index = l:index + 1
