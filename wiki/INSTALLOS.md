@@ -1047,6 +1047,20 @@ https://extensions.gnome.org/extension/2/move-clock/
 https://ubuntuhandbook.org/index.php/2020/03/hide-activities-button-ubuntu-18-04/
 ```
 
+## RSA SecurID
+
+[See](https://sourceforge.net/p/stoken/wiki/Home/)
+
+```bash
+echo "\n" && sudo add-apt-repository ppa:cernekee/ppa
+sudo apt-get update
+sudo apt-get install stoken libstoken-dev -y
+## sudo apt-get remove stoken libstoken-dev && sudo apt-get autoremove
+## echo "\n" | sudo add-apt-repository --remove ppa:cernekee/ppa # Only Ubuntu
+## Start
+stoken-gui --small &
+```
+
 ## Google Chrome
 
 ```bash
@@ -1235,5 +1249,7 @@ node --version
 # v16.19.0
 mysql --version | awk '{print $3}'
 # 14.14
+stoken --version | head -1 | awk '{print $2}'
+# 0.92
 dpkg --list | wc --lines
 # 2226
