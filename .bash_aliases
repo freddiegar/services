@@ -16,7 +16,7 @@ grepx() {
 # Dynamic PHP Version (based in current composer.json)
 phpx() {
     if [ -f composer.json ]; then
-        `cat composer.json | grepx -F '"php":' | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}'` "$@"
+        `cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}'` "$@"
 
         return
     fi
@@ -37,6 +37,7 @@ alias a="alias"
 alias o="xargs -t -r -I {}"
 alias di="diff -rq --suppress-common-lines"
 alias ll="ls -lh"
+alias lsd="ls -la | grep '^d'"
 alias __="ssh-add"
 alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}'"
 alias npkg="dpkg --list | wc --lines"
