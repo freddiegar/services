@@ -153,6 +153,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:cache = {}
         let g:cache['e'] = {}
         let g:cache['x'] = {}
+        let g:cache['t'] = {}
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
         let g:working = split(g:cwd, '/')[-2 :]
@@ -535,6 +536,34 @@ function! GetVersion(executable) abort
     return '  ' . l:version
 endfunction
 
+function! GetTypeCurrentFile() abort
+    let l:path = expand('%:p')
+
+    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
+        return ''
+    endif
+
+    let l:ftime = getftime(l:path)
+
+    if l:ftime < 0
+        return ''
+    endif
+
+    let [l:ctime, l:type] = get(g:cache['t'], l:path, [-2, ''])
+
+    if l:ftime != l:ctime
+        let l:type = (system('readlink -e -n ' . l:path) !=# l:path ? '(S)' : '')
+
+        if l:type ==# ''
+            let l:type = (system(' stat -c %h ' . l:path) > 1 ? '(H)' : '')
+        endif
+
+        let g:cache['t'][l:path] = [l:ftime, l:type]
+    endif
+
+    return '  ' . l:type
+endfunction
+
 function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
                 \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
@@ -630,6 +659,7 @@ function! s:statusline(lastmode) abort
     " This expressions redraw statusline after save file always (slower)
     setlocal statusline+=%{GetNameCurrentPath()}                " Relative folder
     setlocal statusline+=%{GetNameCurrentFile()}                " Relative filename
+    setlocal statusline+=%{GetTypeCurrentFile()}                " Type file
 
     setlocal statusline+=%=                                     " New group (align right)
     setlocal statusline+=\%m                                    " Modified flag
@@ -977,10 +1007,10 @@ nnoremap <silent> ]l :<C-u>lnext<Enter>zzzv
 nnoremap <silent> [L :<C-u>lfirst<Enter>zzzv
 nnoremap <silent> ]L :<C-u>llast<Enter>zzzv
 
-" nnoremap <silent> [b :<C-u>bprevious<Enter>
-" nnoremap <silent> ]b :<C-u>bnext<Enter>
-" nnoremap <silent> [B :<C-u>bfirst<Enter>
-" nnoremap <silent> ]B :<C-u>blast<Enter>
+nnoremap <silent> [b :<C-u>bprevious<Enter>
+nnoremap <silent> ]b :<C-u>bnext<Enter>
+nnoremap <silent> [B :<C-u>bfirst<Enter>
+nnoremap <silent> ]B :<C-u>blast<Enter>
 
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
