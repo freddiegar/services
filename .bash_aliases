@@ -93,15 +93,15 @@ alias pdx="sudo phpdismod xdebug"
 alias psw="sudo update-alternatives --config php"
 
 alias vt="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
-alias vtu="phpx vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
+alias vts="phpx vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite"
 alias vtf="phpx vendor/bin/phpunit --stop-on-failure --no-coverage --filter"
 
 alias vp="phpx vendor/bin/pest --stop-on-failure --no-coverage"
-alias vpu="phpx vendor/bin/pest --stop-on-failure --no-coverage --testsuite=unit"
+alias vps="phpx vendor/bin/pest --stop-on-failure --no-coverage --testsuite"
 alias vpf="phpx vendor/bin/pest --stop-on-failure --no-coverage --filter"
 
 alias st="phpx bin/phpunit --stop-on-failure --no-coverage"
-alias stu="phpx bin/phpunit --stop-on-failure --no-coverage --testsuite=unit"
+alias sts="phpx bin/phpunit --stop-on-failure --no-coverage --testsuite"
 alias stf="phpx bin/phpunit --stop-on-failure --no-coverage --filter"
 
 alias ducks="du -cks * | sort -rn | head"
