@@ -454,7 +454,7 @@ mode "$mode_system" {
 bindsym $mod+Escape mode "$mode_system"
 
 # Controls
-set $mode_control Control (k)eys, (n)etwork, (s)ound, (r)esources
+set $mode_control Control (k)eys, (n)etwork, (s)ound, (r)esources, (d)ocker
 
 mode "$mode_control" {
     # Control Keys
@@ -465,6 +465,8 @@ mode "$mode_control" {
     bindsym s exec          --no-startup-id pavucontrol, mode "default"
     # Control Resources
     bindsym r exec          $emulator --nofork --fullscreen -e 'htop', mode "default"
+    # Docker Stats
+    bindsym d exec          $emulator --nofork --fullscreen -e 'docker stats', mode "default"
 
     # back to normal
     bindsym Return          mode "default"

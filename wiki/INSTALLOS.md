@@ -1251,5 +1251,9 @@ mysql --version | awk '{print $3}'
 # 14.14
 stoken --version | head -1 | awk '{print $2}'
 # 0.92
+python3 --version | awk '{print $2}'
+# 3.6.9
+ruby --version | awk '{print $2}'
+# 2.5.1p57
 dpkg --list | wc --lines
 # 2226
