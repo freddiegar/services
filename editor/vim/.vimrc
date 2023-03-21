@@ -1159,15 +1159,15 @@ function! s:find_filter(type, path) abort
 
     if a:type =~? 'v\?file'
         silent call fzf#vim#files(a:path, fzf#vim#with_preview({'options': ['--query', l:filter]}))
-    elseif a:type =~ 'afind$'
+    elseif a:type =~# 'afind$'
         silent call <SID>rgfzf('AFind', l:filter, 0, a:path, 0, 1)
-    elseif a:type =~ 'aregex$'
+    elseif a:type =~# 'aregex$'
         silent call <SID>rgfzf('ARegExp', l:filter, 0, a:path, 1, 1)
-    elseif a:type =~ 'ifind'
+    elseif a:type =~# 'ifind'
         silent call <SID>rgfzf('IFind', l:filter, 0, a:path, 0)
-    elseif a:type =~ 'find'
+    elseif a:type =~# 'find'
         silent call <SID>rgfzf('Find', l:filter, 0, a:path, 0)
-    elseif a:type =~ 'regex'
+    elseif a:type =~# 'regex'
         silent call <SID>rgfzf('RegExp', l:filter, 0, a:path, 1)
     else
         silent call <SID>rgfzf('Search', l:filter, 0, a:path)
@@ -2962,7 +2962,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>ric :call <SID>phpactor('implement_contracts')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call <SID>phpactor('add_missing_properties')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rcc :call <SID>phpactor('complete_constructor')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>run :call <SID>phpactor('fix_namespace_class_name')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rfn :call <SID>phpactor('fix_namespace_class_name')<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rfg :call setreg('z', "orfg\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rfs :call setreg('z', "orfs\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rdd :call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
@@ -3362,7 +3362,7 @@ augroup AutoCommands
 
     function! s:mustbeignore() abort
         return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
-                    \ || argv()[0] =~ '.bash_aliases\|.vimrc\|.config*\|.zsh*')
+                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*')
                     \ || g:working[1][0 : 2] =~? '_\|ro-'
     endfunction
 
@@ -3438,6 +3438,8 @@ augroup AutoCommands
             let l:index = l:index + 1
         endwhile
     endfunction
+
+    " nnoremap <Leader>w :call <SID>sessionsave()<Enter>
 
     function! s:sessionsave() abort
         if <SID>mustbeignore()
