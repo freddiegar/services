@@ -131,6 +131,7 @@ endif
 
 " WHY TRY NEOVIM
 " 1. No brake changes :(vim9script, yeah):                  -> @see https://www.youtube.com/watch?v=zPQSST-M3fM -> vim9script transpiler
+" 2. Better syntax highlighting (on comments by example)
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
 "           Version                     BARE(ms)    PLUG-NC(ms) PLUG-C(ms)  DATE
@@ -1666,7 +1667,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easily
 " Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
 
-Plug 'wellle/context.vim'                                       " Show context code (slower)
+" Plug 'wellle/context.vim'                                       " Show context code (slower)
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
 Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
@@ -1847,30 +1848,30 @@ let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wa
 nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
 nmap <silent> <S-F3> :PomodoroStatus<Enter>
 
-" Context
-" @see https://github.com/wellle/context.vim
-let g:context_enabled = get(g:, 'context_enabled', 0)
-let g:context_max_height = 10
-let g:context_add_mappings = 0
+" " Context
+" " @see https://github.com/wellle/context.vim
+" let g:context_enabled = get(g:, 'context_enabled', 0)
+" let g:context_max_height = 10
+" let g:context_add_mappings = 0
 
-" file (string): void
-function! s:show_context(file) abort
-    if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive'], &filetype) >= 0
-        if exists(':ContextActivate')
-            silent execute 'ContextDisable'
-        endif
+" " file (string): void
+" function! s:show_context(file) abort
+"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive'], &filetype) >= 0
+"         if exists(':ContextActivate')
+"             silent execute 'ContextDisable'
+"         endif
 
-        return
-    endif
+"         return
+"     endif
 
-    if a:file ==# '' || index(['php', 'c', 'vim', 'yaml'], &filetype) < 0
-        silent execute 'ContextDisable'
+"     if a:file ==# '' || index(['php', 'c', 'vim', 'yaml'], &filetype) < 0
+"         silent execute 'ContextDisable'
 
-        return
-    endif
+"         return
+"     endif
 
-    silent execute 'ContextEnable'
-endfunction
+"     silent execute 'ContextEnable'
+" endfunction
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
@@ -3611,7 +3612,7 @@ augroup AutoCommands
         autocmd DirChanged global call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | call <SID>statusline('x') | filetype detect
     endif
 
-    autocmd BufEnter * call <SID>poststart() | call <SID>show_context(expand('<afile>'))
+    autocmd BufEnter * call <SID>poststart() " | call <SID>show_context(expand('<afile>'))
     " BufEnter:     After changes between buffers (why nvim why!)
     " BufFilePost:  After changes name's current file (why nvim why!)
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
