@@ -1666,6 +1666,7 @@ Plug 'skywind3000/asyncrun.vim', {'for': 'php'}                 " Run async task
 Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
+" Plug 'Shougo/echodoc.vim', {'for': ['php', 'c', 'vim']}         " Show function signature in command line (weird)
 
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easily
 " Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
@@ -1875,6 +1876,10 @@ let g:limelight_paragraph_span = 2
 
 "     silent execute 'ContextEnable'
 " endfunction
+
+" " Echodoc
+" " @see https://github.com/Shougo/echodoc.vim
+" let g:echodoc#enable_at_startup = 1
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
