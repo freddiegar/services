@@ -406,6 +406,9 @@ if has('gui_running')
         " @see https://vimhelp.org/autocmd.txt.html#GUIFailed
         autocmd GUIFailed * qall
 
+        " Cleans garbage
+        autocmd FocusGained * redraw!
+
         " @thanks https://stackoverflow.com/questions/10259366/gvim-auto-copy-selected-text-to-system-clipboard-to-share-it-with-apps
         cnoremap <S-Insert> <C-r>+
 
@@ -675,10 +678,10 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{AsyncStatuslineFlag()}           " Async process info
     endif
 
-    if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
-        setlocal statusline+=\                                  " Extra space
-        setlocal statusline+=%{pomo#remaining_time().'m'}       " Pomodoro time
-    endif
+"     if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
+"         setlocal statusline+=\                                  " Extra space
+"         setlocal statusline+=%{pomo#remaining_time().'m'}       " Pomodoro time
+"     endif
 
     setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
     setlocal statusline+=%{&filetype!=#''?&filetype:':\|'}      " Is it require description?
@@ -1674,7 +1677,7 @@ Plug 'kshenoy/vim-signature'                                    " Show marks in 
 
 Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
 Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++
-Plug 'tricktux/pomodoro.vim', {'on': 'PomodoroStart'}           " Zen mode +++
+" Plug 'tricktux/pomodoro.vim', {'on': 'PomodoroStart'}           " Zen mode +++
 Plug 'wakatime/vim-wakatime'                                    " Zen mode ++++
 
 " Plug 'ap/vim-css-color',  {'for': [
@@ -1839,14 +1842,14 @@ nmap <silent> <F12> :Goyo<Enter>
 " Number of preceding/following paragraphs to include (default: 0)
 let g:limelight_paragraph_span = 2
 
-" Pomodoro
-" @see https://github.com/tricktux/pomodoro.vim
-let g:pomodoro_time_work = 50
-let g:pomodoro_time_slack = 10
-let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav'
+" " Pomodoro
+" " @see https://github.com/tricktux/pomodoro.vim
+" let g:pomodoro_time_work = 50
+" let g:pomodoro_time_slack = 10
+" let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav'
 
-nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
-nmap <silent> <S-F3> :PomodoroStatus<Enter>
+" nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
+" nmap <silent> <S-F3> :PomodoroStatus<Enter>
 
 " " Context
 " " @see https://github.com/wellle/context.vim
@@ -3732,7 +3735,7 @@ if g:isneovim
     nnoremap <silent> <F18> :execute "normal i\<F18>\e"<Enter>
     nnoremap <silent> <F19> :execute "normal i\<F19>\e"<Enter>
     " <S-F3>
-    nmap <silent> <nowait> <Esc>O2R :PomodoroStatus<Enter>
+    " nmap <silent> <nowait> <Esc>O2R :PomodoroStatus<Enter>
     " " <S-F5>
     " nmap <silent> <nowait> <F17> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
     inoremap <silent> <expr> <S-Tab>
