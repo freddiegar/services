@@ -3657,6 +3657,9 @@ augroup AutoCommands
     " BufFilePost:  After changes name's current file (why nvim why!)
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
 
+    " Hide sensible information (maybe share all screen or pair programming)
+    autocmd FocusLost *.asc,.env let afile = expand('<afile>') | execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
+
     autocmd User ALELintPost call <SID>diagnostics()
 
     " BufWinEnter:  After cycling between buffers
