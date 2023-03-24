@@ -371,7 +371,11 @@ set XDEBUG_CONFIG="idekey=PHPSTORM"
 
 > PHP 7.1: pecl install -f xdebug-2.9.8
 
-> PHP 7.2+: pecl install -f xdebug
+> PHP 7.2: pecl install -f xdebug-3.1.6
+> PHP 7.3: pecl install -f xdebug-3.1.6
+> PHP 7.4: pecl install -f xdebug-3.1.6
+
+> PHP 8.0+: pecl install -f xdebug
 
 ### Local
 
@@ -402,15 +406,16 @@ xdebug.mode=debug
 xdebug.start_with_request=trigger
 xdebug.client_host=localhost
 xdebug.client_port=9003
+;xdebug.log=/var/www/html/xdebug/xdebug_local.log
 xdebug.file_link_format=xdebug://%f@%l
-zend_extension=/usr/local/lib/php/extensions/xdebug.so
+zend_extension=/usr/lib/php/20210902/xdebug.so
 
 ; Windows
 ; zend_extension=php_xdebug-{version}.dll
 ```
 > For Windows use php.ini
 
-> For Linux use path: `/etc/php/{vr}/mods-available/xdebug.ini`
+> For Linux use path: `/etc/php/{vr}/mods-available/xdebug.ini` aka: `vim /etc/php/7.4/mods-available/xdebug.ini`
 
 ### Troubles
 
@@ -421,6 +426,16 @@ zend_extension=/usr/local/lib/php/extensions/xdebug.so
 
 2. E: Time-out connecting to client (Waited: 200 ms). :-(
 - Start listening in IDE
+
+3. E: Cannot install, php_dir for channel "pecl.php.net" is not writeable by the current user
+- Run command as sudo user
+
+4. E: Xdebug requires Zend Engine API version 420210902.
+   E: The Zend Engine API version 320190902 which is installed, is outdated.
+- Install from package
+    sudo apt install php7.4-xdebug
+- Set path extension to relative path:
+    zend_extension=/usr/lib/php/20210902/xdebug.so -> zend_extension=xdebug.so
 
 ### VSCode
 

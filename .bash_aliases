@@ -90,6 +90,7 @@ alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-
 
 alias pex="sudo phpenmod xdebug"
 alias pdx="sudo phpdismod xdebug"
+alias prx='export XDEBUG_SESSION=1 && export XDEBUG_CONFIG="idekey=PHPSTORM" && phpx'
 alias psw="sudo update-alternatives --config php"
 
 alias vt="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
