@@ -1693,8 +1693,8 @@ Plug 'kshenoy/vim-signature'                                    " Show marks in 
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 Plug 'junegunn/vader.vim'                                       " Vim Jedi Mode
 
-Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
-Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++
+" Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
+" Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++
 " Plug 'tricktux/pomodoro.vim', {'on': 'PomodoroStart'}           " Zen mode +++
 Plug 'wakatime/vim-wakatime'                                    " Zen mode ++++
 
@@ -1846,19 +1846,19 @@ let g:UltiSnipsUsePythonVersion = 3
 " let g:user_emmet_leader_key = ','
 " let g:user_emmet_install_global = 0
 
-" Goyo
-" @see https://github.com/junegunn/goyo.vim
-let g:goyo_linenr = 1
-let g:goyo_width = 123
-let g:goyo_height = '100%'
-let g:goyo_bg = '#1D2021'
+" " Goyo
+" " @see https://github.com/junegunn/goyo.vim
+" let g:goyo_linenr = 1
+" let g:goyo_width = 123
+" let g:goyo_height = '100%'
+" let g:goyo_bg = '#1D2021'
 
-nmap <silent> <F12> :Goyo<Enter>
+" nmap <silent> <F12> :Goyo<Enter>
 
-" Limelight
-" @see https://github.com/junegunn/limelight.vim
-" Number of preceding/following paragraphs to include (default: 0)
-let g:limelight_paragraph_span = 2
+" " Limelight
+" " @see https://github.com/junegunn/limelight.vim
+" " Number of preceding/following paragraphs to include (default: 0)
+" let g:limelight_paragraph_span = 2
 
 " " Pomodoro
 " " @see https://github.com/tricktux/pomodoro.vim
