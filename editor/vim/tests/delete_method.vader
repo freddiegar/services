@@ -1,0 +1,168 @@
+Given (Delete method at start);
+class name
+{
+    public function start()
+    {
+        return 'cstart';
+    }
+
+    public function middle()
+    {
+        return 'cmiddle';
+    }
+
+    public function end()
+    {
+        return 'cend';
+    }
+}
+
+Do;
+/cstart\<Enter>
+dm
+
+Expect;
+class name
+{
+    public function middle()
+    {
+        return 'cmiddle';
+    }
+
+    public function end()
+    {
+        return 'cend';
+    }
+}
+
+Given (Delete method at middle);
+class name
+{
+    public function start()
+    {
+        return 'cstart';
+    }
+
+    public function middle()
+    {
+        return 'cmiddle';
+    }
+
+    public function end()
+    {
+        return 'cend';
+    }
+}
+
+Do;
+/cmiddle\<Enter>
+dm
+
+Expect;
+class name
+{
+    public function start()
+    {
+        return 'cstart';
+    }
+
+    public function end()
+    {
+        return 'cend';
+    }
+}
+
+Given (Delete method at end);
+class name
+{
+    public function start()
+    {
+        return 'cstart';
+    }
+
+    public function middle()
+    {
+        return 'cmiddle';
+    }
+
+    public function end()
+    {
+        return 'cend';
+    }
+}
+
+Do;
+/cend\<Enter>
+dm
+
+Expect;
+class name
+{
+    public function start()
+    {
+        return 'cstart';
+    }
+
+    public function middle()
+    {
+        return 'cmiddle';
+    }
+}
+
+Given (Delete method with inline docblocks);
+class name
+{
+    public function start()
+    {
+        return 'cstart';
+    }
+
+    /* @param string $foo */
+    public function end($foo)
+    {
+        return $foo;
+    }
+}
+
+Do;
+/foo;\<Enter>
+dm
+
+Expect;
+class name
+{
+    public function start()
+    {
+        return 'cstart';
+    }
+}
+
+Given (Delete method with multiline docblocks);
+class name
+{
+    public function start()
+    {
+        return 'cstart';
+    }
+
+    /**
+     * @param string $foo
+     */
+    public function end($foo)
+    {
+        return $foo;
+    }
+}
+
+Do;
+/foo;\<Enter>
+dm
+
+Expect;
+class name
+{
+    public function start()
+    {
+        return 'cstart';
+    }
+}

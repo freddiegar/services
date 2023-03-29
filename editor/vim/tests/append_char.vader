@@ -1,0 +1,252 @@
+Given (Append semi-colon if exists);
+return $result
+
+Do;
+\<Space>as
+
+Expect;
+return $result;
+
+Given (Replace semi-colon with comma if semi-colon is last char);
+return $result;
+
+Do;
+\<Space>as
+
+Expect;
+return $result,
+
+Given (Replace comma with semi-colon if comma is last char);
+return $result;
+
+Do;
+\<Space>as
+
+Expect;
+return $result,
+
+
+Given (Delete last char);
+return $result;
+
+Do;
+\<Space>sa
+
+Expect;
+return $result
+
+Given (Delete spaces in end line);
+return $result    
+
+Do;
+\<Space>as
+
+Expect;
+return $result
+
+Given json (If last char is a curly is append a comma for json);
+{'body': 'content'}
+
+Do;
+\<Space>as
+
+Expect;
+{'body': 'content'},
+
+Given json (If last char is not a curly is append a semi-colon for json);
+'body': 'content'
+
+Do;
+\<Space>as
+
+Expect;
+'body': 'content';
+
+Given php (Append mark for test incomplete on test);
+    function testFoo()
+    {
+        $foo = 'bar';
+    }
+
+Do;
+2j
+<i
+
+Expect;
+    function testFoo()
+    {
+$this->markTestIncomplete();
+        $foo = 'bar';
+    }
+
+Given php (Not append mark for test incomplete on test if already exists);
+    function testFoo()
+    {
+        $this->markTestIncomplete();
+        $foo = 'bar';
+    }
+
+Do;
+2j
+<i
+
+Expect;
+    function testFoo()
+    {
+        $this->markTestIncomplete();
+        $foo = 'bar';
+    }
+
+Given php (Append mark for test incomplete on test with comments);
+    /**
+     * @test
+     */
+    function baz()
+    {
+        $this->markTestIncomplete();
+        $foo = 'bar';
+    }
+
+Do;
+5j
+<i
+
+Expect;
+    /**
+     * @test
+     */
+    function baz()
+    {
+        $this->markTestIncomplete();
+        $foo = 'bar';
+    }
+
+
+Given php (Append mark for test incomplete on test with parameters);
+    function testFoo(int $bar)
+    {
+        $foo = $bar;
+    }
+
+Do;
+2j
+<i
+
+Expect;
+    function testFoo(int $bar)
+    {
+$this->markTestIncomplete();
+        $foo = $bar;
+    }
+
+Given php (Append mark for test incomplete on test with parameters in multiple line);
+    function testFoo(
+        int $bar
+        string $baz
+    ): void {
+        $foo = $bar;
+    }
+
+Do;
+4j
+<i
+
+Expect;
+    function testFoo(
+        int $bar
+        string $baz
+    ): void {
+$this->markTestIncomplete();
+        $foo = $bar;
+    }
+
+Given php (Drop mark for test incomplete on test);
+    function testFoo(
+        int $bar
+        string $baz
+    ): void {
+        $this->markTestIncomplete();
+        $foo = $bar;
+    }
+
+Do;
+4j
+>i
+
+Expect;
+    function testFoo(
+        int $bar
+        string $baz
+    ): void {
+        $foo = $bar;
+    }
+
+Given php (Not drop mark for test incomplete on test if not exist);
+    function testFoo()
+    {
+        $foo = $bar;
+    }
+
+Do;
+2j
+>i
+
+Expect;
+    function testFoo()
+    {
+        $foo = $bar;
+    }
+
+Given php (Append char on sigle quotes);
+echo 'foo'
+
+Do;
+\<Space>as
+
+Expect;
+echo 'foo';
+
+Given php (Append char on double quotes);
+echo "foo"
+
+Do;
+\<Space>as
+
+Expect;
+echo "foo";
+
+Given php (Append char on bracket);
+return [foo]
+
+Do;
+\<Space>as
+
+Expect;
+return [foo];
+
+Given php (Append char on parentesis);
+return (foo)
+
+Do;
+\<Space>as
+
+Expect;
+return (foo);
+
+Given php (Append char on digits);
+return 0
+
+Do;
+\<Space>as
+
+Expect;
+return 0;
+
+Given php (Append char on words);
+return $foo
+
+Do;
+\<Space>as
+
+Expect;
+return $foo;

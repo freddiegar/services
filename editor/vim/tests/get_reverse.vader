@@ -1,0 +1,116 @@
+Given (Get reverse of '1');
+1
+
+Do;
+\<Space>gr
+
+Expect;
+0
+
+Given (Get reverse of '0');
+0
+
+Do;
+\<Space>gr
+
+Expect;
+1
+
+Given (Get reverse of 'and');
+and
+
+Do;
+\<Space>gr
+
+Expect;
+or
+
+Given (Get reverse of 'or');
+or
+
+Do;
+\<Space>gr
+
+Expect;
+and
+
+Given (Get reverse of 'AND');
+AND
+
+Do;
+\<Space>gr
+
+Expect;
+OR
+
+Given (Get reverse of 'OR');
+OR
+
+Do;
+\<Space>gr
+
+Expect;
+AND
+
+Given (Get reverse of 'on');
+on
+
+Do;
+\<Space>gr
+
+Expect;
+off
+
+Given (Get reverse of 'off');
+off
+
+Do;
+\<Space>gr
+
+Expect;
+on
+
+Given (Get reverse of 'true');
+true
+
+Do;
+\<Space>gr
+
+Expect;
+false
+
+Given (Get reverse of 'false');
+false
+
+Do;
+\<Space>gr
+
+Expect;
+true
+
+Given (Get reverse of '&&');
+&&
+
+Do;
+\<Space>gr
+
+Expect;
+||
+
+Given (Get reverse of '||');
+||
+
+Do;
+\<Space>gr
+
+Expect;
+&&
+
+Given (Not reverse);
+foo
+
+Do;
+\<Space>gr
+
+Expect;
+foo

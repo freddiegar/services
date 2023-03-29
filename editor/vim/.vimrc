@@ -836,7 +836,7 @@ function! s:get_reverse(type) abort
     let l:saved_unnamed_register = @@
     let l:WORD = ''
 
-    if a:type ==# 'v' || a:type ==# 'V'
+    if a:type =~? 'v'
         silent execute "normal! `<v`>\"zy"
 
         let l:word = trim(@z)
@@ -1125,21 +1125,31 @@ function! s:delete_method() abort
 
     if l:line ==# '}'
         " Last method
-        silent execute "normal! -\"_dd"
+        silent execute "normal! -\"zdd"
     elseif l:line ==# ''
         " Empty line
         silent execute "normal! \"_dd"
     endif
 
-    " Has docs (inline too)
+    let l:bsearch = getreg('/')
+
+    " Has docs (inline or multiline)
     if trim(getline('.'))[-2 :] ==# '*/' || trim(getline(line('.') - 1))[-2 :] ==# '*/'
-        let l:bsearch = getreg('/')
+        silent execute "normal! ?\\V\\/*\r\"_d/\\V*\\/\r\"_dd"
+    elseif trim(@z)[-2 :] ==# '*/' && trim(getline(line('.'))) ==# '}'
+        if trim(@z) ==# '*/'
+            " Last method with multiline docs
+            silent execute "normal! ?\\V\\/*\r\"_d/}\r"
+        endif
 
-        silent execute "normal! ?\\/\\*\rd/\\*\\/\r\"_dd"
-
-        silent call setreg('/', l:bsearch)
-        silent call histdel('/', -1)
+        if trim(getline(line('.') - 1)) ==# ''
+            " Empty line
+            silent execute "normal! -\"_dd"
+        endif
     endif
+
+    silent call setreg('/', l:bsearch)
+    silent call histdel('/', -1)
 
     let @@ = l:saved_unnamed_register
 
@@ -1676,6 +1686,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
 Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
+Plug 'junegunn/vader.vim'                                       " Vim Jedi Mode
 
 Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
 Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++

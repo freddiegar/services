@@ -1,0 +1,19 @@
+Given (Delete call with arguments);
+return foo();
+
+Do;
+/foo\<Enter>
+dc
+
+Expect;
+return ;
+
+Given (Delete call with arguments);
+return foo('bar');
+
+Do;
+/foo\<Enter>
+dc
+
+Expect;
+return 'bar';
