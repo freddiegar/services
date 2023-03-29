@@ -477,7 +477,7 @@ let g:filterprg = split(&grepprg)[0] ==# 'rg'
             \ : split(&grepprg)[0] . ' -E'
 
 function! GetNameCurrentPath() abort
-    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive'], &filetype) < 0
+    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive', 'tagbar'], &filetype) < 0
                 \ ? split(g:cwd, '/')[-1] . (expand('%:t') !=# '' ? ' ' : '')
                 \ : ''
 endfunction
@@ -492,7 +492,7 @@ function! GetNameCurrentFile() abort
     "   /var/www/html/repo/services/docker/conf/.gitignore > 60 -> d/c/.gitignore
     "   /home/user/.vimrc                                       -> ~/.vimrc
     "   /etc/hosts                                              -> /e/hosts
-    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive'], &filetype) > 0 || expand('%') ==# ''
+    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar'], &filetype) > 0 || expand('%') ==# ''
         return ''
     elseif match(expand('%:p:h'), g:cwd) >= 0 && len(expand('%:~')) <= 60
         return expand('%:~')
@@ -506,7 +506,7 @@ function! GetNameCurrentFile() abort
 endfunction
 
 function! GetNameBranch() abort
-    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
+    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
         return ' '
     endif
 
@@ -517,7 +517,7 @@ endfunction
 
 " executable (string)
 function! GetVersion(executable) abort
-    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
+    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
         return ''
     endif
 
@@ -543,7 +543,7 @@ endfunction
 function! GetTypeCurrentFile() abort
     let l:path = expand('%:p')
 
-    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
+    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
         return ''
     endif
 
@@ -570,7 +570,7 @@ endfunction
 
 function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
-                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
+                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
         return g:test_strategy ==# 'background' ? '[A]' : ''
     endif
@@ -634,7 +634,7 @@ function! s:statusline(lastmode) abort
 
     set statusline=                                             " Start from scratch (default: empty)
 
-    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'snippets'], &filetype) >= 0
+    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
         setlocal statusline+=\                                  " Extra space
 
         return
@@ -967,7 +967,7 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
-            \ index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV'], &filetype) >= 0
+            \ index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar'], &filetype) >= 0
             \ ? ":bdelete!<Enter>"
             \ : ":update
             \ <Bar> if buflisted(bufnr('#')) == 1 && bufname('#') !=# ''
@@ -1667,8 +1667,8 @@ Plug 'airblade/vim-gitgutter'                                   " Show signs cha
 Plug 'tpope/vim-dadbod'                                         " DB console in Vim
 Plug 'kristijanhusak/vim-dadbod-completion', {'for': ['sql']}   " DB autocompletion (needs vim-dadbod)
 
-" Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
-" Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
+Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
+Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 
 Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
 Plug 'vim-vdebug/vdebug', {'for': 'php'}                        " Run debugger
@@ -1872,7 +1872,7 @@ let g:limelight_paragraph_span = 2
 
 " " file (string): void
 " function! s:show_context(file) abort
-"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive'], &filetype) >= 0
+"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar'], &filetype) >= 0
 "         if exists(':ContextActivate')
 "             silent execute 'ContextDisable'
 "         endif
@@ -1897,13 +1897,16 @@ let g:limelight_paragraph_span = 2
 " @see https://github.com/machakann/vim-highlightedyank
 let g:highlightedyank_highlight_duration = 250
 
-" " TagBar
-" " @see https://github.com/preservim/tagbar
-" let g:tagbar_sort = 0
-" let g:tagbar_compact = 1
-" let g:tagbar_autofocus = 1
+" TagBar
+" @see https://github.com/preservim/tagbar
+let g:tagbar_sort = 0
+let g:tagbar_width = max([80, winwidth(0) / 3])
+let g:tagbar_silent = 0
+let g:tagbar_compact = 2
+let g:tagbar_autofocus = 1
+let g:tagbar_no_status_line = 1
 
-" nmap <silent> <F8> :TagbarToggle<Enter>
+nmap <silent> <F8> :TagbarToggle<Enter>
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
