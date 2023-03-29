@@ -338,7 +338,7 @@ set pumheight=10                                                " Maximum option
 " Custom Interface
 set autoread                                                    " Reload after external changes (default: off)
 set autowrite                                                   " Save on lost focus (cycling buffers) (default: off)
-set autoindent                                                  " Same indent after Enter, if Esc indent is deleted, less Spaces (default: off)
+" set autoindent                                                  " Same indent after Enter, if Esc indent is deleted, less Spaces (default: off)
 set backspace=indent,eol,start                                  " Allow backspacing over everything (default: depends)
 set clipboard^=unnamedplus                                      " Shared SO clipboard (macros are slower)
                                                                 "     then: buffer -> (no vim) => "+yy
@@ -1195,6 +1195,8 @@ function! s:append_char(type) abort
     let l:screenrow = winline()
     let l:changerow = 0
     let l:ccursor = getpos('.')
+    let l:formatoptions = &formatoptions
+    setlocal formatoptions-=r
 
     silent execute "normal! $v\"zy"
     let l:lastchar = @z
@@ -1203,20 +1205,20 @@ function! s:append_char(type) abort
         if a:type ==# 'd'
             silent execute "normal! $\"_x\e"
             let l:repeatable = 'DeleteFinal'
-        elseif a:type ==# 'i'
+        elseif a:type ==# 'i' && index(['php'], &filetype) >= 0
             let l:bsearch = getreg('/')
             let l:changerow = -(1 + &scrolloff)
 
             silent execute "normal! ?^    .*{$\rj"
 
             if match(getline('.'), '->mark') < 0
-                silent execute "normal! O$this->markTestIncomplete();\e"
+                silent execute "normal! O$this->markTestIncomplete();\e=="
             endif
 
             silent call setreg('/', l:bsearch)
             silent call histdel('/', -1)
             let l:repeatable = 'AddIncompleteMark'
-        elseif a:type ==# 'I'
+        elseif a:type ==# 'I' && index(['php'], &filetype) >= 0
             let l:bsearch = getreg('/')
             let l:changerow = -(1 + &scrolloff)
 
@@ -1251,7 +1253,7 @@ function! s:append_char(type) abort
         echohl None
     endtry
 
-    silent call cursor(l:ccursor)
+    " silent call cursor(l:ccursor) <- Change cursor position!
     silent call setpos('.', l:ccursor)
 
     if l:changerow != 0
@@ -1262,6 +1264,7 @@ function! s:append_char(type) abort
         echo substitute(l:repeatable, '\(\l\|\d\)\(\u\)', '\1 \l\2', 'g') . ' applied.'
     endif
 
+    let &formatoptions = l:formatoptions
     let @@ = l:saved_unnamed_register
 
     if len(l:repeatable) > 0
@@ -1363,7 +1366,7 @@ function! s:get_masked(type) abort
         silent execute "sno/\\%V" . substitute(getreg('z'), '\/', '\\/', 'g') . '/' . substitute(l:masked, '\/', '\\/', 'g') . "/e"
     endif
 
-    silent call cursor(l:ccursor)
+    " silent call cursor(l:ccursor) <- Change cursor position!
     silent call setpos('.', l:ccursor)
     silent call setreg('/', l:lsearch)
     silent call histdel('/', -1)
@@ -1470,6 +1473,8 @@ function s:go_docs(word) abort
         let l:word = trim(@z)
 
         let @@ = l:saved_unnamed_register
+    elseif index(['sql'], &filetype) >= 0
+        let l:docsurl = 'https://dev.mysql.com/doc/search/?q='
     elseif index(['help'], &filetype) >= 0
         let l:docsurl = 'https://duckduckgo.com/?sites=vimhelp.org&ia=web&q='
     elseif index(['vim'], &filetype) >= 0
@@ -2842,7 +2847,7 @@ function! s:notes() abort
 
     if !filereadable(l:filename) || len(l:matches) == 0
         let l:formatoptions = &formatoptions
-        set formatoptions-=r
+        setlocal formatoptions-=r
 
         silent execute "normal! Go\e<<i\r" . l:header . "\r\e"
 
@@ -3586,7 +3591,7 @@ augroup AutoCommands
             silent call add(l:cleanup, 'registers')
         endif
 
-        silent call cursor(l:ccursor)
+        " silent call cursor(l:ccursor) <- Change cursor position!
         silent call setpos('.', l:ccursor)
         silent call setreg('/', l:lsearch)
         silent call histdel('/', -1)
