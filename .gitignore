@@ -2,9 +2,12 @@
 .php-cs-fixer.cache
 docker/.env
 docker/docker-compose.override.yml
+
 docker/conf/alias.conf
 docker/conf/vhost.conf
 docker/conf/crontab
 docker/conf/hosts_extra
 docker/conf/hosts_extra_supervisor
 docker/conf/worker.conf
+
+database/mysql/.env
