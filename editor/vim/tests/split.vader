@@ -1,0 +1,32 @@
+Given php (A ternary expression);
+return $result ? $result : [];
+
+Do;
+gS
+
+Expect php;
+return $result
+ ? $result
+: [];
+
+Given php (An array expression with one element);
+return ['foo'];
+
+Do;
+gS
+
+Expect php;
+return ['foo'];
+
+Given php (An array expression with a lot elements);
+return ['foo, 'bar', 'baz'];
+
+Do;
+gS
+
+Expect php;
+return [
+    'foo,
+    'bar',
+    'baz',
+];

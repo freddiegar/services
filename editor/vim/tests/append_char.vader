@@ -72,7 +72,7 @@ Do;
 2j
 <i
 
-Expect;
+Expect php;
     function testFoo()
     {
 $this->markTestIncomplete();
@@ -90,7 +90,7 @@ Do;
 2j
 <i
 
-Expect;
+Expect php;
     function testFoo()
     {
         $this->markTestIncomplete();
@@ -111,7 +111,7 @@ Do;
 5j
 <i
 
-Expect;
+Expect php;
     /**
      * @test
      */
@@ -132,7 +132,7 @@ Do;
 2j
 <i
 
-Expect;
+Expect php;
     function testFoo(int $bar)
     {
 $this->markTestIncomplete();
@@ -151,7 +151,7 @@ Do;
 4j
 <i
 
-Expect;
+Expect php;
     function testFoo(
         int $bar
         string $baz
@@ -173,7 +173,7 @@ Do;
 4j
 >i
 
-Expect;
+Expect php;
     function testFoo(
         int $bar
         string $baz
@@ -191,7 +191,7 @@ Do;
 2j
 >i
 
-Expect;
+Expect php;
     function testFoo()
     {
         $foo = $bar;
