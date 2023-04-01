@@ -288,11 +288,14 @@ sudo chmod +x /usr/local/bin/git-summary
 [See](https://git-lfs.com/)
 
 ```bash
+## Enable in repository
 git lfs install
 
 ## On working repository
 git lfs track "*.sql.gz"
 git add .gitattributes
+## Add other files *.sql.gz
+git commit -m "Added lfs support"
 
 ## Undo LFS behaviour
 git lfs migrate export --include="*.sql.gz" --everything
