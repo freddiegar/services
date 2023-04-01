@@ -377,7 +377,7 @@ bindkey -M menuselect 'j' vi-down-line-or-history" >> ~/.zshrc
 # Aliases
 
 ```bash
-ln -s `pwd`/.bash_aliases ~/.bash_aliases
+ln -s `pwd`/shell/bash/bash_aliases ~/.bash_aliases
 
 ## Enable alias in Zsh
 echo '
