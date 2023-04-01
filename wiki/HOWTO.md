@@ -277,3 +277,17 @@ sudo lshw -c video
 
 lspci -nn | grep -E 'VGA|Display'
 ```
+
+# Renew GPG
+
+[See](https://superuser.com/questions/813421/can-you-extend-the-expiration-date-of-an-already-expired-gpg-key#1141251)
+
+```bash
+gpg --list-keys
+gpg --edit-key O6QN77Q432NQRQ0S
+
+gpg> key O6QN77Q432NQRQ0S
+gpg> expire
+    1y
+gpg> save
+```
