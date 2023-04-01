@@ -1,9 +1,5 @@
 #!/bin/sh
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases > /dev/null
-fi
-
 # Run fixer before add message to commit
 if [ -f .php_cs ]; then
     phpx vendor/bin/php-cs-fixer fix --config=.php_cs

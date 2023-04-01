@@ -685,7 +685,7 @@ function! s:statusline(lastmode) abort
 
     setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
     setlocal statusline+=%{&filetype!=#''?&filetype:':\|'}      " Is it require description?
-    setlocal statusline+=%{GetVersion('/etc/alternatives/php')} " PHP version
+    setlocal statusline+=%{GetVersion('/usr/local/bin/phpx')}   " PHP version
 
     setlocal statusline+=\%<                                    " Truncate long statusline here
     setlocal statusline+=\                                      " Extra space
@@ -2875,7 +2875,7 @@ augroup AutoCommands
 
     " Customization
     autocmd BufRead,BufNewFile .env.* setfiletype sh
-    autocmd BufRead,BufNewFile phplint setfiletype sh
+    autocmd BufRead,BufNewFile phplint,phpx,grepx setfiletype sh
     autocmd BufRead,BufNewFile *.tphp setfiletype php
     autocmd BufRead,BufNewFile .php_cs* setfiletype php
     autocmd BufRead,BufNewFile *.conf setfiletype apache
@@ -2994,8 +2994,8 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <expr><buffer>L (v:count > 0 ? "<Esc>" : '') . v:count1 . 'f$'
 
     " PHP Testing
-    autocmd FileType php let g:test#php#phpunit#executable = get(g:, 'test#php#phpunit#executable', '') !~? '.bash_aliases'
-                \ ? '. ~/.bash_aliases && phpx ' . test#php#phpunit#executable()
+    autocmd FileType php let g:test#php#phpunit#executable = get(g:, 'test#php#phpunit#executable', '') !~? 'phpx'
+                \ ? 'phpx ' . test#php#phpunit#executable()
                 \ : get(g:, 'test#php#phpunit#executable')
     autocmd FileType php let g:test#php#phpunit#options = {
         \ 'all': '--no-coverage --stop-on-failure',

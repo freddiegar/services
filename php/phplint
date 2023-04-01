@@ -1,7 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -o nounset
-
-. ~/.bash_aliases
 
 # Recursively call `php -l` over the specified directories/files
 # @thanks https://gist.github.com/akrabat/138951fc3f0ef85e3d5f8ff4672fbf39

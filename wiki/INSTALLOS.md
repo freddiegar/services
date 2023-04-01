@@ -454,6 +454,18 @@ sudo chmod +x /usr/local/bin/phpmd
 ## sudo rm /usr/local/bin/phpmd
 ```
 
+## Dynamic Grep (used in phpx)
+
+```bash
+sudo ln -s `pwd`/shell/bash/grepx /usr/local/bin/grepx
+```
+
+## Dynamic PHP Version (based in current composer.json)
+
+```bash
+sudo ln -s `pwd`/php/phpx /usr/local/bin/phpx
+```
+
 ## PHPLint recursive
 
 ```bash

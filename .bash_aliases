@@ -3,27 +3,6 @@ drun() {
     docker exec -w `pwd` -it "$@"
 }
 
-grepx() {
-    if [ -x "`which rg`" ]; then
-        rg "$@"
-
-        return
-    fi
-
-    grep "$@"
-}
-
-# Dynamic PHP Version (based in current composer.json)
-phpx() {
-    if [ -f composer.json ]; then
-        `cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}'` "$@"
-
-        return
-    fi
-
-    `which php` "$@"
-}
-
 alias x="exit"
 alias v="vim"
 alias g="grepx"
