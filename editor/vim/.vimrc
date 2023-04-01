@@ -980,10 +980,10 @@ nnoremap <silent> <expr> <Leader>z
 " Close all except current buffer (saving changes)
 nnoremap <silent> <Leader>Z :wall <Bar> execute "normal mZ" <Bar> %bdelete <Bar> execute "normal `Z" <Bar> bdelete # <Bar> delmarks Z<Enter>
 
-nnoremap <silent> <Plug>AppendSemicolonRepeatable :call <SID>append_char('a')<Enter>
+nnoremap <silent> <Plug>AppendSemicolonRepeatable <Cmd>call <SID>append_char('a')<Enter>
 nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 
-nnoremap <silent> <Plug>DeleteFinalRepeatable :call <SID>append_char('d')<Enter>
+nnoremap <silent> <Plug>DeleteFinalRepeatable <Cmd>call <SID>append_char('d')<Enter>
 nmap <silent> <Leader>sa <Plug>DeleteFinalRepeatable
 
 " @simple https://github.com/tpope/vim-unimpaired
@@ -1029,7 +1029,7 @@ nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all'<Enter><Enter>
 
-nnoremap <silent> <Leader>gC :call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
+nnoremap <silent> <Leader>gC <Cmd>call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
 
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
@@ -1050,7 +1050,7 @@ nnoremap <silent> <S-F6> :execute "normal i\<S-F6>\e"<Enter>
 nnoremap <silent> <F7> :execute "normal i\<F7>\e"<Enter>
 nnoremap <silent> <S-F7> :execute "normal i\<S-F7>\e"<Enter>
 
-nnoremap <silent> <Plug>GetReverseRepeatable :call <SID>get_reverse('word')<Enter>
+nnoremap <silent> <Plug>GetReverseRepeatable <Cmd>call <SID>get_reverse('word')<Enter>
 nmap <silent> <Leader>gr <Plug>GetReverseRepeatable
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
@@ -1071,10 +1071,10 @@ xnoremap <silent> <Leader>gM :<C-u>let mask=<SID>generate_mask(visualmode())
             \ <Bar> echomsg 'Copied:   ' . mask[0] . ' -> ' . @+
             \ <Bar> endif<Enter>
 
-nnoremap <silent> <Plug>DeleteMethodRepeatable :call <SID>delete_method()<Enter>
+nnoremap <silent> <Plug>DeleteMethodRepeatable <Cmd>call <SID>delete_method()<Enter>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
 
-nnoremap <silent> <Plug>DeleteInnerCallRepeatable :call <SID>delete_call('vbc', 'Inner')<Enter>
+nnoremap <silent> <Plug>DeleteInnerCallRepeatable <Cmd>call <SID>delete_call('vbc', 'Inner')<Enter>
 nmap <silent> dc <Plug>DeleteInnerCallRepeatable
 
 function! s:delete_call(flags, type) abort
@@ -1439,7 +1439,7 @@ endfunction
 
 " Docs rescue
 " @thanks https://github.com/Phantas0s/.dotfiles
-nnoremap <silent> <Leader>gd :call <SID>go_docs(expand('<cword>'))<Enter>
+nnoremap <silent> <Leader>gd <Cmd>call <SID>go_docs(expand('<cword>'))<Enter>
 
 " word (string)
 function s:go_docs(word) abort
@@ -1488,14 +1488,14 @@ function s:go_docs(word) abort
     silent call <SID>go_url(l:docsurl . l:word)
 endfunction
 
-nnoremap <silent> <Plug>GetMaskedRepeatable :call <SID>get_masked('word')<Enter>
+nnoremap <silent> <Plug>GetMaskedRepeatable <Cmd>call <SID>get_masked('word')<Enter>
 nmap <silent> <Leader>gm <Plug>GetMaskedRepeatable
 
 xnoremap <silent> <Leader>gm :<C-u>call <SID>get_masked(visualmode())<Enter>
 
 " Buffers navigation
 nnoremap <silent> <Leader><Leader> :Buffers<Enter>
-nnoremap <silent> <Tab> :call <SID>cycling_buffers(1)<Enter>
+nnoremap <silent> <Tab> <Cmd>call <SID>cycling_buffers(1)<Enter>
 
 xnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
 " Snippets using $VISUAL with :vnoremap fails!
@@ -1825,7 +1825,7 @@ endfunction
 command! -nargs=* -range -bang T call <SID>translate(<range>, <bang>0, <f-args>)
 
 " Sound of silence
-nnoremap <silent> <Leader>gW :call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<Enter>
+nnoremap <silent> <Leader>gW <Cmd>call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<Enter>
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
@@ -1924,30 +1924,30 @@ let g:fzf_preview_window = ['right,50%,<70(hidden)', 'Ctrl-/']
 let $FZF_DEFAULT_OPTS = '--bind "ctrl-d:preview-down,ctrl-u:preview-up"'
 
 " String in current work directory
-nnoremap <silent> <Leader>f :call <SID>find_filter('find', g:cwd)<Enter>
+nnoremap <silent> <Leader>f <Cmd>call <SID>find_filter('find', g:cwd)<Enter>
 xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode() . 'find', g:cwd)<Enter>
 
-nnoremap <silent> <Leader>F :call <SID>find_filter('word', g:cwd)<Enter>
+nnoremap <silent> <Leader>F <Cmd>call <SID>find_filter('word', g:cwd)<Enter>
 xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file', g:cwd)<Enter>
 
 " String [I]nside current file directory
-nnoremap <silent> <Leader>I :call <SID>find_filter('ifind', expand('%:h'))<Enter>
+nnoremap <silent> <Leader>I <Cmd>call <SID>find_filter('ifind', expand('%:h'))<Enter>
 xnoremap <silent> <Leader>I :<C-u>call <SID>find_filter(visualmode() . 'ifind', expand('%:h'))<Enter>
 
 " String [A]ll files in current work directory
-nnoremap <silent> <Leader>A :call <SID>find_filter('afind', g:cwd)<Enter>
+nnoremap <silent> <Leader>A <Cmd>call <SID>find_filter('afind', g:cwd)<Enter>
 xnoremap <silent> <Leader>A :<C-u>call <SID>find_filter(visualmode() . 'afind', g:cwd)<Enter>
 
 " String re[G]ex in current work directory
-nnoremap <silent> <Leader>G :call <SID>find_filter('regex', g:cwd)<Enter>
+nnoremap <silent> <Leader>G <Cmd>call <SID>find_filter('regex', g:cwd)<Enter>
 xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter(visualmode() . 'regex', g:cwd)<Enter>
 
 " String r[E]gex in all files of current work directory
-nnoremap <silent> <Leader>E :call <SID>find_filter('aregex', g:cwd)<Enter>
+nnoremap <silent> <Leader>E <Cmd>call <SID>find_filter('aregex', g:cwd)<Enter>
 xnoremap <silent> <Leader>E :<C-u>call <SID>find_filter(visualmode() . 'aregex', g:cwd)<Enter>
 
 " Files [i]nside current file directory (show all files in specific directory)
-nnoremap <silent> <Leader>i :call <SID>rgafzf(expand('%:p:h'))<Enter>
+nnoremap <silent> <Leader>i <Cmd>call <SID>rgafzf(expand('%:p:h'))<Enter>
 xnoremap <silent> <Leader>i :<C-u>call <SID>rgafzf(expand('%:p:h'))<Enter>
 
 " Files in current work directory
@@ -1959,7 +1959,7 @@ nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'WFiles' : 'Files') . "<Ent
 xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
 
 " Files r[e]gex in current work directory
-nnoremap <silent> <Leader>e :call <SID>rgafzf(g:cwd)<Enter>
+nnoremap <silent> <Leader>e <Cmd>call <SID>rgafzf(g:cwd)<Enter>
 xnoremap <silent> <Leader>e :<C-u>call <SID>rgafzf(g:cwd)<Enter>
 
 " Marks in current project directory
@@ -2038,7 +2038,7 @@ nnoremap <silent> <Leader>tf :cclose <Bar> execute ":TestFile -strategy=" . g:te
 nnoremap <silent> <Leader>ts :cclose <Bar> execute ":TestSuite " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
 nnoremap <silent> <Leader>tl :cclose <Bar> TestLast<Enter>
 nnoremap <silent> <Leader>tg :cclose <Bar> TestVisit<Enter>
-nnoremap <silent> <Leader>tq :call <SID>test_strategy()<Enter>
+nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
 
 " Vim Debug
 " @see https://github.com/vim-vdebug/vdebug
@@ -2317,7 +2317,7 @@ endfunction
 " nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<Enter>
+nnoremap <silent> K <Cmd>call <SID>show_documentation()<Enter>
 
 function! s:show_documentation() abort
     let l:word = expand('<cword>')
@@ -2349,7 +2349,7 @@ endfunction
 " endif
 
 " @see https://github.com/vim/vim/issues/4738
-nnoremap <silent> <Plug>GoUrlRepeatable :call <SID>go_url(expand('<cWORD>'))<Enter>
+nnoremap <silent> <Plug>GoUrlRepeatable <Cmd>call <SID>go_url(expand('<cWORD>'))<Enter>
 nmap <silent> gx <Plug>GoUrlRepeatable
 
 " url (string)
@@ -2387,8 +2387,8 @@ function! s:go_url(url) abort
     endif
 endfunction
 
-nnoremap <silent> gf :call <SID>go_file(expand('<cfile>'))<Enter>
-nnoremap <silent> gF :call <SID>go_line()<Enter>
+nnoremap <silent> gf <Cmd>call <SID>go_file(expand('<cfile>'))<Enter>
+nnoremap <silent> gF <Cmd>call <SID>go_line()<Enter>
 
 " ffile (string)
 function! s:go_file(ffile) abort
@@ -2727,7 +2727,7 @@ endfunction
 " " @see https://github.com/AndrewRadev/tagalong.vim
 " let g:tagalong_filetypes = ['html', 'xml']
 
-nnoremap <silent> <Plug>SplitRepeatable <SID>split()<Enter>
+nnoremap <silent> <Plug>SplitRepeatable <Cmd>call <SID>split()<Enter>
 nmap <silent> gS <Plug>SplitRepeatable
 
 " @see https://github.com/AndrewRadev/splitjoin.vim
@@ -2829,7 +2829,7 @@ function! s:exception() abort
 endfunction
 
 " Open notes in Normal|Select|Operator Mode
-nmap <silent> <F9> :call <SID>notes()<Enter>
+nmap <silent> <F9> <Cmd>call <SID>notes()<Enter>
 
 function! s:notes() abort
     let l:matches = []
@@ -2984,10 +2984,10 @@ augroup AutoCommands
     " autocmd FileType vpm nnoremap <silent> <buffer>.b :.!toilet -w 200 -f term -F border<Enter>
 
     " PHP Customization
-    autocmd FileType php nnoremap <silent> <buffer><Leader>uu :call phpactor#UseAdd()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Plug>AddIncompleteMarkRepeatable :call <SID>append_char('i')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>uu <Cmd>call phpactor#UseAdd()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Plug>AddIncompleteMarkRepeatable <Cmd>call <SID>append_char('i')<Enter>
     autocmd FileType php nmap     <silent> <buffer><i <Plug>AddIncompleteMarkRepeatable
-    autocmd FileType php nnoremap <silent> <buffer><Plug>DropIncompleteMarkRepeatable :call <SID>append_char('I')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Plug>DropIncompleteMarkRepeatable <Cmd>call <SID>append_char('I')<Enter>
     autocmd FileType php nmap     <silent> <buffer>>i <Plug>DropIncompleteMarkRepeatable
     " NOTE: <Esc> is used to remove the range that Vim may insert (something like the CTRL-U does)
     autocmd FileType php nnoremap <silent> <expr><buffer>H (v:count > 0 ? "<Esc>" : '') . v:count1 . 'F$'
@@ -3012,32 +3012,32 @@ augroup AutoCommands
 
     " PHP Refactor
     " @see https://github.com/phpactor/phpactor
-    " autocmd FileType php nnoremap <silent> <buffer><Leader>rnc :call phpactor#ClassNew()<Enter>
-    " autocmd FileType php nnoremap <silent> <buffer><Leader>rxc :call phpactor#ClassExpand()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>ruu :call phpactor#ImportMissingClasses()<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer><Leader>rnc <Cmd>call phpactor#ClassNew()<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer><Leader>rxc <Cmd>call phpactor#ClassExpand()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>ruu <Cmd>call phpactor#ImportMissingClasses()<Enter>
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rmf :call phpactor#MoveFile()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rcf :call phpactor#CopyFile()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rmf <Cmd>call phpactor#MoveFile()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rcf <Cmd>call phpactor#CopyFile()<Enter>
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>ric :call <SID>phpactor('implement_contracts')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rap :call <SID>phpactor('add_missing_properties')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rcc :call <SID>phpactor('complete_constructor')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rfn :call <SID>phpactor('fix_namespace_class_name')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rfg :call setreg('z', "orfg\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rfs :call setreg('z', "orfs\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rdd :call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rdu :call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rrd :call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>ric <Cmd>call <SID>phpactor('implement_contracts')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rap <Cmd>call <SID>phpactor('add_missing_properties')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rcc <Cmd>call <SID>phpactor('complete_constructor')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rfn <Cmd>call <SID>phpactor('fix_namespace_class_name')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rfg <Cmd>call setreg('z', "orfg\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rfs <Cmd>call setreg('z', "orfs\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rdd <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rdu <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rrd <Cmd>call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
 
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rci :call phpactor#ClassInflect()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rci <Cmd>call phpactor#ClassInflect()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>rec :call phpactor#ExtractConstant()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rec <Cmd>call phpactor#ExtractConstant()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>ree :<C-u>call phpactor#ExtractExpression(v:true)<Enter>
-    autocmd FileType php nnoremap <silent> <buffer><Leader>R   :call phpactor#ContextMenu()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>R   <Cmd>call phpactor#ContextMenu()<Enter>
 
-    autocmd FileType php nmap <silent> <buffer>gd :call phpactor#GotoDefinition()<Enter>
-    " autocmd FileType php nmap <silent> <buffer>gy :call phpactor#GotoImplementations()<Enter>
-    " autocmd FileType php nmap <silent> <buffer>gr :call phpactor#FindReferences()<Enter>
+    autocmd FileType php nmap <silent> <buffer>gd <Cmd>call phpactor#GotoDefinition()<Enter>
+    " autocmd FileType php nmap <silent> <buffer>gy <Cmd>call phpactor#GotoImplementations()<Enter>
+    " autocmd FileType php nmap <silent> <buffer>gr <Cmd>call phpactor#FindReferences()<Enter>
 
     " transformer (string)
     function! s:phpactor(transformer) abort
@@ -3049,7 +3049,7 @@ augroup AutoCommands
     endfunction
 
     " Go parent (extends) or implements (interface) file from 'any' position
-    autocmd FileType php nmap <silent> <buffer>gX :call <SID>go_parent()<Enter>
+    autocmd FileType php nmap <silent> <buffer>gX <Cmd>call <SID>go_parent()<Enter>
 
     function! s:go_parent() abort
         let l:pattern = ' extends \| implements '
@@ -3066,8 +3066,8 @@ augroup AutoCommands
     endfunction
 
     " Search current file(Y) or function(y) implementations
-    autocmd FileType php nmap <silent> <buffer>gY :call <SID>get_implementations('file')<Enter>
-    autocmd FileType php nmap <silent> <buffer>gy :call <SID>get_implementations('word')<Enter>
+    autocmd FileType php nmap <silent> <buffer>gY <Cmd>call <SID>get_implementations('file')<Enter>
+    autocmd FileType php nmap <silent> <buffer>gy <Cmd>call <SID>get_implementations('word')<Enter>
 
     " type (string)
     function! s:get_implementations(type) abort
@@ -3104,8 +3104,8 @@ augroup AutoCommands
     endfunction
 
     " Search current file(R) or funtion(r) references
-    autocmd FileType php nmap <silent> <buffer>gR :call <SID>get_references('file')<Enter>
-    autocmd FileType php nmap <silent> <buffer>gr :call <SID>get_references('word')<Enter>
+    autocmd FileType php nmap <silent> <buffer>gR <Cmd>call <SID>get_references('file')<Enter>
+    autocmd FileType php nmap <silent> <buffer>gr <Cmd>call <SID>get_references('word')<Enter>
 
     " type (string)
     function! s:get_references(type) abort
@@ -3138,7 +3138,7 @@ augroup AutoCommands
     endfunction
 
     " PHP Fixer
-    autocmd FileType php nnoremap <silent> <buffer><F1> :call <SID>phpfixer() <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><F1> <Cmd>call <SID>phpfixer() <Bar> call <SID>statusline('f')<Enter>
 
     function! s:phpfixer() abort
         if bufname('%') ==# ''
@@ -3200,10 +3200,10 @@ augroup AutoCommands
         echo 'Fixer ' . l:fixertype . ' v' . l:fixerversion . ' applied.'
     endfunction
 
-    autocmd FileType vim-plug nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
+    autocmd FileType vim-plug nnoremap <silent> <buffer><Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
-    autocmd FileType json nnoremap <silent> <buffer><F1> :call <SID>jsonfixer() <Bar> call <SID>statusline('f')<Enter>
-    autocmd FileType json nnoremap <silent> <buffer><Leader>gd :call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
+    autocmd FileType json nnoremap <silent> <buffer><F1> <Cmd>call <SID>jsonfixer() <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType json nnoremap <silent> <buffer><Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
     autocmd FileType json nnoremap <silent> <buffer><Leader>gi :echo 'Version:  ' . <SID>composer('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
     function! s:jsonfixer() abort
@@ -3499,7 +3499,7 @@ augroup AutoCommands
         endwhile
     endfunction
 
-    " nnoremap <Leader>w :call <SID>sessionsave()<Enter>
+    " nnoremap <Leader>w <Cmd>call <SID>sessionsave()<Enter>
 
     function! s:sessionsave() abort
         if <SID>mustbeignore()
@@ -3719,7 +3719,7 @@ augroup AutoCommands
     " autocmd VimResized * wincmd =
 augroup END
 
-nmap <silent> <F4> :call <SID>get_hlinfo()<Enter>
+nmap <silent> <F4> <Cmd>call <SID>get_hlinfo()<Enter>
 
 " @thanks https://stackoverflow.com/questions/9464844/how-to-get-group-name-of-highlighting-under-cursor-in-vim#9464929
 function! s:get_hlinfo() abort
@@ -3732,7 +3732,7 @@ function! s:get_hlinfo() abort
                 \ . ' -> ' . g:colors_name
 endfunction
 
-" nmap <silent> <F5> :call <SID>presentation_mode()<Enter>
+" nmap <silent> <F5> <Cmd>call <SID>presentation_mode()<Enter>
 " nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
 
 " let g:presentation_mode = 0
