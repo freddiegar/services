@@ -531,7 +531,7 @@ function! GetVersion(executable) abort
 
     if l:ftime != l:ctime
         if filereadable('composer.json')
-            let g:cache['x'][a:executable] = [l:ftime, system("php --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0 : 2]]
+            let g:cache['x'][a:executable] = [l:ftime, system(a:executable . " --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0 : 2]]
         else
             return ''
         endif
