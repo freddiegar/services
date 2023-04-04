@@ -3170,20 +3170,21 @@ augroup AutoCommands
 
         let l:fixerversion = system(l:fixerpath . " --version 2>/dev/null | cut -d ' ' -f 4 | cut -d '.' -f 1 | tr -d '\n'")
 
+        " Setup default
         let l:configversion = l:fixerversion
         let l:configfile = l:configpath . (l:configversion ==# '2' ? '.php_cs' : '.php-cs-fixer.php')
 
-        if filereadable(expand('.php_cs'))
+        if l:fixertype ==# 'local' && filereadable(expand('.php_cs'))
             " Setup v2
             let l:configversion = '2'
             let l:configfile = '.php_cs'
-        elseif filereadable(expand('.php-cs-fixer.php'))
+        elseif l:fixertype ==# 'local' && filereadable(expand('.php-cs-fixer.php'))
             " Setup v3
             let l:configversion = '3'
             let l:configfile = '.php-cs-fixer.php'
         endif
 
-        if l:fixerversion !=# l:configversion
+        if l:fixerversion !=# l:configversion || !filereadable(l:configfile)
             echohl WarningMsg
             echo 'Fixer ' . l:fixertype . ' v' . l:fixerversion . ' config file not found.'
             echohl None

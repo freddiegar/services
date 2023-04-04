@@ -448,7 +448,7 @@ sudo chmod +x /usr/local/bin/php-cs-fixer
 
 ```bash
 cd ~
-sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.12.0/phpmd.phar -o /usr/local/bin/phpmd
+sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.13.0/phpmd.phar -o /usr/local/bin/phpmd
 sudo chmod +x /usr/local/bin/phpmd
 ## Command:
 ## phpmd source/code format ruleset
