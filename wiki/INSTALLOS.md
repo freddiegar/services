@@ -687,17 +687,17 @@ nvm ls-remote
 # Ubuntu 18
 # @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
 # ldd --version
-nvm install v16.19.0
-# nvm alias default v16.19.0
+nvm install v16.20.0
+# nvm alias default v16.20.0
 # nvm current
 ## Enabled to all users in [L|X]Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
 
 ## Install package: npm install express
-## nvm deactivate && nvm uninstall v16.13.0
+## nvm deactivate && nvm uninstall v16.20.0
 
 ## Install npm
-npm install -g npm@9.6.1
+npm install -g npm@9.6.4
 ## npm --version
 ## npm install -g npm@latest
 ```
@@ -1163,7 +1163,7 @@ openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.d
 chmod 600 MOK.priv
 mokutil --import /root/module-signing/MOK.der
 
-echo '#!/bin/bash
+echo '#!/usr/bin/env bash
 
 for modfile in $(dirname $(modinfo -n vboxdrv))/*.ko; do
   echo "Signing $modfile"
@@ -1258,6 +1258,8 @@ rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 0.9.0
 php --version | grep -e "^PHP" | awk '{print $2}'
 # 7.4.33
+nvm --version
+# 0.38.0
 npm --version
 # 9.6.1
 node --version
