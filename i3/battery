@@ -1,4 +1,5 @@
-#! /bin/bash
+#!/usr/bin/env bash
+
 # @see https://github.com/rjekker/i3-battery-popup
 # @thanks https://raw.githubusercontent.com/rjekker/i3-battery-popup/master/i3-battery-popup
 

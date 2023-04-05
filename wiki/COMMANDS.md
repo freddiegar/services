@@ -1205,7 +1205,8 @@ done
 
 # OR
 
-echo '#!/bin/bash
+echo '#!/usr/bin/env bash
+
 echo "Do you want continue with dump? (y/N)"
 
 read RESPONSE
@@ -1219,7 +1220,7 @@ databases="db1 db2 dbn"
 
 for database in $databases
 do
-mysqldump -h 172.20.0.10 --opt -uroot -p $database | gzip > ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql.gz
+mysqldump -hdb --opt -uroot -p $database | gzip > ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql.gz
 echo Dump $database done.
 done
 ' > ~/mysqldump.sh
@@ -1243,7 +1244,8 @@ done
 
 # OR
 
-echo '#!/bin/bash
+echo '#!/usr/bin/env bash
+
 echo "WARNING: Do you want continue with restore? (y/N)"
 
 read RESPONSE
@@ -1257,8 +1259,8 @@ databases="db1 db2 dbn"
 
 for database in $databases
 do
-mysql -h 172.20.0.10 -uroot -p -e "drop database if exists ${database};create database ${database} charset utf8;" 2>/dev/null
-zcat ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql.gz | mysql -h 172.20.0.10 -uroot -p $database 2>/dev/null
+mysql -hdb -uroot -p -e "drop database if exists ${database};create database ${database} charset utf8;" 2>/dev/null
+zcat ~/MYSQLDUMPS/${database}_`date +"%Y%m%d" -u`.sql.gz | mysql -hdb -uroot -p $database 2>/dev/null
 echo Restore $database done.
 done
 ' > ~/mysqlrestore.sh
