@@ -291,3 +291,16 @@ gpg> expire
     1y
 gpg> save
 ```
+
+# Get data from certificate tls
+
+[See #6](https://www.baeldung.com/linux/openssl-extract-certificate-info)
+
+```bash
+openssl s_client -connect duckduckgo.com:443 -showcerts </dev/null | openssl x509 -outform pem > duckduckgo.com.pem
+openssl x509 -in duckduckgo.com.pem -noout -text
+# Expiration dates
+openssl x509 -in duckduckgo.com.pem -noout -dates
+# Check expirations in seconds 60*60*24*30 -> 2592000
+openssl x509 -in duckduckgo.com.pem -noout -checkend 2592000
+```
