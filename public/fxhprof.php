@@ -25,5 +25,7 @@ if (\extension_loaded('xhprof')) {
 
     $xhprofurl = \sprintf('https://xhprof.development.local/index.php?run=%s&source=%s', $xhprofid, $xhprofns);
 
-    echo '<a href="' . $xhprofurl . '" target="_blank">------@------</a>';
+    if (empty($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
+        echo '<a href="' . $xhprofurl . '" target="_blank">------@------</a>';
+    }
 }
