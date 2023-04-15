@@ -1453,6 +1453,11 @@ function s:go_docs(word) abort
         let l:word = ''
     elseif expand('%:t') ==# 'composer.json'
         let l:docsurl = 'https://github.com/'
+
+        if filereadable('composer.lock')
+            let l:docsurl = system('composer show ' . l:word . ' 2>/dev/null | ' . g:filterprg . ' "^source.*\[git\]" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
+            let l:word = ''
+        endif
     elseif expand('%:t') ==# 'package.json'
         let l:docsurl = 'https://www.npmjs.com/package/'
     elseif expand('%:t') ==# 'Dockerfile' && match(getline('.'), 'FROM') >= 0
