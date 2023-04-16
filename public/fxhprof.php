@@ -7,7 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-if (\extension_loaded('xhprof')) {
+if (\extension_loaded('xhprof')
+    && !empty($_SERVER['SCRIPT_URL'])
+    && strpos($_SERVER['SCRIPT_URL'], '_debugbar') === false
+) {
     $xhprof = '/var/www/html/xhprof';
     $version = str_replace('.', '', substr(\PHP_VERSION, 0, 3));
     $xhprofns = 'xhprof-' . $version;
@@ -36,11 +39,13 @@ if (\extension_loaded('xhprof')) {
 
     if (is_writable($xhproflog)) {
         file_put_contents($xhproflog, date('Y-m-d H:i:s ') . $xhprofid . ' $_SERVER ' . $jsonServer . "\n", \FILE_APPEND);
-        // file_put_contents($xhproflog, date('Y-m-d H:i:s ') . $xhprofid . ' $_HEADER ' . $jsonHeaders . "\n", \FILE_APPEND);
+        file_put_contents($xhproflog, date('Y-m-d H:i:s ') . $xhprofid . ' $_HEADER ' . $jsonHeaders . "\n", \FILE_APPEND);
     }
 
-    if ((!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-        || strpos(strtolower($jsonHeaders), 'application\/json') !== false) {
+    if (strpos(strtolower($jsonHeaders), 'application\/json') !== false
+        || (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+        || (!empty($_SERVER['SCRIPT_URL']) && strpos($_SERVER['SCRIPT_URL'], 'v1/challenge') !== false)
+    ) {
         exit;
     }
 

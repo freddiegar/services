@@ -7,7 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-if (\extension_loaded('xhprof')) {
+if (\extension_loaded('xhprof')
+    && !empty($_SERVER['SCRIPT_URL'])
+    && strpos($_SERVER['SCRIPT_URL'], '_debugbar') === false
+) {
     // @see https://github.com/longxinH/xhprof
     // @see https://github.com/perftools/xhgui
     // @see https://www.php.net/manual/en/xhprof.constants.php
