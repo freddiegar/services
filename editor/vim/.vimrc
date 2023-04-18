@@ -826,6 +826,8 @@ function! s:get_reverse(type) abort
                 \ 'AND': 'OR',
                 \ 'on': 'off',
                 \ 'true': 'false',
+                \ 'yes': 'no',
+                \ 'YES': 'NO',
                 \ '&&': '||',
                 \ }
 
@@ -1567,6 +1569,7 @@ cnoremap <C-x><C-l> ~/.vimrc.local
 cnoremap <C-x><C-h> /var/www/html/
 cnoremap <C-x><C-a> ~/.bash_aliases
 cnoremap <C-x><C-f> <C-u>set filetype=
+cnoremap <C-x><C-b> <C-u>='!sha256sum %'<Enter>
 cnoremap <C-x><C-w> =join(['~/working', g:working[0], 'CODE', g:working[1] . '/'], '/')<Enter>
 cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env'], '/')<Enter>
 cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')<Enter>
@@ -3688,11 +3691,13 @@ augroup AutoCommands
     autocmd FocusLost *.asc,.env let afile = expand('<afile>') | execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
 
     autocmd User ALELintPost call <SID>diagnostics()
+    autocmd InsertEnter * call <SID>popup_hide()
+    autocmd InsertLeave * call <SID>diagnostics()
 
     " BufWinEnter:  After cycling between buffers
     " BufHidden:    After close CTRL-W o
     autocmd WinEnter,BufWinEnter,BufHidden * call <SID>statusline(mode()) | setlocal cursorline
-    autocmd WinLeave,BufWinLeave * setlocal nocursorline
+    autocmd WinLeave,BufWinLeave * call <SID>statusline('f') | setlocal nocursorline
     autocmd User UpdateStatusline call <SID>statusline(mode())
     autocmd User AsyncRunPre call <SID>statusline('f')
     autocmd User AsyncRunStart call <SID>statusline('f')
