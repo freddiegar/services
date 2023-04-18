@@ -371,6 +371,7 @@ set textwidth=120                                               " Breakline in I
 set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
 "              └ weight in bytes
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
+set smoothscroll                                                " Scrolling works with screen lines (default: off)
 
 " @see https://utf8-icons.com/
 set fillchars+=vert:│                                           " Better vertical split char
@@ -419,6 +420,7 @@ if has('gui_running')
 endif
 
 " Custom identation
+set tabstop=4                                                   " Tabs (if exists) are "showed" (aka: idented) as spaces (default: 8)
 set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
 set shiftwidth=4                                                " 1 tab === 4 spaces (default: 8)
 set shiftround                                                  " Indentation to multiples of &shiftwidth 3>4>8 (default: off)
@@ -1560,7 +1562,6 @@ cnoremap <C-x><C-x> <C-a>
 
 " @simple https://github.com/tpope/vim-eunuch
 " Shortcuts to recurrent files or directories
-cnoremap <C-x><C-z> ~/.zshrc
 cnoremap <C-x><C-d> ~/Downloads/
 cnoremap <C-x><C-l> ~/.vimrc.local
 cnoremap <C-x><C-h> /var/www/html/
@@ -2376,6 +2377,7 @@ function! s:go_url(url) abort
         " No escape yet
         let l:uri = substitute(l:uri, '?', '\\?', 'ge')
         let l:uri = substitute(l:uri, '&', '\\&', 'ge')
+        let l:uri = substitute(l:uri, ')', '', 'ge')
         let l:uri = substitute(l:uri, ' ', '\\ ', 'ge')
     endif
 
