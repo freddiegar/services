@@ -5,8 +5,15 @@ set -o nounset
 # @thanks https://gist.github.com/akrabat/138951fc3f0ef85e3d5f8ff4672fbf39
 
 if [ $# -lt 1 ] ; then
-    printf 'Usage: %s <directory-or-file> ...\n' "$(basename "$0")"
+    printf 'Usage: %s <directory-or-file> [<more-directory-or-file>] [<php-version>]...\n' "$(basename "$0")"
     exit 1
+fi
+
+PHPX=phpx
+PHPV=['5.6','7.0','7.1','7.2','7.3','7.4','8.0','8.1','8.2']
+
+if [ $# -gt 1 ] && [[ ${PHPV[*]} =~ ${@: -1} ]] ; then
+    PHPX=php${@: -1}
 fi
 
 ERROR=false
@@ -16,6 +23,10 @@ while test $# -gt 0; do
     CURRENT=${1%/}
     shift
 
+    if [ "php$CURRENT" == $PHPX ] ; then
+        continue
+    fi
+
     if [ ! -f $CURRENT ] && [ ! -d $CURRENT ] ; then
         echo "$CURRENT cannot be found"
         ERROR=true
@@ -23,7 +34,7 @@ while test $# -gt 0; do
     fi
 
     for FILE in $(find $CURRENT -type f -name "*.php") ; do
-        OUTPUT=$(phpx -l "$FILE" 2> /dev/null)
+        OUTPUT=$($PHPX -l "$FILE" 2> /dev/null)
 
         # Remove blank lines from the `php -l` output
         OUTPUT=$(echo -e "$OUTPUT" | awk 'NF')
