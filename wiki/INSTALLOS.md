@@ -463,6 +463,12 @@ sudo chmod +x /usr/local/bin/phpmd
 sudo ln -s `pwd`/shell/bash/grepx /usr/local/bin/grepx
 ```
 
+## Change date
+
+```bash
+sudo ln -s `pwd`/shell/bash/datex /usr/local/bin/datex
+```
+
 ## Dynamic PHP Version (based in current composer.json)
 
 ```bash
