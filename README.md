@@ -126,6 +126,9 @@ SHOW VARIABLES LIKE '%max_connections%';
 
 ### Logs
 
+[Slow queries](https://www.percona.com/blog/identifying-high-load-mysql-slow-query-log-pt-query-digest/)
+[Bad and poorly queries](https://www.percona.com/blog/queries-for-finding-poorly-designed-mysql-schemas-and-how-to-fix-them/)
+
 Save logs file:
 
 ```bash

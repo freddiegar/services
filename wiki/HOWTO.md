@@ -304,3 +304,14 @@ openssl x509 -in duckduckgo.com.pem -noout -dates
 # Check expirations in seconds 60*60*24*30 -> 2592000
 openssl x509 -in duckduckgo.com.pem -noout -checkend 2592000
 ```
+# Fix Bluetooth issue
+
+[See](https://www.reddit.com/r/Ubuntu/comments/owbdc3/boot_error_bluetooth_failed_to_send_firmware_data/)
+
+```bash
+# dmesg| g Blue
+# > Bluetooth: hci0: Failed to send firmware data (-110)
+sudo apt remove --purge --auto-remove bluez
+sudo rfkill list
+rfkill unblock bluetooth
+```
