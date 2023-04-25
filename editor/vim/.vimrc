@@ -371,7 +371,6 @@ set textwidth=120                                               " Breakline in I
 set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
 "              └ weight in bytes
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
-set smoothscroll                                                " Scrolling works with screen lines (default: off)
 
 " @see https://utf8-icons.com/
 set fillchars+=vert:│                                           " Better vertical split char
@@ -624,6 +623,7 @@ set shortmess+=t                                                " [t]runcate fil
 
 if !g:isneovim
     set shortmess+=C                                            " Don't give the "s[C]anning" message (Vim: >= 9.0.0738)
+    set smoothscroll                                            " Scrolling works with screen lines (default: off)
 endif
 
 set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
@@ -2911,6 +2911,7 @@ augroup AutoCommands
                 \ "\<C-x>\<C-o>"
     autocmd FileType apache setlocal commentstring=#\ %s
     autocmd FileType crontab setlocal commentstring=#\ %s
+    autocmd FileType debsources setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php setlocal commentstring=//\ %s
     autocmd FileType php,c setlocal matchpairs-=<:>
@@ -2994,6 +2995,7 @@ augroup AutoCommands
     " autocmd FileType vpm nnoremap <silent> <buffer>.b :.!toilet -w 200 -f term -F border<Enter>
 
     " PHP Customization
+    " autocmd FileType php inoremap <silent> <buffer>-> -><C-x><C-n>
     autocmd FileType php nnoremap <silent> <buffer><Leader>uu <Cmd>call phpactor#UseAdd()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Plug>AddIncompleteMarkRepeatable <Cmd>call <SID>append_char('i')<Enter>
     autocmd FileType php nmap     <silent> <buffer><i <Plug>AddIncompleteMarkRepeatable
@@ -3449,7 +3451,7 @@ augroup AutoCommands
         endif
 
         if !argc() && g:hasgit && empty(v:this_session) && filereadable(g:session_file) && !&modified
-            silent execute 'source ' . g:session_file
+            silent! execute 'source ' . g:session_file
 
             let l:message = 'Loaded ' . l:session . '##ENV####INF##.'
         elseif !argc() && g:hasgit
