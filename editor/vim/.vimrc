@@ -3241,7 +3241,12 @@ augroup AutoCommands
 
     " Custom register by filetype
     " Diff [t]ime operation
-    autocmd BufRead .vimrc let @t = "\"ayiWj\"byiWj ciW=100-((b*100)/a)\r\e"
+    autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=100-((b*100)/a)\r\e")
+    " Tinker [s]ql operation
+    autocmd BufEnter,BufNewFile *.sql call setreg('t', "\"zyyIDB::select(\"\eA\")\eyyV\"zp")
+
+    " Cleanup queries log
+    autocmd BufRead \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
 
     " Open files with external application
     autocmd BufEnter *.jpg,*.jpeg,*.png,*.gif,*.svg call <SID>go_url(expand('<afile>')) | bwipeout
@@ -3604,6 +3609,12 @@ augroup AutoCommands
             silent call add(l:cleanup, 'registers')
         endif
 
+        if index(l:options, 'q') >= 0
+            silent! g/ table \| TABLE \| TABLES \|migrations\| AS \|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|set session \| Connect\|mysqld\|version_comment\|general_log\|IN_PROCCES\|UPDATE /v/ WHEN /d_
+
+            silent call add(l:cleanup, 'queries')
+        endif
+
         " silent call cursor(l:ccursor) <- Change cursor position!
         silent call setpos('.', l:ccursor)
         silent call setreg('/', l:lsearch)
@@ -3620,6 +3631,7 @@ augroup AutoCommands
     command! -nargs=0 CS call <SID>cleanup('vfte')
     command! -nargs=0 CL call <SID>cleanup('vfted')
     command! -nargs=0 CB call <SID>cleanup('vfb')
+    command! -nargs=0 CQ call <SID>cleanup('vfq')
 
     " title (string)
     function! s:settitle(title) abort
