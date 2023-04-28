@@ -399,10 +399,11 @@ bindsym --release XF86Search    exec  $browser duckduckgo.com, workspace $worksp
 bindsym --release XF86Tools     exec  $browser music.youtube.com, workspace $workspace2
 
 # Screenshot
-bindsym --release Print         exec maim ~/Pictures/Screenshot\ from\ $(date +%Y-%m-%d-%H-%M-%S).png | sleep 1 | ls ~/Pictures -1 -t | head -1 | xargs -I {} echo ~/Pictures/{} | tr -d "\n" | xclip -selection clipboard
+bindsym --release Print         exec maim ~/Pictures/Screenshot\ from\ $(date +%Y-%m-%d-%H-%M-%S).png    | sleep 3 | ls ~/Pictures -1 -t | head -1 | xargs -I {} echo ~/Pictures/{} | tr -d "\n" | xclip -selection clipboard
+bindsym --release XF86Display   exec maim -s ~/Pictures/Screenshot\ from\ $(date +%Y-%m-%d-%H-%M-%S).png | sleep 3 | ls ~/Pictures -1 -t | head -1 | xargs -I {} echo ~/Pictures/{} | tr -d "\n" | xclip -selection clipboard
 bindsym --release Shift+Print   exec maim -s | xclip -selection clipboard -t image/png
-bindsym --release $mod+Print    exec maim -sd 5 | xclip -selection clipboard -t image/png
-bindsym --release Ctrl+Print    exec maim -st 9999999 -p 10 | xclip -selection clipboard -t image/png
+bindsym --release Ctrl+Print    exec maim -sd 5 | xclip -selection clipboard -t image/png
+bindsym --release $mod+Print    exec maim -st 9999999 -p 10 | xclip -selection clipboard -t image/png
 
 # Display selector
 set $external_output HDMI-2 --auto
