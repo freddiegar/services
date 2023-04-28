@@ -1,4 +1,5 @@
-show tables;
+-- https://dev.mysql.com/doc/refman/5.7/en/optimization.html
+-- https://orangematter.solarwinds.com/2019/02/05/the-left-prefix-index-rule/
 
 -- 10 more expensive queries
 
