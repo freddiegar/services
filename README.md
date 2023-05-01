@@ -108,6 +108,19 @@ apt update && apt install vim -y
 vim /etc/mysql/mysql.conf.d/mysqld.cnf
 ```
 
+### Password (Less)
+
+[See](https://akrabat.com/password-less-command-line-scripts-with-mysql-5-6/)
+
+```bash
+# Set credentials
+mysql_config_editor set --login-path=development --host=db --user=root --password
+# Use credentials
+mysql --login-path=development
+# Show save paths
+mysql_config_editor print --all
+```
+
 ### Check config file
 
 After change it run:
