@@ -151,6 +151,8 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
     " cwd (string)
     function! s:initialize(cwd) abort
         let g:cwd = a:cwd
+        let g:dsource = isdirectory(g:cwd . '/app') ? g:cwd . '/app' : g:cwd . '/src'
+        let g:dtests = isdirectory(g:cwd . '/tests') ? g:cwd . '/tests' : g:cwd
         let g:cache = {}
         let g:cache['e'] = {}
         let g:cache['x'] = {}
@@ -1163,6 +1165,7 @@ endfunction
 " type (string), path (string): void
 function! s:find_filter(type, path) abort
     let l:saved_unnamed_register = @@
+    let l:path = fnamemodify(a:path, ':~:.')
     let l:filter = ''
 
     if a:type ==# 'word' || a:type ==# 'file'
@@ -1176,19 +1179,19 @@ function! s:find_filter(type, path) abort
     let @@ = l:saved_unnamed_register
 
     if a:type =~? 'v\?file'
-        silent call fzf#vim#files(a:path, fzf#vim#with_preview({'options': ['--query', l:filter]}))
+        silent call fzf#vim#files(l:path, fzf#vim#with_preview({'options': ['--query', l:filter]}))
     elseif a:type =~# 'afind$'
-        silent call <SID>rgfzf('AFind', l:filter, 0, a:path, 0, 1)
+        silent call <SID>rgfzf('AFind', l:filter, 0, l:path, 0, 1)
     elseif a:type =~# 'aregex$'
-        silent call <SID>rgfzf('ARegExp', l:filter, 0, a:path, 1, 1)
+        silent call <SID>rgfzf('ARegExp', l:filter, 0, l:path, 1, 1)
     elseif a:type =~# 'ifind'
-        silent call <SID>rgfzf('IFind', l:filter, 0, a:path, 0)
+        silent call <SID>rgfzf('IFind', l:filter, 0, l:path, 0)
     elseif a:type =~# 'find'
-        silent call <SID>rgfzf('Find', l:filter, 0, a:path, 0)
+        silent call <SID>rgfzf('Find', l:filter, 0, l:path, 0)
     elseif a:type =~# 'regex'
-        silent call <SID>rgfzf('RegExp', l:filter, 0, a:path, 1)
+        silent call <SID>rgfzf('RegExp', l:filter, 0, l:path, 1)
     else
-        silent call <SID>rgfzf('Search', l:filter, 0, a:path)
+        silent call <SID>rgfzf('Search', l:filter, 0, l:path)
     endif
 endfunction
 
@@ -1748,7 +1751,7 @@ call plug#end()
 
 " PHPActor
 " @see https://github.com/phpactor/phpactor
-let g:phpactorPhpBin = "/usr/bin/php8.1"
+let g:phpactorPhpBin = '/usr/bin/php8.1'
 
 " LSP Vue
 " npm -g install vls eslint eslint-plugin-vue -D
@@ -1938,6 +1941,14 @@ xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode() . 'find', g
 
 nnoremap <silent> <Leader>F <Cmd>call <SID>find_filter('word', g:cwd)<Enter>
 xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file', g:cwd)<Enter>
+
+" String [W]ork files in current work directory
+nnoremap <silent> <Leader>W <Cmd>call <SID>find_filter('find', g:dsource)<Enter>
+xnoremap <silent> <Leader>W :<C-u>call <SID>find_filter(visualmode() . 'find', g:dsource)<Enter>
+
+" String [T]est files in current work directory
+nnoremap <silent> <Leader>T <Cmd>call <SID>find_filter('find', g:dtests)<Enter>
+xnoremap <silent> <Leader>T :<C-u>call <SID>find_filter(visualmode() . 'find', g:dtests)<Enter>
 
 " String [I]nside current file directory
 nnoremap <silent> <Leader>I <Cmd>call <SID>find_filter('ifind', expand('%:h'))<Enter>
@@ -2566,6 +2577,9 @@ nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo '
 nnoremap <silent> <Leader>hh /\v[<\|>\|=]{7}<Enter>
 
 " if &diff <-- fails with diff mode opens from vim-fugitive
+    nnoremap <silent> <Leader>gt :diffthis<Enter>
+    nnoremap <silent> <Leader>go :diffoff<Enter>
+
     nnoremap <silent> <Leader>gf :diffget //2<Enter>
     nnoremap <silent> <Leader>gj :diffget //3<Enter>
     nnoremap <silent> <Leader>gg :Gwrite <Bar> edit %<Enter>
@@ -3261,7 +3275,7 @@ augroup AutoCommands
         let l:directory = a:directory ==# g:cwd ? '' : a:directory
         let l:filter_type = a:0 > 0 && a:1 == 1 ? '--no-fixed-strings' : '--fixed-strings'
         let l:filter_ignore = a:0 > 1 && a:2 == 1 ? ' --no-ignore' : ' --ignore'
-        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
+        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
         let l:initial_command = printf(l:finder_command, shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
         let l:spec = {'options': ['--phony', '--prompt', l:prompt, '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
@@ -3440,7 +3454,7 @@ augroup AutoCommands
 
     function! s:mustbeignore() abort
         return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
-                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*')
+                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*')
                     \ || g:working[1][0 : 2] =~? '_\|ro-'
     endfunction
 
