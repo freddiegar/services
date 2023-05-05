@@ -134,11 +134,14 @@ endif
 " 2. Better syntax highlighting (on comments by example)
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
-"           Version                     BARE(ms)    PLUG-NC(ms) PLUG-C(ms)  DATE
-"   Vim9:   9.0.1-749 (vim9script)      5.524       126.238     234.192     2023-01-17
-"   Vim9:   9.0.1-749 (vimscript)       6.275       105.983     205.478     2023-02-17
-"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)  28.620      87.598      131.869     2023-02-17
-"   Diff:                               -356.0%     +17.3%      +35.8%
+"           Version                         BARE(ms)    PLUG-NC(ms) PLUG-C(ms)  DATE
+"   Vim9:   9.0.1-749 (vimscript)           4.766       108.271     305.373     2023-05-15
+"   Vim9:   9.0.1-749 (vim9script)          5.524       126.238     234.192     2023-01-17
+"   Diff:                                   +15.9%      +16.5%      +23.3%
+"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)      26.466      81.847      220.711     2023-02-17
+"   Diff:                                   +455.3%     -24.4%      -27.7%
+"   Neovim: 0.10.0-dev (LuaJIT 2.1.0-beta3) 4.434       79.283      173.307     2023-05-05  (no python3, errors fzf)
+"   Diff:                                   -6.9%       -26.7%      -43.2%
 " @see https://neovim.io/doc/user/vim_diff.html
 " @see https://www.murilopereira.com/the-values-of-emacs-the-neovim-revolution-and-the-vscode-gorilla/
 

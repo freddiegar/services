@@ -1518,10 +1518,14 @@ ln -s `pwd`/editor/neovim/init.vim ~/.config/nvim/init.vim
 
 # Install (Latest)
 echo "\n" | sudo add-apt-repository ppa:neovim-ppa/stable
+echo "\n" | sudo add-apt-repository ppa:neovim-ppa/unstable
+
 sudo apt-get update
 sudo apt-get install -y neovim
 
 # sudo apt-get remove -y neovim && sudo apt-get autoremove
+# echo "\n" | sudo add-apt-repository --remove ppa:neovim-ppa/stable
+# echo "\n" | sudo add-apt-repository --remove ppa:neovim-ppa/unstable
 
 ## CoC Settings
 ln -s `pwd`/editor/vim/coc-settings.json ~/.config/nvim/coc-settings.json
@@ -1639,7 +1643,7 @@ Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
 Test loading times in Vim
 
 ```bash
-EXECUTABLE=nvim
+EXECUTABLE=vim
 rm -Rf editor/$EXECUTABLE.time
 
 for i in {1..10}; do
