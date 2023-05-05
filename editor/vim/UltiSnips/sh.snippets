@@ -1,3 +1,11 @@
+snippet sh "Shell" b
+#!/bin/sh
+endsnippet
+
+snippet bash "Bash" b
+#!/usr/bin/env bash
+endsnippet
+
 snippet if "If"
 if [ $1 ]; then
     ${0:${VISUAL}}
@@ -19,4 +27,49 @@ for $1 in $2
 do
     ${0:${VISUAL}}
 done
+endsnippet
+
+# @see https://bash.cyberciti.biz/guide/Bash_special_parameters
+snippet rp "Reference parameters"
+# \$* -> Positional parameters: array $* != "$*" string								https://bash.cyberciti.biz/guide/$*
+# \$@ -> Expand postional:		That is, "$@" is equivalent to "\$1" "\$2" .. "$n"	https://bash.cyberciti.biz/guide/$@
+# \$# -> Number of parameters
+# \$? -> Exit status:			0 is all OK!										https://bash.cyberciti.biz/guide/$%3F
+# \$-
+# \$$ -> Process ID (PID)															https://bash.cyberciti.biz/guide/$$
+# \$!
+# \$0 -> Name script file															https://bash.cyberciti.biz/guide/\$0
+# \$_
+endsnippet
+
+# @see https://dev.to/ifenna__/adding-colors-to-bash-scripts-48g4
+snippet rc "Reference colors"
+# aka:
+#	echo -e "\e[41mRed background\e[0m"
+#	echo -e "\e[3;31mRed italic text\e[0m"
+
+# Color       Font  Background
+# blac[k]     30    40
+# [r]ed       31    41
+# [g]reen     32    42
+# [y]ellow    33    43
+# [b]lue      34    44
+# [m]agenta   35    45
+# [c]yan      36    46
+# gr[a]y      90    100
+# [w]hite     97    107
+
+# [n]ormal          0
+# b[o]ld            1
+# [f]aint           2
+# [i]talics         3
+# [u]nderlined      4
+endsnippet
+
+snippet "f(k|r|g|y|b|m|c|a|w)" "Colors Font " r
+\e[`!p snip.rv='30' if match.group(1) == 'k' else ('31' if match.group(1) == 'r' else ('32' if match.group(1) == 'g' else ('33' if match.group(1) == 'y' else ('34' if match.group(1) == 'b' else ('35' if match.group(1) == 'm' else ('36' if match.group(1) == 'c' else ('90' if match.group(1) == 'a' else '97')))))))`m${1:${VISUAL}}\e[0m$0
+endsnippet
+
+snippet "b(k|r|g|y|b|m|c|a|w)" "Colors Background " r
+\e[`!p snip.rv='40' if match.group(1) == 'k' else ('41' if match.group(1) == 'r' else ('42' if match.group(1) == 'g' else ('43' if match.group(1) == 'y' else ('44' if match.group(1) == 'b' else ('45' if match.group(1) == 'm' else ('46' if match.group(1) == 'c' else ('100' if match.group(1) == 'a' else '107')))))))`m${1:${VISUAL}}\e[0m$0
 endsnippet
