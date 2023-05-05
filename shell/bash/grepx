@@ -3,7 +3,7 @@
 if [ -x "`which rg`" ]; then
     rg "$@"
 
-    exit 0
+    exit $?
 fi
 
 grep "$@"

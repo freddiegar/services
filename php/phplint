@@ -6,6 +6,7 @@ set -o nounset
 
 if [ $# -lt 1 ] ; then
     printf 'Usage: %s <directory-or-file> [<more-directory-or-file>] [<php-version>]...\n' "$(basename "$0")"
+
     exit 1
 fi
 
@@ -54,4 +55,5 @@ if [ "$ERROR" = true ] ; then
 fi
 
 echo "No syntax errors found."
+
 exit 0
