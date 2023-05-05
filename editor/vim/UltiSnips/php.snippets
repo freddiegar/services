@@ -20,10 +20,6 @@ def functypes():
 	return ['public', 'protected', 'private']
 endglobal
 
-snippet see "See Link"
-`!v printf(&commentstring, '')`@$1 ${0:`!v match(getreg('+'), '\chttp') == 0 ? getreg('+') : ''`}
-endsnippet
-
 snippet nn "Get file name"
 `!v sniphpets#basename()`
 endsnippet

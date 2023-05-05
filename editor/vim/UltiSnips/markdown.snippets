@@ -1,3 +1,6 @@
+# Avoid colisions with all.snippets file
+priority 10
+
 snippet see "See Link"
 [$1](${0:`!v match(getreg('+'), '\chttp') == 0 ? getreg('+') : ''`})
 endsnippet
