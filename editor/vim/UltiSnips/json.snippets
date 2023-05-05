@@ -1,0 +1,6 @@
+snippet "r(p|c|v)" "Repository" r
+{
+	"type": "`!p snip.rv='path' if match.group(1) == 'p' else ('composer' if match.group(1) == 'c' else 'vsc')`",
+	"url": "`!p snip.rv='/var/www/html/' if match.group(1) == 'p' else ('https://' if match.group(1) == 'c' else 'https://github.com/')`$0"
+}
+endsnippet
