@@ -641,7 +641,7 @@ function! s:statusline(lastmode) abort
 
     set statusline=                                             " Start from scratch (default: empty)
 
-    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
+    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'tagbar'], &filetype) >= 0
         setlocal statusline+=\                                  " Extra space
 
         return
@@ -3260,7 +3260,7 @@ augroup AutoCommands
     " Diff [t]ime operation
     autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=100-((b*100)/a)\r\e")
     " Tinker [s]ql operation
-    autocmd BufEnter,BufNewFile *.sql call setreg('t', "\"zyyIDB::select(\"\eA\")\eyyV\"zp")
+    autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyy\"zpIDB::select(\"\eA\")\edd'z:delmarks z\r")
 
     " Cleanup queries log
     autocmd BufRead \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
@@ -3458,6 +3458,7 @@ augroup AutoCommands
     function! s:mustbeignore() abort
         return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
                     \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*')
+                    \ || g:working[0] =~? 'plugged'
                     \ || g:working[1][0 : 2] =~? '_\|ro-'
     endfunction
 
