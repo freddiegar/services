@@ -1678,7 +1678,7 @@ Plug 'junegunn/fzf.vim'                                         " Using a fuzzy 
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
 Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve (needs ultisnips)
 
-Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GB and GBrowse commands, etc)
+Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GV, GB and GBrowse commands, etc)
 Plug 'junegunn/gv.vim', {'on': 'GV'}                            " - Commits filter extension (needs vim-fugitive) -> :GV[!], GV?
 Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (needs vim-fugitive) -> :GBrowse
 Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (needs vim-fugitive) -> :GBrowse
@@ -1702,6 +1702,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easily
 " Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
 
+" Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 " Plug 'wellle/context.vim'                                       " Show context code (slower)
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
 Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
@@ -1724,11 +1725,11 @@ Plug 'wakatime/vim-wakatime'                                    " Zen mode ++++
 " Plug 'StanAngeloff/php.vim', {'for': 'php'}                     " Better highlight PHP syntax: unmanteined 2020-05-28
 " Plug 'octol/vim-cpp-enhanced-highlight', {'for': 'c'}           " Better highlight C syntax
 " Plug 'mboughaba/i3config.vim', {'for': 'i3config'}              " Better highlight i3 syntax
-" Plug 'storyn26383/vim-vue', {'for': 'vue'}                      " Better highlight vue syntax
+" Plug 'leafOfTree/vim-vue-plugin', {'for': 'vue'}                " Better highlight vue syntax
 " Plug 'tpope/vim-markdown', {'for': 'markdown'}                  " Better highlight markdown syntax (slower?)
-" Plug 'MTDL9/vim-log-highlighting'                               " Better highlight log syntax
-" Plug 'ekalinin/dockerfile.vim'                                  " Better highlight dockerfile syntax (better?)
-" Plug 'pangloss/vim-javascript'                                  " Better highlight javascript syntax
+" Plug 'MTDL9/vim-log-highlighting', {'for': 'log'}               " Better highlight log syntax
+" Plug 'ekalinin/dockerfile.vim', {'for': 'dockerfile'}           " Better highlight dockerfile syntax (better?)
+" Plug 'pangloss/vim-javascript', {'for': 'javascript'}           " Better highlight javascript syntax
 
 if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
@@ -1860,6 +1861,16 @@ let g:UltiSnipsUsePythonVersion = 3
 " let g:user_emmet_mode = 'i'
 " let g:user_emmet_leader_key = ','
 " let g:user_emmet_install_global = 0
+
+" " Vim Sneak
+" " @see https://github.com/justinmk/vim-sneak
+" " Less keys to reach a destiny
+" let g:sneak#label = 1
+
+" map f <Plug>Sneak_f
+" map F <Plug>Sneak_F
+" map t <Plug>Sneak_t
+" map T <Plug>Sneak_T
 
 " " Goyo
 " " @see https://github.com/junegunn/goyo.vim
@@ -3026,6 +3037,10 @@ augroup AutoCommands
     autocmd FileType php let g:test#php#phpunit#executable = get(g:, 'test#php#phpunit#executable', '') !~? 'phpx'
                 \ ? 'phpx ' . test#php#phpunit#executable()
                 \ : get(g:, 'test#php#phpunit#executable')
+                \ | if get(g:, 'test#last_command', '') ==# ''
+                \ |     let g:test#last_strategy = g:test_strategy
+                \ |     let g:test#last_command = g:test#php#phpunit#executable . ' --colors --no-coverage --stop-on-failure ' . g:dtests
+                \ | endif
     autocmd FileType php let g:test#php#phpunit#options = {
         \ 'all': '--no-coverage --stop-on-failure',
     \}
