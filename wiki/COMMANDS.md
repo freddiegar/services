@@ -1207,13 +1207,14 @@ done
 
 echo '#!/usr/bin/env bash
 
-echo "Do you want continue with dump? (y/N)"
+echo -n "Do you want continue with dump? (y/N): "
 
 read RESPONSE
 
 if [ "$RESPONSE" != "y" ]; then
     echo "Dump canceled!"
-    exit
+
+    exit 1
 fi
 
 databases="db1 db2 dbn"
@@ -1246,13 +1247,14 @@ done
 
 echo '#!/usr/bin/env bash
 
-echo "WARNING: Do you want continue with restore? (y/N)"
+echo -n "WARNING: Do you want continue with restore? (y/N): "
 
 read RESPONSE
 
 if [ "$RESPONSE" != "y" ]; then
     echo "Restore canceled!"
-    exit
+
+    exit 1
 fi
 
 databases="db1 db2 dbn"

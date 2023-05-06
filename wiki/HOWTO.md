@@ -156,11 +156,12 @@ AuthorizedKeysFile .ssh/authorized_keys
 Change author commit in git
 
 [See](https://stackoverflow.com/questions/3042437/how-to-change-the-commit-author-for-one-specific-commit#3042512)
+[See --force](https://githint.com/questions/overwrite-remote-commit-history)
 
 ```bash
 # Show current commits
 git log
-# Select commit before to change
+# Select commit before to change (N+1)
 git rebase -i ffd697b
 # Before command open Vim, change `pick` to `edit` in lines required (with bad author info)
 # Close Vim
@@ -171,8 +172,12 @@ git rebase --continue
 or, many using N as number's commits before
 
 ```bash
-git rebase -i HEAD~N -x "git commit --amend --author 'Freddie Gar <freddie@gar.com>' --no-edit"
+git rebase -i HEAD~N -x "git commit -S --amend --author 'Freddie Gar <freddie@gar.com>' --no-edit --no-verify"
+# If changes already in origin
+git push --force
 ```
+
+
 
 Supervisor error
 

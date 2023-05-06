@@ -1231,7 +1231,8 @@ zsh --version | awk '{print $2}'
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included " | awk '{print $3}'`
 # 9.0.1-749
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
-# v0.6.1-LuaJIT 2.1.0-beta3
+# Stable:   v0.6.1-LuaJIT 2.1.0-beta3
+# Unstable: v0.10.0-dev-LuaJIT 2.1.0-beta3
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.9.1
 curl --version | grep -e "^curl " | awk '{print $2}'
