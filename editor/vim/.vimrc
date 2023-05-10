@@ -8,6 +8,7 @@ endif
 " @see https://www.moolenaar.net/habits.html
 " @see http://www.viemu.com/a-why-vi-vim.html
 " @see https://blog.sanctum.geek.nz/vim-koans/
+" @see https://prirai.github.io/books/unix-koans.html
 " @see https://rwx.gg/tools/editors/vi/how/magic/
 " @see https://whyisitsogood.wiki/Vim
 
@@ -726,6 +727,9 @@ cnoremap <Down> <Nop>
 cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
+" Convenience (keep splits)
+nnoremap <silent> ZZ :qall<Enter>
+
 " Utility
 " @tip Macro until end of buffer: VG:normal @x
 nnoremap <silent> Q @@
@@ -979,7 +983,9 @@ nnoremap <silent> <expr> <Leader>z
             \ index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar'], &filetype) >= 0
             \ ? ":bdelete!<Enter>"
             \ : ":update
-            \ <Bar> if buflisted(bufnr('#')) == 1 && bufname('#') !=# ''
+            \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
+            \ <Bar>  silent close
+            \ <Bar> elseif buflisted(bufnr('#')) == 1 && bufname('#') !=# ''
             \ <Bar>  silent edit #
             \ <Bar>  bdelete #
             \ <Bar> else
@@ -1013,7 +1019,7 @@ nnoremap <silent> <A-k> :<C-u>lopen<Enter>
 nnoremap <silent> <A-j> :<C-u>lclose<Enter>
 nnoremap <silent> <A-h> :<C-u>lolder<Enter>
 nnoremap <silent> <A-l> :<C-u>lnewer<Enter>
-" nnoremap <silent> <A-9> :<C-u>lfirst<Enter>
+" nnoremap <silent> <A-9> :<C-u>llast<Enter>
 
 nnoremap <silent> [l :<C-u>lprevious<Enter>zzzv
 nnoremap <silent> ]l :<C-u>lnext<Enter>zzzv
@@ -3273,7 +3279,7 @@ augroup AutoCommands
 
     " Custom register by filetype
     " Diff [t]ime operation
-    autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=100-((b*100)/a)\r\e")
+    autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=((b*100)/a)-100\r\e")
     " Tinker [s]ql operation
     autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyy\"zpIDB::select(\"\eA\")\edd'z:delmarks z\r")
 
@@ -3472,9 +3478,9 @@ augroup AutoCommands
 
     function! s:mustbeignore() abort
         return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
-                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*')
-                    \ || g:working[0] =~? 'plugged'
-                    \ || g:working[1][0 : 2] =~? '_\|ro-'
+                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*|crontab')
+                    \ || (len(g:working) > 0 && g:working[0] =~? 'plugged')
+                    \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-')
     endfunction
 
     function! s:sessionload() abort
@@ -3605,6 +3611,7 @@ augroup AutoCommands
     "    [e]nd of file lines
     "    [d]uplicate blank lines
     " no-[b]reak spaces
+    "    [q]uery log
     "    [f]orce
     "    [v]erbose
     function! s:cleanup(include) abort
