@@ -1,8 +1,8 @@
-if has('vim9script') && filereadable(expand('~/.vimrc9'))
-    source ~/.vimrc9
+" if has('vim9script') && filereadable(expand('~/.vimrc9'))
+"     source ~/.vimrc9
 
-    finish
-endif
+"     finish
+" endif
 
 " PHILOSOPHY
 " @see https://www.moolenaar.net/habits.html
@@ -136,13 +136,9 @@ endif
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
 "           Version                         BARE(ms)    PLUG-NC(ms) PLUG-C(ms)  DATE
-"   Vim9:   9.0.1-749 (vimscript)           4.766       108.271     305.373     2023-05-15
-"   Vim9:   9.0.1-749 (vim9script)          5.524       126.238     234.192     2023-01-17
-"   Diff:                                   +15.9%      +16.5%      +23.3%
-"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)      26.466      81.847      220.711     2023-02-17
-"   Diff:                                   +455.3%     -24.4%      -27.7%
-"   Neovim: 0.10.0-dev (LuaJIT 2.1.0-beta3) 4.434       79.283      173.307     2023-05-05  (no python3, errors fzf)
-"   Diff:                                   -6.9%       -26.7%      -43.2%
+"   Vim9:   9.0.1-749 (vimscript)           4.086       101.880     238.182     2023-05-10
+"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)      25.311      74.522      149.765     2023-05-10
+"   Diff:                                   519.4       -26.8     -37.1%
 " @see https://neovim.io/doc/user/vim_diff.html
 " @see https://www.murilopereira.com/the-values-of-emacs-the-neovim-revolution-and-the-vscode-gorilla/
 
@@ -151,6 +147,7 @@ endif
 " - @z  Save temp content used in mappings
 " - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
 
+" @see :h initialization
 if !get(v:, 'vim_did_enter', !has('vim_starting'))
     " cwd (string)
     function! s:initialize(cwd) abort
@@ -513,7 +510,7 @@ function! GetNameCurrentFile() abort
 endfunction
 
 function! GetNameBranch() abort
-    if &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
+    if !g:hasgit || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
         return ' '
     endif
 
@@ -1678,27 +1675,27 @@ Plug 'machakann/vim-swap'                                       " Swap args: g>,
 " Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
 
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
-Plug 'dense-analysis/ale'                                       " Diagnostic code on-the-fly
+Plug 'dense-analysis/ale', {'for': 'php'}                       " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', {'do': { -> fzf#install() }}               " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
-Plug 'sniphpets/sniphpets'                                      " PHP snippet with namespace resolve (needs ultisnips)
+Plug 'sniphpets/sniphpets', {'for': 'php'}                      " PHP snippet with namespace resolve (needs ultisnips)
 
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GV, GB and GBrowse commands, etc)
-Plug 'junegunn/gv.vim', {'on': 'GV'}                            " - Commits filter extension (needs vim-fugitive) -> :GV[!], GV?
-Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (needs vim-fugitive) -> :GBrowse
-Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (needs vim-fugitive) -> :GBrowse
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
+Plug 'junegunn/gv.vim', {'on': 'GV'}                            " - Commits filter extension (needs vim-fugitive) -> :GV[!], GV?
+Plug 'tpope/vim-rhubarb', {'on': 'GBrowse'}                     " - GitHub browser extension (needs vim-fugitive) -> :GBrowse
+Plug 'tommcdo/vim-fubitive', {'on': 'GBrowse'}                  " - BitBucket browser extension (needs vim-fugitive) -> :GBrowse
 
-Plug 'tpope/vim-dadbod'                                         " DB console in Vim
+Plug 'tpope/vim-dadbod', {'for': 'sql'}                         " DB console in Vim
 Plug 'kristijanhusak/vim-dadbod-completion', {'for': ['sql']}   " DB autocompletion (needs vim-dadbod)
 
-Plug 'preservim/tagbar', {'for': ['php', 'c']}                  " Navigate: methods, vars, etc
-Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
+Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: methods, vars, etc
+" Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 
-Plug 'vim-test/vim-test', {'for': 'php'}                        " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
-Plug 'vim-vdebug/vdebug', {'for': 'php'}                        " Run debugger
-Plug 'skywind3000/asyncrun.vim', {'for': 'php'}                 " Run async tasks: tests, commits, etc in background
+Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
+Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
+Plug 'skywind3000/asyncrun.vim', {'on': '<Plug>asyncrun#run'}   " Run async tasks: tests, commits, etc in background
 
 Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
@@ -1713,7 +1710,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
 Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
-Plug 'junegunn/vader.vim'                                       " Vim Jedi Mode
+" Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
 
 " Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
 " Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++
@@ -3285,6 +3282,8 @@ augroup AutoCommands
 
     " Cleanup queries log
     autocmd BufRead \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
+    " Cleanup profiles log
+    autocmd BufRead profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
 
     " Open files with external application
     autocmd BufEnter *.jpg,*.jpeg,*.png,*.gif,*.svg call <SID>go_url(expand('<afile>')) | bwipeout
@@ -3612,6 +3611,7 @@ augroup AutoCommands
     "    [d]uplicate blank lines
     " no-[b]reak spaces
     "    [q]uery log
+    "    [p]rofile log
     "    [f]orce
     "    [v]erbose
     function! s:cleanup(include) abort
@@ -3674,6 +3674,12 @@ augroup AutoCommands
             silent call add(l:cleanup, 'queries')
         endif
 
+        if index(l:options, 'p') >= 0
+            silent! normal! :g!/plugged/d_vEEllggdVG:sort!gg
+
+            silent call add(l:cleanup, 'profiles')
+        endif
+
         " silent call cursor(l:ccursor) <- Change cursor position!
         silent call setpos('.', l:ccursor)
         silent call setreg('/', l:lsearch)
@@ -3691,6 +3697,7 @@ augroup AutoCommands
     command! -nargs=0 CL call <SID>cleanup('vfted')
     command! -nargs=0 CB call <SID>cleanup('vfb')
     command! -nargs=0 CQ call <SID>cleanup('vfq')
+    command! -nargs=0 CP call <SID>cleanup('vfp')
 
     " title (string)
     function! s:settitle(title) abort
