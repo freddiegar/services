@@ -1483,6 +1483,9 @@ mysql -hlocalhost -p3317 -uuser -p database;
 # Redis connection local
 vapor cache:tunnel database-name
 
+# List current environments
+vapor env:list --manifest=vapor.dev.yml
+
 # Deploy instance
 vapor deploy dev
 ```
@@ -1520,13 +1523,18 @@ ln -s `pwd`/editor/neovim/init.vim ~/.config/nvim/init.vim
 
 # Install (Latest)
 echo "\n" | sudo add-apt-repository ppa:neovim-ppa/stable
-echo "\n" | sudo add-apt-repository ppa:neovim-ppa/unstable
+# echo "\n" | sudo add-apt-repository ppa:neovim-ppa/unstable
 
-sudo apt-get update
 sudo apt-get install -y neovim
+
+# On unstable (0.10.0), it requires and neovim module for Snippets!
+# sudo apt-get install -f python3-pip libpython3-dev
+# pip3 install --upgrade pynvim
 
 # sudo apt-get remove -y neovim && sudo apt-get autoremove
 # echo "\n" | sudo add-apt-repository --remove ppa:neovim-ppa/stable
+
+# sudo apt-get remove -y neovim libpython3-dev python3-pip && sudo apt-get autoremove
 # echo "\n" | sudo add-apt-repository --remove ppa:neovim-ppa/unstable
 
 ## CoC Settings
@@ -1731,14 +1739,6 @@ Copy in clipboard from output
 command | xclip  -selection clipboard
 ```
 > Require: sudo apt-get clipboard
-
-Install i3-gaps
-
-```bash
-sudo add-apt-repository ppa:regolith-linux/release
-
-sudo apt-get install i3-gaps
-```
 
 Machine details
 

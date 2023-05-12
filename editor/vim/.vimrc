@@ -1863,7 +1863,19 @@ let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsListSnippets = ''
 let g:UltiSnipsExpandTrigger = '<C-Tab>'
 let g:UltiSnipsRemoveSelectModeMappings = 0
-let g:UltiSnipsUsePythonVersion = 3
+
+" @thanks https://carakan.net/blog/2020/04/configuring-python3-on-neovim/
+" Explicitly use python3 when evaluate python code (aka: snippets)
+set pyxversion=3
+
+" Disable python2 support ... and others (why nvim why!)
+let g:loaded_ruby_provider = 0
+let g:loaded_node_provider = 0
+let g:loaded_perl_provider = 0
+let g:loaded_python_provider = 0
+
+" Explicitly tells to use python3 (why nvim why!)
+let g:python3_host_prog = '/usr/bin/python3'
 
 " " Emmet
 " " @see https://github.com/mattn/emmet-vim
