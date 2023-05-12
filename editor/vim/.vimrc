@@ -371,7 +371,7 @@ set number                                                      " Number in curs
 set numberwidth=5                                               " Number size, aka: 9999␣ (default: 4=999␣)
 set relativenumber                                              " Relative number (slower) (default: off)
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
-set synmaxcol=300                                               " Only highlight the first N columns (default: 3000)
+set synmaxcol=256                                               " Only highlight the first N columns (default: 3000)
 "              └ weight in bytes
 set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
 
@@ -382,9 +382,9 @@ if !g:istty
     set listchars=space:·,eol:↲                                 " Chars used for invisible chars
     set listchars+=tab:⇥\ ,trail:␣,precedes:⇇,extends:⇉
 else
-    set ttyfast
     set listchars=space:\ ,eol:$                                " tty!
     set listchars+=tab:>\ ,trail:+,extends:<,precedes:>
+    set ttyfast                                                 " Always set fast (default: depends gui:off,tty:on)
 endif
 
 set winaltkeys=no                                               " Never use alt-keys for GUI menus (default: menu)
@@ -627,6 +627,7 @@ set shortmess+=t                                                " [t]runcate fil
 if !g:isneovim
     set shortmess+=C                                            " Don't give the "s[C]anning" message (Vim: >= 9.0.0738)
     set smoothscroll                                            " Scrolling works with screen lines (default: off)
+    set ttyscroll=3                                             " Lines to scroll (default: 999)
 endif
 
 set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
@@ -1695,7 +1696,7 @@ Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: meth
 
 Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
 Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
-Plug 'skywind3000/asyncrun.vim', {'on': '<Plug>asyncrun#run'}   " Run async tasks: tests, commits, etc in background
+Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
 
 Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
@@ -3768,7 +3769,7 @@ augroup AutoCommands
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
 
     " Hide sensible information (maybe share all screen or pair programming)
-    autocmd FocusLost *.asc,.env let afile = expand('<afile>') | execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
+    autocmd FocusLost *.asc let afile = expand('<afile>') | execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
 
     autocmd User ALELintPost call <SID>diagnostics()
     autocmd InsertEnter * call <SID>popup_hide()
@@ -3819,6 +3820,9 @@ function! s:get_hlinfo() abort
     if !exists("*synstack")
         return
     endif
+
+    syntax sync minlines=256
+    syntax sync maxlines=256
 
     echo 'Highligth: ' . join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ',')
                 \ . ' -> ' . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
