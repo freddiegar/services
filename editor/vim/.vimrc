@@ -403,14 +403,20 @@ if has('gui_running')
     set guiligatures=!\"#$%&()*+-./:<=>?@[]^_{\|~               " Ligatures!
 
     augroup GUIOptions
-        autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'FiraCode Retina 14', '')
-        " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 14', '')
-        " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'JetBrains Mono 14', '')
+        autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'FiraCode Retina 17', '')
+        " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 17', '')
+        " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'JetBrains Mono 17', '')
         " @see https://vimhelp.org/autocmd.txt.html#GUIFailed
         autocmd GUIFailed * qall
 
-        " Cleans garbage
-        autocmd FocusGained * redraw!
+        " Cleans garbage, annoyoning flash
+        " autocmd FocusGained * redraw!
+
+        " @thanks https://github.com/junegunn/fzf.vim/issues/672
+        tnoremap <expr> <S-Insert> getreg('+')
+
+        " @thanks http://superuser.com/questions/322947/ddg#322953
+        inoremap <silent> <S-Insert> +
 
         " @thanks https://stackoverflow.com/questions/10259366/gvim-auto-copy-selected-text-to-system-clipboard-to-share-it-with-apps
         cnoremap <S-Insert> <C-r>+
@@ -3706,7 +3712,7 @@ augroup AutoCommands
             return
         endif
 
-        silent execute '!echo -ne "\033]30;' . a:title . '\007"'
+        silent! execute '!echo -ne "\033]30;' . a:title . '\007"'
     endfunction
 
     function! s:postcolorscheme() abort
