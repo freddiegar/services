@@ -1,14 +1,40 @@
 #!/bin/sh
 
+# Run checker user before continue
+# @thanks https://victoria.dev/blog/an-automatic-interactive-pre-commit-checklist-in-the-style-of-infomercials/
+echo -n "Do you want commit on [\e[90m${PWD##*/}\e[0m] as \e[1;32m`git config --get user.name`\e[0m? (y/N): "
+
+exec < /dev/tty
+
+read RESPONSE
+
+if [ "$RESPONSE" != "y" ]; then
+    echo "\e[31mCommit canceled!\e[0m"
+
+    exit 1
+fi
+
+exec <&-
+
+FSTAGING=`git ls-files --modified | grepx ".php$" | wc -l`
+FMODIFING=`git diff --name-only --cached | xargs -r -l echo | grepx ".php$" | wc -l`
+FPHP=$(($FSTAGING + $FMODIFING))
+
 # Run fixer before add message to commit
-if [ -f .php_cs ]; then
+if [ $FPHP = 0 ]; then
+    echo -n ""
+elif [ -f .php_cs ]; then
     phpx vendor/bin/php-cs-fixer fix --config=.php_cs
 elif [ -f .php-cs-fixer.php ]; then
     phpx vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php
 elif [ -f .phpcs.xml ]; then
     phpx vendor/bin/phpcbf --colors -s --standard=.phpcs.xml
 else
-    echo "Fixer not found."
+    echo "\e[31mFixer not found.\e[0m"
+fi
+
+if [ $FPHP = 0 ]; then
+    exit 0
 fi
 
 # Run test before add message to commit
