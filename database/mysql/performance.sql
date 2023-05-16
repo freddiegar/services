@@ -27,6 +27,115 @@ WHERE 1 = 1
 ORDER BY SUM_TIMER_WAIT DESC
 LIMIT 10
 
+-- @see https://www.percona.com/blog/queries-for-finding-poorly-designed-mysql-schemas-and-how-to-fix-them/
+
+-- Find tables without PK
+
+SELECT t.table_schema,t.table_name,t.engine
+FROM information_schema.tables t
+JOIN information_schema.columns c
+ON t.table_schema=c.table_schema
+AND t.table_name=c.table_name
+WHERE 1=1
+AND t.table_schema = 'mpi_co'
+AND t.table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
+AND t.table_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
+AND t.table_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
+AND t.table_schema NOT LIKE '%phpunit'
+AND t.table_name NOT IN ('password_resets', 'telescope_entries_tags', 'telescope_monitoring')
+AND t.table_type = 'BASE TABLE'
+GROUP BY t.table_schema,t.table_name, t.engine
+HAVING SUM(IF(c.column_key IN ('PRI','UNI'), 1,0)) = 0;
+
+-- Find columns in tables by type
+
+SELECT table_schema, table_name, column_name, data_type, character_maximum_length
+FROM information_schema.columns
+WHERE 1 = 1
+AND data_type IN ('datetime')
+AND table_schema = 'microsites_co';
+
+-- Find tables with non-integer PK's
+
+SELECT table_schema, table_name, column_name, data_type, character_maximum_length
+FROM information_schema.columns
+WHERE column_key IN ('PRI','UNI')
+AND ordinal_position=1
+AND data_type NOT IN ('tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'timestamp', 'datetime')
+AND table_schema = 'mpi_co'
+AND table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
+AND table_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
+AND table_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
+AND table_schema NOT LIKE '%phpunit';
+
+-- Find tables not using InnoDB
+
+SELECT t.table_schema,t.table_name,t.engine
+FROM information_schema.tables t
+WHERE 1=1
+AND t.table_schema = 'mpi_co'
+AND t.table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
+AND t.table_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
+AND t.table_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
+AND t.table_schema NOT LIKE '%phpunit'
+AND t.engine <> 'InnoDB'
+AND t.table_type = 'BASE TABLE';
+
+-- Find tables and indexes with the most latency
+-- Amdhal's law: the overall performance improvement gained by optimizing a single part of a system, is limited by the fraction of time that the improved part is actually used
+
+SELECT *
+FROM sys.schema_table_statistics
+WHERE 1=1
+AND table_schema = 'mpi_co'
+AND table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
+AND table_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
+AND table_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
+AND table_schema NOT LIKE '%phpunit';
+
+SELECT *
+FROM sys.schema_index_statistics
+WHERE 1=1
+AND table_schema = 'mpi_co'
+AND table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
+AND table_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
+AND table_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
+AND table_schema NOT LIKE '%phpunit';
+
+-- Find tables whose indexes > data by 50%
+
+SELECT table_schema, table_name, index_length, data_length, index_length/data_length AS index_to_data_ratio
+FROM information_schema.tables
+WHERE 1=1
+AND table_schema = 'mpi_co'
+AND table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
+AND table_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
+AND table_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
+AND table_schema NOT LIKE '%phpunit';
+AND INDEX_LENGTH > DATA_LENGTH*1.5;
+
+-- Find tables with duplicate indexes
+
+SELECT table_schema,table_name,redundant_index_name AS redundant_index, redundant_index_columns AS redundant_columns, dominant_index_name AS covered_by_index,sql_drop_index
+FROM sys.schema_redundant_indexes
+WHERE 1=1
+AND table_schema = 'mpi_co'
+AND table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
+AND table_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
+AND table_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
+AND table_schema NOT LIKE '%phpunit';
+
+-- Find unused indexes
+
+SELECT *
+FROM sys.schema_unused_indexes
+WHERE 1=1
+AND object_schema = 'mpi_co'
+AND object_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
+AND object_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
+AND object_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
+AND object_schema NOT LIKE '%phpunit';
+
 /*
 desc events_statements_summary_by_digest;
 +-----------------------------+---------------------+------+-----+---------------------+-------+
