@@ -3,15 +3,61 @@ ___
 
 [Comparation SO](https://wiki.archlinux.org/title/Arch_compared_to_other_distributions)
 
+# User
+
+```bash
+useradd -D
+sudo useradd --create-ho[m]e --[u]id 1000 --[s]hell /bin/bash --[c]omment Freddie freddie
+sudo usermod -aG sudo freddie
+sudo passwd freddie
+# Reload profile
+su - freddie
+```
+
+# English Language for All
+
+```bash
+cat /etc/default/locale
+echo "\n" | sudo update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en
+# On error, generate locale, uncomment in this file en_US.UTF-8 (and comment current)
+# vi /etc/locale.gen
+# Regenerate options
+# sudo locale-gen
+echo 'Acquire::Languages "none";' | sudo tee -a /etc/apt/apt.conf.d/00aptitude
+```
+
 # Utils
 
 ```bash
-sudo apt-get install -y software-properties-common
-## sudo apt-get remove software-properties-common && sudo apt-get autoremove
+sudo apt-get install -y software-properties-common git-core
+## sudo apt-get remove software-properties-common git-core && sudo apt-get autoremove
 ```
 > By example: add-apt-repository
 
-# Vim Latest :D, of course!
+## Sync config files using git
+
+```bash
+sudo mkdir -p /var/www/html/freddiegar
+sudo chown freddie:freddie /var/www -R
+git clone https://github.com/freddiegar/services.git /var/www/html/freddiegar/services
+```
+> Sync .ssh (and .gnupg) keys (if there any)
+> tar -czvf ssh.tar.gz .ssh     -> tar -xzvf ssh.tar.gz --overwrite .ssh
+> tar -czvf gnupg.tar.gz .gnupg -> tar -xzvf gnupg.tar.gz --overwrite .gnupg
+
+Now, we can to use SSH
+
+```bash
+git remote set-url origin git@github.com:freddiegar/services.git
+```
+
+# PWD
+
+```bash
+cd /var/www/html/freddiegar/services
+```
+
+## Vim Latest :D, of course! (Non necessary in current LTS)
 
 ```bash
 echo "\n" | sudo add-apt-repository ppa:jonathonf/vim
@@ -23,33 +69,6 @@ echo "\n" | sudo add-apt-repository ppa:jonathonf/vim
 ```bash
 sudo apt-get update
 sudo apt-get -y upgrade
-sudo apt-get install -y vim konsole
-## sudo apt-get remove vim konsole && sudo apt-get autoremove
-```
-
-## Vim Configuration
-
-```bash
-# Set as default editor
-sudo update-alternatives --config editor
-
-ln -s `pwd`/editor/vim/.vimrc ~/.vimrc
-
-## CoC Settings
-ln -s `pwd`/editor/vim/coc-settings.json ~/.vim/coc-settings.json
-
-## PHPActor Settings
-ln -s `pwd`/editor/vim/phpactor.json ~/.config/phpactor/phpactor.json
-```
-
-## Konsole Profile
-
-```bash
-rm -f ~/.local/share/konsole/*.profile
-rm -f ~/.local/share/konsole/*.colorscheme
-
-ln -s `pwd`/emulator/konsole/konsole.profile ~/.local/share/konsole/konsole.profile
-ln -s `pwd`/emulator/konsole/Linux.colorscheme ~/.local/share/konsole/Linux.colorscheme
 ```
 
 # Performance, not use swap while RAM < 90% used
@@ -59,16 +78,26 @@ ln -s `pwd`/emulator/konsole/Linux.colorscheme ~/.local/share/konsole/Linux.colo
 [Tips 2](https://github.com/akalongman/ubuntu-configuration)
 
 ```bash
+grep -F "vm.swappiness=" /etc/sysctl.d/99-sysctl.conf
+
 echo '# Overwrite default: 60
 vm.swappiness=10' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
+
+grep -F "vm.swappiness=" /etc/sysctl.d/99-sysctl.conf
+
 sudo sysctl -p
 ```
 
 # Change default User Max Watches
 
 ```bash
+grep -F "fs.inotify.max_user_watches=" /etc/sysctl.d/99-sysctl.conf
+
 echo '# Overwrite default: 8192 ~8M to ~540M
 fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
+
+grep -F "fs.inotify.max_user_watches=" /etc/sysctl.d/99-sysctl.conf
+
 sudo sysctl -p
 ```
 
@@ -79,16 +108,26 @@ sudo cp -p /etc/default/grub /etc/default/grub.backup
 ```
 
 ```bash
+grep -F "GRUB_TIMEOUT=" /etc/default/grub
+
 sudo sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=0/g' /etc/default/grub
+
+grep -F "GRUB_TIMEOUT=" /etc/default/grub
+
 sudo update-grub
 ```
 
 # Change graphical to text GRUB
 
 ```bash
+grep "GRUB_CMDLINE_LINUX_DEFAULT=\|GRUB_CMDLINE_LINUX=\|GRUB_TERMINAL=" /etc/default/grub
+
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT/#GRUB_CMDLINE_LINUX_DEFAULT/g' /etc/default/grub
 sudo sed -i 's/GRUB_CMDLINE_LINUX="*"/GRUB_CMDLINE_LINUX="text"/g' /etc/default/grub
 sudo sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
+
+grep "GRUB_CMDLINE_LINUX_DEFAULT=\|GRUB_CMDLINE_LINUX=\|GRUB_TERMINAL=" /etc/default/grub
+
 sudo update-grub
 
 sudo systemctl set-default multi-user.target
@@ -97,20 +136,17 @@ sudo systemctl set-default multi-user.target
 # Turn-off hibernation
 
 ```bash
+grep 'HandleLidSwitch=\|LidSwitchIgnoreInhibited=' /etc/systemd/logind.conf
+
 sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/g' /etc/systemd/logind.conf
 sudo sed -i 's/#LidSwitchIgnoreInhibited=yes/LidSwitchIgnoreInhibited=no/g' /etc/systemd/logind.conf
+
+grep 'HandleLidSwitch=\|LidSwitchIgnoreInhibited=' /etc/systemd/logind.conf
+
 sudo systemctl restart systemd-logind
 ```
 
-# English Language for All
-
-```bash
-cat /etc/default/locale
-echo "\n" | sudo update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en
-echo 'Acquire::Languages "none";' | sudo tee -a /etc/apt/apt.conf.d/00aptitude
-```
-
-# Auto-update (on servers)
+# Auto-update (ONLY on servers!)
 
 ```bash
 sudo apt-get install -y unattended-upgrades update-notifier-common
@@ -128,11 +164,11 @@ sudo service cups stop && sudo systemctl disable cups
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim
-## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim && sudo apt-get autoremove
+sudo apt-get install -y unzip curl tree nmap htop i3 feh pavucontrol maim
+## sudo apt-get remove unzip curl tree nmap htop i3 feh pavucontrol maim && sudo apt-get autoremove
 ```
 
-# i3
+## i3
 
 ```bash
 mkdir -p ~/.config/i3
@@ -147,7 +183,7 @@ ln -s `pwd`/i3/battery ~/.config/i3/battery-popup
 > Change $meta Mod1 -> Mod4
 > sed -i 's/$meta Mod1/$meta Mod4/g' ~/.config/i3/config
 
-## Set i3 as WM
+### Set i3 as WM
 
 ```bash
 sudo update-alternatives --config x-session-manager
@@ -155,7 +191,7 @@ sudo update-alternatives --config x-session-manager
 # sudo update-alternatives --install /usr/bin/x-session-manager x-session-manager /usr/bin/i3 60
 ```
 
-## Start i3 after StartX
+### Start i3 after StartX
 
 [See](https://www.reddit.com/r/i3wm/comments/72oiwl/how_do_i_set_environment_variables_so_that_they/)
 
@@ -163,25 +199,39 @@ sudo update-alternatives --config x-session-manager
 echo 'exec i3' >> ~/.xinitrc
 ```
 
-# Vim Plugins
+## Konsole Profile
 
 ```bash
-# Install
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+sudo apt-get install -y konsole
+## sudo apt-get remove konsole && sudo apt-get autoremove
 
-# Open Vim and run
-:PlugInstall
+rm -f ~/.local/share/konsole/*.profile
+rm -f ~/.local/share/konsole/*.colorscheme
 
-# Update all plugins
-:PlugUpdate
-
-# Clean plugins
-:PlugClean
-
-# Upgrade plugin manager
-:PlugUpgrade
+ln -s `pwd`/emulator/konsole/konsole.profile ~/.local/share/konsole/konsole.profile
+ln -s `pwd`/emulator/konsole/Linux.colorscheme ~/.local/share/konsole/Linux.colorscheme
 ```
-> See .vimrc file
+
+## Vim Configuration
+
+```bash
+sudo apt-get install -y vim
+## sudo apt-get remove vim && sudo apt-get autoremove
+
+# Set as default editor
+sudo update-alternatives --config editor
+
+rm ~/.viminfo
+ln -s `pwd`/editor/vim/.vimrc ~/.vimrc
+
+## CoC Settings
+mkdir ~/.vim
+ln -s `pwd`/editor/vim/coc-settings.json ~/.vim/coc-settings.json
+
+## PHPActor Settings
+mkdir -p ~/.config/phpactor
+ln -s `pwd`/editor/vim/phpactor.json ~/.config/phpactor/phpactor.json
+```
 
 ## Vim Copy/Paste (Share SO)
 
@@ -254,8 +304,8 @@ ln -s `pwd`/editor/phpstorm/.ideavimrc ~/.ideavimrc
 # GIT
 
 ```bash
-sudo apt-get install -y git-core git-lfs
-## sudo apt-get remove git-core git-lfs && sudo apt-get autoremove
+sudo apt-get install -y git-lfs
+## sudo apt-get remove git-lfs && sudo apt-get autoremove
 ```
 > https://www.howtogeek.com/devops/how-to-completely-reset-a-git-repository-including-untracked-files/
 

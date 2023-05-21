@@ -83,7 +83,7 @@ udisksctl unmount -b /dev/sda
 ## if: Input File
 ## of: Output File
 ## status: Verbose option
-dd bs=4M if=/path/to/file.iso of=/dev/sdb conv=fsync oflag=direct status=progress
+dd bs=4M if=/home/freddie/Downloads/archlinux-x86_64.iso of=/dev/sda conv=fsync oflag=direct status=progress
 
 # or
 
