@@ -22,6 +22,6 @@
     "phpactor.enable": true,
     "phpactor.path": "~/.vim/plugged/phpactor/bin/phpactor",
     "clangd.enable": true,
-    "clangd.path": "/usr/local/clang_9.0.0/bin/clangd",
+    "clangd.path": "/usr/local/clang_16.0.0/bin/clangd",
     "vetur.ignoreProjectWarning": true
 }
