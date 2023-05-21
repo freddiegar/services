@@ -14,14 +14,14 @@
 	useAutoMerge = auto
 [merge]
 	tool = vimdiff
-        ; Weird view
+	; Weird view
 	; conflictstyle = diff3
 	; Available in 2.35+
 	; @see https://git-scm.com/docs/git-merge#_how_conflicts_are_presented
 	; conflictstyle = zdiff3
 [diff]
 	algorithm = histogram
-        trustExitCode = true
+	trustExitCode = true
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
