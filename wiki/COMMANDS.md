@@ -1821,3 +1821,28 @@ Install [Zoom](https://zoom.us/download?os=linux)
 curl -L https://zoom.us/client/5.13.5.431/zoom_amd64.deb -o zoom.deb && sudo apt install ./zoom.deb && rm zoom.deb
 # sudo apt remove zoom
 ```
+
+Add/Update [supervisor](http://supervisord.org/configuration.html) setup
+
+```bash
+# Check status
+sudo supervisorctl status
+
+# Where are config?
+grep -e "^files =" /etc/supervisor/supervisord.conf
+cd /etc/supervisor/conf.d/
+
+# New file setup
+echo '[program:scope-name-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=/usr/bin/php /var/www/vhosts/deployments/name/current/artisan queue:work --queue=high,default --sleep=3 --tries=2
+autostart=true
+autorestart=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stderr_logfile=/var/www/vhosts/deployments/name/storage/logs/worker.log' | sudo tee /etc/supervisor/conf.d/scope_name.conf
+
+# Reload supervisor configuration
+sudo supervisorctl reload
+```
