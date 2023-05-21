@@ -189,8 +189,9 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.c
 # Check: +xterm_clipboard
 vim --version | grep xterm
 # if -xterm_clipboard then
-# sudo apt-get install -y vim-gnome
-# Check again
+# sudo apt-get install -y vim-gtk3
+## In olders versions use: vim-gnome
+# Check again ;)
 ```
 
 ## Vim C Development
@@ -202,9 +203,10 @@ vim --version | grep xterm
 
 ```bash
 cd ~
-curl -SL http://releases.llvm.org/9.0.0/clang%2bllvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz | tar -xJC .
-mv clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04 clang_9.0.0
-sudo mv clang_9.0.0 /usr/local
+sudo apt install libncurses5
+curl -SL https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz | tar -xJC .
+sudo mv clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04 /usr/local/clang_16.0.0
+# /usr/local/clang_16.0.0/bin/clangd --version
 ```
 
 ### C Tags
@@ -283,7 +285,7 @@ sudo chmod +x /usr/local/bin/git-summary
 ## sudo apt-get remove gawk && sudo rm /usr/local/bin/git-summary && sudo apt-get autoremove
 ```
 
-## GIT Large File Storage - LFD
+## GIT Large File Storage - LFS
 
 [See](https://git-lfs.com/)
 
@@ -309,7 +311,7 @@ git clone --depth=1 git@github.com:freddiegar/wallpapers.git
 ln -s /var/www/html/freddiegar/wallpapers ~/BG
 ```
 
-# Zsh
+# ZSH
 
 [See](https://towardsdatascience.com/comparing-sh-bash-ksh-and-zsh-speed-82a72bbc20ed)
 [See 2](https://google.github.io/styleguide/shellguide.html)
@@ -322,11 +324,17 @@ echo $SHELL
 # Change shell if not is zsh
 chsh -s `which zsh`
 
+grep "CASE_SENSITIVE=\|HIST_STAMPS=\|plugins=" ~/.zshrc
+
 cp -p ~/.zshrc ~/.zshrc.original
 sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
 sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy-mm-dd"/g' ~/.zshrc
 sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
 
+grep "CASE_SENSITIVE=\|HIST_STAMPS=\|plugins=" ~/.zshrc
+
+# In i3
+i3-msg exit
 # In Ubuntu
 gnome-session-quit
 # In Lubuntu
@@ -401,7 +409,7 @@ fi' >> ~/.zshenv
 # PHP 8.1
 
 ```bash
-echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only Ubuntu
+echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only oldest Ubuntu
 sudo apt-get install -y php8.1-cli
 sudo apt-get install -y php8.1-dev
 sudo apt-get install -y php8.1-mbstring
@@ -418,7 +426,7 @@ sudo apt-get install -y php8.1-bcmath
 sudo apt-get install -y php8.1-gmp
 sudo apt-get install -y php8.1-xml
 ## sudo apt-get remove php8.1\* && sudo apt-get autoremove
-## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php # Only Ubuntu
+## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
 ```
 
 ## Composer for PHP
@@ -491,11 +499,14 @@ sudo ln -s `pwd`/php/phplint /usr/local/bin/phplint
 
 ```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common
-echo "\n" | curl -L https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/`lsb_release -is | awk '{print tolower($0)}'` `lsb_release -cs` stable"
+curl -L https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/docker.gpg > /dev/null
+echo "\n" | sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/`lsb_release -is | awk '{print tolower($0)}'` `lsb_release -cs` stable"
+
 sudo apt-get install -y docker-ce
 sudo usermod -aG docker $(whoami)
 
+# In i3
+i3-msg exit
 # In Ubuntu
 gnome-session-quit
 # In Lubuntu
@@ -507,7 +518,7 @@ lxqt-leave
 
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -547,6 +558,7 @@ cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
 echo '
 if [ -f ~/.ssh/agent.env ]; then
     . ~/.ssh/agent.env > /dev/null
+
     if ! kill -0 $SSH_AGENT_PID > /dev/null 2>&1; then
         eval `ssh-agent | tee ~/.ssh/agent.env`
     fi
@@ -636,10 +648,10 @@ sudo apt-get remove firefox && sudo apt-get autoremove
 curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.bz2
 sudo tar -xvjf firefox.tar.bz2 -C /opt && rm -Rf firefox.tar.bz2
 sudo ln -s /opt/firefox/firefox /usr/bin/firefox
-## rm -Rf /opt/firefox
+## rm -Rf /opt/bin/firefox
 ```
 
-## Firefox Developer Edition Shorcut
+## Firefox Developer Edition Shortcut
 
 ```bash
 echo '[Desktop Entry]
@@ -679,9 +691,10 @@ sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/f
 
 ```bash
 cd ~
-sudo apt-get install -y build-essential libssl-dev
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.38.0/install.sh | bash
+sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash
 
+# Only oldest Ubuntu
 echo '
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -693,19 +706,19 @@ nvm ls-remote
 # Ubuntu 18
 # @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
 # ldd --version
-nvm install v16.20.0
-# nvm alias default v16.20.0
+nvm install v18.16.0
+# nvm alias default v18.16.0
 # nvm current
 ## Enabled to all users in [L|X]Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
 
 ## Install package: npm install express
-## nvm deactivate && nvm uninstall v16.20.0
+## nvm deactivate && nvm uninstall v18.16.0
 
 ## Install npm
-npm install -g npm@9.6.4
+npm install -g npm@latest
 ## npm --version
-## npm install -g npm@latest
+## npm uninstall -g npm@latest
 ```
 
 # Profile
@@ -737,9 +750,18 @@ sudo apt-get install -y fonts-firacode
 ```
 
 # Clean installation
+
+```bash
 sudo apt-get clean
 sudo apt-get autoclean
 sudo apt-get autoremove
+```
+
+# Avoid DEPRECATION on Keys Managment
+
+```bash
+sudo mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d
+```
 
 ## That is ALL :D !
 
@@ -753,7 +775,7 @@ sudo apt-get autoremove
 # After :PluInstall in Vim (Last version auto update by Vim)
 sudo ln -s ~/.vim/plugged/fzf/bin/fzf /usr/bin/fzf
 # or Debian 9+/Ubuntu 19.10+
-sudo apt-get install fzf
+sudo apt-get install -y fzf
 ```
 
 # RigGrep for Vim search (Performance FZF and Terminal)
@@ -763,11 +785,11 @@ sudo apt-get install fzf
 ```bash
 # [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
 echo "\n" | sudo add-apt-repository ppa:x4121/ripgrep
-sudo apt-get install ripgrep
+sudo apt-get install -y ripgrep
 ## sudo apt-get remove ripgrep && echo "\n" | sudo add-apt-repository --remove ppa:x4121/ripgrep
 
 # [L|X]Ubuntu 18.10+ | Rg v11.0.2+
-sudo apt-get install ripgrep
+sudo apt-get install -y ripgrep
 ## sudo apt-get remove ripgrep && sudo apt-get autoremove
 ```
 
@@ -776,9 +798,14 @@ sudo apt-get install ripgrep
 [See](https://github.com/sharkdp/bat)
 
 ```bash
+# [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
 cd ~
 sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.19.0/bat_0.19.0_amd64.deb -o bat.deb
 sudo dpkg -i bat.deb && rm -f bat.deb
+
+# [L|X]Ubuntu 18.10+ | Rg v0.22.1
+sudo apt-get install -y bat
+
 ## Command:
 ## bat file.php
 ## sudo apt-get remove bat && sudo apt-get autoremove
@@ -789,8 +816,7 @@ sudo dpkg -i bat.deb && rm -f bat.deb
 [See](https://wiki.vifm.info/index.php?title=Manual)
 
 ```bash
-cd ~
-sudo apt-get install vifm
+sudo apt-get install -y vifm
 ## sudo apt-get remove vifm && sudo apt-get autoremove
 ```
 
@@ -801,7 +827,6 @@ sudo apt-get install vifm
 [See](https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md)
 
 ```bash
-cd ~
 composer global require rector/rector --dev
 sudo ln -s ~/.composer/vendor/bin/rector /usr/local/bin/phprector
 ## Command
@@ -814,8 +839,7 @@ sudo ln -s ~/.composer/vendor/bin/rector /usr/local/bin/phprector
 # Infection AST
 
 ```bash
-cd ~
-sudo curl -L https://github.com/infection/infection/releases/download/0.25.6/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.27.0/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command:
 ## infection -j$(nproc) [--filter=file.php]
@@ -825,7 +849,6 @@ sudo chmod +x /usr/local/bin/infection
 # PHPLOC (Lines Of Code)
 
 ```bash
-cd ~
 sudo curl -L https://phar.phpunit.de/phploc.phar -o /usr/local/bin/phploc
 sudo chmod +x /usr/local/bin/phploc
 ## Command:
@@ -836,7 +859,6 @@ sudo chmod +x /usr/local/bin/phploc
 # PHPCPD (Copy/Paste Dectector)
 
 ```bash
-cd ~
 sudo curl -L https://phar.phpunit.de/phpcpd.phar -o /usr/local/bin/phpcpd
 sudo chmod +x /usr/local/bin/phpcpd
 ## Command:
@@ -847,7 +869,6 @@ sudo chmod +x /usr/local/bin/phpcpd
 # PHPMetrics
 
 ```bash
-cd ~
 sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.8.1/phpmetrics.phar -o /usr/local/bin/phpmetrics
 sudo chmod +x /usr/local/bin/phpmetrics
 ## Command:
@@ -884,8 +905,9 @@ xdebug.client_host=host.docker.internal
 xdebug.client_port=9003
 ;xdebug.log=/var/www/html/xdebug/xdebug.log
 xdebug.file_link_format=xdebug://%f@%l
-zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
-zend_extension=/usr/lib/php/20210902/xdebug.so' | sudo tee /etc/php/8.1/mods-available/xdebug.ini <- 3.2.0
+zend_extension=/usr/lib/php/20210902/xdebug.so' | sudo tee /etc/php/8.1/mods-available/xdebug.ini
+
+# PHP 7.4: zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 sudo phpenmod xdebug
 ```
 
@@ -904,11 +926,11 @@ sudo pecl upgrade -f xdebug
 
 ```bash
 mkdir ~/bin
-echo "#! /bin/sh
+echo "#\!/bin/sh
 
-f=`echo $1 | cut -d @ -f 1 | sed 's/xdebug:\/\///'`
-l=`echo $1 | cut -d @ -f 2`
-vim --remote-tab +$l $f
+f=\`echo \$1 | cut -d @ -f 1 | sed 's/xdebug:\/\///'\`
+l=\`echo \$1 | cut -d @ -f 2\`
+gvim --remote-tab +\$l \$f
 " > ~/bin/ff-xdebug.sh
 
 # Permissions
@@ -949,7 +971,7 @@ phpize && ./configure && make && make install && cd /var/www/html
 ```bash
 # VS Code
 cd ~
-curl -L "https://az764295.vo.msecnd.net/stable/c722ca6c7eed3d7987c0d5c3df5c45f6b15e77d1/code_1.65.2-1646927742_amd64.deb" -o vscode.deb
+curl -L "https://az764295.vo.msecnd.net/stable/b3e4e68a0bc097f0ae7907b217c1119af9e03435/code_1.78.2-1683731010_amd64.deb" -o vscode.deb
 sudo dpkg -i vscode.deb
 rm -f vscode.deb
 ## sudo apt-get remove code && sudo apt-get autoremove
@@ -959,8 +981,9 @@ rm -f vscode.deb
 
 ```bash
 cd ~
-curl -L https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+curl -L https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublime-text.gpg > /dev/null
 echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+
 sudo apt-get update
 sudo apt-get install -y sublime-text
 ## sudo apt-get remove sublime-text && sudo apt-get autoremove
@@ -1038,7 +1061,6 @@ sudo apt-get install -y ffmpeg obs-studio
 ## Screen Recording
 
 ```bash
-sudo apt-get update
 sudo apt-get install -y kazam
 ## sudo apt-get remove kazam && sudo apt-get autoremove
 ```
@@ -1046,7 +1068,6 @@ sudo apt-get install -y kazam
 ## ScreenKey -> only X11
 
 ```bash
-sudo apt-get update
 sudo apt-get install -y screenkey
 ## sudo apt-get remove screenkey && sudo apt-get autoremove
 ```
@@ -1054,7 +1075,6 @@ sudo apt-get install -y screenkey
 ## Ubuntu: CPU Usage Bar
 
 ```bash
-sudo apt-get update
 sudo apt-get install -y indicator-multiload
 ## sudo apt-get remove indicator-multiload && sudo apt-get autoremove
 ```
@@ -1073,11 +1093,16 @@ https://ubuntuhandbook.org/index.php/2020/03/hide-activities-button-ubuntu-18-04
 [See](https://sourceforge.net/p/stoken/wiki/Home/)
 
 ```bash
+# Oldest
 echo "\n" && sudo add-apt-repository ppa:cernekee/ppa
 sudo apt-get update
-sudo apt-get install stoken libstoken-dev -y
+sudo apt-get install -y stoken libstoken-dev
 ## sudo apt-get remove stoken libstoken-dev && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:cernekee/ppa # Only Ubuntu
+
+# Newest
+sudo apt-get install -y stoken
+## sudo apt-get remove stoken && sudo apt-get autoremove
 ## Start
 stoken-gui --small &
 ```
@@ -1086,11 +1111,30 @@ stoken-gui --small &
 
 ```bash
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-curl -L https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+curl -L https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/google-chrome.gpg > /dev/null
+
 sudo apt-get update
 sudo apt-get install -y google-chrome-stable
 ## sudo apt-get remove google-chrome-stable && sudo apt-get autoremove
 ```
+
+## Microsoft Edge (for Teams :()
+
+```
+curl -L https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft-edge.gpg > /dev/null
+sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
+
+sudo apt-get update
+sudo apt install microsoft-edge-stable
+## sudo apt-get remove microsoft-edge-stable && sudo apt-get autoremove
+```
+> Something was wrong?
+> ls -la /etc/apt/trusted.gpg.d
+> sudo chmod 755 /etc/apt/trusted.gpg.d -f
+> sudo chmod 644 /etc/apt/trusted.gpg.d/* -Rf
+> sudo chown root:root /etc/apt/trusted.gpg.d/* -Rf
+> -rw-r--r-- 1 root root 2794 Mar 26  2021 ubuntu-keyring-2012-cdimage.gpg
+> -rw-r--r-- 1 root root 1733 Mar 26  2021 ubuntu-keyring-2018-archive.gpg
 
 ## Virtual Machine
 
@@ -1100,7 +1144,6 @@ sudo apt-get install -y google-chrome-stable
 [See 2](https://www.youtube.com/watch?v=9FBhcOnCxM8)
 
 ```bash
-cd ~
 sudo apt-get update
 sudo apt-get install qemu qemu-kvm libvirt-bin bridge-utils virt-manager
 sudo systemctl enable libvirtd
@@ -1121,13 +1164,11 @@ sudo qemu-img convert -f vdi -O qcow2 Ubuntu\ 20.04.vdi /var/lib/libvirt/images/
 
 ```bash
 # v5.2
-cd ~
 sudo apt-get update
 sudo apt-get install virtualbox
 ## sudo apt-get remove virtualbox && sudo apt-get autoremove
 
 # v6.1
-cd ~
 sudo apt-get update
 sudo apt-get install -y libqt5opengl5
 sudo curl -L https://download.virtualbox.org/virtualbox/6.1.32/virtualbox-6.1_6.1.32-149290~Ubuntu~bionic_amd64.deb -o virtualbox.deb
@@ -1190,6 +1231,20 @@ sudo apt-get install -y vagrant
 ## sudo apt-get remove vagrant && sudo apt-get autoremove
 ```
 
+## Remove Snap Unused
+
+```bash
+sudo snap list
+
+sudo snap remove firefox
+sudo snap remove gnome-3-28-1804
+sudo snap remove gnome-42-2204
+sudo snap remove gtk-common-themes
+sudo snap remove snap-store
+sudo snap remove snapd-desktop-integration
+sudo snap remove teams-for-linux
+```
+
 ## Remove LibreOffice
 
 ```bash
@@ -1204,80 +1259,76 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 
 # Summary
 
-> Ubuntu 22.04: https://discourse.ubuntu.com/t/jammy-jellyfish-release-notes/24668
-
-date            : 2022-07-28
-
 ## Commands
 
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
-# Ubuntu 18.04.5 LTS
+# Ubuntu 23.04
 uname -r
-# 5.4.0-137-generic
+# 6.2.0-20-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
-# 2.27
+# 2.37
 gcc --version | grep -e "^gcc" | awk '{print $4}'
-# 7.5.0
+# 12.2.0
 openssl version | awk '{print $2}'
-# 1.1.1k
+# 3.0.8
 i3 --version | awk '{print $3}'
-# 4.14.1
+# 4.22
 konsole --version | awk '{print $2}'
-# 17.12.3
+# 22.12.3
 bash --version | grep -e "bash" | awk '{print $4}'
-# 4.4.20(1)-release
+# 5.2.15(1)-release
 zsh --version | awk '{print $2}'
-# 5.4.2
+# 5.9
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included " | awk '{print $3}'`
-# 9.0.1-749
+# 9.0.1-1000
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
-# Stable:   v0.6.1-LuaJIT 2.1.0-beta3
+# Stable:   v0.7.2-LuaJIT 2.1.0-beta3
 # Unstable: v0.10.0-dev-LuaJIT 2.1.0-beta3
 vifm --version | grep -e "^Version" | awk '{print $2}'
-# 0.9.1
+# 0.12
 curl --version | grep -e "^curl " | awk '{print $2}'
-# 7.58.0
+# 7.88.1
 git --version | awk '{print $3}'
-# 2.17.1
+# 2.39.2
 git lfs version
-# git-lfs/2.3.4 (GitHub; linux amd64; go 1.8.3)
+# git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.3)
 docker --version | awk '{print $3}'
-# 20.10.23
+# 24.0.1
 docker-compose --version | awk '{print $4}'
-# v2.7.0
+# v2.18.1
 feh --version | grep version | awk '{print $3}'
-# 2.23.2
+# 3.9.1
 maim --version | awk '{print $1}'
-# v5.4.68
+# v5.7.4
 unzip -v | grep "^UnZip.*\.$" | awk '{print $2}'
 # 6.00
 tree --version | awk '{print $2}'
-# v1.7.0
+# v2.1.0
 nmap --version | grep "^Nmap" | awk '{print $3}'
-# 7.60
+# 7.93
 htop --version | grep "^htop" | awk '{print $2}'
-# 2.1.0
+# 3.2.2
 man xcompmgr | grep "^X Version" | awk '{print $5}'
 # 1.1.7
 bat --version | awk '{print $2}'
-# 0.19.0
+# 0.22.1
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
-# 0.9.0
+# 13.0.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 7.4.33
+# 8.1.12-1ubuntu4
 nvm --version
-# 0.38.0
+# 0.39.3
 npm --version
-# 9.6.1
+# 9.6.7
 node --version
-# v16.19.0
+# v18.16.0
 mysql --version | awk '{print $3}'
-# 14.14
+# 8.0.33-0ubuntu0.23.04.2
 stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
-# 3.6.9
+# 3.11.2
 ruby --version | awk '{print $2}'
-# 2.5.1p57
+# 3.1.2p20
 dpkg --list | wc --lines
-# 2226
+# 2143
