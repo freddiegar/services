@@ -569,7 +569,7 @@ function! GetTypeCurrentFile() abort
         let l:type = (system('readlink -e -n ' . l:path) !=# l:path ? '(S)' : '')
 
         if l:type ==# ''
-            let l:type = (system(' stat -c %h ' . l:path) > 1 ? '(H)' : '')
+            let l:type = (system('stat -c %h ' . l:path) > 1 ? '(H)' : '')
         endif
 
         let g:cache['t'][l:path] = [l:ftime, l:type]

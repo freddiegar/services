@@ -1,5 +1,19 @@
 -- https://dev.mysql.com/doc/refman/5.7/en/optimization.html
 -- https://orangematter.solarwinds.com/2019/02/05/the-left-prefix-index-rule/
+-- https://www.forknerds.com/reduce-the-size-of-mysql/
+
+-- Size in MB of schemas
+
+SELECT table_schema "DB Name", ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) "DB Size in MB"
+FROM information_schema.tables
+GROUP BY table_schema;
+
+-- Size in MB of tables (any schema)
+
+SELECT table_schema as `Database`, table_name AS `Table`, ROUND(((data_length + index_length) / 1024 / 1024), 2) `Size in MB`
+FROM information_schema.TABLES
+ORDER BY (data_length + index_length) DESC
+LIMIT 10;
 
 -- 10 more expensive queries
 
