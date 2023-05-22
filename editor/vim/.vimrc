@@ -1226,30 +1226,24 @@ function! s:append_char(type) abort
             silent execute "normal! $\"_x\e"
             let l:repeatable = 'DeleteFinal'
         elseif a:type ==# 'i' && index(['php'], &filetype) >= 0
-            let l:bsearch = getreg('/')
             let l:changerow = -(1 + &scrolloff)
 
-            silent execute "normal! ?^    .*{$\rj"
+            silent execute ":keeppatterns normal! ?^    \\(public \\)\\=function \r/{\rj"
 
             if match(getline('.'), '->mark') < 0
                 silent execute "normal! O$this->markTestIncomplete();\e=="
             endif
 
-            silent call setreg('/', l:bsearch)
-            silent call histdel('/', -1)
             let l:repeatable = 'AddIncompleteMark'
         elseif a:type ==# 'I' && index(['php'], &filetype) >= 0
-            let l:bsearch = getreg('/')
             let l:changerow = -(1 + &scrolloff)
 
-            silent execute "normal! ?^    .*{$\rj"
+            silent execute ":keeppatterns normal! ?^    \\(public \\)\\=function \r/{\rj"
 
             if match(getline('.'), '->mark') > 0
                 silent execute "normal! \"_dd"
             endif
 
-            silent call setreg('/', l:bsearch)
-            silent call histdel('/', -1)
             let l:repeatable = 'DropIncompleteMark'
         elseif l:lastchar ==# ';'
             silent execute "normal! \"_xA,\e"
@@ -1691,8 +1685,8 @@ Plug 'sniphpets/sniphpets', {'for': 'php'}                      " PHP snippet wi
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GV, GB and GBrowse commands, etc)
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 Plug 'junegunn/gv.vim', {'on': 'GV'}                            " - Commits filter extension (needs vim-fugitive) -> :GV[!], GV?
-Plug 'tpope/vim-rhubarb', {'on': 'GBrowse'}                     " - GitHub browser extension (needs vim-fugitive) -> :GBrowse
-Plug 'tommcdo/vim-fubitive', {'on': 'GBrowse'}                  " - BitBucket browser extension (needs vim-fugitive) -> :GBrowse
+Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (needs vim-fugitive, no conditional) -> :GBrowse
+Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (needs vim-fugitive, no conditional) -> :GBrowse
 
 Plug 'tpope/vim-dadbod', {'for': 'sql'}                         " DB console in Vim
 Plug 'kristijanhusak/vim-dadbod-completion', {'for': ['sql']}   " DB autocompletion (needs vim-dadbod)
@@ -1717,7 +1711,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
 Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
-" Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
+Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
 
 " Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
 " Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++

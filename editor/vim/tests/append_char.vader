@@ -160,6 +160,53 @@ $this->markTestIncomplete();
         $foo = $bar;
     }
 
+Given php (Append for test incomplete on test with public accesor);
+    public function testFoo(
+        int $bar
+        string $baz
+    ): void {
+        $foo = $bar;
+    }
+
+Do;
+4j
+<i
+
+Expect php;
+    public function testFoo(
+        int $bar
+        string $baz
+    ): void {
+$this->markTestIncomplete();
+        $foo = $bar;
+    }
+
+
+Given php (Append mark for test incomplete on test with nested curly braces);
+    function testFoo(int $bar string $baz): void
+    {
+        if (false) {
+            $this->assertEquals($bar);
+        }
+
+        $this->assertEquals($baz);
+    }
+
+Do;
+3j
+<i
+
+Expect php;
+    function testFoo(int $bar string $baz): void
+    {
+$this->markTestIncomplete();
+        if (false) {
+            $this->assertEquals($bar);
+        }
+
+        $this->assertEquals($baz);
+    }
+
 Given php (Drop mark for test incomplete on test);
     function testFoo(
         int $bar
@@ -175,6 +222,27 @@ Do;
 
 Expect php;
     function testFoo(
+        int $bar
+        string $baz
+    ): void {
+        $foo = $bar;
+    }
+
+Given php (Drop mark for test incomplete on test with public accesor);
+    public function testFoo(
+        int $bar
+        string $baz
+    ): void {
+        $this->markTestIncomplete();
+        $foo = $bar;
+    }
+
+Do;
+4j
+>i
+
+Expect php;
+    public function testFoo(
         int $bar
         string $baz
     ): void {
