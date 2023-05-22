@@ -30,16 +30,17 @@ done
 endsnippet
 
 # @see https://bash.cyberciti.biz/guide/Bash_special_parameters
+# @see https://www.thegeekstuff.com/2010/05/bash-shell-special-parameters
 snippet rp "Reference parameters"
 # \$* -> Positional parameters: array $* != "$*" string								https://bash.cyberciti.biz/guide/$*
 # \$@ -> Expand postional:		That is, "$@" is equivalent to "\$1" "\$2" .. "$n"	https://bash.cyberciti.biz/guide/$@
 # \$# -> Number of parameters
-# \$? -> Exit status:			0 is all OK!										https://bash.cyberciti.biz/guide/$%3F
-# \$-
+# \$? -> Exit status last command:		0 is all OK!								https://bash.cyberciti.biz/guide/$%3F
+# \$- -> Options set using set builtin command (a LOT weird)
 # \$$ -> Process ID (PID)															https://bash.cyberciti.biz/guide/$$
-# \$!
+# \$! -> Precess ID last background:	sleep 1000 &
 # \$0 -> Name script file															https://bash.cyberciti.biz/guide/\$0
-# \$_
+# \$_ -> Same params before command:	ls -la /home && echo "$_"
 endsnippet
 
 # @see https://dev.to/ifenna__/adding-colors-to-bash-scripts-48g4
