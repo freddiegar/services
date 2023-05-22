@@ -1150,15 +1150,13 @@ function! s:delete_method() abort
         silent execute "normal! \"_dd"
     endif
 
-    let l:bsearch = getreg('/')
-
     " Has docs (inline or multiline)
     if trim(getline('.'))[-2 :] ==# '*/' || trim(getline(line('.') - 1))[-2 :] ==# '*/'
-        silent execute "normal! ?\\V\\/*\r\"_d/\\V*\\/\r\"_dd"
+        silent execute "keeppatterns normal! ?\\V\\/*\r\"_d/\\V*\\/\r\"_dd"
     elseif trim(@z)[-2 :] ==# '*/' && trim(getline(line('.'))) ==# '}'
         if trim(@z) ==# '*/'
             " Last method with multiline docs
-            silent execute "normal! ?\\V\\/*\r\"_d/}\r"
+            silent execute "keeppatterns normal! ?\\V\\/*\r\"_d/}\r"
         endif
 
         if trim(getline(line('.') - 1)) ==# ''
@@ -1166,9 +1164,6 @@ function! s:delete_method() abort
             silent execute "normal! -\"_dd"
         endif
     endif
-
-    silent call setreg('/', l:bsearch)
-    silent call histdel('/', -1)
 
     let @@ = l:saved_unnamed_register
 
@@ -1348,18 +1343,16 @@ endfunction
 
 " type (string)
 function! s:get_masked(type) abort
-    let l:saved_search_register = @/
     let l:saved_unnamed_register = @@
     let l:repeatable = ''
 
     let l:ccursor = getpos('.')
-    let l:lsearch = getreg('/')
 
     if a:type ==# 'word'
         silent execute "normal! viw\"zy"
 
         let l:repeatable = 'GetMasked'
-    elseif a:type ==# 'v' || a:type ==# 'V'
+    elseif a:type =~? 'v'
         silent execute "normal! `<v`>\"zy"
     endif
 
@@ -1369,24 +1362,21 @@ function! s:get_masked(type) abort
         " Canceled
     elseif l:type ==# 1
         " Replaced symbols -> * (no spaces)
-        silent execute "s/\\%V[^a-zA-Z0-9 ]/*/ge"
+        silent execute "keeppatterns s/\\%V[^a-zA-Z0-9 ]/*/ge"
         " Replaced chars -> @
-        silent execute "s/\\%V[a-zA-Z]/@/ge"
+        silent execute "keeppatterns s/\\%V[a-zA-Z]/@/ge"
         " Replaced numbers -> #
-        silent execute "s/\\%V[0-9]/#/ge"
+        silent execute "keeppatterns s/\\%V[0-9]/#/ge"
     elseif l:type ==# 2
         let l:masked = system("php --run \"echo str_rot13('" . <SID>escape(@z) . "');\"")
 
-        silent execute "sno/\\%V" . substitute(getreg('z'), '\/', '\\/', 'g') . '/' . substitute(l:masked, '\/', '\\/', 'g') . "/e"
+        silent execute "keeppatterns sno/\\%V" . substitute(getreg('z'), '\/', '\\/', 'g') . '/' . substitute(l:masked, '\/', '\\/', 'g') . "/e"
     endif
 
     " silent call cursor(l:ccursor) <- Change cursor position!
     silent call setpos('.', l:ccursor)
-    silent call setreg('/', l:lsearch)
-    silent call histdel('/', -1)
 
     let @@ = l:saved_unnamed_register
-    let @/ = l:saved_search_register
 
     if len(l:repeatable) > 0
         silent! call repeat#set("\<Plug>" . l:repeatable . 'Repeatable', a:type)
@@ -2476,9 +2466,8 @@ function! s:go_file(ffile) abort
                 if l:filter !=# ''
                     let l:hlsearch = &hlsearch
                     set nohlsearch
-                    silent execute "keepjumps normal! gg/'" . l:filter . "'\r"
+                    silent execute "keeppatterns keepjumps normal! gg/'" . l:filter . "'\r"
 
-                    silent call histdel('/', -1)
                     let &hlsearch = l:hlsearch
                 endif
 
@@ -2889,7 +2878,6 @@ function! s:notes() abort
     let l:matches = []
     let l:header = '>> ' . strftime('%A, %d of %B %Y')
     let l:filename = expand('~/working/notes/notes_' . strftime('%Y%m') . '.md')
-    let l:lsearch = getreg('/')
 
     if bufname('%') !=# '' && split(bufname('%'), '/')[-1] ==# split(l:filename, '/')[-1]
         silent update!
@@ -2897,7 +2885,7 @@ function! s:notes() abort
         silent execute 'edit ' . fnameescape(l:filename)
     endif
 
-    silent execute '%g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
+    silent execute 'keeppatterns %g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
 
     if !filereadable(l:filename) || len(l:matches) == 0
         let l:formatoptions = &formatoptions
@@ -2911,9 +2899,6 @@ function! s:notes() abort
     endif
 
     silent execute "normal! Gzto== " . strftime('%H:%M') . " ==\r- \e"
-
-    silent call setreg('/', l:lsearch)
-    silent call histdel('/', -1)
 
     return 0
 endfunction
@@ -3643,30 +3628,29 @@ augroup AutoCommands
         endif
 
         let l:ccursor = getpos('.')
-        let l:lsearch = getreg('/')
         let l:cleanup = []
 
         if index(l:options, 't') >= 0
-            silent! %s/\s\+$//e
+            silent! keeppatterns %s/\s\+$//e
 
             silent call add(l:cleanup, 'trailing spaces')
         endif
 
         if index(l:options, 'b') >= 0
-            silent! %s/ / /ge
+            silent! keeppatterns %s/ / /ge
 
             silent call add(l:cleanup, 'no break spaces')
         endif
 
         if index(l:options, 'e') >= 0
-            silent! %s/\n\+\%$//e
+            silent! keeppatterns %s/\n\+\%$//e
 
             silent call add(l:cleanup, 'end of file lines')
         endif
 
         if index(l:options, 'd') >= 0
             " @see https://vi.stackexchange.com/questions/1920/how-does-g-j-reduce-multiple-blank-lines-to-a-single-blank-work-in-vi
-            silent! g/^$/,/./-j
+            silent! keeppatterns g/^$/,keeppatterns /./-j
 
             silent call add(l:cleanup, 'duplicate blank lines')
         endif
@@ -3682,21 +3666,19 @@ augroup AutoCommands
         endif
 
         if index(l:options, 'q') >= 0
-            silent! g/ table \| TABLE \| TABLES \|migrations\| AS \|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|set session \| Connect\|mysqld\|version_comment\|general_log\|IN_PROCCES\|UPDATE /v/ WHEN /d_
+            silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\| AS \|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|set session \| Connect\|mysqld\|version_comment\|general_log\|IN_PROCCES\|UPDATE /v/ WHEN /d_
 
             silent call add(l:cleanup, 'queries')
         endif
 
         if index(l:options, 'p') >= 0
-            silent! normal! :g!/plugged/d_vEEllggdVG:sort!gg
+            silent! normal! :keeppatterns g!/plugged/d_vEEllggdVG:sort!gg
 
             silent call add(l:cleanup, 'profiles')
         endif
 
         " silent call cursor(l:ccursor) <- Change cursor position!
         silent call setpos('.', l:ccursor)
-        silent call setreg('/', l:lsearch)
-        silent call histdel('/', -1)
 
         if index(l:options, 'v') >= 0 && len(l:cleanup) > 0
             echo 'Cleaned-up: ' . join(l:cleanup, ', ')
