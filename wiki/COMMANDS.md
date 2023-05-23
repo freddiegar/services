@@ -207,6 +207,25 @@ Copy all content folder local to server by ssh
 scp -r public/apidoc user@server:/var/www/html/sites/public/.
 ```
 
+Copy in LAN network
+```bash
+# Install a SSH Server:
+sudo apt-get install -y openssh-server
+# Check status:
+## sudo systemctl status ssh
+
+# Check firewall status:
+sudo ufw status
+# Enable ssh:
+# sudo ufw allow ssh
+
+# Get IP:
+## ip a[ddress]
+scp -rpC /var/www/html user@192.168.1.76:/var/www/html
+
+scp -rpC user@192.168.1.76:/var/www/html /var/www/html
+```
+
 Copy by SSH using password, it need
 ```bash
 # sudo apt-get install -y sshpass
