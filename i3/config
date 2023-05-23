@@ -167,6 +167,7 @@ default_orientation auto
 assign [instance="(?i)gvim"]                                                $workspace1
 assign [class="(?i)firefox" title="^((?!(?i)private).)*$"]                  $workspace2
 assign [class="Microsoft Teams - Preview"]                                  $workspace3
+assign [class="(?i)microsoft-edge"]                                         $workspace3
 assign [class="zoom" title="Zoom Cloud Meetings"]                           $workspace3
 assign [class="Mysql-workbench-bin"]                                        $workspace4
 assign [class="(?i)firefox" title="(?=(?i)private).*"]                      $workspace5

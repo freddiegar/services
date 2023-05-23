@@ -1847,9 +1847,11 @@ let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsListSnippets = ''
 let g:UltiSnipsExpandTrigger = '<C-Tab>'
 let g:UltiSnipsRemoveSelectModeMappings = 0
+" After update to 9.0.1-1000 (from 9.0.1-749) this fix snippets :|
+let g:UltiSnipsSnippetDirectories = [$HOME . '/.vim/UltiSnips']
 
 " @thanks https://carakan.net/blog/2020/04/configuring-python3-on-neovim/
-" Explicitly use python3 when evaluate python code (aka: snippets)
+" Explicitly use python3 when evaluate python code (default: 3, aka: snippets)
 set pyxversion=3
 
 " Disable python2 support ... and others (why nvim why!)

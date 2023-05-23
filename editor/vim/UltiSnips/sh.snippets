@@ -33,13 +33,13 @@ endsnippet
 # @see https://www.thegeekstuff.com/2010/05/bash-shell-special-parameters
 snippet rp "Reference parameters"
 # \$* -> Positional parameters: array $* != "$*" string								https://bash.cyberciti.biz/guide/$*
-# \$@ -> Expand postional:		That is, "$@" is equivalent to "\$1" "\$2" .. "$n"	https://bash.cyberciti.biz/guide/$@
+# \$@ -> Expand positional:		That is, "$@" is equivalent to "\$1" "\$2" .. "$n"	https://bash.cyberciti.biz/guide/$@
 # \$# -> Number of parameters
 # \$? -> Exit status last command:		0 is all OK!								https://bash.cyberciti.biz/guide/$%3F
 # \$- -> Options set using set builtin command (a LOT weird)
-# \$$ -> Process ID (PID)															https://bash.cyberciti.biz/guide/$$
-# \$! -> Precess ID last background:	sleep 1000 &
-# \$0 -> Name script file															https://bash.cyberciti.biz/guide/\$0
+# \$$ -> Process ID (PID)				echo $$										https://bash.cyberciti.biz/guide/$$
+# \$! -> Precess ID last background:	sleep 1000 & echo $!
+# \$0 -> Name script file				sh $(dirname "\$0")/../command.sh			https://bash.cyberciti.biz/guide/\$0
 # \$_ -> Same params before command:	ls -la /home && echo "$_"
 endsnippet
 
