@@ -149,7 +149,9 @@ git stash clear -- Delete all in stash
 
 Create tag
 ```bash
-git tag -a v1.0 -m "This is new version v1.0"
+git tag -s -a v1.0 -m "This is new version v1.0"
+
+git push --tags
 ```
 
 Delete branch
@@ -1547,8 +1549,8 @@ echo "\n" | sudo add-apt-repository ppa:neovim-ppa/stable
 sudo apt-get install -y neovim
 
 # On unstable (0.10.0), it requires and neovim module for Snippets!
-# sudo apt-get install -f python3-pip libpython3-dev
-# pip3 install --upgrade pynvim
+# Test WITHOUT install: sudo apt-get install -y python3-pip libpython3-dev
+# sudo apt-get install -y python3-pynvim
 
 # sudo apt-get remove -y neovim && sudo apt-get autoremove
 # echo "\n" | sudo add-apt-repository --remove ppa:neovim-ppa/stable
@@ -1559,6 +1561,13 @@ sudo apt-get install -y neovim
 ## CoC Settings
 ln -s `pwd`/editor/vim/coc-settings.json ~/.config/nvim/coc-settings.json
 ```
+> GUI?:
+> @see https://neovide.dev/installation.html#linux-source
+>       sudo snap install neovide
+>       sudo snap install neovide --channel=latest/beta
+>       sudo snap remove neovide
+> Allow call from i3:
+>       sudo ln -s /home/$USER/.cargo/bin/neovide /usr/bin/neovide
 
 Rename files using xargs
 

@@ -563,9 +563,9 @@ git clone --depth=1 git@github.com:perftools/php-profiler.git
 Load certificate in browser
 
 ```
-Authorities -> Import -> ssl/ca.cert.pem -> Identify Websites
+Authorities -> Import -> ssl/certs/ca.cert.pem -> Identify Websites
 ```
-> Not exists? check below generate item
+> Not exists? check below to generate item
 
 ###  On Linux
 

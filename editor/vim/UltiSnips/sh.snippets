@@ -67,10 +67,10 @@ snippet rc "Reference colors"
 # [u]nderlined      4
 endsnippet
 
-snippet "f(k|r|g|y|b|m|c|a|w)" "Colors Font " r
+snippet "f(k|r|g|y|b|m|c|a|w)" "Colors Foreground" r
 \e[`!p snip.rv='30' if match.group(1) == 'k' else ('31' if match.group(1) == 'r' else ('32' if match.group(1) == 'g' else ('33' if match.group(1) == 'y' else ('34' if match.group(1) == 'b' else ('35' if match.group(1) == 'm' else ('36' if match.group(1) == 'c' else ('90' if match.group(1) == 'a' else '97')))))))`m${1:${VISUAL}}\e[0m$0
 endsnippet
 
-snippet "b(k|r|g|y|b|m|c|a|w)" "Colors Background " r
+snippet "b(k|r|g|y|b|m|c|a|w)" "Colors Background" r
 \e[`!p snip.rv='40' if match.group(1) == 'k' else ('41' if match.group(1) == 'r' else ('42' if match.group(1) == 'g' else ('43' if match.group(1) == 'y' else ('44' if match.group(1) == 'b' else ('45' if match.group(1) == 'm' else ('46' if match.group(1) == 'c' else ('100' if match.group(1) == 'a' else '107')))))))`m${1:${VISUAL}}\e[0m$0
 endsnippet

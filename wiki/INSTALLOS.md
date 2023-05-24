@@ -164,8 +164,8 @@ sudo service cups stop && sudo systemctl disable cups
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 feh pavucontrol maim
-## sudo apt-get remove unzip curl tree nmap htop i3 feh pavucontrol maim && sudo apt-get autoremove
+sudo apt-get install -y unzip curl tree nmap htop i3 feh pavucontrol maim xclip
+## sudo apt-get remove unzip curl tree nmap htop i3 feh pavucontrol maim xclip && sudo apt-get autoremove
 ```
 
 ## i3
@@ -318,14 +318,14 @@ ln -s `pwd`/git/.gitconfig ~/.gitconfig
 ln -s `pwd`/git/.gitignore ~/.gitignore
 ```
 
-## GIT Flow
+### GIT Flow
 
 ```bash
 sudo apt-get install git-flow
 ## sudo apt-get remove git-flow && sudo apt-get autoremove
 ```
 
-## GIT Summary
+### GIT Summary
 
 ```bash
 cd ~
@@ -351,6 +351,24 @@ git commit -m "Added lfs support"
 
 ## Undo LFS behaviour
 git lfs migrate export --include="*.sql.gz" --everything
+```
+
+## GIT CLI
+
+[See](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+
+```bash
+# Install
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y gh
+
+# Auth (need token from: https://github.com/settings/tokens)
+gh config set -h github.com git_protocol ssh
+## or Interactive
+gh auth login
 ```
 
 ## Wallpapers in i3
@@ -459,7 +477,7 @@ fi' >> ~/.zshenv
 # PHP 8.1
 
 ```bash
-echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only oldest Ubuntu
+echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only oldest Ubuntu or with oldest version's PHP (Tune ubuntu version is required :|)
 sudo apt-get install -y php8.1-cli
 sudo apt-get install -y php8.1-dev
 sudo apt-get install -y php8.1-mbstring
@@ -590,6 +608,7 @@ sudo apt-get install -y mysql-client
 sudo apt-get install -y mariadb-client
 ## sudo apt-get remove mariadb-client && sudo apt-get autoremove
 ```
+> Auth Secure: mysql_config_editor set --login-path=development --host=db --user=root --password
 
 # SSH Keys
 
