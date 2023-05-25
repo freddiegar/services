@@ -1,6 +1,14 @@
 # Dynamic Docker Run (based in current path)
 drun() {
     docker exec -w `pwd` -it "$@"
+
+    return $?
+}
+
+pcs() {
+    phplint $(ls -1 -d */ | grepx -v 'vendor|node_modules|.git' | xargs -I {} echo -n ' {}') "$@"
+
+    return $?
 }
 
 alias x="exit"
@@ -18,7 +26,7 @@ alias o="xargs -t -r -I {}"
 alias s="bash ~/working/mysqlog.sh"
 alias di="diff -rq --suppress-common-lines"
 alias ll="ls -lh"
-alias le="find . -size 0 | g -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
+alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
 alias lsd="ls -la | grep '^d'"
 alias __="ssh-add"
 alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}'"
@@ -146,6 +154,8 @@ alias gb="git branch"
 alias gbc="git branch --merged | grep -i -v -w -E 'master|main|develop' | xargs -r git branch -d"
 alias gbn="git checkout master && git branch -M master && git push -u origin master"
 alias ggc="git gc --prune=now"
+alias gck="git fsck --full --progress"
+alias gfx="ggc && gck"
 alias gfa="git fetch --all --prune"
 alias gfu="git fetch upstream"
 alias gco="git checkout"

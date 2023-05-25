@@ -29,13 +29,22 @@ while test $# -gt 0; do
     fi
 
     if [ ! -f $CURRENT ] && [ ! -d $CURRENT ] ; then
-        echo "$CURRENT cannot be found"
+        echo "\e[31m$CURRENT cannot be found.\e[0m"
+
         ERROR=true
+
         continue
     fi
 
     for FILE in $(find $CURRENT -type f -name "*.php") ; do
         OUTPUT=$($PHPX -l "$FILE" 2> /dev/null)
+        STATUS="$?"
+
+        if [ $STATUS -ne 0 ]; then
+            echo -e $OUTPUT
+
+            exit $STATUS
+        fi
 
         # Remove blank lines from the `php -l` output
         OUTPUT=$(echo -e "$OUTPUT" | awk 'NF')
@@ -43,6 +52,7 @@ while test $# -gt 0; do
         if [ "$OUTPUT" != "No syntax errors detected in $FILE" ] ; then
             echo -e "$FILE:"
             echo -e "  ${OUTPUT//$'\n'/\\n  }\n"
+
             ERROR=true
         fi
     done
