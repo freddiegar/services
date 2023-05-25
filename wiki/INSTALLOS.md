@@ -493,6 +493,7 @@ sudo apt-get install -y php8.1-redis
 sudo apt-get install -y php8.1-bcmath
 sudo apt-get install -y php8.1-gmp
 sudo apt-get install -y php8.1-xml
+sudo apt-get install -y php8.1-zip
 ## sudo apt-get remove php8.1\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
 ```
@@ -507,6 +508,14 @@ rm -Rf composer-setup.php
 ## Update
 ## composer self-update
 ## rm -Rf /usr/local/bin/composer
+```
+
+### Old projects require old composer
+
+```bash
+wget https://getcomposer.org/composer-1.phar
+chmod a+x composer-1.phar
+sudo mv composer-1.phar /usr/local/bin/composer_v1
 ```
 
 ## Code Sniffer Fixer for PHP (and Vim)

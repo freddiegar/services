@@ -400,16 +400,23 @@ if has('gui_running')
     set guioptions+=c                                           " Confirmations in [c]onsole (as Terminal)
     set guioptions+=k                                           " Windows [k]eep size after change GUI
     set guioptions+=!                                           " Use terminal with external commands, no simulate
-    set guiligatures=!\"#$%&()*+-./:<=>?@[]^_{\|~               " Ligatures!
 
     augroup GUIOptions
-        autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'FiraCode Retina 17', '')
-        " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 17', '')
-        " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'JetBrains Mono 17', '')
-        " @see https://vimhelp.org/autocmd.txt.html#GUIFailed
-        autocmd GUIFailed * qall
+        if exists('g:neovide') " (why nvim why!)
+            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h17
+                        \ | let g:neovide_confirm_quit = v:false
+                        \ | let g:neovide_remember_window_size = v:true
+        else
+            autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Fira Code Retina 17', '')
+                        \ | set guiligatures=!\"#$%&()*+-./:<=>?@[]^_{\|~
+            " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 17', '')
+            " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'JetBrains Mono 17', '')
 
-        " Cleans garbage, annoyoning flash
+            " @see https://vimhelp.org/autocmd.txt.html#GUIFailed
+            autocmd GUIFailed * qall
+        endif
+
+        " Cleans garbage, annoyoning flash!
         " autocmd FocusGained * redraw!
 
         " @thanks https://github.com/junegunn/fzf.vim/issues/672
