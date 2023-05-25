@@ -2,7 +2,23 @@
 set -o nounset
 
 if [ -f composer.json ]; then
-    `cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}'` "$@"
+    PHPBIN=`cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}'`
+
+    if [ "$PHPBIN" = "" ]; then
+        PHPBIN=`which php`
+
+        echo -e "\e[90mEmpty PHP version, using $PHPBIN as fallback.\e[0m"
+
+        sleep 1
+    fi
+
+    if [ ! -f $PHPBIN ]; then
+        echo -e "\e[31mUnavailable PHP ${PHPBIN:12:3} version.\e[0m"
+
+        exit 1
+    fi
+
+    $PHPBIN "$@"
 
     exit $?
 fi
