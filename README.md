@@ -581,7 +581,7 @@ vim /etc/hosts
 1. Add development certificate in trusted certficates in host machine
 
 ```bash
-sudo cp -p /var/www/html/freddiegar/services/ssl/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt
+sudo cp -p /var/www/ssl/certs/ca.cert.pem /usr/local/share/ca-certificates/development.local.ca-cert.crt
 sudo chown root:root /usr/local/share/ca-certificates/development.local.ca-cert.crt
 sudo chmod 644 /usr/local/share/ca-certificates/development.local.ca-cert.crt
 ```

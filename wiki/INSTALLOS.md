@@ -410,6 +410,24 @@ lxqt-leave
 ## sudo apt-get remove zsh && sudo apt-get autoremove
 ```
 
+## Profile Environment
+
+```bash
+echo '
+export EDITOR=vim
+export VISUAL=vim
+export BROWSER=/usr/bin/firefox' >> ~/.profile
+```
+
+## Setup in Zsh
+```bash
+echo '
+# Load special vars
+if [ -f ~/.profile ]; then
+    . ~/.profile
+fi' >> ~/.zshrc
+```
+
 ## Enable Vi Mode in Zsh
 
 [See](https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/vi-mode/vi-mode.plugin.zsh)
@@ -420,9 +438,6 @@ lxqt-leave
 
 ```bash
 echo "
-# Require in tty
-export EDITOR=vim
-
 # Vi mode
 bindkey -v
 
@@ -644,6 +659,7 @@ else
     eval `ssh-agent | tee ~/.ssh/agent.env`
 fi' >> ~/.zshrc
 ```
+> Don't use: ssh-agent zsh
 
 # GPG Keys
 
@@ -725,44 +741,53 @@ sudo snap install postman
 sudo apt-get remove firefox && sudo apt-get autoremove
 curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.bz2
 sudo tar -xvjf firefox.tar.bz2 -C /opt && rm -Rf firefox.tar.bz2
-sudo ln -s /opt/firefox/firefox /usr/bin/firefox
-## rm -Rf /opt/bin/firefox
+sudo ln -s /opt/firefox/firefox-bin /usr/bin/firefox
+## rm -Rf /usr/bin/firefox
 ```
 
 ## Firefox Developer Edition Shortcut
 
 ```bash
 echo '[Desktop Entry]
+Encoding=UTF-8
 Version=1.0
 Name=Firefox Web Browser Developer Edition
+NoDisplay=true
+Type=Application
 Comment=Browse the WWW
 GenericName=Web Browser
 Keywords=Internet;WWW;Browser;Web
 Exec=/usr/bin/firefox %u
 Terminal=false
 X-MultipleArgs=false
-Type=Application
 Icon=/opt/firefox/browser/chrome/icons/default/default128.png
 Categories=GNOME;GTK;Network;WebBrowser;
-MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
 StartupNotify=true
 Actions=new-window;new-private-window;
 StartupWMClass=Firefox Developer Edition
+MimeType=x-scheme-handler/unknown;x-scheme-handler/about;text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
 
 [Desktop Action new-window]
 Name=Open a New Window
 Exec=/usr/bin/firefox -new-window
+MimeType=x-scheme-handler/unknown;x-scheme-handler/about;text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
 
 [Desktop Action new-private-window]
 Name=Open a New Private Window
-Exec=/usr/bin/firefox -private-window' > ~/.local/share/applications/firefox.desktop
+Exec=/usr/bin/firefox -private-window
+MimeType=x-scheme-handler/unknown;x-scheme-handler/about;text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;' > ~/.local/share/applications/firefox.desktop
 ```
 
 ## Enable in i3 as default browser
 
+[See](https://forum.endeavouros.com/t/i3-default-browser-change/14381/14)
+
 ```bash
 # see ~/.config/mimeapps.list and replace using firefox.desktop if it is necesary
 sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/firefox.desktop
+
+# xdg-mime query default x-scheme-handler/https
+# CAUTION: xdg-mime default firefox.desktop text/xml text/html application/xhtml+xml x-scheme-handler/http x-scheme-handler/https
 ```
 
 # Node (and Vim LSP)
@@ -797,15 +822,6 @@ nvm install v18.16.0
 npm install -g npm@latest
 ## npm --version
 ## npm uninstall -g npm@latest
-```
-
-# Profile
-
-```bash
-echo '
-export EDITOR=vim
-export VISUAL=vim
-export BROWSER=/usr/bin/firefox' >> ~/.profile
 ```
 
 # Font Fira Code
