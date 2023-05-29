@@ -1193,20 +1193,20 @@ function! s:find_filter(type, path) abort
 
     let @@ = l:saved_unnamed_register
 
-    if a:type =~? 'v\?file'
+    if a:type =~? 'v\?file$'
         silent call fzf#vim#files(l:path, fzf#vim#with_preview({'options': ['--query', l:filter]}))
     elseif a:type =~# 'afind$'
         silent call <SID>rgfzf('AFind', l:filter, 0, l:path, 0, 1)
     elseif a:type =~# 'aregex$'
         silent call <SID>rgfzf('ARegExp', l:filter, 0, l:path, 1, 1)
     elseif a:type =~# 'ifind'
-        silent call <SID>rgfzf('IFind', l:filter, 0, l:path, 0)
+        silent call <SID>rgfzf('IFind', l:filter, 0, l:path, 0, 0)
     elseif a:type =~# 'find'
-        silent call <SID>rgfzf('Find', l:filter, 0, l:path, 0)
+        silent call <SID>rgfzf('Find', l:filter, 0, l:path, 0, 0)
     elseif a:type =~# 'regex'
-        silent call <SID>rgfzf('RegExp', l:filter, 0, l:path, 1)
+        silent call <SID>rgfzf('RegExp', l:filter, 0, l:path, 1, 0)
     else
-        silent call <SID>rgfzf('Search', l:filter, 0, l:path)
+        silent call <SID>rgfzf('Search', l:filter, 0, l:path, 0, 0)
     endif
 endfunction
 
@@ -1996,8 +1996,8 @@ nnoremap <silent> <Leader>E <Cmd>call <SID>find_filter('aregex', g:cwd)<Enter>
 xnoremap <silent> <Leader>E :<C-u>call <SID>find_filter(visualmode() . 'aregex', g:cwd)<Enter>
 
 " Files [i]nside current file directory (show all files in specific directory)
-nnoremap <silent> <Leader>i <Cmd>call <SID>rgafzf(expand('%:p:h'))<Enter>
-xnoremap <silent> <Leader>i :<C-u>call <SID>rgafzf(expand('%:p:h'))<Enter>
+nnoremap <silent> <Leader>i :IFiles<Enter>
+xnoremap <silent> <Leader>i :<C-u>IFiles<Enter>
 
 " Files in current work directory
 nnoremap <silent> <Leader>p :Files<Enter>
@@ -2006,10 +2006,6 @@ xnoremap <silent> <Leader>p :<C-u>Files<Enter>
 " WFiles or Files in current work directory
 nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
 xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
-
-" Files r[e]gex in current work directory
-nnoremap <silent> <Leader>e <Cmd>call <SID>rgafzf(g:cwd)<Enter>
-xnoremap <silent> <Leader>e :<C-u>call <SID>rgafzf(g:cwd)<Enter>
 
 " Marks in current project directory
 nnoremap <silent> <Leader>M :Marks<Enter>
@@ -3045,7 +3041,7 @@ augroup AutoCommands
 
     " PHP Testing
     autocmd FileType php let g:test#php#phpunit#executable = get(g:, 'test#php#phpunit#executable', '') !~? 'phpx'
-                \ ? 'phpx ' . test#php#phpunit#executable()
+                \ ? 'phpx ' . (exists('*test#php#phpunit#executable()') ? test#php#phpunit#executable() : 'vendor/bin/phpunit')
                 \ : get(g:, 'test#php#phpunit#executable')
                 \ | if get(g:, 'test#last_command', '') ==# ''
                 \ |     let g:test#last_strategy = g:test_strategy
@@ -3303,9 +3299,11 @@ augroup AutoCommands
     function! s:rgfzf(prompt, query, fullscreen, directory, ...) abort
         let l:prompt = a:prompt . '> '
         let l:directory = a:directory ==# g:cwd ? '' : a:directory
-        let l:filter_type = a:0 > 0 && a:1 == 1 ? '--no-fixed-strings' : '--fixed-strings'
-        let l:filter_ignore = a:0 > 1 && a:2 == 1 ? ' --no-ignore' : ' --ignore'
+        let l:filter_type = a:0 > 0 && a:1 ==# 1 ? '--no-fixed-strings' : '--fixed-strings'
+        let l:filter_ignore = a:0 > 1 && a:2 ==# 1 ? ' --no-ignore' : ' --ignore'
+
         let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
+
         let l:initial_command = printf(l:finder_command, shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
         let l:spec = {'options': ['--phony', '--prompt', l:prompt, '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
@@ -3313,32 +3311,30 @@ augroup AutoCommands
         silent call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
     endfunction
 
-    " path (string): void
-    " NOTE: Don't use rga alias, is stricter on folder with *.log
-    function! s:rgafzf(path) abort
-        let $FZF_DEFAULT_COMMAND = 'rg --no-ignore --hidden --files'
-
-        " Don't add silent
-        execute 'Files ' . a:path
-
-        unlet $FZF_DEFAULT_COMMAND
-    endfunction
-
     " GFiles fails(?) when current file path is out of git repo
     " @see https://github.com/junegunn/fzf.vim/commit/50707b089b1c61fcdb300ec1ecbc4249ead4af11
     " path (string), args (string), fullscreen (1/0): void
-    function! s:rgffzf(path, args, fullscreen) abort
+    function! s:rgffzf(type, path, args, fullscreen) abort
         let l:spec = { 'dir': a:path }
 
         if a:args ==# '?'
             let l:spec.placeholder = ''
         endif
 
+        if a:type ==# 'git'
+            " Don't add silent
+            call fzf#vim#gitfiles(a:path, fzf#vim#with_preview(l:spec), a:fullscreen)
+
+            return
+        endif
+
         " Don't add silent
-        call fzf#vim#gitfiles(a:path, fzf#vim#with_preview(l:spec), a:fullscreen)
+        call fzf#vim#files(a:path, fzf#vim#with_preview(l:spec), a:fullscreen)
     endfunction
 
-    command! -bang -nargs=? WFiles call <SID>rgffzf(g:cwd, <q-args>, <bang>0)
+    command! -bang -nargs=? -complete=dir WFiles call <SID>rgffzf('git', g:cwd, <q-args>, <bang>0)
+
+    command! -bang -nargs=? -complete=dir IFiles call <SID>rgffzf('fls', expand('%:p:h'), <q-args>, <bang>0)
 
     " Git blame
     " @thanks https://gist.github.com/romainl/5b827f4aafa7ee29bdc70282ecc31640
