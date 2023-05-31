@@ -738,8 +738,8 @@ cnoremap <Down> <Nop>
 cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
-" Convenience (keep splits)
-nnoremap <silent> ZZ :qall<Enter>
+" Convenience, same to ZZ BUT: keeps splits
+nnoremap <silent> ZZ :update <Bar> qall<Enter>
 
 " Utility
 " @tip Macro until end of buffer: VG:normal @x

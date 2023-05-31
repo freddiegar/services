@@ -84,7 +84,7 @@ sudo mkdir -p /var/log/mysql && sudo chown $(whoami):docker /var/log/mysql
 touch /var/log/mysql/error.log
 touch /var/log/mysql/mysql.log
 touch /var/log/mysql/slow.log
-chmod 666 /var/log/mysql/*.log
+sudo chmod 666 /var/log/mysql/*.log
 ```
 
 ## Supervisor
