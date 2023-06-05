@@ -1,10 +1,53 @@
-# Dynamic Docker Run (based in current path)
+# Dynamic Docker Run (based in current path):
+#   - drun db bash
 drun() {
     docker exec -w `pwd` -it "$@"
 
     return $?
 }
 
+# OpenSSL PEM:
+#   - osp duckduck.com:443
+osp() {
+    openssl s_client -connect "$@" -showcerts </dev/null | openssl x509 -outform pem > "$@".pem
+
+    return $?
+}
+
+# OpenSSL Body:
+#   - osb duckduck.com:443.pem
+osb() {
+    openssl x509 -in "$@" | sed -e '1d;$d' > body.txt
+    STATUS="$?"
+
+    if [ $STATUS -ne 0 ]; then
+        return $STATUS
+    fi
+
+    cat body.txt | yy
+
+    return $?
+}
+
+# OpenSSL Body:
+#   - osb duckduck.com:443.pem
+osi() {
+    openssl pkey -in "$@" -out pkey.txt
+    STATUS="$?"
+
+    if [ $STATUS -ne 0 ]; then
+        return $STATUS
+    fi
+
+    cat pkey.txt | yy
+
+    return $?
+}
+
+
+# PHP Syntax Check:
+#   - pcs
+#   - pcs 7.4
 pcs() {
     phplint $(ls -1 -d */ | grepx -v 'vendor|node_modules|.git' | xargs -I {} echo -n ' {}') "$@"
 
@@ -188,6 +231,16 @@ alias glol="git show --name-only"
 alias glof="git log --decorate=full --pretty=full --graph -b --stat"
 alias glos="git log --show-signature"
 alias gconf="git config --list"
+
+# osc duckduck.com:443
+alias osc="openssl s_client -brief -connect"
+# osd duckduck.com:443.pem
+alias osd="openssl x509 -noout -text -in"
+# osx duckduck.com:443.pem
+alias osx="openssl x509 -noout -dates -in"
+# Check expirations in seconds 60*60*24*30 -> 2592000 (1 month)
+# osv duckduck.com:443.pem
+alias osv="openssl x509 -noout -checkend 2592000 -in"
 
 alias cdh="cd /var/www/html"
 alias cdt="cd /var/www/html/ataringenieria"
