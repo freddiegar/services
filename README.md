@@ -203,8 +203,8 @@ default-character-set                  = utf8
 
 ```bash
 apt update && apt install curl -y
-curl -L https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl -o /usr/local/bin/mysqltuner.pl
-chmod +x /usr/local/bin/mysqltuner.pl
+sudo curl -L https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl -o /usr/local/bin/mysqltuner.pl
+sudo chmod +x /usr/local/bin/mysqltuner.pl
 # Localhost
 mysqltuner.pl --host 127.0.0.1
 # Remote

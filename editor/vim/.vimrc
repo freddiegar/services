@@ -523,7 +523,7 @@ function! GetNameCurrentFile() abort
 endfunction
 
 function! GetNameBranch() abort
-    if !g:hasgit || !has('fugitive#Head') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
+    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
         return ' '
     endif
 

@@ -5,44 +5,51 @@
 # http://dev.mysql.com/doc/mysql/en/server-system-variables.html
 
 [client]
-default-character-set                  = utf8
+default-character-set                   = utf8
 
 [mysql]
-default-character-set                  = utf8
+default-character-set                   = utf8
 
 [mysqld]
-pid-file                               = /var/run/mysqld/mysqld.pid
-socket                                 = /var/run/mysqld/mysqld.sock
-datadir                                = /var/lib/mysql
-symbolic-links                         = 0
-explicit_defaults_for_timestamp        = 1 # 1: Enable | 0: Disabled
+pid-file                                = /var/run/mysqld/mysqld.pid
+socket                                  = /var/run/mysqld/mysqld.sock
+datadir                                 = /var/lib/mysql
+symbolic-links                          = 0
+explicit_defaults_for_timestamp         = 1
 
-sql-mode                               = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
-log_error                              = /var/log/mysql/error.log
-general_log                            = 0 # 1: Enable | 0: Disabled
-general_log_file                       = /var/log/mysql/mysql.log
-slow_query_log                         = 1 # 1: Enable | 0: Disabled
-long_query_time                        = 1 # In seconds
-log_queries_not_using_indexes          = 1 # 1: Enable | 0: Disabled
-log_throttle_queries_not_using_indexes = 1 # Same query not using index in same minute
-slow_query_log_file                    = /var/log/mysql/slow.log
+sql-mode                                = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+log_error                               = /var/log/mysql/error.log
+general_log                             = 0
+general_log_file                        = /var/log/mysql/mysql.log
+slow_query_log                          = 1
+long_query_time                         = 1                                 # In seconds
+log_queries_not_using_indexes           = 1
+log_throttle_queries_not_using_indexes  = 1                                 # Same query not using index in same minute
+slow_query_log_file                     = /var/log/mysql/slow.log
+log_error_verbosity                     = 2                                 # 1: Errors
+                                                                            # 2: Errors + Warning
+                                                                            # 3: Errors + Warnings + Info
 
-log_error_verbosity                    = 2 # 1: Error | 2: Errors + Warning | 3: Errors + Warnings + Info
-key_buffer_size                        = 200MB # 20% of total RAM
+key_buffer_size                         = 409M                              # 20% of total RAM
 
-innodb_buffer_pool_size                = 700M # 50% - 70 of total RAM
-innodb_log_file_size                   = 175M # 25% of innodb_buffer_pool_size
-innodb_flush_method                    = O_DIRECT # avoid double buffering
-innodb_file_per_table                  = 1
-innodb_stats_on_metadata               = 0
-innodb_buffer_pool_instances           = 1 # or 8 if innodb_buffer_pool_size > 1GB
+# https://dev.mysql.com/doc/refman/5.7/en/innodb-buffer-pool-resize.html
+innodb_buffer_pool_size                 = 1024M                             # 50% - 70% of total RAM and >= innodb_buffer_pool_instances * innodb_buffer_pool_chunk_size
+innodb_log_file_size                    = 256M                              # 25% of innodb_buffer_pool_size
+innodb_flush_method                     = O_DIRECT                          # Avoid double buffering
+innodb_file_per_table                   = 1
+innodb_stats_on_metadata                = 0
+innodb_buffer_pool_instances            = 8                                 # 1 or 8 if innodb_buffer_pool_size >= 1GB
+innodb_buffer_pool_chunk_size           = 128M                              # Default: 128M, but, better explicit
 
-skip_name_resolve                      = 1
+skip_name_resolve                       = 1
 
-character-set-server                   = utf8
-collation-server                       = utf8_general_ci
+character-set-server                    = utf8
+collation-server                        = utf8_general_ci
 # https://dev.mysql.com/doc/refman/5.7/en/innodb-troubleshooting-datadict.html
-# innodb_force_recovery                  = 1 # Used after innodb corruption
+# innodb_force_recovery                  = 1                                # Used after innodb corruption
+
+table_open_cache                        = 2500                              # > 2000
+table_definition_cache                  = 5000                              # > 4412
 
 [mysqld_safe]
-default-character-set                  = utf8
+default-character-set                   = utf8
