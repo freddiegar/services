@@ -2,9 +2,11 @@
 # The MySQL  Server configuration file.
 #
 # For explanations see
-# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+# https://dev.mysql.com/doc/mysql/en/dynindex-sysvar.html
+# https://dev.mysql.com/doc/mysql/en/server-system-variables.html
 
 [client]
+protocol                                = tcp                               # Explicit: https://dev.mysql.com/doc/mysql/en/transport-protocols.html
 default-character-set                   = utf8
 
 [mysql]
@@ -14,7 +16,7 @@ default-character-set                   = utf8
 pid-file                                = /var/run/mysqld/mysqld.pid
 socket                                  = /var/run/mysqld/mysqld.sock
 datadir                                 = /var/lib/mysql
-symbolic-links                          = 0
+symbolic-links                          = 0                                 # Recommended to prevent assorted security risks
 explicit_defaults_for_timestamp         = 1
 
 sql-mode                                = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
@@ -32,7 +34,9 @@ log_error_verbosity                     = 2                                 # 1:
 
 key_buffer_size                         = 409M                              # 20% of total RAM
 
-# https://dev.mysql.com/doc/refman/5.7/en/innodb-buffer-pool-resize.html
+# https://dev.mysql.com/doc/mysql/en/innodb-buffer-pool-resize.html
+# https://dev.mysql.com/doc/mysql/en/innodb-init-startup-configuration.html
+# https://www.percona.com/blog/10-mysql-performance-tuning-settings-after-installation/
 innodb_buffer_pool_size                 = 1024M                             # 50% - 70% of total RAM and >= innodb_buffer_pool_instances * innodb_buffer_pool_chunk_size
 innodb_log_file_size                    = 256M                              # 25% of innodb_buffer_pool_size
 innodb_flush_method                     = O_DIRECT                          # Avoid double buffering
@@ -40,16 +44,20 @@ innodb_file_per_table                   = 1
 innodb_stats_on_metadata                = 0
 innodb_buffer_pool_instances            = 8                                 # 1 or 8 if innodb_buffer_pool_size >= 1GB
 innodb_buffer_pool_chunk_size           = 128M                              # Default: 128M, but, better explicit
+innodb_log_buffer_size                  = 48M                               # Default: 16M, more is less I/O
 
 skip_name_resolve                       = 1
 
 character-set-server                    = utf8
 collation-server                        = utf8_general_ci
-# https://dev.mysql.com/doc/refman/5.7/en/innodb-troubleshooting-datadict.html
+# https://dev.mysql.com/doc/mysql/en/innodb-troubleshooting-datadict.html
 # innodb_force_recovery                  = 1                                # Used after innodb corruption
 
 table_open_cache                        = 2500                              # > 2000
 table_definition_cache                  = 5000                              # > 4412
+
+query_cache_type                        = 1                                 # Default: off
+query_cache_size                        = 10M                               # Default: 1M
 
 [mysqld_safe]
 default-character-set                   = utf8
