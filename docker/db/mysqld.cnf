@@ -51,13 +51,18 @@ skip_name_resolve                       = 1
 character-set-server                    = utf8
 collation-server                        = utf8_general_ci
 # https://dev.mysql.com/doc/mysql/en/innodb-troubleshooting-datadict.html
-# innodb_force_recovery                  = 1                                # Used after innodb corruption
+# innodb_force_recovery                   = 1                                 # Used after innodb corruption
 
 table_open_cache                        = 2500                              # > 2000
 table_definition_cache                  = 5000                              # > 4412
 
 query_cache_type                        = 1                                 # Default: off
 query_cache_size                        = 10M                               # Default: 1M
+
+# https://dev.mysql.com/doc/mysql/en/replication-options-replica.html
+server-id                               = 1
+log_bin                                 = /var/log/mysql/replication.log
+binlog_do_db                            = microsites_co
 
 [mysqld_safe]
 default-character-set                   = utf8

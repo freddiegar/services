@@ -9,13 +9,9 @@ services:
       dockerfile: ./db/Dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
-      # To create user use:
-      # MYSQL_DATABASE: $DB_NAME
-      # MYSQL_USER: $DB_USER
-      # MYSQL_PASSWORD: $DB_USER_PASSWORD
     volumes:
-      - $DB_PATH_DATA:/var/lib/mysql
-      - $DB_PATH_LOG:/var/log/mysql
+      - $DB_PATH_DATA/db57:/var/lib/mysql
+      - $DB_PATH_LOG/db57:/var/log/mysql
     networks:
       development:
         ipv4_address: $DB_IP_ADDRESS

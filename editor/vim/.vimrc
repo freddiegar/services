@@ -179,7 +179,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         " @see https://github.com/junegunn/vim-plug
         if empty(glob('~/.vim/autoload/plug.vim'))
                     \ || (fmod(str2float(strftime('%d')), 14.0) == 0.0 && strftime('%d') !=# strftime('%d', getftime(expand('~/.vim/autoload/plug.vim'))))
-            " Try each n days to  update
+            " Try each n days to update
             silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
         endif
     endfunction

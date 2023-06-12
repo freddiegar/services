@@ -79,8 +79,8 @@ If DNS dont works, try editing `/etc/hosts`
 Create folders data and log and set defaults
 
 ```bash
-sudo mkdir -p /var/lib/mysql && sudo chown $(whoami):docker /var/lib/mysql
-sudo mkdir -p /var/log/mysql && sudo chown $(whoami):docker /var/log/mysql
+sudo mkdir -p /var/lib/mysql && sudo chown $(whoami):systemd-journal /var/lib/mysql
+sudo mkdir -p /var/log/mysql && sudo chown $(whoami):systemd-journal /var/log/mysql
 touch /var/log/mysql/error.log
 touch /var/log/mysql/mysql.log
 touch /var/log/mysql/slow.log
