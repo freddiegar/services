@@ -54,6 +54,14 @@ pcs() {
     return $?
 }
 
+# Change Terminal Theme
+#   - ctm Light
+ctt() {
+    sed -i "s/ColorScheme=.*/ColorScheme=${1}/g" /var/www/html/freddiegar/services/emulator/konsole/konsole.profile
+
+    konsoleprofile colors=$1
+}
+
 alias x="exit"
 alias v="vim"
 alias g="grepx"
@@ -74,6 +82,9 @@ alias lsd="ls -la | grep '^d'"
 alias __="ssh-add"
 alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}'"
 alias npkg="dpkg --list | wc --lines"
+
+alias kd="ctt Dark"
+alias kl="ctt Light"
 
 alias vf="vifm"
 alias vd="vimdiff"

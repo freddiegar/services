@@ -209,7 +209,8 @@ rm -f ~/.local/share/konsole/*.profile
 rm -f ~/.local/share/konsole/*.colorscheme
 
 ln -s `pwd`/emulator/konsole/konsole.profile ~/.local/share/konsole/konsole.profile
-ln -s `pwd`/emulator/konsole/Linux.colorscheme ~/.local/share/konsole/Linux.colorscheme
+ln -s `pwd`/emulator/konsole/Dark.colorscheme ~/.local/share/konsole/Dark.colorscheme
+ln -s `pwd`/emulator/konsole/Light.colorscheme ~/.local/share/konsole/Light.colorscheme
 ```
 
 ## Vim Configuration
