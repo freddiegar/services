@@ -119,6 +119,9 @@ mysql_config_editor set --login-path=development --host=db --user=root --passwor
 mysql --login-path=development
 # Show save paths
 mysql_config_editor print --all
+
+# Replication
+mysql_config_editor set --login-path=replication --host=dbrx --user=root --password
 ```
 
 ### Check config file

@@ -23,6 +23,27 @@ services:
           cpus: $DB_CORE
           memory: $DB_MEMORY
 
+  dbrx:
+    container_name: dbrx
+    build:
+      context: .
+      dockerfile: ./dbrx/Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+    volumes:
+      - $DB_PATH_DATA/dbrx:/var/lib/mysql
+      - $DB_PATH_LOG/dbrx:/var/log/mysql
+    networks:
+      development:
+        ipv4_address: $DBRX_IP_ADDRESS
+    ports:
+    - $DBRX_PORT:3306
+    deploy:
+      resources:
+        limits:
+          cpus: $DB_CORE
+          memory: $DB_MEMORY
+
   mssql:
     image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: mssql
