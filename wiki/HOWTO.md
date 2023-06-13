@@ -87,9 +87,9 @@ dd bs=4M if=/home/freddie/Downloads/archlinux-x86_64.iso of=/dev/sda conv=fsync 
 
 # or
 
-cp /path/to/file.iso /dev/sda
-cat /path/to/file.iso > /dev/sda
-nautilus -> right clic on iso file -> open with -> Disk Image Writer
+sudo cp /home/freddie/Downloads/archlinux-x86_64.iso /dev/sda
+sudo cat /home/freddie/Downloads/archlinux-x86_64.iso > /dev/sda
+sudo nautilus -> right clic on iso file -> open with -> Disk Image Writer
 
 # Detach stick to extract
 udisksctl power-off -b /dev/sda
@@ -300,4 +300,20 @@ openssl x509 -in duckduckgo.com.pem -noout -checkend 2592000
 sudo apt remove --purge --auto-remove bluez
 sudo rfkill list
 rfkill unblock bluetooth
+```
+
+# Ytdl
+
+[See](https://github.com/ytdl-org/youtube-dl)
+
+```bash
+# Install
+sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+sudo chmod a+rx /usr/local/bin/youtube-dl
+
+# Pre-requisites (convert to only audio)
+sudo apt-get install -y ffmpeg
+
+# Download
+python3 /usr/local/bin/youtube-dl --ignore-errors --yes-playlist --yes-playlist --extract-audio -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' https://music.youtube.com/watch?v=jiP2uZu5fBY&list=RDAOy1jlKyX_GYhAAPvBR43tFQ
 ```

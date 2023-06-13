@@ -433,11 +433,11 @@ bindsym $mod+Shift+x mode "$mode_display"
 # @see https://olinux.net/xrandr/
 # Add new resolution (T490s)
 # cvt 1440 810
-# exec --no-startup-id xrandr --newmode  "1440x810_60.00" 95.00  1440 1520 1664 1888  810 813 818 841 -hsync +vsync; xrandr --addmode  eDP-1 1440x810_60.00; xrandr --output   eDP-1 --mode 1440x810_60.00 --primary
+exec --no-startup-id xrandr --newmode  "1440x810_60.00" 95.00   1440 1520 1664 1888  810 813 818 841 -hsync +vsync; xrandr --addmode eDP-1 1440x810_60.00; xrandr --output eDP-1 --mode 1440x810_60.00 --primary
 
 # Add new resolution (T14 Gen3)
 # cvt 1440 900
-exec --no-startup-id xrandr --newmode  "1440x900_60.00" 106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync; xrandr --addmode  eDP-1 1440x900_60.00; xrandr --output   eDP-1 --mode 1440x900_60.00 --primary
+exec --no-startup-id xrandr --newmode  "1440x900_60.00" 106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync; xrandr --addmode eDP-1 1440x900_60.00; xrandr --output eDP-1 --mode 1440x900_60.00 --primary
 
 exec --no-startup-id xrandr --output $internal_mode --primary --output $external_output --same-as $internal_mode
 
