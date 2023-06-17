@@ -17,29 +17,33 @@ osp() {
 # OpenSSL Body:
 #   - osb duckduck.com:443.pem
 osb() {
-    openssl x509 -in "$@" | sed -e '1d;$d' > body.txt
+    sed '1d;/^\s.*/d' "$@" > body.txt
     STATUS="$?"
 
     if [ $STATUS -ne 0 ]; then
+        rm -f body.txt
+
         return $STATUS
     fi
 
-    cat body.txt | yy
+    cat body.txt | yy | rm body.txt
 
     return $?
 }
 
-# OpenSSL Body:
-#   - osb duckduck.com:443.pem
+# OpenSSL Private Key:
+#   - osi duckduck.com:443.pem
 osi() {
     openssl pkey -in "$@" -out pkey.txt
     STATUS="$?"
 
     if [ $STATUS -ne 0 ]; then
+        rm -f pkey.txt
+
         return $STATUS
     fi
 
-    cat pkey.txt | yy
+    cat pkey.txt | yy | rm pkey.txt
 
     return $?
 }
@@ -63,7 +67,7 @@ ctt() {
 }
 
 alias x="exit"
-alias v="vim"
+alias v=$EDITOR
 alias g="grepx"
 alias m="man"
 alias l="less"
@@ -79,6 +83,7 @@ alias di="diff -rq --suppress-common-lines"
 alias ll="ls -lh"
 alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
 alias lsd="ls -la | grep '^d'"
+alias lsn="ls -L1"
 alias __="ssh-add"
 alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}'"
 alias npkg="dpkg --list | wc --lines"
@@ -89,11 +94,11 @@ alias kl="ctt Light"
 alias vf="vifm"
 alias vd="vimdiff"
 alias vv="nvim"
-alias vn="vim -u NONE"
-alias vz="vim ~/.zshrc"
-alias va="vim ~/.bash_aliases"
-alias v3="vim ~/.config/i3/config"
-alias vl="vim -c \"colorscheme morning\""
+alias vn="$EDITOR -u NONE"
+alias vz="$EDITOR ~/.zshrc"
+alias va="$EDITOR ~/.bash_aliases"
+alias v3="$EDITOR ~/.config/i3/config"
+alias vl="$EDITOR -c \"set background=light\""
 
 alias rz="source ~/.zshrc"
 alias ra="source ~/.bash_aliases"
@@ -105,6 +110,7 @@ alias sai="sudo apt-get install -y"
 alias sar="sudo apt-get remove -y"
 alias sau="sudo apt-get update && sudo apt-get upgrade -y && sac"
 alias sac="sudo apt-get autoremove --purge -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
+alias sap="dpkg -l | grepx ^rc | grepx -v grub | awk '{print \$2}' | xargs -t sudo apt-get -y purge"
 
 alias xpa='echo "\n" | sudo add-apt-repository'
 alias xpr='echo "\n" | sudo add-apt-repository --remove'
