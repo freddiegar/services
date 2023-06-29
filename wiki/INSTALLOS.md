@@ -158,7 +158,15 @@ sudo sed -i 's/\/\/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/Unattended
 # Disabled IPP Service: 631 (Internet Printer Protocol)
 
 ```bash
-sudo service cups stop && sudo systemctl disable cups
+sudo service cups stop && sudo systemctl disable cups && sudo apt-get remove cups
+```
+
+# Disabled Plymouth Service
+
+```bash
+sudo service plymouth stop && sudo systemctl disable plymouth
+sudo service plymouth-log stop && sudo systemctl disable plymouth-log
+sudo apt-get remove plymouth-* plymouth
 ```
 
 # Main and extra utils
@@ -923,7 +931,7 @@ sudo apt-get install -y vifm
 
 ```bash
 composer global require rector/rector --dev
-sudo ln -s ~/.composer/vendor/bin/rector /usr/local/bin/phprector
+sudo ln -s ~/.config/composer/vendor/bin/rector /usr/local/bin/phprector
 ## Command
 ## phprector -c /var/www/html/freddiegar/services/rector.php process src
 ## phprector -c /var/www/html/freddiegar/services/rector.php -n process src tests

@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-require_once \realpath('/home/freddie/.composer/vendor/autoload.php');
+require_once \realpath('/home/freddie/.config/composer/vendor/autoload.php');
 
 use Rector\Config\RectorConfig;
 use Rector\Core\Configuration\Option;
