@@ -20,6 +20,14 @@ def functypes():
 	return ['public', 'protected', 'private']
 endglobal
 
+snippet ns "Set namespace"
+namespace `!v sniphpets#namespace()`;
+endsnippet
+
+snippet nm "Namespace modified"
+`!v sniphpets#namespace()`;
+endsnippet
+
 snippet nn "Get file name"
 `!v sniphpets#basename()`
 endsnippet

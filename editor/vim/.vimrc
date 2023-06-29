@@ -164,11 +164,6 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
         let g:qfcommand = get(g:, 'qfcommand', '')
 
-        " Day/Night Mode
-        " @see https://uxpickle.com/dark-or-light-mode-for-the-eyes/
-        " @timezone https://24timezones.com/time-zone/est
-        let g:colorscheme = !g:istty ? 'miningbox' : 'default'
-
         " Viminfofile setup
         let g:infofile = ''
 
@@ -3079,6 +3074,9 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer><Leader>rdu <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rrd <Cmd>call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
 
+    autocmd FileType php nnoremap <silent> <Plug>SimplifyNamespaceRepeatable <Cmd>call <SID>rsn('word')<Enter>
+    autocmd FileType php nmap <silent> <buffer><Leader>rsn <Plug>SimplifyNamespaceRepeatable
+
     autocmd FileType php nnoremap <silent> <buffer><Leader>rci <Cmd>call phpactor#ClassInflect()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rec <Cmd>call phpactor#ExtractConstant()<Enter>
@@ -3096,6 +3094,33 @@ augroup AutoCommands
         let l:result = system(g:phpactorbinpath . ' class:transform ' . expand('%') . ' --transform="' . a:transformer . '"')
 
         silent edit!
+    endfunction
+
+    function! s:rsn(type) abort
+        let l:saved_unnamed_register = @@
+
+        if a:type ==# 'v' || a:type ==# 'V'
+            silent execute "normal! `<v`>\"zy"
+
+            let l:namespace = trim(@z)
+        else
+            let l:namespace = expand('<cWORD>')
+        endif
+
+        let @@ = l:saved_unnamed_register
+        let l:simplify = split(l:namespace, '\\')
+
+        if len(l:simplify) > 0
+            let l:simplify = l:simplify[-1]
+        endif
+
+        if l:namespace =~# '?' && l:simplify !~# '?'
+            let l:simplify = '?' . l:simplify
+        endif
+
+        execute 'normal! ciW' . l:simplify . "\e"
+
+        silent! call repeat#set("\<Plug>SimplifyNamespaceRepeatable", a:type)
     endfunction
 
     " Go parent (extends) or implements (interface) file from 'any' position
