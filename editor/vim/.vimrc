@@ -2437,11 +2437,14 @@ function! s:go_file(ffile) abort
     let l:cext = expand('%:e')
     let l:ffile = a:ffile
     let l:filter = ''
-    " Used in:     Symfony      Laravel
-    let l:paths = ['templates', 'resources/views', 'config', 'routes']
+    " Used in:    .env Symfony      Laravel
+    let l:paths = ['', 'templates', 'resources/views', 'config', 'routes']
 
     try
-        if l:cext ==# 'php' && match(expand('<cWORD>'), 'route(') >= 0
+        if l:cext ==# 'php' && match(expand('<cWORD>'), 'env(') >= 0
+            let l:ffile = filereadable('.env.local') ? '.env.local' : '.env'
+            let l:filter = expand('<cword>')
+        elseif l:cext ==# 'php' && match(expand('<cWORD>'), 'route(') >= 0
             let l:filter = l:ffile
 
             if match(expand('<cWORD>'), "route('api") >= 0
@@ -2452,7 +2455,7 @@ function! s:go_file(ffile) abort
         elseif l:cext ==# 'php' && match(expand('<cWORD>'), 'config(') >= 0
             let l:parts = split(l:ffile, '\.')
             let l:ffile = join([l:parts[0] . '.php'], '/')
-            let l:filter = l:parts[-1]
+            let l:filter = "'" . l:parts[-1] . "'"
         elseif l:cext ==# 'php' && match(l:ffile, '\.twig$') <= 0
             let l:ffile = substitute(l:ffile, '\.', '/', 'g') . '.blade.php'
         endif
@@ -2466,7 +2469,7 @@ function! s:go_file(ffile) abort
                 if l:filter !=# ''
                     let l:hlsearch = &hlsearch
                     set nohlsearch
-                    silent execute "keeppatterns keepjumps normal! gg/'" . l:filter . "'\r"
+                    silent execute "keeppatterns keepjumps normal! gg/" . l:filter . "\r"
 
                     let &hlsearch = l:hlsearch
                 endif
