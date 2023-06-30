@@ -3643,6 +3643,7 @@ augroup AutoCommands
     " no-[b]reak spaces
     "    [q]uery log
     "    [p]rofile log
+    "    [m]arks
     "    [f]orce
     "    [v]erbose
     function! s:cleanup(include) abort
@@ -3710,6 +3711,12 @@ augroup AutoCommands
             silent call add(l:cleanup, 'profiles')
         endif
 
+        if index(l:options, 'm') >= 0
+            silent! keeppatterns delmarks! | delmarks A-Z0-9
+
+            silent call add(l:cleanup, 'marks')
+        endif
+
         " silent call cursor(l:ccursor) <- Change cursor position!
         silent call setpos('.', l:ccursor)
 
@@ -3726,6 +3733,7 @@ augroup AutoCommands
     command! -nargs=0 CB call <SID>cleanup('vfb')
     command! -nargs=0 CQ call <SID>cleanup('vfq')
     command! -nargs=0 CP call <SID>cleanup('vfp')
+    command! -nargs=0 CM call <SID>cleanup('vfm')
 
     " title (string)
     function! s:settitle(title) abort
