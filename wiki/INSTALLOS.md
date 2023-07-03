@@ -1396,7 +1396,7 @@ git --version | awk '{print $3}'
 git lfs version
 # git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.3)
 docker --version | awk '{print $3}'
-# 24.0.1
+# 24.0.2
 docker-compose --version | awk '{print $4}'
 # v2.18.1
 feh --version | grep version | awk '{print $3}'
@@ -1418,7 +1418,7 @@ bat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 13.0.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.1.12-1ubuntu4
+# 8.1.20
 nvm --version
 # 0.39.3
 npm --version

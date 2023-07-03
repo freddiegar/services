@@ -64,5 +64,8 @@ server-id                               = 10
 log_bin                                 = /var/log/mysql/replication.log
 binlog_do_db                            = microsites_co
 
+# https://stackoverflow.com/questions/56389698/why-super-privileges-are-disabled-when-binary-logging-option-is-on#56390000
+log_bin_trust_function_creators         = 1
+
 [mysqld_safe]
 default-character-set                   = utf8
