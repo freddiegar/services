@@ -38,4 +38,10 @@ if [ $FPHP = 0 ]; then
 fi
 
 # Run test before add message to commit
-phpx vendor/bin/phpunit --stop-on-failure --no-coverage
+if [ "`phpx /usr/local/bin/composer list | grepx -F "test-ci"`" != "" ]; then
+    COMMAND="/usr/local/bin/composer test-ci"
+else
+    COMMAND="vendor/bin/phpunit --stop-on-failure --no-coverage"
+fi
+
+phpx $COMMAND
