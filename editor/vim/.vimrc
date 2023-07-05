@@ -344,7 +344,7 @@ set clipboard^=unnamedplus                                      " Shared SO clip
 set splitbelow                                                  " :split  opens window below (default: off)
 set splitright                                                  " :vsplit opens window right (default: off)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
-set cursorline                                                  " Highligth current line (default: off)
+set nocursorline                                                " Highligth current line (slower) (default: off)
 set cmdheight=2                                                 " More spaces, less "Enter to continue..." messages (default: 1)
 set report=5                                                    " Less verbose (default: 2)
 
@@ -3812,15 +3812,18 @@ augroup AutoCommands
 
     " BufWinEnter:  After cycling between buffers
     " BufHidden:    After close CTRL-W o
-    autocmd WinEnter,BufWinEnter,BufHidden * call <SID>statusline(mode()) | setlocal cursorline
-    autocmd WinLeave,BufWinLeave * call <SID>statusline('f') | setlocal nocursorline
+    autocmd WinEnter,BufWinEnter,BufHidden * call <SID>statusline(mode())
+        " | setlocal cursorline
+    autocmd WinLeave,BufWinLeave * call <SID>statusline('f')
+        " | setlocal nocursorline
     autocmd User UpdateStatusline call <SID>statusline(mode())
     autocmd User AsyncRunPre call <SID>statusline('f')
     autocmd User AsyncRunStart call <SID>statusline('f')
     autocmd User AsyncRunStop call <SID>statusline('f')
     " After open terminal with fzf
     if exists("##ModeChanged") " (why nvim why!)
-        autocmd ModeChanged *t:* call <SID>statusline(v:event.old_mode) | setlocal cursorline
+        autocmd ModeChanged *t:* call <SID>statusline(v:event.old_mode)
+           " | setlocal cursorline
     endif
 
     " Relative numbers on Insert Mode
@@ -3941,7 +3944,7 @@ if g:isneovim
 endif
 
 try
-    silent execute 'colorscheme ' . get(g:, 'colors_name', g:colorscheme)
+    silent execute 'colorscheme ' . get(g:, 'colors_name', 'miningbox')
 catch /^Vim\%((\a\+)\)\=:E185/
     " Light:
     " - delek       <- +++++
