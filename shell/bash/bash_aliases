@@ -58,6 +58,14 @@ pcs() {
     return $?
 }
 
+# Change Dir Project
+#   - cdp /var/www/html/flexphp
+cdp() {
+    cd "$@"/$(cd "$@" && ls -L1 | fzf) && $EDITOR
+
+    return $?
+}
+
 # Change Terminal Theme
 #   - ctm Light
 ctt() {
@@ -176,7 +184,7 @@ alias dcclean="docker ps -a | grep ' Exited (1) ' | awk '{print \$1}' | xargs -r
 
 alias gs="git summary -q 2> /dev/null"
 alias gv="gs | grep -v -E '/ro-|/_' | grep -E ' M?v'"
-alias gV="gs | grep -v -E '/ro-|/_' | grep -E '^$'"
+alias gV="gs | grep -v -E '/ro-|/_' | grep -E '\^$'"
 alias gM="gs | grep -v -E '/ro-|/_' | grep -E 'M'"
 alias gN="gs | grep -v -E '/ro-|/_' | grep -E '\?'"
 alias gi="git init"
@@ -266,6 +274,11 @@ alias cdt="cd /var/www/html/ataringenieria"
 alias cde="cd /var/www/html/evertec"
 alias cdx="cd /var/www/html/flexphp"
 alias cdf="cd /var/www/html/freddiegar"
+
+alias vdt="cdp /var/www/html/ataringenieria"
+alias vde="cdp /var/www/html/evertec"
+alias vdx="cdp /var/www/html/flexphp"
+alias vdf="cdp /var/www/html/freddiegar"
 
 alias cdd="cd /home/$USER/Downloads"
 
