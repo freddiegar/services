@@ -2,8 +2,9 @@
 
 # Changes system time temporarily
 # Usage datex [<date-as-YYYY-MM-DD>]
-#   datex 2020-12-31    -> Set current time to 2020-12-31
-#   datex               -> Set time to real current time
+#   datex 2020-12-31            -> Set current date to 2020-12-31
+#   datex 2020-12-31 17:21:00   -> Set current date time to 2020-12-31 17:21:00
+#   datex                       -> Reset datetime to current time
 
 timedatectl status
 
@@ -14,7 +15,7 @@ if [ "$1" == "" ] ; then
 else
     timedatectl set-ntp no
 
-    timedatectl set-time $1
+    timedatectl set-time "$1"
 fi
 
 echo "============================ Now ============================"
