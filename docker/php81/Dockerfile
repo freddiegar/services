@@ -125,6 +125,13 @@ RUN set -eux \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y default-jdk pdftk; fi \
     && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y gnupg1; fi \
+    # @see https://stackoverflow.com/questions/73832854/php-openssl-pkcs12-read-error0308010cdigital-envelope-routinesunsupported
+    && sed -i '/^# default = default_sect/a legacy = legacy_sect' /etc/ssl/openssl.cnf \
+    && sed -i 's/^# default = default_sect/default = default_sect/g' /etc/ssl/openssl.cnf \
+    && sed -i '/^# \[default_sect\]/a activate = 1\n\[legacy_sect\]\nactivate = 1' /etc/ssl/openssl.cnf \
+    && sed -i 's/^# \[default_sect\]/\[default_sect\]/g' /etc/ssl/openssl.cnf \
+    && sed -i 's/^# \[provider_sect\]/\[provider_sect\]/g' /etc/ssl/openssl.cnf \
+    && sed -i 's/^# providers =/providers =/g' /etc/ssl/openssl.cnf \
     # Clear
     && rm -rf /tmp/pear \
     && rm -rf /var/lib/apt/lists/* \
