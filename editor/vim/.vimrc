@@ -2933,7 +2933,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile make setlocal noexpandtab tabstop=4
     autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=4
     autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
-    " autocmd BufRead,BufNewFile *.vpm setfiletype vpm
+    autocmd BufRead,BufNewFile *.vpm setfiletype vpm
 
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType sql let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
@@ -3014,17 +3014,19 @@ augroup AutoCommands
     autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
     autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 
-    " VPM: Vim Presentation Mode
-    " autocmd FileType vpm nnoremap <silent> <buffer><Left> :silent bprevious<Enter> :redraw!<Enter>
-    " autocmd FileType vpm nnoremap <silent> <buffer><Right> :silent bnext<Enter> :redraw!<Enter>
+    " VPM: Vim Presentation Mode: slide001.vpm, slide002.vpm, etc, syntax.vim
+    "   sai toilet figlet
+    autocmd FileType vpm nnoremap <silent> <buffer><Left> :silent bprevious<Enter> :redraw!<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer><Right> :silent bnext<Enter> :redraw!<Enter>
     " TOIlet
-    " autocmd FileType vpm nnoremap <silent> <buffer>.f :.!toilet -w 200 -f small<Enter>
-    " autocmd FileType vpm nnoremap <silent> <buffer>.F :.!toilet -w 200 -f standard<Enter>
-    " autocmd FileType vpm nnoremap <silent> <buffer>.k :.!toilet -w 200 -f small -k<Enter>
-    " autocmd FileType vpm nnoremap <silent> <buffer>.K :.!toilet -w 200 -f standard -k<Enter>
-    " autocmd FileType vpm nnoremap <silent> <buffer>.w :.!toilet -w 200 -f small -W<Enter>
-    " autocmd FileType vpm nnoremap <silent> <buffer>.W :.!toilet -w 200 -f standard -W<Enter>
-    " autocmd FileType vpm nnoremap <silent> <buffer>.b :.!toilet -w 200 -f term -F border<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer>>f :.!toilet -w 200 -f small<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer>>F :.!toilet -w 200 -f standard<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer>>k :.!toilet -w 200 -f small -k<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer>>K :.!toilet -w 200 -f standard -k<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer>>w :.!toilet -w 200 -f small -W<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer>>W :.!toilet -w 200 -f standard -W<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer>>b :.!toilet -w 200 -f term -F border<Enter>
+    autocmd FileType vpm xnoremap <silent> <buffer>>b :!toilet -w 200 -f term -F border<Enter>
 
     " PHP Customization
     " autocmd FileType php inoremap <silent> <buffer>-> -><C-x><C-n>
@@ -3842,11 +3844,11 @@ augroup AutoCommands
 
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
-    " " Auto-source syntax in *.vpm
-    " autocmd BufNewFile,BufRead *.vpm
-    "     \ if filereadable(expand('syntax.vim')) |
-    "     \   silent execute 'source ' . expand('syntax.vim') |
-    "     \ endif
+    " Auto-source syntax in *.vpm
+    autocmd BufNewFile,BufRead *.vpm
+        \ if filereadable(expand('syntax.vim')) |
+        \   silent execute 'source ' . expand('syntax.vim') |
+        \ endif
     " " No resize in i3
     " autocmd VimResized * wincmd =
 augroup END
@@ -3867,41 +3869,43 @@ function! s:get_hlinfo() abort
                 \ . ' -> ' . g:colors_name
 endfunction
 
-" nmap <silent> <F5> <Cmd>call <SID>presentation_mode()<Enter>
-" nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
+nmap <silent> <F5> <Cmd>call <SID>vpm()<Enter>
+nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
 
-" let g:presentation_mode = 0
+let g:vpm = 0
 
-" function! s:presentation_mode() abort
-"     let l:maximum_column = 21
-"     let l:show_button_line = line('$') >= l:maximum_column
+function! s:vpm() abort
+    let l:maximum_column = 21
+    let l:show_button_line = line('$') >= l:maximum_column
 
-"     if g:presentation_mode == 0
-"         let g:presentation_mode = 1
+    if g:vpm == 0
+        let g:vpm = 1
 
-"         silent setlocal colorcolumn=81
-"         silent setlocal virtualedit+=all
+        let &fillchars ..= ',eob: '
+        silent setglobal colorcolumn=81
+        silent setglobal virtualedit+=all
 
-"         if l:show_button_line
-"             silent execute 'normal! mz' . l:maximum_column . 'G' . (&colorcolumn - 1) . "i-\e`z"
-"         endif
+        if l:show_button_line
+            silent execute 'normal! mz' . l:maximum_column . 'G' . (&colorcolumn - 1) . "i-\e`z"
+        endif
 
-"         silent execute 'highlight! link MaxLinePresentation CursorColumn'
-"         silent execute 'match MaxLinePresentation /\%' . l:maximum_column . 'l/'
-"     else
-"         silent execute 'match'
-"         silent execute 'highlight! clear MaxLinePresentation'
+        silent execute 'highlight! link MaxLinePresentation CursorColumn'
+        silent execute 'match MaxLinePresentation /\%' . l:maximum_column . 'l/'
+    else
+        silent execute 'match'
+        silent execute 'highlight! clear MaxLinePresentation'
 
-"         if l:show_button_line
-"             silent execute 'normal! mz' . l:maximum_column . "G\"_D`z"
-"         endif
+        if l:show_button_line
+            silent execute 'normal! mz' . l:maximum_column . "G\"_D`z"
+        endif
 
-"         silent setlocal virtualedit-=all
-"         silent setlocal colorcolumn=
+        silent setglobal virtualedit-=all
+        silent setglobal colorcolumn=
+        silent setglobal fillchars+=eob:~
 
-"         let g:presentation_mode = 0
-"     endif
-" endfunction
+        let g:vpm = 0
+    endif
+endfunction
 
 " Themes
 " Allowed 24 bit colors, by default only accept 8 bit, tty!
