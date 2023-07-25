@@ -1192,12 +1192,14 @@ function! s:find_filter(type, path) abort
         silent call fzf#vim#files(l:path, fzf#vim#with_preview({'options': ['--query', l:filter]}))
     elseif a:type =~# 'afind$'
         silent call <SID>rgfzf('AFind', l:filter, 0, l:path, 0, 1)
-    elseif a:type =~# 'aregex$'
-        silent call <SID>rgfzf('ARegExp', l:filter, 0, l:path, 1, 1)
     elseif a:type =~# 'ifind'
         silent call <SID>rgfzf('IFind', l:filter, 0, l:path, 0, 0)
     elseif a:type =~# 'find'
         silent call <SID>rgfzf('Find', l:filter, 0, l:path, 0, 0)
+    elseif a:type =~# 'aregex$'
+        silent call <SID>rgfzf('ARegExp', l:filter, 0, l:path, 1, 1)
+    elseif a:type =~# 'iregex$'
+        silent call <SID>rgfzf('IRegExp', l:filter, 0, l:path, 1, 0)
     elseif a:type =~# 'regex'
         silent call <SID>rgfzf('RegExp', l:filter, 0, l:path, 1, 0)
     else
@@ -1681,7 +1683,7 @@ Plug 'tpope/vim-rhubarb'                                        " - GitHub brows
 Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (needs vim-fugitive, no conditional) -> :GBrowse
 
 Plug 'tpope/vim-dadbod', {'for': 'sql'}                         " DB console in Vim
-Plug 'kristijanhusak/vim-dadbod-completion', {'for': ['sql']}   " DB autocompletion (needs vim-dadbod)
+Plug 'kristijanhusak/vim-dadbod-completion', {'for': 'sql'}     " DB autocompletion (needs vim-dadbod)
 
 " Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: methods, vars, etc
 " Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
@@ -1986,9 +1988,13 @@ xnoremap <silent> <Leader>A :<C-u>call <SID>find_filter(visualmode() . 'afind', 
 nnoremap <silent> <Leader>G <Cmd>call <SID>find_filter('regex', g:cwd)<Enter>
 xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter(visualmode() . 'regex', g:cwd)<Enter>
 
-" String r[E]gex in all files of current work directory
+" String reg[E]x in all files of current work directory
 nnoremap <silent> <Leader>E <Cmd>call <SID>find_filter('aregex', g:cwd)<Enter>
 xnoremap <silent> <Leader>E :<C-u>call <SID>find_filter(visualmode() . 'aregex', g:cwd)<Enter>
+
+" String reg[e]x in current file directory
+nnoremap <silent> <Leader>e <Cmd>call <SID>find_filter('iregex', expand('%:h'))<Enter>
+xnoremap <silent> <Leader>e :<C-u>call <SID>find_filter(visualmode() . 'iregex', expand('%:h'))<Enter>
 
 " Files [i]nside current file directory (show all files in specific directory)
 nnoremap <silent> <Leader>i :IFiles<Enter>
