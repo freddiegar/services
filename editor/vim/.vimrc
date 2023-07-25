@@ -1683,7 +1683,7 @@ Plug 'tommcdo/vim-fubitive'                                     " - BitBucket br
 Plug 'tpope/vim-dadbod', {'for': 'sql'}                         " DB console in Vim
 Plug 'kristijanhusak/vim-dadbod-completion', {'for': ['sql']}   " DB autocompletion (needs vim-dadbod)
 
-Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: methods, vars, etc
+" Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: methods, vars, etc
 " Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 
 Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
@@ -1938,16 +1938,16 @@ let g:python3_host_prog = '/usr/bin/python3'
 " @see https://github.com/machakann/vim-highlightedyank
 let g:highlightedyank_highlight_duration = 250
 
-" TagBar
-" @see https://github.com/preservim/tagbar
-let g:tagbar_sort = 0
-let g:tagbar_width = max([80, winwidth(0) / 3])
-let g:tagbar_silent = 0
-let g:tagbar_compact = 2
-let g:tagbar_autofocus = 1
-let g:tagbar_no_status_line = 1
+" " TagBar
+" " @see https://github.com/preservim/tagbar
+" let g:tagbar_sort = 0
+" let g:tagbar_width = max([80, winwidth(0) / 3])
+" let g:tagbar_silent = 0
+" let g:tagbar_compact = 2
+" let g:tagbar_autofocus = 1
+" let g:tagbar_no_status_line = 1
 
-nmap <silent> <F8> :TagbarToggle<Enter>
+" nmap <silent> <F8> :TagbarToggle<Enter>
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
