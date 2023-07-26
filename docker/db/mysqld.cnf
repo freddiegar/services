@@ -19,6 +19,9 @@ datadir                                 = /var/lib/mysql
 symbolic-links                          = 0                                 # Recommended to prevent assorted security risks
 explicit_defaults_for_timestamp         = 1
 
+# https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_max_allowed_packet
+max_allowed_packet                      = 67108864                          # In bytes (5.7: 4M 8.0: 64M)
+
 sql-mode                                = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
 log_error                               = /var/log/mysql/error.log
 general_log                             = 0
