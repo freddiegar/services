@@ -1052,6 +1052,8 @@ nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
 
 nnoremap <silent> <Leader>gC <Cmd>call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
 
+nnoremap <silent> <Leader>gK <Cmd>call <SID>go_url('https://app.clickup.com/t/31051369/' . substitute(expand('<cWORD>'), ':', '', 'g'))<Enter>
+
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
@@ -1561,6 +1563,8 @@ cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
 cnoremap %% =fnameescape(expand('%'))<Enter>
+cnoremap ncdo noautocmd cdo
+cnoremap ncfdo noautocmd cfdo
 
 " Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-x>)
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
@@ -2986,6 +2990,9 @@ augroup AutoCommands
     " Hide signcolumn in Terminal Mode
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
+        " Tab Terminal
+        command! -nargs=? M tabnew <Bar> terminal
+
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
         autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=250}
 
@@ -3011,6 +3018,8 @@ augroup AutoCommands
             silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() ==# '%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
+        command! -nargs=? M tab terminal
+
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
                     \ | setlocal bufhidden=wipe
                     \ | setlocal signcolumn=no
