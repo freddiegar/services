@@ -2968,7 +2968,7 @@ augroup AutoCommands
     autocmd FileType crontab setlocal commentstring=#\ %s
     autocmd FileType debsources setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
-    autocmd FileType php setlocal commentstring=//\ %s
+    autocmd FileType php setlocal commentstring=//\ %s iskeyword=@,48-57,_,192-255
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
     autocmd FileType c,cpp setlocal path+=/usr/include include&
@@ -3587,6 +3587,7 @@ augroup AutoCommands
                     \ || getbufvar(a:item, '&filetype') ==# 'netrw'
                     \ || split(a:item, '\.')[-1] ==# 'dbout'
                     \ || isdirectory(a:item)
+                    \ || (a:item =~? 'notes_' && getbufvar(a:item, '&filetype') ==# 'markdown')
     endfunction
 
     function! s:sessionsavepre() abort
