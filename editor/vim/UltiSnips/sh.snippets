@@ -29,6 +29,29 @@ do
 done
 endsnippet
 
+# @see https://www.redhat.com/sysadmin/linux-shell-redirection-pipelining
+snippet rr "Reference Redirection"
+# Short
+#	1 -> standard output
+#	2 -> error output
+#	& -> all (standard and error) output
+#
+# Redirection with >
+#     command > file:		Sends standard output to <file>
+#     command 2> file:		Sends error output to <file>
+#     command > file 2>&1:	Sends all (standard and error) output to a <file>
+#
+# Append with >>
+#     command >> file:		Appends standard output to a <file>
+#     command 2>> file:		Appends error output to a <file>
+#     command >> file 2>&1:	Appends all (standard and error) input to a <file>
+#
+# Redirect with <
+#     command < input:		Feeds a command input from <input>
+#     command << input:		Feeds a command or interactive program with a list defined by a delimiter; this is known as a here-document (heredoc)
+#     command <<< input:	Feeds a command with <input>; this is known as a here-string
+endsnippet
+
 # @see https://bash.cyberciti.biz/guide/Bash_special_parameters
 # @see https://www.thegeekstuff.com/2010/05/bash-shell-special-parameters
 snippet rp "Reference parameters"
