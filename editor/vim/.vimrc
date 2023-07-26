@@ -1188,17 +1188,17 @@ function! s:find_filter(type, path) abort
 
     let @@ = l:saved_unnamed_register
 
-    if a:type =~? 'v\?file$'
+    if a:type =~? 'v\?file'
         silent call fzf#vim#files(l:path, fzf#vim#with_preview({'options': ['--query', l:filter]}))
-    elseif a:type =~# 'afind$'
+    elseif a:type =~# 'afind'
         silent call <SID>rgfzf('AFind', l:filter, 0, l:path, 0, 1)
     elseif a:type =~# 'ifind'
         silent call <SID>rgfzf('IFind', l:filter, 0, l:path, 0, 0)
     elseif a:type =~# 'find'
         silent call <SID>rgfzf('Find', l:filter, 0, l:path, 0, 0)
-    elseif a:type =~# 'aregex$'
+    elseif a:type =~# 'aregex'
         silent call <SID>rgfzf('ARegExp', l:filter, 0, l:path, 1, 1)
-    elseif a:type =~# 'iregex$'
+    elseif a:type =~# 'iregex'
         silent call <SID>rgfzf('IRegExp', l:filter, 0, l:path, 1, 0)
     elseif a:type =~# 'regex'
         silent call <SID>rgfzf('RegExp', l:filter, 0, l:path, 1, 0)
@@ -1958,8 +1958,18 @@ let g:highlightedyank_highlight_duration = 250
 let g:fzf_buffers_jump = 1
 " Hidden preview if visible columns are lesser 70
 let g:fzf_preview_window = ['right,50%,<70(hidden)', 'Ctrl-/']
+" @see https://github.com/junegunn/fzf/blob/master/src/options.go
+let $FZF_DEFAULT_OPTS = '--bind "'
 " Extend in preview Ctrl+d and Ctrl+u
-let $FZF_DEFAULT_OPTS = '--bind "ctrl-d:preview-down,ctrl-u:preview-up"'
+let $FZF_DEFAULT_OPTS .= 'ctrl-d:preview-down,ctrl-u:preview-up,'
+" Move between results Ctrl+n and Ctrl+p
+let $FZF_DEFAULT_OPTS .= 'ctrl-n:down,ctrl-p:up,'
+" Move between history Ctrl+j and Ctrl+k
+let $FZF_DEFAULT_OPTS .= 'ctrl-j:next-history,ctrl-k:previous-history"'
+
+" History search using Ctrl+p and Ctrl+n (to move: Ctrl+j and Ctrl+k)
+" @thanks https://github.com/junegunn/fzf.vim/issues/290#issuecomment-303076880
+let $FZF_DEFAULT_OPTS .= ' --history=' . $HOME . '/.fzf_history'
 
 " String in current work directory
 nnoremap <silent> <Leader>f <Cmd>call <SID>find_filter('find', g:cwd)<Enter>
