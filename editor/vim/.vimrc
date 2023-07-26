@@ -1707,14 +1707,17 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 " Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 " Plug 'wellle/context.vim'                                       " Show context code (slower)
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
-Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
+" Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
-Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
+" Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
 
 " Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
 " Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++
 " Plug 'tricktux/pomodoro.vim', {'on': 'PomodoroStart'}           " Zen mode +++
-Plug 'wakatime/vim-wakatime'                                    " Zen mode ++++
+
+if g:hasgit
+    Plug 'wakatime/vim-wakatime'                                " Zen mode ++++
+endif
 
 " Plug 'ap/vim-css-color',  {'for': [
 "             \ 'html',
