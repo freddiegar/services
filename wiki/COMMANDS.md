@@ -1874,3 +1874,17 @@ stderr_logfile=/var/www/vhosts/deployments/name/storage/logs/worker.log' | sudo 
 # Reload supervisor configuration
 sudo supervisorctl reload
 ```
+
+Enable [legacy](https://www.practicalnetworking.net/practical-tls/openssl-3-and-legacy-providers/) modules in OpenSSL
+
+Error: ErrorException: hex2bin(): Input string must be hexadecimal string
+
+```bash
+openssl list -providers
+
+# Only show default?
+sudo cp -p /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.backup
+
+sudo sed -i '/default = default_sect/a legacy = legacy_sect' /etc/ssl/openssl.cnf
+sudo sed -i '/^\[default_sect\]/a activate = 1\n\[legacy_sect\]\nactivate = 1' /etc/ssl/openssl.cnf
+```

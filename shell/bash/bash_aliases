@@ -77,6 +77,7 @@ ctt() {
 alias x="exit"
 alias v=$EDITOR
 alias g="grepx"
+alias n="neovide"
 alias m="man"
 alias l="less"
 alias t="sh testx.sh"
@@ -206,6 +207,7 @@ alias glss="git diff --name-only --cached | xargs -r -l echo"
 alias glsa="git ls-files -v | rg '^h ' | awk '{print \$2}'"
 
 alias gd="git diff -w"
+alias gda="git diff"
 alias gdc="git diff -w --cached"
 alias ga="git add"
 alias gcm="git commit -S"
