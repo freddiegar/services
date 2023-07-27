@@ -79,7 +79,7 @@ alias v=$EDITOR
 alias g="grepx"
 alias m="man"
 alias l="less"
-alias t="touch"
+alias t="sh testx.sh"
 alias h="history"
 alias d="diff"
 alias f="fzf"
@@ -172,6 +172,7 @@ alias sts="phpx bin/phpunit --stop-on-failure --no-coverage --testsuite"
 alias stS="phpx bin/phpunit --testdox -vvv --testsuite"
 alias stf="phpx bin/phpunit --stop-on-failure --no-coverage --filter"
 
+alias vapor="phpx vendor/bin/vapor"
 alias ducks="du -cks * | sort -rn | head"
 alias fo="/opt/firefox/firefox --new-tab"
 

@@ -1052,7 +1052,7 @@ nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
 
 nnoremap <silent> <Leader>gC <Cmd>call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
 
-nnoremap <silent> <Leader>gK <Cmd>call <SID>go_url('https://app.clickup.com/t/31051369/' . substitute(expand('<cWORD>'), ':', '', 'g'))<Enter>
+nnoremap <silent> <Leader>gK <Cmd>call <SID>go_url('https://app.clickup.com/t/31051369/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'))<Enter>
 
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
@@ -3325,11 +3325,11 @@ augroup AutoCommands
 
     " command (string), [dependency (string)]
     function! s:composer(command, ...) abort
-        let l:version = system('composer ' . a:command . ' 2>/dev/null | ' . g:filterprg . ' "' . a:1 . ' " | sed "s#\s\+# #g" | cut -d " " -f 2 | tr -d "\n"')
+        let l:version = system('composer ' . a:command . ' "' . a:1 . '" 2>/dev/null | ' . g:filterprg . ' "^versions" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
 
         if l:version[0] != 'v' &&  match(split(l:version, '-'), '[master|main|hotfix|release|develop|feature|bugfix]') >= 0
-            let l:commit = system('composer ' . a:command . ' 2>/dev/null | ' . g:filterprg . ' "' . a:1 . '" | sed "s#\s\+# #g" | cut -d " " -f 3 | tr -d "\n"')
-            let l:version = printf('%s (%s)', l:version, l:commit)
+            let l:commit = system('composer ' . a:command . ' "' . a:1 . '" 2>/dev/null | ' . g:filterprg . ' "^source.*\.git" | sed "s#\s\+# #g" | cut -d " " -f 5 | tr -d "\n"')
+            let l:version = printf('%s (%s)', l:version, l:commit[0 : 10])
         endif
 
         return len(l:version) > 0 ? l:version : 'None'

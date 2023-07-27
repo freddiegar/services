@@ -2,3 +2,7 @@
 .vscode
 vendor
 node_modules
+testx.sh
+*.log
+storage/oauth-public.key.*
+storage/oauth-private.key.*

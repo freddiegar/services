@@ -20,13 +20,17 @@ FSTAGING=`git ls-files --modified | grepx ".php$" | wc -l`
 FMODIFING=`git diff --name-only --cached | xargs -r -l echo | grepx ".php$" | wc -l`
 FPHP=$(($FSTAGING + $FMODIFING))
 
+phpx /usr/local/bin/composer validate --no-check-all --strict || exit 1
+
+phpx /usr/local/bin/composer audit || exit 1
+
 # Run fixer before add message to commit
 if [ $FPHP = 0 ]; then
     echo -n ""
 elif [ -f .php_cs ]; then
-    phpx vendor/bin/php-cs-fixer fix --config=.php_cs
+    phpx vendor/bin/php-cs-fixer fix --config=.php_cs -v
 elif [ -f .php-cs-fixer.php ]; then
-    phpx vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php
+    phpx vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php -v
 elif [ -f .phpcs.xml ]; then
     phpx vendor/bin/phpcbf --colors -s --standard=.phpcs.xml
 else
@@ -39,9 +43,11 @@ fi
 
 # Run test before add message to commit
 if [ "`phpx /usr/local/bin/composer list | grepx -F "test-ci"`" != "" ]; then
-    COMMAND="/usr/local/bin/composer test-ci"
+    COMMAND="phpx /usr/local/bin/composer test-ci"
+elif [ -f "testx.sh" ]; then
+    COMMAND="sh testx.sh"
 else
-    COMMAND="vendor/bin/phpunit --stop-on-failure --no-coverage"
+    COMMAND="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
 fi
 
-phpx $COMMAND
+$COMMAND
