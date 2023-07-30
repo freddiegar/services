@@ -1050,9 +1050,11 @@ nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all'<Enter><Enter>
 
-nnoremap <silent> <Leader>gC <Cmd>call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'))<Enter>
+nnoremap <silent> <Plug>GetColorRepeatable <Cmd>call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'), 'GetColorRepeatable')<Enter>
+nmap <silent> <Leader>gC <Plug>GetColorRepeatable
 
-nnoremap <silent> <Leader>gK <Cmd>call <SID>go_url('https://app.clickup.com/t/31051369/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'))<Enter>
+nnoremap <silent> <Plug>GetClickUpRepeatable <Cmd>call <SID>go_url('https://app.clickup.com/t/31051369/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetClickUpRepeatable')<Enter>
+nmap <silent> <Leader>gK <Plug>GetClickUpRepeatable
 
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
@@ -1392,7 +1394,7 @@ endfunction
 " string (string), [ignorechars (List)]: string
 function s:escape(string, ...) abort
     let l:escaped = a:string
-    let l:ignorechars = len(a:000) > 0 ? a:1 : []
+    let l:ignorechars = a:0 > 0 ? a:1 : []
 
     " Escape backslash (\)
     let l:escaped = index(l:ignorechars, '\') >= 0 ? l:escaped : substitute(l:escaped, '\', '\\\\\\\\', 'g')
@@ -1563,12 +1565,13 @@ cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
 cnoremap %% =fnameescape(expand('%'))<Enter>
-cnoremap ncdo noautocmd cdo
-cnoremap ncfdo noautocmd cfdo
 
 " Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-x>)
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
 cnoremap <C-x><C-x> <C-a>
+
+" SpeedUp massive changes in quickfix
+cnoremap <C-x><C-n> noautocmd cdo
 
 " @simple https://github.com/tpope/vim-eunuch
 " Shortcuts to recurrent files or directories
@@ -1815,9 +1818,9 @@ endfunction
 " range (0,1,2), inverse (0/1), [options (array: source, targe, text)]: void
 function! s:translate(range, inverse, ...) abort
     let s:result = []
-    let l:source = len(a:000) >= 2 ? a:1 : 'en'
-    let l:target = len(a:000) >= 2 ? a:2 : (len(a:000) >= 1 ? a:1 : 'es')
-    let l:fwords = len(a:000) >= 2 ? a:000[2 :] : (len(a:000) >= 1 ? a:000[1 :] : (len(a:000) ==# 1 ? a:000 : []))
+    let l:source = a:0 >= 2 ? a:1 : 'en'
+    let l:target = a:0 >= 2 ? a:2 : (a:0 >= 1 ? a:1 : 'es')
+    let l:fwords = a:0 >= 2 ? a:000[2 :] : (a:0 >= 1 ? a:000[1 :] : (a:0 ==# 1 ? a:000 : []))
     let l:content = <SID>get_selection(a:range, 0, l:fwords)
     let l:command = ['curl', '-s', '-L', 'https://script.google.com/macros/s/AKfycbywwDmlmQrNPYoxL90NCZYjoEzuzRcnRuUmFCPzEqG7VdWBAhU/exec', '-d']
 
@@ -2415,9 +2418,10 @@ endfunction
 nnoremap <silent> <Plug>GoUrlRepeatable <Cmd>call <SID>go_url(expand('<cWORD>'))<Enter>
 nmap <silent> gx <Plug>GoUrlRepeatable
 
-" url (string)
-function! s:go_url(url) abort
+" url (string), [string repeatable]
+function! s:go_url(url, ...) abort
     let l:uri = a:url
+    let l:repeatable = a:0 > 0 ? a:1 : 'GoUrlRepeatable'
 
     if match(l:uri, '[') >= 0
         let l:uri = substitute(l:uri, '\v\[(.*)\]', '', '')
@@ -2445,7 +2449,7 @@ function! s:go_url(url) abort
 
         silent redraw!
 
-        silent! call repeat#set("\<Plug>GoUrlRepeatable")
+        silent! call repeat#set("\<Plug>" . l:repeatable)
 
         echo 'Opened:   ' . l:uri
     endif

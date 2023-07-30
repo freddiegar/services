@@ -20,19 +20,19 @@ FSTAGING=`git ls-files --modified | grepx ".php$" | wc -l`
 FMODIFING=`git diff --name-only --cached | xargs -r -l echo | grepx ".php$" | wc -l`
 FPHP=$(($FSTAGING + $FMODIFING))
 
-phpx /usr/local/bin/composer validate --no-check-all --strict || exit 1
+phpx /usr/local/bin/composer validate --no-check-all --strict || exit $1
 
-phpx /usr/local/bin/composer audit || exit 1
+phpx /usr/local/bin/composer audit || exit $?
 
 # Run fixer before add message to commit
 if [ $FPHP = 0 ]; then
     echo -n ""
 elif [ -f .php_cs ]; then
-    phpx vendor/bin/php-cs-fixer fix --config=.php_cs -v
+    phpx vendor/bin/php-cs-fixer fix --config=.php_cs -v || exit $?
 elif [ -f .php-cs-fixer.php ]; then
-    phpx vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php -v
+    phpx vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php -v || exit $?
 elif [ -f .phpcs.xml ]; then
-    phpx vendor/bin/phpcbf --colors -s --standard=.phpcs.xml
+    phpx vendor/bin/phpcbf --colors -s --standard=.phpcs.xml || exit $?
 else
     echo "\e[31mFixer not found.\e[0m"
 fi
