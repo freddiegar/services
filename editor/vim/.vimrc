@@ -3591,7 +3591,7 @@ augroup AutoCommands
                     \ || getbufvar(a:item, '&filetype') ==# 'netrw'
                     \ || split(a:item, '\.')[-1] ==# 'dbout'
                     \ || isdirectory(a:item)
-                    \ || (a:item =~? 'notes_' && getbufvar(a:item, '&filetype') ==# 'markdown')
+                    \ || (a:item =~? '\/notes\/' && getbufvar(a:item, '&filetype') ==# 'markdown')
     endfunction
 
     function! s:sessionsavepre() abort

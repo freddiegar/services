@@ -257,12 +257,12 @@ mode "resize" {
     bindsym Shift+k resize shrink height  10 px or 10 ppt
     bindsym Shift+l resize grow   width   10 px or 10 ppt
 
-    # Borders                                                                 -20 -25
-    bindsym a           floating enable, resize set 1024 576,   move position 876 479
-    bindsym s           floating enable, resize set 854 480,    move position 1046 575
-    bindsym d           floating enable, resize set 640 360,    move position 1260 695
-    bindsym f           floating enable, resize set 426 240,    move position 1474 815
-    bindsym g           floating enable, resize set 256 144,    move position 1644 911
+    # Borders                                                                 -30 -25
+    bindsym a           floating enable, resize set 1024 576,   move position 866 479
+    bindsym s           floating enable, resize set 854 480,    move position 1036 575
+    bindsym d           floating enable, resize set 640 360,    move position 1250 695
+    bindsym f           floating enable, resize set 426 240,    move position 1464 815
+    bindsym g           floating enable, resize set 256 144,    move position 1634 911
 
     bindsym Shift+a     floating enable, resize set 1024 576,   move position 20 479
     bindsym Shift+s     floating enable, resize set 854 480,    move position 20 575
