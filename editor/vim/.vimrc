@@ -1463,6 +1463,8 @@ function s:go_docs(word) abort
     elseif &filetype ==# 'vim-plug'
         let l:docsurl = substitute(g:plugs[l:word].uri, 'git::@', '', 'g')
         let l:word = ''
+    elseif expand('%:t') ==# 'phpunit.xml'
+        let l:docsurl = 'https://docs.phpunit.de/en/9.6/search.html?q='
     elseif expand('%:t') ==# 'composer.json'
         let l:docsurl = 'https://github.com/'
 
@@ -3837,7 +3839,7 @@ augroup AutoCommands
     autocmd BufEnter * call <SID>poststart() " | call <SID>show_context(expand('<afile>'))
     " BufEnter:     After changes between buffers (why nvim why!)
     " BufFilePost:  After changes name's current file (why nvim why!)
-    autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], ''))
+    autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], '')) | call <SID>statusline('f')
 
     " Hide sensible information (maybe share all screen or pair programming)
     autocmd FocusLost *.asc let afile = expand('<afile>') | execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
