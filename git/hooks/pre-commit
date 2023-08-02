@@ -43,7 +43,11 @@ fi
 
 # Run test before add message to commit
 if [ "`phpx /usr/local/bin/composer list | grepx -F "test-ci"`" != "" ]; then
-    COMMAND="phpx /usr/local/bin/composer test-ci"
+    COMMAND="$(jq '.scripts."test-ci"' composer.json | sed 's/\"//g')"
+
+    if [ "`echo "$COMMAND" | grepx -F "^@php "`" = "" ]; then
+        COMMAND="phpx $COMMAND"
+    fi
 elif [ -f "testx.sh" ]; then
     COMMAND="sh testx.sh"
 else
