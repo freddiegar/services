@@ -43,6 +43,7 @@ return static function (RectorConfig $configurator): void {
         \Rector\CodingStyle\Rector\Encapsed\WrapEncapsedVariableInCurlyBracesRector::class,
         \Rector\CodingStyle\Rector\PostInc\PostIncDecToPreIncDecRector::class,
         \Rector\CodingStyle\Rector\Switch_\BinarySwitchToIfElseRector::class,
+        \Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector::class,
         \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedConstructorParamRector::class,
         \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
         \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
