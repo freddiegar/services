@@ -267,12 +267,13 @@ if executable('rg')
     " @see https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#automatic-filtering
     " @see https://gist.github.com/seanh/a866462a27cb3ad7b084c8e6000a06b9
     "  --no-messages:       No show warning messages if not found nothing
-    "  --vimgrep:           Every match on its own line with line number and column
+    "  --vimgrep:           Every match on its own line using %filename, %line, %column number and %message
     "  --follow:            Follow symlinks (-L)
     "  --ignore-case:       Ignore lower and upper case (-i)
     "  --case-sensitive:    Respect lower and upper case (-s)
     "  --smart-case:        Uppercase are important!, if there is (-S)
     "  --fixed-strings      No use regex symbols (-F)
+    "  --hidden             Search hidden files and directories (-.)
     "  --glob               Include or exclude dirs or files (-g). Examples: -g '!{.git,.svn}'
     set grepprg=rg\ --no-messages\ --vimgrep\ --follow          " Used in :grep command (default: grep -n $* /dev/null)
 
@@ -285,10 +286,21 @@ if executable('rg')
 
     " Better integration's rg. Only Vim (or nvim 0.5+)
     " @thanks https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
+    " @example
+    "   - vimgrep /ERROR:.*DefaultService SETTLE response/ *.log        <- Native
+    "   - grep 'ERROR:.*DefaultService SETTLE response' *.log           <- Native grep
+    "   - grep <C-r><C-w>                                               <- Use word (cWORD, line, etc) under cursor
+    "   - Grep 'ERROR:.*DefaultService SETTLE response' *.log           <- Skip .gitignore file
+    "   - Grep 'ERROR:.*DefaultService SETTLE response'                 <- Use .gitignore file
+    "   - Grep 'ERROR:.*DefaultService SETTLE response' --ignore-case   <- Use flags as usual
     function! Grep(...) abort
+        let l:errorformat = &errorformat
         let g:qfcommand = join([&grepprg] + [expandcmd(join(a:000, ' '))], ' ')
 
-        return system(g:qfcommand)
+        let l:qfmatches = systemlist(g:qfcommand)
+        let &errorformat = &grepformat
+
+        return l:qfmatches
     endfunction
 
     " string (string)
@@ -910,7 +922,7 @@ function! s:backup(...) abort
     return 0
 endfunction
 
-" Backup rescue
+" Beatiful Backup
 command! -nargs=? -complete=file BB call <SID>backup(<f-args>)
 
 " Don't write in update <- Sugar
@@ -3216,6 +3228,7 @@ augroup AutoCommands
                     \ ? '(class|trait|interface) \b' . l:string . '\b(\s?\w*)'
                     \ : '(class|trait|interface|function) \b' . l:string . '\b(\(?|\s?)'
 
+        " Don't remove single quotes using start (*) wildcard
         silent execute "Grep --glob '*.php' --ignore-case '" . <SID>rg_escape(l:pattern) . "'"
     endfunction
 
@@ -3250,6 +3263,7 @@ augroup AutoCommands
                     \ ? '\b' . l:string . '\b(::|\(|;)'
                     \ : '(->|::|new )?[^_-]\b' . l:string . '\b(\(|;)'
 
+        " Don't remove single quotes using start (*) wildcard
         silent execute "Grep --glob '*.php' --ignore-case '" . <SID>rg_escape(l:pattern) . "'"
     endfunction
 
