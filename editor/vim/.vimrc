@@ -925,6 +925,9 @@ endfunction
 " Beatiful Backup
 command! -nargs=? -complete=file BB call <SID>backup(<f-args>)
 
+" Explorer
+command! -nargs=1 -complete=dir E execute "normal :!vifm <f-args><Enter>"
+
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() =~# '^w') ? 'update' : 'w'
 
@@ -3756,6 +3759,12 @@ augroup AutoCommands
             silent call add(l:cleanup, 'duplicate blank lines')
         endif
 
+        if index(l:options, 'y') >= 0
+            silent! keeppatterns g/^\s*$/d
+
+            silent call add(l:cleanup, 'empty lines')
+        endif
+
         if index(l:options, 'r') >= 0
             let l:registers = split('abcdefghijklmnopqrstuvwxyz0123456789/-"', '\zs')
 
@@ -3796,6 +3805,7 @@ augroup AutoCommands
 
     command! -nargs=0 CR call <SID>cleanup('vfr')
     command! -nargs=0 CS call <SID>cleanup('vfte')
+    command! -nargs=0 CE call <SID>cleanup('vftey')
     command! -nargs=0 CL call <SID>cleanup('vfted')
     command! -nargs=0 CB call <SID>cleanup('vfb')
     command! -nargs=0 CQ call <SID>cleanup('vfq')
