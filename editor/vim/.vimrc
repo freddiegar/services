@@ -322,8 +322,8 @@ if executable('rg')
     command! -nargs=0 -bar UP call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
 
     " No learn new command, use :grep and :lgrep with superpowers
-    cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() ==# 'grep') ? 'Grep' : 'grep'
-    cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() ==# 'lgrep') ? 'LGrep' : 'lgrep'
+    cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() =~# '^grep') ? 'Grep' : 'grep'
+    cnoreabbrev <expr> lgrep (getcmdtype() ==# ':' && getcmdline() =~# '^lgrep') ? 'LGrep' : 'lgrep'
 
     " Open quickfix on finish command automatically
     augroup Quickfix
@@ -926,7 +926,7 @@ endfunction
 command! -nargs=? -complete=file BB call <SID>backup(<f-args>)
 
 " Don't write in update <- Sugar
-cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() ==# 'w') ? 'update' : 'w'
+cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() =~# '^w') ? 'update' : 'w'
 
 " isregex (1/0), file (string), [filter (string)]: void
 function! s:file_filter(isregex, file, filter) abort
@@ -2651,10 +2651,10 @@ nnoremap <silent> <Leader>hh /\v[<\|>\|=]{7}<Enter>
 " endif
 
 " I don't want to learn (or write) new aliases
-cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() ==# 'git') ? 'Git' : 'git'
+cnoreabbrev <expr> git (getcmdtype() ==# ':' && getcmdline() =~# '^git') ? 'Git' : 'git'
 
 for [s:shortcut, s:command] in <SID>git_alias() + [['gh', 'Git blame'], ['gst', 'Git']]
-    execute "cnoreabbrev <expr> " . s:shortcut . " (getcmdtype() ==# ':' && getcmdline() ==# '" . s:shortcut . "') ? '" . s:command . "' : '" . s:shortcut . "'"
+    execute "cnoreabbrev <expr> " . s:shortcut . " (getcmdtype() ==# ':' && getcmdline() =~# '^" . s:shortcut . "') ? '" . s:command . "' : '" . s:shortcut . "'"
 endfor
 
 " GitGutter
@@ -3013,8 +3013,8 @@ augroup AutoCommands
     " Hide signcolumn in Terminal Mode
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
-        " Tab Terminal
-        command! -nargs=? M tabnew <Bar> terminal
+        " " Tab Terminal
+        " command! -nargs=? M tabnew <Bar> terminal
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
         autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=250}
@@ -3035,13 +3035,19 @@ augroup AutoCommands
                     \ | endif
                     \ | endif
 
+        autocmd TermEnter * setlocal nonumber
+                    \ | setlocal norelativenumber
+
+        autocmd TermLeave * setlocal number
+                    \ | setlocal relativenumber
+
         " Open Terminal Mode splitted (Same to Vim behaviour)
-        " Not use l: (why nvim why!)
+        " Not use l: prefix (why nvim why!)
         for option in ['ter', 'term', 'termi', 'termin', 'termina', 'terminal']
-            silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() ==# '%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
+            silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() =~# '^%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
-        command! -nargs=? M tab terminal
+        " command! -nargs=? M tab terminal
 
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
                     \ | setlocal bufhidden=wipe
