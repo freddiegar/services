@@ -1580,6 +1580,7 @@ cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
 cnoremap %% =fnameescape(expand('%'))<Enter>
 
+" Available: <C-x><C-cjkpv>
 " Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-x>)
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
 cnoremap <C-x><C-x> <C-a>
@@ -1612,6 +1613,7 @@ cnoremap <C-x><C-g> <C-u>='!curl -L '<Enter>=getreg('+')<Enter>=' > '<Enter>
 cnoremap <C-x><C-u> <C-u>='!curl --upload-file '<Enter>=expand('%:p')<Enter> https://free.keep.sh
 
 " gZip (and show dotfiles)
+cnoremap <C-x><C-o> <C-u>!gzip -d *.gz
 cnoremap <C-x><C-z> <C-u>='!gzip -k -c '<Enter>=expand('%:p')<Enter>=' > ~/Downloads/'<Enter>=substitute(split(expand('%:p'), '/')[-1], '\.', '', 'g') . '.gz'<Enter>
 
 " incr (int)
@@ -2918,9 +2920,10 @@ function! s:exception() abort
 endfunction
 
 " Open notes in Normal|Select|Operator Mode
-nmap <silent> <F9> <Cmd>call <SID>notes()<Enter>
+nmap <silent> <F9> <Cmd>call <SID>notes(v:true)<Enter>
+nmap <silent> <S-F9> <Cmd>call <SID>notes(v:false)<Enter>
 
-function! s:notes() abort
+function! s:notes(append) abort
     let l:matches = []
     let l:header = '>> ' . strftime('%A, %d of %B %Y')
     let l:filename = expand('~/working/notes/notes_' . strftime('%Y%m') . '.md')
@@ -2929,6 +2932,10 @@ function! s:notes() abort
         silent update!
     else
         silent execute 'edit ' . fnameescape(l:filename)
+    endif
+
+    if a:append ==# v:false
+        return 0
     endif
 
     silent execute 'keeppatterns %g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
@@ -3566,7 +3573,8 @@ augroup AutoCommands
 
     function! s:mustbeignore() abort
         return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
-                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*|crontab')
+                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*|crontab|errors\.err')
+                    \ || get(v:argv, 1, '') ==# '-'
                     \ || (len(g:working) > 0 && g:working[0] =~? 'plugged')
                     \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-')
     endfunction
