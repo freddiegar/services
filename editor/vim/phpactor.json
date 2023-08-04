@@ -1,8 +1,17 @@
 {
+    "logging.enabled": false,
+    "logging.level": "debug",
+    "logging.formatter": "json",
+    "logging.path": "/var/www/html/logs/phpactor.log",
     "language_server_code_transform.import_globals": true,
     "language_server_completion.trim_leading_dollar": true,
+    "language_server.diagnostics_on_update": false,
     "file_path_resolver.enable_logging": false,
     "indexer.exclude_patterns": [
+        ".git/**/*",
+        "/node_modules/**/*",
+        "/var/**/*",
+        "/storage/**/*",
         "/tests/coverage/**/*",
         "/vendor/**/Tests/**/*",
         "/vendor/**/tests/**/*",

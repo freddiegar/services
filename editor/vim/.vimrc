@@ -2404,6 +2404,8 @@ function! s:show_documentation() abort
         endtry
     " elseif coc#rpc#ready()
     "     silent call CocActionAsync('doHover')
+    elseif index(['php'], &filetype) >= 0
+        call phpactor#Hover()
     else
         " Don't add silent
         execute '!' . &keywordprg . ' ' . l:word
