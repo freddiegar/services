@@ -142,6 +142,11 @@
 " @see https://neovim.io/doc/user/vim_diff.html
 " @see https://www.murilopereira.com/the-values-of-emacs-the-neovim-revolution-and-the-vscode-gorilla/
 
+" THROBLESHOOTING
+" 1. Update system
+" 2. Delete viminfo file!
+" 3. Delete session file!
+
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
 " - @z  Save temp content used in mappings
@@ -289,7 +294,7 @@ if executable('rg')
     " @example
     "   - vimgrep /ERROR:.*DefaultService SETTLE response/ *.log        <- Native
     "   - grep 'ERROR:.*DefaultService SETTLE response' *.log           <- Native grep
-    "   - grep <C-r><C-w>                                               <- Use word (cWORD, line, etc) under cursor
+    "   - grep <C-r><C-w>                                               <- Use [f]ile, [p]ath, [w]ord, [a]ll, [l]ine under cursor
     "   - Grep 'ERROR:.*DefaultService SETTLE response' *.log           <- Skip .gitignore file
     "   - Grep 'ERROR:.*DefaultService SETTLE response'                 <- Use .gitignore file
     "   - Grep 'ERROR:.*DefaultService SETTLE response' --ignore-case   <- Use flags as usual
@@ -321,6 +326,8 @@ if executable('rg')
     " Update Quickfix List
     " @see https://vi.stackexchange.com/questions/13662/is-there-a-way-to-update-the-quickfix-entries-after-running-cdo-cfdo
     command! -nargs=0 -bar UP call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
+
+    nnoremap <C-r><C-g> :Grep =expand('<cword>')<Enter>
 
     " No learn new command, use :grep and :lgrep with superpowers
     cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() =~# '^grep') ? 'Grep' : 'grep'
@@ -2443,6 +2450,16 @@ nmap <silent> gx <Plug>GoUrlRepeatable
 
 " url (string), [string repeatable]
 function! s:go_url(url, ...) abort
+    let l:running = system('ps -fea | ' . g:filterprg . ' "/opt/firefox/firefox-bin" |  ' . g:filterprg  . ' --invert-match "' . g:filterprg . '"')
+
+    if len(l:running) ==# 0
+        echohl WarningMsg
+        echo 'Not running browser'
+        echohl None
+
+        return 1
+    endif
+
     let l:uri = a:url
     let l:repeatable = a:0 > 0 ? a:1 : 'GoUrlRepeatable'
 
