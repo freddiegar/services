@@ -219,7 +219,7 @@ set noswapfile                                                  " No swap for ne
 " .     Relative to the directory of current file (non-recursively)
 " ,,    Empty value = current work directory
 " **    Any where, ex: /var/** (slower)
-set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind
+set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind, -complete=file_in_path
                                                                 " Skip /usr/include, it's slow (default: .,/usr/include,,)
 
 set sessionoptions=                                             " (default: blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal)
@@ -314,9 +314,10 @@ if executable('rg')
     endfunction
 
     " Quickfix List
-    command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>)
+    command! -nargs=+ -complete=file -bar Grep  cgetexpr Grep(<f-args>)
     " Location List
-    command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>)
+    command! -nargs=+ -complete=file -bar LGrep lgetexpr Grep(<f-args>)
+
     " Update Quickfix List
     " @see https://vi.stackexchange.com/questions/13662/is-there-a-way-to-update-the-quickfix-entries-after-running-cdo-cfdo
     command! -nargs=0 -bar UP call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
@@ -492,7 +493,7 @@ let g:netrw_browse_split = 4                                    " Open file vert
 let g:netrw_winsize = 20                                        " Keep same size after open file in previews (default: 50=50%)
 let g:netrw_liststyle = 3                                       " Show as tree: folders and files always. Cycling: i
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive (default: cp)
-let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles
+let g:netrw_list_hide = '^\.git\=/\=$,^\.\=/\=$'                " Hide some extensions: git and dotfiles (show using: gh)
 let g:netrw_sizestyle = 'H'                                     " Human-readable: 5K, 4M, uses 1024 base (default: [b]ytes)
 let g:netrw_altfile = 1                                         " Avoid netrw as alt file # (default: 0)
 
@@ -820,6 +821,7 @@ inoremap <silent> ! <C-g>u!
 inoremap <silent> ? <C-g>u?
 inoremap <silent> ( <C-g>u(
 inoremap <silent> ) <C-g>u)
+" Delete word in Terminal Mode: <C-w>.
 inoremap <silent> <C-w> <C-g>u<C-w>
 inoremap <silent> <C-u> <C-g>u<C-u>
 " inoremap <silent> <Enter> <C-g>u<Enter> <-- Prefer pum_on_enter()
