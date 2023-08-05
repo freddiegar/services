@@ -1726,6 +1726,7 @@ Plug 'kristijanhusak/vim-dadbod-completion', {'for': 'sql'}     " DB autocomplet
 Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
 Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
 Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
+" Plug 'romainl/vim-qf'                                           " Run Cfilter using wrapper: Keep|Filter, Reject|Filter!, Restore
 
 Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
@@ -3021,7 +3022,7 @@ augroup AutoCommands
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
     autocmd FileType c,cpp setlocal path+=/usr/include include&
-    autocmd FileType vim setlocal keywordprg=:help
+    autocmd FileType vim setlocal keywordprg=:help commentstring=\"\ %s
     autocmd FileType git setlocal foldmethod=syntax foldlevel=1
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
     " autocmd FileType markdown,log,csv let b:coc_suggest_disable = 1
@@ -3726,15 +3727,18 @@ augroup AutoCommands
     endfunction
 
     " include (string)
-    "    [t]railing spaces in end of line
-    "    [e]nd of file lines
-    "    [d]uplicate blank lines
-    " no-[b]reak spaces
-    "    [q]uery log
-    "    [p]rofile log
-    "    [m]arks
-    "    [f]orce
-    "    [v]erbose
+    "     [t]railing spaces in end of line
+    "  no-[b]reak spaces
+    "     [c]omments
+    "     [d]uplicate blank lines
+    " empt[y] lines
+    "     [e]nd of file lines
+    "     [q]uery log
+    "     [p]rofile log
+    "     [r]egistes
+    "     [m]arks
+    "     [f]orce
+    "     [v]erbose
     function! s:cleanup(include) abort
         if &diff
             echohl WarningMsg
@@ -3765,33 +3769,29 @@ augroup AutoCommands
             silent call add(l:cleanup, 'no break spaces')
         endif
 
-        if index(l:options, 'e') >= 0
-            silent! keeppatterns %s/\n\+\%$//e
+        if index(l:options, 'c') >= 0
+            silent! keeppatterns execute "g/^\\s*". split(&commentstring)[0] . ".*/d_"
 
-            silent call add(l:cleanup, 'end of file lines')
+            silent call add(l:cleanup, 'comments')
         endif
 
         if index(l:options, 'd') >= 0
             " @see https://vi.stackexchange.com/questions/1920/how-does-g-j-reduce-multiple-blank-lines-to-a-single-blank-work-in-vi
-            silent! keeppatterns g/^$/,keeppatterns /./-j
+            silent! keeppatterns g/^$/,/./-j
 
             silent call add(l:cleanup, 'duplicate blank lines')
         endif
 
         if index(l:options, 'y') >= 0
-            silent! keeppatterns g/^\s*$/d
+            silent! keeppatterns g/^\s*$/d_
 
             silent call add(l:cleanup, 'empty lines')
         endif
 
-        if index(l:options, 'r') >= 0
-            let l:registers = split('abcdefghijklmnopqrstuvwxyz0123456789/-"', '\zs')
+        if index(l:options, 'e') >= 0
+            silent! keeppatterns %s/\n\+\%$//e
 
-            for l:register in l:registers
-                call setreg(l:register, [])
-            endfor
-
-            silent call add(l:cleanup, 'registers')
+            silent call add(l:cleanup, 'end of file lines')
         endif
 
         if index(l:options, 'q') >= 0
@@ -3804,6 +3804,16 @@ augroup AutoCommands
             silent! normal! :keeppatterns g!/plugged/d_vEEllggdVG:sort!gg
 
             silent call add(l:cleanup, 'profiles')
+        endif
+
+        if index(l:options, 'r') >= 0
+            let l:registers = split('abcdefghijklmnopqrstuvwxyz0123456789/-"', '\zs')
+
+            for l:register in l:registers
+                call setreg(l:register, [])
+            endfor
+
+            silent call add(l:cleanup, 'registers')
         endif
 
         if index(l:options, 'm') >= 0
@@ -3822,13 +3832,14 @@ augroup AutoCommands
         return 0
     endfunction
 
-    command! -nargs=0 CR call <SID>cleanup('vfr')
-    command! -nargs=0 CS call <SID>cleanup('vfte')
     command! -nargs=0 CE call <SID>cleanup('vftey')
-    command! -nargs=0 CL call <SID>cleanup('vfted')
+    command! -nargs=0 CS call <SID>cleanup('vfte')
     command! -nargs=0 CB call <SID>cleanup('vfb')
+    command! -nargs=0 CC call <SID>cleanup('vfced')
+    command! -nargs=0 CL call <SID>cleanup('vfted')
     command! -nargs=0 CQ call <SID>cleanup('vfq')
     command! -nargs=0 CP call <SID>cleanup('vfp')
+    command! -nargs=0 CR call <SID>cleanup('vfr')
     command! -nargs=0 CM call <SID>cleanup('vfm')
 
     " title (string)
