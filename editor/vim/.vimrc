@@ -1548,10 +1548,10 @@ xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 " Insert Mode navigation (Forget Arrows)
 inoremap <silent> <C-a> <C-o>^
 inoremap <silent> <C-e> <C-o>$
-inoremap <silent> <C-k> <C-o>k
-inoremap <silent> <C-j> <C-o>j
-inoremap <silent> <C-h> <C-o>h
-inoremap <silent> <C-l> <C-o>l
+inoremap <silent> <C-k> <C-g>u<Up>
+inoremap <silent> <C-j> <C-g>u<Down>
+inoremap <silent> <C-h> <C-g>u<Left>
+inoremap <silent> <C-l> <C-g>u<Right>
 inoremap <silent> <C-b> <C-o>B
 inoremap <silent> <C-f> <C-o>W
 
@@ -1590,14 +1590,16 @@ cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
-cnoremap %% =fnameescape(expand('%'))<Enter>
+" cnoremap %% =fnameescape(expand('%'))<Enter>
+" Replace because annoyoning wait after typing % in [s]ubstitution command
+cnoreabbrev <expr> %% (getcmdtype() ==# ':' && getcmdline() !~# '^%%' && getcmdline() =~# '%%') ? fnameescape(expand('%')) : '%%'
 
 " Available: <C-x><C-cjkpv>
 " Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-x>)
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
 cnoremap <C-x><C-x> <C-a>
 
-" SpeedUp massive changes in quickfix
+" SpeedUp massive changes in quickfix, but sacrifices syntax highlighting
 cnoremap <C-x><C-n> noautocmd cdo
 
 " @simple https://github.com/tpope/vim-eunuch

@@ -172,8 +172,8 @@ sudo apt-get remove plymouth-* plymouth
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 feh pavucontrol maim xclip
-## sudo apt-get remove unzip curl tree nmap htop i3 feh pavucontrol maim xclip && sudo apt-get autoremove
+sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim xclip
+## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim xclip && sudo apt-get autoremove
 ```
 
 ## i3
@@ -619,7 +619,8 @@ lxqt-leave
 
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+# @see https://github.com/docker/compose/releases
+sudo curl -L https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -804,7 +805,8 @@ sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/f
 ```bash
 cd ~
 sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash
+# @see https://github.com/nvm-sh/nvm/releases
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
 
 # Only oldest Ubuntu
 echo '
@@ -903,7 +905,8 @@ sudo apt-get install -y ripgrep
 ```bash
 # [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
 cd ~
-sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.19.0/bat_0.19.0_amd64.deb -o bat.deb
+# @see https://github.com/sharkdp/bat/releases
+sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.23.0/bat_0.23.0_amd64.deb -o bat.deb
 sudo dpkg -i bat.deb && rm -f bat.deb
 
 # [L|X]Ubuntu 18.10+ | Rg v0.22.1
@@ -1367,15 +1370,17 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 23.04
 uname -r
-# 6.2.0-20-generic
+# 6.2.0-26-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.37
 gcc --version | grep -e "^gcc" | awk '{print $4}'
-# 12.2.0
+# 12.3.0
 openssl version | awk '{print $2}'
 # 3.0.8
 i3 --version | awk '{print $3}'
 # 4.22
+i3status --version | grep -e "i3status" | awk '{print $2}'
+# 2.14-non-git
 konsole --version | awk '{print $2}'
 # 22.12.3
 bash --version | grep -e "bash" | awk '{print $4}'
@@ -1396,9 +1401,9 @@ git --version | awk '{print $3}'
 git lfs version
 # git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.3)
 docker --version | awk '{print $3}'
-# 24.0.2
+# 24.0.5
 docker-compose --version | awk '{print $4}'
-# v2.18.1
+# v2.20.2
 feh --version | grep version | awk '{print $3}'
 # 3.9.1
 maim --version | awk '{print $1}'
@@ -1412,13 +1417,13 @@ nmap --version | grep "^Nmap" | awk '{print $3}'
 htop --version | grep "^htop" | awk '{print $2}'
 # 3.2.2
 man xcompmgr | grep "^X Version" | awk '{print $5}'
-# 1.1.7
+# 1.1.8
 bat --version | awk '{print $2}'
-# 0.22.1
+# 0.23.0
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 13.0.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.1.20
+# 8.1.21
 nvm --version
 # 0.39.3
 npm --version
@@ -1426,12 +1431,12 @@ npm --version
 node --version
 # v18.16.0
 mysql --version | awk '{print $3}'
-# 8.0.33-0ubuntu0.23.04.2
+# 8.0.33-0ubuntu0.23.04.4
 stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
-# 3.11.2
+# 3.11.4
 ruby --version | awk '{print $2}'
 # 3.1.2p20
 dpkg --list | wc --lines
-# 2143
+# 2336
