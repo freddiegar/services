@@ -212,7 +212,7 @@ for_window [instance="^virt-manager$" title="KVM$"]                         floa
 # Open new tab is focus in current Firefox workspace
 # for_window [urgent="latest" class="(?i)firefox"]                            focus
 # PiP in Firefox
-for_window [instance="Toolkit" class="(?i)firefox"]                         floating enable, resize set 640 360, move position 1260 695, sticky enable
+for_window [instance="Toolkit" class="(?i)firefox"]                         floating enable, resize set 640 360, move position 1250 695, sticky enable
 # Downloads
 for_window [instance="Places" class="(?i)firefox"]                          floating enable
 # Certificates information

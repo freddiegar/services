@@ -107,6 +107,11 @@
 "   {#,#}   ->  Range of numbers {min,max}
 " @regex https://www.youtube.com/watch?v=sa-TUpSx1JA
 
+" SIMPLE 3 STEPS (@thanks Bram)
+" 1. Problem:  While you are editing, keep an eye out for actions you repeat and/or spend quite a bit of time on.
+" 2. Solution: Find out if there is an editor command that will do this action quicker. Read the documentation, ask a friend, or look at how others do this.
+" 3. Habit:    Train using the command. Do this until your fingers type it without thinking.
+
 " THE WAY
 " 1. Team Comprehension (Understand another code, yes: juniors)
 " 2. Reduce Interruptions (Try different ways)
@@ -327,7 +332,7 @@ if executable('rg')
     " @see https://vi.stackexchange.com/questions/13662/is-there-a-way-to-update-the-quickfix-entries-after-running-cdo-cfdo
     command! -nargs=0 -bar UP call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
 
-    nnoremap <C-r><C-g> :Grep =expand('<cword>')<Enter>
+    nnoremap <Leader>gG :Grep =expand('<cword>')<Enter>
 
     " No learn new command, use :grep and :lgrep with superpowers
     cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() =~# '^grep') ? 'Grep' : 'grep'
@@ -788,8 +793,7 @@ nnoremap <silent> <expr> <C-w>> (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>>"
 " @thanks https://stackoverflow.com/questions/597687/how-to-quickly-change-variable-names-in-vim
 nnoremap <BS> *``cgn
 nnoremap <Leader><BS> :g/\<\>/
-nnoremap <Leader>rll *``[{V%::s/<C-r>///g<Left><Left>
-nnoremap <Leader>rlc *``[{V%::s/<C-r>///gc<Left><Left><Left>
+nnoremap <Leader>rll *``[{V%::s/<C-r>///gc<Left><Left><Left>
 nnoremap <Leader>rgg *``:%s/<C-r>///gc<Left><Left><Left>
 
 " Marks using exact position in Normal|Select|Operator Mode
