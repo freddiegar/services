@@ -330,7 +330,7 @@ if executable('rg')
 
     " Update Quickfix List
     " @see https://vi.stackexchange.com/questions/13662/is-there-a-way-to-update-the-quickfix-entries-after-running-cdo-cfdo
-    command! -nargs=0 -bar UP call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
+    command! -nargs=0 -bar C call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
 
     nnoremap <Leader>gG :Grep =expand('<cword>')<Enter>
 
@@ -942,11 +942,33 @@ function! s:backup(...) abort
     return 0
 endfunction
 
-" Beatiful Backup
-command! -nargs=? -complete=file BB call <SID>backup(<f-args>)
+" Backup
+command! -nargs=? -complete=file B call <SID>backup(<f-args>)
 
 " Explorer
 command! -nargs=1 -complete=dir E execute "normal :!vifm <f-args><Enter>"
+
+" Diff
+command! -nargs=0 D call <SID>file_diff(expand('%'))
+
+" file (string): void
+function! s:file_diff(file) abort
+    let l:result = system('git diff ' . a:file)
+
+    if l:result ==# ''
+        echo 'Nothing to do.'
+
+        return 1
+    endif
+
+    new
+    setlocal noswapfile
+    setlocal noloadplugins
+    setfiletype diff
+    silent execute "normal! i" . l:result
+    setlocal nowrap nolist readonly nomodifiable nomodified nobuflisted bufhidden=delete
+    normal! gg
+endfunction
 
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() =~# '^w') ? 'update' : 'w'
