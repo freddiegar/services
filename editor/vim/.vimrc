@@ -3029,6 +3029,16 @@ augroup AutoCommands
                 \ match(getline('.')[col('.') - 2], '\W') >= 0 && match(getline('.')[col('.') - 2], '\.') < 0 ? "\<C-x>\<C-n>" :
                 \ pumvisible() ?  "\<C-n>" :
                 \ "\<C-x>\<C-o>"
+    autocmd FileType sql nnoremap <silent> <buffer><F1> <Cmd>call <SID>sqlfixer() <Bar> call <SID>statusline('f')<Enter>
+
+    function! s:sqlfixer() abort
+        if bufname('%') !=# ''
+            silent update!
+        endif
+
+        silent execute '%!sqlformat --keywords upper --identifiers lower -'
+    endfunction
+
     autocmd FileType apache setlocal commentstring=#\ %s
     autocmd FileType crontab setlocal commentstring=#\ %s
     autocmd FileType debsources setlocal commentstring=#\ %s

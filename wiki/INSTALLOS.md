@@ -253,6 +253,13 @@ vim --version | grep xterm
 # Check again ;)
 ```
 
+## Vim SQL Development
+
+```bash
+sudo apt install sqlformat
+# sudo apt remove sqlformat && sudo apt-get autoremove
+```
+
 ## Vim C Development
 
 ### LSP
