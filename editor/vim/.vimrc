@@ -372,6 +372,7 @@ set signcolumn=yes                                              " Always show si
 set nocursorline                                                " Highligth current line (slower) (default: off)
 set cmdheight=2                                                 " More spaces, less "Enter to continue..." messages (default: 1)
 set report=5                                                    " Less verbose (default: 2)
+" set virtualedit=block                                           " Allow in Visual block mode (default: empty), use: yov
 
 if has('mouse')
     set mouse=                                                  " Mouse disable always, allows copying from cmdline (default: "")
@@ -837,6 +838,12 @@ inoremap <silent> <C-w> <C-g>u<C-w>
 inoremap <silent> <C-u> <C-g>u<C-u>
 " inoremap <silent> <Enter> <C-g>u<Enter> <-- Prefer pum_on_enter()
 
+" " @simple https://github.com/Raimondi/delimitMate
+" " Annoyoning!
+" inoremap <silent> ' ''<Left>
+" inoremap <silent> " ""<Left>
+" inoremap <silent> ` ``<Left>
+
 " Keep cursor position after join....?
 " nnoremap <silent> <expr> J 'mz' . v:count1 . 'J`z'
 " nnoremap <silent> <expr> J v:count1 > 1 ? 'JJ' : 'J'
@@ -957,7 +964,7 @@ function! s:file_filter(isregex, file, filter) abort
     setlocal noloadplugins
     silent execute join([':0read', '!' . (a:isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') . ' -F'), shellescape(a:filter), fnameescape(a:file)])
     setlocal nowrap nolist readonly nomodifiable nomodified nobuflisted bufhidden=delete
-    normal gg
+    normal! gg
 endfunction
 
 " [F]ilter data in files easily
@@ -1076,7 +1083,7 @@ nnoremap <silent> yot :<C-u>set <C-r>=(&colorcolumn > 0)
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
 nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
-            \ : 'virtualedit+=all'<Enter><Enter>
+            \ : 'virtualedit+=all' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
 
 nnoremap <silent> <Plug>GetColorRepeatable <Cmd>call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'), 'GetColorRepeatable')<Enter>
 nmap <silent> <Leader>gC <Plug>GetColorRepeatable
@@ -1738,6 +1745,7 @@ Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} "
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
 " Plug 'Shougo/echodoc.vim', {'for': ['php', 'c', 'vim']}         " Show function signature in command line (weird)
+" Plug 'Shougo/context_filetype.vim', {'for': 'markdown'}         " Show/use context in markdown files
 
 " Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easily
 " Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
@@ -1749,6 +1757,7 @@ Plug 'jamessan/vim-gnupg'                                       " Transparent ed
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
 
+" Plug 'dstein64/vim-startuptime', {'on': 'StartupTime'}          " Zen mode: K, gf
 " Plug 'junegunn/goyo.vim', {'on': 'Goyo'}                        " Zen mode +
 " Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++
 " Plug 'tricktux/pomodoro.vim', {'on': 'PomodoroStart'}           " Zen mode +++
@@ -3918,7 +3927,7 @@ augroup AutoCommands
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], '')) | call <SID>statusline('f')
 
     " Hide sensible information (maybe share all screen or pair programming)
-    autocmd FocusLost *.asc let afile = expand('<afile>') | execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
+    autocmd FocusLost *.asc let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
 
     autocmd User ALELintPost call <SID>diagnostics()
     autocmd InsertEnter * call <SID>popup_hide()
