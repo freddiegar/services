@@ -1249,6 +1249,19 @@ sudo apt install microsoft-edge-stable
 > -rw-r--r-- 1 root root 2794 Mar 26  2021 ubuntu-keyring-2012-cdimage.gpg
 > -rw-r--r-- 1 root root 1733 Mar 26  2021 ubuntu-keyring-2018-archive.gpg
 
+## Onefetch
+
+Not snap please
+[See](https://github.com/o2sh/onefetch/wiki/getting-started)
+
+```bash
+echo "\n" | sudo add-apt-repository ppa:o2sh/onefetch
+sudo apt-get update
+sudo apt-get install onefetch
+# onefetch /path/git
+# echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
+```
+
 ## Virtual Machine
 
 ### Virt-Manager
@@ -1336,13 +1349,6 @@ done
 chmod 700 /root/module-signing/sign-vbox-modules
 ```
 > After each update linux-headers: sh /root/module-signing/sign-vbox-modules && modprobe vboxdrv
-
-## Vagrant (VM)
-
-```bash
-sudo apt-get install -y vagrant
-## sudo apt-get remove vagrant && sudo apt-get autoremove
-```
 
 ## Remove Snap Unused
 
