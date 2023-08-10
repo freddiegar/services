@@ -3217,6 +3217,7 @@ augroup AutoCommands
     autocmd FileType php xnoremap <silent> <buffer><Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>rec <Cmd>call phpactor#ExtractConstant()<Enter>
     autocmd FileType php xnoremap <silent> <buffer><Leader>ree :<C-u>call phpactor#ExtractExpression(v:true)<Enter>
+    autocmd FileType php nnoremap <silent> <buffer><Leader>rff <Cmd>call <SID>rff()<Enter>
     autocmd FileType php nnoremap <silent> <buffer><Leader>R   <Cmd>call phpactor#ContextMenu()<Enter>
 
     autocmd FileType php nmap <silent> <buffer>gd <Cmd>call phpactor#GotoDefinition()<Enter>
@@ -3257,6 +3258,51 @@ augroup AutoCommands
         execute 'normal! ciW' . l:simplify . "\e"
 
         silent! call repeat#set("\<Plug>SimplifyNamespaceRepeatable", a:type)
+    endfunction
+
+    function! s:rff() abort
+        let l:saved_unnamed_register = @@
+        let l:haserror = v:false
+        let l:hlsearch = &hlsearch
+        let l:incsearch = &incsearch
+        set incsearch
+        set nohlsearch
+
+        try
+            silent execute ":keeppatterns normal! mz?^\\s*\\(p.* \\)function\\s\rV/{\r%\"zyy'z:delmarks z\r"
+        catch
+            let l:haserror = v:true
+
+            " Escape from Visual Mode
+            silent execute "normal! \e"
+        finally
+            let &incsearch = l:incsearch
+            let &hlsearch = l:hlsearch
+            let @@ = l:saved_unnamed_register
+        endtry
+
+        if l:haserror ==# v:true || len(@z) ==# 0
+            echo 'Nothing to do.'
+
+            return 1
+        endif
+
+        let l:filetype = &filetype
+
+        new
+        setlocal noswapfile
+        setlocal noloadplugins
+        execute "setfiletype " . l:filetype
+
+        if l:filetype ==# 'php'
+            ALEDisableBuffer
+
+            silent execute "normal! i<?php\r\e"
+        endif
+
+        normal! "zpgg=G
+        setlocal nowrap nolist readonly nomodifiable nomodified nobuflisted bufhidden=delete
+        normal! gg
     endfunction
 
     " Go parent (extends) or implements (interface) file from 'any' position
