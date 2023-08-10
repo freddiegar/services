@@ -74,6 +74,7 @@ ctt() {
     konsoleprofile colors=$1
 }
 
+alias \?="apropos"
 alias x="exit"
 alias v=$EDITOR
 alias g="grepx"
@@ -89,6 +90,10 @@ alias w="which"
 alias o="xargs -t -r -I {}"
 alias s="bash ~/working/mysqlog.sh"
 alias q="bash ~/working/evertec/queues.sh"
+alias p="ps -fea -U \$USER -u \$USER --forest"
+
+# @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
+alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
 alias di="diff -rq --suppress-common-lines"
 alias ll="ls -lh"
 alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
@@ -209,6 +214,7 @@ alias glsa="git ls-files -v | rg '^h ' | awk '{print \$2}'"
 alias gd="git diff -w"
 alias gda="git diff"
 alias gdc="git diff -w --cached"
+alias gdca="git diff --cached"
 alias ga="git add"
 alias gcm="git commit -S"
 alias gcmn="git commit --no-verify -S"
@@ -291,6 +297,7 @@ alias cdd="cd /home/$USER/Downloads"
 
 alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
 alias yy="xclip -selection clipboard"
+alias pp="xclip -selection clipboard -o"
 
 alias ff="ls -L1 | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
 alias fa="find . -type f -print | shuf | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
