@@ -169,7 +169,7 @@ assign [instance="(?i)neovide"]                                             $wor
 assign [class="(?i)firefox" title="^((?!(?i)private).)*$"]                  $workspace2
 assign [class="Microsoft Teams - Preview"]                                  $workspace3
 assign [class="(?i)microsoft-edge"]                                         $workspace3
-assign [class="zoom" title="Zoom Cloud Meetings"]                           $workspace3
+assign [class="(?i)zoom" title="Zoom Cloud Meetings"]                       $workspace3
 assign [class="Mysql-workbench-bin"]                                        $workspace4
 assign [class="(?i)firefox" title="(?=(?i)private).*"]                      $workspace5
 assign [class="(?i)postman"]                                                $workspace6
@@ -189,11 +189,11 @@ for_window [window_role="tooltip"]                                          floa
 for_window [window_type="notification"]                                     floating enable, sticky enable
 
 # Zoom
-for_window [class="zoom" title="zoom"]                                      floating enable
-for_window [class="zoom" title="Meeting Chat"]                              floating enable
-for_window [class="zoom" title="Participants\s\(\d+\)"]                     floating enable
-for_window [class="zoom" title="Settings"]                                  floating enable
-for_window [class="zoom" title="Zoom Meeting"]                              floating enable, resize set 720 500, move position 1180 555
+for_window [class="(?i)zoom" title="zoom"]                                  floating enable
+for_window [class="(?i)zoom" title="Meeting Chat"]                          floating enable
+for_window [class="(?i)zoom" title="Participants\s\(\d+\)"]                 floating enable
+for_window [class="(?i)zoom" title="Settings"]                              floating enable
+for_window [class="(?i)zoom" title="Zoom Meeting"]                          floating enable, resize set 720 500, move position 1180 555
 
 # Programs
 for_window [class="Gnome-calculator"]                                       floating enable
