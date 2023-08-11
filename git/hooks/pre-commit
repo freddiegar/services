@@ -18,7 +18,8 @@ exec <&-
 
 FSTAGING=`git ls-files --modified | grepx ".php$" | wc -l`
 FMODIFING=`git diff --name-only --cached | xargs -r -l echo | grepx ".php$" | wc -l`
-FPHP=$(($FSTAGING + $FMODIFING))
+FCOMPOSER=`git diff --name-only --cached | xargs -r -l echo | grepx "composer.[json|lock]" | wc -l`
+FPHP=$(($FSTAGING + $FMODIFING + $FCOMPOSER))
 
 phpx /usr/local/bin/composer validate --no-check-all --strict || exit $1
 
