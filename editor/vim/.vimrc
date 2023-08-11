@@ -394,7 +394,7 @@ set relativenumber                                              " Relative numbe
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
 set synmaxcol=256                                               " Only highlight the first N columns (default: 3000)
 "              └ weight in bytes
-set updatetime=300                                              " Time await for any: git-gutter, events. RIP :redir
+set updatetime=300                                              " Time (in ms) await for any: git-gutter, events. RIP :redir
 
 " @see https://utf8-icons.com/
 set fillchars+=vert:│                                           " Better vertical split char
@@ -424,7 +424,7 @@ if has('gui_running')
 
     augroup GUIOptions
         if exists('g:neovide') " (why nvim why!)
-            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h17
+            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h14
                         \ | let g:neovide_confirm_quit = v:false
                         \ | let g:neovide_remember_window_size = v:true
         else
@@ -436,6 +436,9 @@ if has('gui_running')
             " @see https://vimhelp.org/autocmd.txt.html#GUIFailed
             autocmd GUIFailed * qall
         endif
+
+        " @see :h 'conceallevel'
+        autocmd FileType markdown setlocal conceallevel=2 " concealcursor=nv
 
         " Cleans garbage, annoyoning flash!
         " autocmd FocusGained * redraw!
@@ -753,6 +756,9 @@ inoremap <Down> <Nop>
 inoremap <Left> <Nop>
 inoremap <Right> <Nop>
 
+" Trigger the InsertLeave autocommand event (fix diagnostics() function error)
+inoremap <C-c> <Esc>
+
 " Purify!!! God
 cnoremap <Up> <Nop>
 cnoremap <Down> <Nop>
@@ -792,10 +798,14 @@ nnoremap <silent> <expr> <C-w>> (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>>"
 
 " [R]eplace [l]ocal or [g]lobal with [c]onfirmation easily. Don't add silent
 " @thanks https://stackoverflow.com/questions/597687/how-to-quickly-change-variable-names-in-vim
+" @see :h :s_flags
+"   [g]lobal ocurrences
+"   [I]gnore smartcase and ignorecase setup
+"   [c]onfirmation
 nnoremap <BS> *``cgn
 nnoremap <Leader><BS> :g/\<\>/
-nnoremap <Leader>rll *``[{V%::s/<C-r>///gc<Left><Left><Left>
-nnoremap <Leader>rgg *``:%s/<C-r>///gc<Left><Left><Left>
+nnoremap <Leader>rll *``[{V%::s/<C-r>///gIc<Left><Left><Left><Left>
+nnoremap <Leader>rgg *``:%s/<C-r>///gIc<Left><Left><Left><Left>
 
 " Marks using exact position in Normal|Select|Operator Mode
 noremap ` '
@@ -1131,6 +1141,11 @@ nnoremap <silent> <F6> :execute "normal i\<F6>\e"<Enter>
 nnoremap <silent> <S-F6> :execute "normal i\<S-F6>\e"<Enter>
 nnoremap <silent> <F7> :execute "normal i\<F7>\e"<Enter>
 nnoremap <silent> <S-F7> :execute "normal i\<S-F7>\e"<Enter>
+
+" Same!, but in Command Mode
+" Not use <silent>
+cnoremap <S-F6> <C-r>=strftime('%Y-%m-%d')<Enter>
+cnoremap <S-F7> <C-r>=strftime('%Y-%m-%d-%H-%M-%S')<Enter>
 
 nnoremap <silent> <Plug>GetReverseRepeatable <Cmd>call <SID>get_reverse('word')<Enter>
 nmap <silent> <Leader>gr <Plug>GetReverseRepeatable
@@ -3020,7 +3035,7 @@ augroup AutoCommands
     autocmd!
 
     " Reload after save (if asyncrun isn't running!) and run PlugInstall if there are missing plugins
-    autocmd BufWritePost .vimrc nested if get(g:, 'asyncrun_status', '') !=# 'running' | source $MYVIMRC | endif
+    autocmd BufWritePost .vimrc,.vimrc.local nested if get(g:, 'asyncrun_status', '') !=# 'running' | source $MYVIMRC | endif
                 \ | if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
                 \ |     PlugInstall
                 \ | endif
@@ -3689,7 +3704,7 @@ augroup AutoCommands
 
     function! s:mustbeignore() abort
         return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
-                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*|crontab|errors\.err')
+                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*\|hosts\|crontab\|errors\.err')
                     \ || get(v:argv, 1, '') ==# '-'
                     \ || (len(g:working) > 0 && g:working[0] =~? 'plugged')
                     \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-')
@@ -3740,6 +3755,7 @@ augroup AutoCommands
                     \ || split(a:item, '\.')[-1] ==# 'dbout'
                     \ || isdirectory(a:item)
                     \ || (a:item =~? '\/notes\/' && getbufvar(a:item, '&filetype') ==# 'markdown')
+                    \ || (a:item =~? '.vimrc*' && getbufvar(a:item, '&filetype') ==# 'vim')
     endfunction
 
     function! s:sessionsavepre() abort
@@ -4005,7 +4021,7 @@ augroup AutoCommands
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], '')) | call <SID>statusline('f')
 
     " Hide sensible information (maybe share all screen or pair programming)
-    autocmd FocusLost *.asc let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
+    autocmd FocusLost *.asc,hosts.yml let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
 
     autocmd User ALELintPost call <SID>diagnostics()
     autocmd InsertEnter * call <SID>popup_hide()
@@ -4118,19 +4134,23 @@ if has('termguicolors')
     set termguicolors                                           " Vivid colours? Please! (default: off)
 endif
 
-if g:isneovim
+if g:isneovim && !has('gui_running')
     " Same to ... (why nvim why!)
     " <S-F2>
     nmap <silent> <nowait> <expr> <Esc>O2Q
                 \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>"
+    " <S-F9>
+    nmap <silent> <F21> <Cmd>call <SID>notes(v:false)<Enter>
     " <S-F10>
     nnoremap <silent> <nowait> <F22> :PlugClean<Enter>
     " <S-F6>
     inoremap <silent> <F18> <C-r>=strftime('%Y-%m-%d')<Enter>
     inoremap <silent> <F19> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
+    cnoremap <F18> <C-r>=strftime('%Y-%m-%d')<Enter>
     " <S-F7>
     nnoremap <silent> <F18> :execute "normal i\<F18>\e"<Enter>
     nnoremap <silent> <F19> :execute "normal i\<F19>\e"<Enter>
+    cnoremap <F19> <C-r>=strftime('%Y-%m-%d-%H-%M-%S')<Enter>
     " <S-F3>
     " nmap <silent> <nowait> <Esc>O2R :PomodoroStatus<Enter>
     " " <S-F5>
@@ -4139,7 +4159,6 @@ if g:isneovim
                 \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
                 \ pumvisible() ? "\<C-p>" :
                 \ "\<C-d>"
-
     snoremap <silent> <expr> <S-Tab>
                 \ UltiSnips#CanJumpBackwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
                 \ pumvisible() ? "\<C-p>" :
