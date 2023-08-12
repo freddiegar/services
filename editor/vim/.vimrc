@@ -177,6 +177,13 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         " Viminfofile setup
         let g:infofile = ''
 
+        " Save|Load undos
+        " For Unix, if a directory ends in two path separators "//"
+        " >  the swap file name will be built from the complete path to
+        " >  the file with all path separators substituted to percent '%' signs.
+        " >  This will ensure file name uniqueness in the preserve directory.
+        let g:undodir = expand('~/.vim/undodirs/' . (g:isneovim ? 'nvim' : 'vim')) . '//'
+
         " Save|Load sessions
         let g:session_file = expand('~/.vim/sessions/' . join(g:working, '@') . (g:isneovim ? '.nvim' : '.vim'))
 
@@ -518,7 +525,7 @@ let g:filterprg = split(&grepprg)[0] ==# 'rg'
             \ : split(&grepprg)[0] . ' -E'
 
 function! GetNameCurrentPath() abort
-    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive', 'tagbar'], &filetype) < 0
+    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree'], &filetype) < 0
                 \ ? split(g:cwd, '/')[-1] . (expand('%:t') !=# '' ? ' ' : '')
                 \ : ''
 endfunction
@@ -533,7 +540,7 @@ function! GetNameCurrentFile() abort
     "   /var/www/html/repo/services/docker/conf/.gitignore > 60 -> d/c/.gitignore
     "   /home/user/.vimrc                                       -> ~/.vimrc
     "   /etc/hosts                                              -> /e/hosts
-    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar'], &filetype) > 0 || expand('%') ==# ''
+    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree'], &filetype) > 0 || expand('%') ==# ''
         return ''
     elseif match(expand('%:p:h'), g:cwd) >= 0 && len(expand('%:~')) <= 60
         return expand('%:~')
@@ -547,7 +554,7 @@ function! GetNameCurrentFile() abort
 endfunction
 
 function! GetNameBranch() abort
-    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
+    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree'], &filetype) >= 0
         return ' '
     endif
 
@@ -558,7 +565,7 @@ endfunction
 
 " executable (string)
 function! GetVersion(executable) abort
-    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
+    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree'], &filetype) >= 0
         return ''
     endif
 
@@ -584,7 +591,7 @@ endfunction
 function! GetTypeCurrentFile() abort
     let l:path = expand('%:p')
 
-    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar'], &filetype) >= 0
+    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree'], &filetype) >= 0
         return ''
     endif
 
@@ -611,7 +618,7 @@ endfunction
 
 function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
-                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar'], &filetype) >= 0
+                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
         return g:test_strategy ==# 'background' ? '[A]' : ''
     endif
@@ -677,7 +684,7 @@ function! s:statusline(lastmode) abort
 
     set statusline=                                             " Start from scratch (default: empty)
 
-    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'tagbar'], &filetype) >= 0
+    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree'], &filetype) >= 0
         setlocal statusline+=\                                  " Extra space
 
         return
@@ -1053,7 +1060,7 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
-            \ index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar'], &filetype) >= 0
+            \ index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree'], &filetype) >= 0
             \ ? ":bdelete!<Enter>"
             \ : ":update
             \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
@@ -1777,7 +1784,7 @@ Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Lea
 Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
 Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
 " Plug 'romainl/vim-qf'                                           " Run Cfilter using wrapper: Keep|Filter, Reject|Filter!, Restore
-
+Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}                " Run undo world: g-, g+
 Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
@@ -2006,7 +2013,7 @@ let g:python3_host_prog = '/usr/bin/python3'
 
 " " file (string): void
 " function! s:show_context(file) abort
-"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar'], &filetype) >= 0
+"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree'], &filetype) >= 0
 "         if exists(':ContextActivate')
 "             silent execute 'ContextDisable'
 "         endif
@@ -2041,6 +2048,10 @@ let g:highlightedyank_highlight_duration = 250
 " let g:tagbar_no_status_line = 1
 
 " nmap <silent> <F8> :TagbarToggle<Enter>
+
+" Undo
+" @see https://github.com/mbbill/undotree
+nmap <silent> <S-F8> :UndotreeToggle<Enter>
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
@@ -3740,6 +3751,13 @@ augroup AutoCommands
             let l:message = l:message ==# '' ? 'Loaded ' . g:infofile . ' setup.' : substitute(l:message, '##INF##', ' and ' . g:infofile, '')
         endif
 
+        set undofile                                            " Enable undo world (default: off)
+        let &undodir = g:undodir
+
+        if !isdirectory(expand(&undodir))
+            call mkdir(expand(&undodir), 'p', 0700)
+        endif
+
         if l:message !=# ''
             let l:message = substitute(l:message, '##ENV##', '', '')
             let l:message = substitute(l:message, '##INF##', '', '')
@@ -3750,8 +3768,8 @@ augroup AutoCommands
 
     function! s:sessionremoveitem(item) abort
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
+                    \ || index(['netrw', 'diff', 'undotree'], getbufvar(a:item, '&filetype')) >= 0
                     \ || buflisted(a:item) == 0
-                    \ || getbufvar(a:item, '&filetype') ==# 'netrw'
                     \ || split(a:item, '\.')[-1] ==# 'dbout'
                     \ || isdirectory(a:item)
                     \ || (a:item =~? '\/notes\/' && getbufvar(a:item, '&filetype') ==# 'markdown')
