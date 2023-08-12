@@ -189,7 +189,7 @@ for_window [window_role="tooltip"]                                          floa
 for_window [window_type="notification"]                                     floating enable, sticky enable
 
 # Zoom
-for_window [class="(?i)zoom" title="zoom"]                                  floating enable
+for_window [class="(?i)zoom" title="(?i)zoom"]                              floating enable
 for_window [class="(?i)zoom" title="Meeting Chat"]                          floating enable
 for_window [class="(?i)zoom" title="Participants\s\(\d+\)"]                 floating enable
 for_window [class="(?i)zoom" title="Settings"]                              floating enable
@@ -264,14 +264,19 @@ mode "resize" {
     bindsym f           floating enable, resize set 426 240,    move position 1464 815
     bindsym g           floating enable, resize set 256 144,    move position 1634 911
 
+    bindsym v           floating enable, resize set 854 540,    move position 1046 515, sticky enable
+    bindsym m           floating enable, resize set 720 500,    move position 1180 555, sticky enable
+    bindsym t           floating enable, resize set 720 500,    move position 1180 555, sticky enable
+
     bindsym Shift+a     floating enable, resize set 1024 576,   move position 20 479
     bindsym Shift+s     floating enable, resize set 854 480,    move position 20 575
     bindsym Shift+d     floating enable, resize set 640 360,    move position 20 695
     bindsym Shift+f     floating enable, resize set 426 240,    move position 20 815
     bindsym Shift+g     floating enable, resize set 256 144,    move position 20 911
 
-    bindsym v           floating enable, resize set 854 540,    move position 1046 515, sticky enable
-    bindsym m           floating enable, resize set 720 500,    move position 1180 555, sticky enable
+    bindsym Shift+v     floating enable, resize set 854 540,    move position 20 515, sticky enable
+    bindsym Shift+m     floating enable, resize set 720 500,    move position 20 555, sticky enable
+    bindsym Shift+t     floating enable, resize set 720 500,    move position 20 555, sticky enable
 
     # back to normal
     bindsym Return mode "default"
