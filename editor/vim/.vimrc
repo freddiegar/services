@@ -263,7 +263,11 @@ let g:diff_translations = 0
 
 set wildmenu                                                    " Better command tab-completion (default: off)
 set wildignore=                                                 " We never want to see them in command tab-completion (default: empty)
+set wildignore+=**/.git/**                                      " VSC are slow in this cases
+set wildignore+=**/node_modules/**                              " Vendor are slow in this cases
 set wildignore+=*.gif,*.jpeg,*.jpg,*.mp3,*.mp4,*.png            " Media files aren't usable here
+set wildignore+=*.zip,*.gz                                      " Compress files aren't usable here
+set wildignore+=*.deb                                           " Instalation files aren't usable here
 
 if g:isneovim
     set wildoptions-=pum                                        " Don't use popup menu for wildmode in command tab-completion
@@ -339,7 +343,7 @@ if executable('rg')
     " @see https://vi.stackexchange.com/questions/13662/is-there-a-way-to-update-the-quickfix-entries-after-running-cdo-cfdo
     command! -nargs=0 -bar C call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
 
-    nnoremap <Leader>gG :Grep =expand('<cword>')<Enter>
+    nnoremap <Space>gG :Grep =expand('<cword>')<Enter>
 
     " No learn new command, use :grep and :lgrep with superpowers
     cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() =~# '^grep') ? 'Grep' : 'grep'
@@ -431,6 +435,7 @@ if has('gui_running')
 
     augroup GUIOptions
         if exists('g:neovide') " (why nvim why!)
+            " @see https://neovide.dev/
             autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h14
                         \ | let g:neovide_confirm_quit = v:false
                         \ | let g:neovide_remember_window_size = v:true
@@ -3387,7 +3392,7 @@ augroup AutoCommands
         silent execute "Grep --glob '*.php' --ignore-case '" . <SID>rg_escape(l:pattern) . "'"
     endfunction
 
-    " Search current file(R) or funtion(r) references
+    " Search current file(R) or function(r) references
     autocmd FileType php nmap <silent> <buffer>gR <Cmd>call <SID>get_references('file')<Enter>
     autocmd FileType php nmap <silent> <buffer>gr <Cmd>call <SID>get_references('word')<Enter>
 
@@ -3522,6 +3527,18 @@ augroup AutoCommands
     autocmd BufRead \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
     " Cleanup profiles log
     autocmd BufRead profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
+    " Debug mappings
+    " redir! > editor/vim/vimkeys.txt | silent verbose map | redir END
+    autocmd BufRead vimkeys.txt if !exists('b:cleanup')
+                \ | let b:cleanup = 1
+                \ | silent! keeppatterns
+                \ | execute "g/^$/d_"
+                \ | execute "g/Last set\\|keyboard /d_"
+                \ | execute "%s/^   /n  /"
+                \ | execute "g/[n\\|x\\|o\\v]  <Plug>/d_"
+                \ | %sort
+                \ | execute "normal gg/^o\rO\egg/^s\rO\egg/^v\rO\e/^x\rO\e"
+                \ | endif
 
     " Open files with external application
     autocmd BufEnter *.jpg,*.jpeg,*.png,*.gif,*.svg call <SID>go_url(expand('<afile>')) | bwipeout
@@ -3773,7 +3790,7 @@ augroup AutoCommands
                     \ || split(a:item, '\.')[-1] ==# 'dbout'
                     \ || isdirectory(a:item)
                     \ || (a:item =~? '\/notes\/' && getbufvar(a:item, '&filetype') ==# 'markdown')
-                    \ || (a:item =~? '.vimrc*' && getbufvar(a:item, '&filetype') ==# 'vim')
+                    \ || (a:item !~? 'editor/' && a:item =~? '.vimrc*' && getbufvar(a:item, '&filetype') ==# 'vim')
     endfunction
 
     function! s:sessionsavepre() abort
