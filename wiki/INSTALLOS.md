@@ -277,6 +277,28 @@ sudo mv clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04 /usr/local/clang_16.0.0
 
 ### C Tags
 
+[See](https://docs.ctags.io/en/latest/autotools.html#gnu-linux-distributions)
+
+```bash
+# After Ubuntu 23.04+
+sudo apt-get -y install \
+    gcc make \
+    pkg-config autoconf automake \
+    python3-docutils \
+    libseccomp-dev \
+    libjansson-dev \
+    libyaml-dev \
+    libxml2-dev
+
+mkdir /var/www/html/universal-ctags
+cd /var/www/html/universal-ctags
+git clone --depth=1 https://github.com/universal-ctags/ctags.git
+cd ctags
+./autogen.sh
+./configure
+make
+make install
+
 echo "--recurse=yes
 --tag-relative=yes
 --exclude=.git
@@ -289,6 +311,10 @@ echo "--recurse=yes
 --regex-php=/^[ \t]*trait[ \t]+([a-z0_9_]+)/\1/t,traits/i
 --PHP-kinds=+cfi-vj
 " > ~/.ctags
+
+## sudo rm /usr/local/bin/ctags
+```
+> /usr/local/bin/ctags
 
 ```bash
 # Need: Plug 'vim-scripts/autotags'
@@ -436,6 +462,7 @@ export BROWSER=/usr/bin/firefox' >> ~/.profile
 ```
 
 ## Setup in Zsh
+
 ```bash
 echo '
 # Load special vars
@@ -1440,7 +1467,7 @@ php --version | grep -e "^PHP" | awk '{print $2}'
 nvm --version
 # 0.39.3
 npm --version
-# 9.6.7
+# 9.8.1
 node --version
 # v18.16.0
 mysql --version | awk '{print $3}'

@@ -1789,8 +1789,8 @@ Plug 'tommcdo/vim-fubitive'                                     " - BitBucket br
 Plug 'tpope/vim-dadbod', {'for': 'sql'}                         " DB console in Vim
 Plug 'kristijanhusak/vim-dadbod-completion', {'for': 'sql'}     " DB autocompletion (needs vim-dadbod)
 
-" Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: methods, vars, etc
-" Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
+Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: methods, vars, etc
+Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 
 Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
 Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
@@ -2050,16 +2050,16 @@ let g:python3_host_prog = '/usr/bin/python3'
 " @see https://github.com/machakann/vim-highlightedyank
 let g:highlightedyank_highlight_duration = 250
 
-" " TagBar
-" " @see https://github.com/preservim/tagbar
-" let g:tagbar_sort = 0
-" let g:tagbar_width = max([80, winwidth(0) / 3])
-" let g:tagbar_silent = 0
-" let g:tagbar_compact = 2
-" let g:tagbar_autofocus = 1
-" let g:tagbar_no_status_line = 1
+" TagBar
+" @see https://github.com/preservim/tagbar
+let g:tagbar_sort = 0
+let g:tagbar_width = max([80, winwidth(0) / 3])
+let g:tagbar_silent = 0
+let g:tagbar_compact = 2
+let g:tagbar_autofocus = 1
+let g:tagbar_no_status_line = 1
 
-" nmap <silent> <F8> :TagbarToggle<Enter>
+nmap <silent> <F8> :TagbarToggle<Enter>
 
 " Undo Tree
 " @see https://github.com/mbbill/undotree
@@ -4071,16 +4071,19 @@ augroup AutoCommands
     autocmd InsertLeave * call <SID>diagnostics()
 
     " @see https://gist.github.com/maxboisvert/a63e96a67d0a83d71e9f49af73e71d93
-    " Not use :noautocmd, opening notes fails
-    autocmd InsertCharPre * call <SID>autocomplete()
+    autocmd InsertCharPre * noautocmd call <SID>autocomplete()
 
     function! s:autocomplete() abort
+        " Trigger local autocompletion after writes 3 chars in one word
         " @see :h /\K
-        " @see :h v:char
         " >  Keyword character (see 'iskeyword' option), but excluding digits
-        " Not use strict comparisons in \K
+        " >  Not use strict comparisons in \K
+        " @see :h v:char
         " @thanks https://stackoverflow.com/questions/6496778/vim-run-autocmd-on-all-filetypes-except#6496995
         " @conflicts kristijanhusak/vim-dadbod-completion
+
+        " echo 'Auto-complete: ft:[' . &filetype . '] [' . (v:char =~ '\K' ? 't' : 'f') . '] -2:[' . getline('.')[col('.') - 2] . '] c:[' . v:char . ']'
+
         if &filetype !=# 'sql'
                     \ && v:char =~ '\K'
                     \ && getline('.')[col('.') - 4] !~ '\K'
@@ -4117,10 +4120,16 @@ augroup AutoCommands
 
     " One <C-x><C-f> to auto-complet files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories
-    autocmd CompleteDonePre * if complete_info()['mode'] ==# 'files' && len(complete_info()['items']) > 0 && complete_info()['selected'] !=# -1 | call feedkeys("\<C-x>\<C-f>", 'n') | endif
+    autocmd CompleteDonePre *
+                \ if complete_info()['mode'] ==# 'files' && len(complete_info()['items']) > 0 && complete_info()['selected'] !=# -1 |
+                \   call feedkeys("\<C-x>\<C-f>", 'n') |
+                \ endif
 
     " Create non-existent directories when saving files
-    autocmd BufWritePre * if !isdirectory(expand('<afile>:p:h')) | call mkdir(expand('<afile>:p:h'), 'p') | endif
+    autocmd BufWritePre *
+                \ if !isdirectory(expand('<afile>:p:h')) |
+                \   call mkdir(expand('<afile>:p:h'), 'p') |
+                \ endif
 
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
