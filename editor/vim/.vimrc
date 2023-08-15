@@ -265,7 +265,8 @@ set wildmenu                                                    " Better command
 set wildignore=                                                 " We never want to see them in command tab-completion (default: empty)
 set wildignore+=**/.git/**                                      " VSC are slow in this cases
 set wildignore+=**/node_modules/**                              " Vendor are slow in this cases
-set wildignore+=*.gif,*.jpeg,*.jpg,*.mp3,*.mp4,*.png            " Media files aren't usable here
+set wildignore+=*.gif,*.jpeg,*.jpg,*.png,*.ico,*.svg            " Image files aren't usable here
+set wildignore+=*.mp3,*.mp4                                     " Media files aren't usable here
 set wildignore+=*.zip,*.gz                                      " Compress files aren't usable here
 set wildignore+=*.deb                                           " Instalation files aren't usable here
 
@@ -367,6 +368,9 @@ set complete+=u                                                 " Buffers [u]nlo
 set completeopt=                                                " Show preview in popup menu (default: menu,preview)
 set completeopt+=longest                                        " Don't select the first option, allow insert more words
 set completeopt+=menu                                           " Show list only if items > 1, if only once option is selected
+" @see autocomplete function, they are necesary to don't select first item random
+set completeopt+=menuone                                        " Use the popup menu also when there is only one match.
+set completeopt+=noinsert                                       " Do not insert any text for a match until the user selects a match from the menu
 set pumheight=10                                                " Maximum options showed in popup menu (default: 0=all)
 
 " Custom Interface
@@ -480,6 +484,7 @@ set fileformat=unix                                             " End of line as
 
 " Avoid (unused) built-in plugins and: less code, fewer bugs
 let g:loaded_2html_plugin = 1
+let g:loaded_getscriptPlugin = 1
 let g:loaded_gzip = 1
 let g:loaded_logiPat = 1
 let g:loaded_rrhelper = 1
@@ -1607,7 +1612,9 @@ xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 " @simple https://github.com/tpope/vim-rsi
 " Insert Mode navigation (Forget Arrows)
 inoremap <silent> <C-a> <C-o>^
-inoremap <silent> <C-e> <C-o>$
+inoremap <silent> <expr> <C-e>
+            \ pumvisible() ? "\<lt>C-e>" :
+            \ "\<C-o>$"
 inoremap <silent> <C-k> <C-g>u<Up>
 inoremap <silent> <C-j> <C-g>u<Down>
 inoremap <silent> <C-h> <C-g>u<Left>
@@ -2054,7 +2061,7 @@ let g:highlightedyank_highlight_duration = 250
 
 " nmap <silent> <F8> :TagbarToggle<Enter>
 
-" Undo
+" Undo Tree
 " @see https://github.com/mbbill/undotree
 nmap <silent> <S-F8> :UndotreeToggle<Enter>
 
@@ -2634,7 +2641,7 @@ augroup END
 
 " file (string)
 function! s:check_large_file(file) abort
-    if a:file ==# '' || index(['jpg', 'jpeg', 'png', 'gif', 'svg', 'pdf'], expand(a:file . ':t')) >= 0
+    if a:file ==# '' || index(['gif', 'jpeg', 'jpg', 'png', 'ico', 'svg', 'mp3', 'mp4', 'pdf'], expand(a:file . ':t')) >= 0
         return
     endif
 
@@ -3058,7 +3065,7 @@ augroup AutoCommands
 
     " Customization
     autocmd BufRead,BufNewFile .env.* setfiletype sh
-    autocmd BufRead,BufNewFile phplint,phpx,grepx setfiletype sh
+    autocmd BufRead,BufNewFile phplint,phpx,grepx,datex setfiletype sh
     autocmd BufRead,BufNewFile *.tphp setfiletype php
     autocmd BufRead,BufNewFile .php_cs* setfiletype php
     autocmd BufRead,BufNewFile *.conf setfiletype apache
@@ -3541,7 +3548,8 @@ augroup AutoCommands
                 \ | endif
 
     " Open files with external application
-    autocmd BufEnter *.jpg,*.jpeg,*.png,*.gif,*.svg call <SID>go_url(expand('<afile>')) | bwipeout
+    autocmd BufEnter *.gif,*.jpeg,*.jpg,*.png,*.ico,*.svg call <SID>go_url(expand('<afile>')) | bwipeout
+    autocmd BufEnter *.mp3,*.mp4 call <SID>go_url(expand('<afile>')) | bwipeout
     autocmd BufEnter *.pdf call <SID>go_url(expand('<afile>')) | bwipeout
 
     " @see :help :function
@@ -4061,6 +4069,28 @@ augroup AutoCommands
     autocmd User ALELintPost call <SID>diagnostics()
     autocmd InsertEnter * call <SID>popup_hide()
     autocmd InsertLeave * call <SID>diagnostics()
+
+    " @see https://gist.github.com/maxboisvert/a63e96a67d0a83d71e9f49af73e71d93
+    " Not use :noautocmd, opening notes fails
+    autocmd InsertCharPre * call <SID>autocomplete()
+
+    function! s:autocomplete() abort
+        " @see :h /\K
+        " @see :h v:char
+        " >  Keyword character (see 'iskeyword' option), but excluding digits
+        " Not use strict comparisons in \K
+        " @thanks https://stackoverflow.com/questions/6496778/vim-run-autocmd-on-all-filetypes-except#6496995
+        " @conflicts kristijanhusak/vim-dadbod-completion
+        if &filetype !=# 'sql'
+                    \ && v:char =~ '\K'
+                    \ && getline('.')[col('.') - 4] !~ '\K'
+                    \ && getline('.')[col('.') - 3] =~ '\K'
+                    \ && getline('.')[col('.') - 2] =~ '\K'
+                    \ && getline('.')[col('.') - 1] !~ '\K'
+
+            call feedkeys("\<C-x>\<C-p>", 'n')
+        end
+    endfun
 
     " BufWinEnter:  After cycling between buffers
     " BufHidden:    After close CTRL-W o
