@@ -238,6 +238,7 @@ set noswapfile                                                  " No swap for ne
 " **    Any where, ex: /var/** (slower)
 set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind, -complete=file_in_path
                                                                 " Skip /usr/include, it's slow (default: .,/usr/include,,)
+set tagcase=smart                                               " Smart always is best (default: followic=Follow the 'ignorecase' option)
 
 set sessionoptions=                                             " (default: blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal)
 set sessionoptions+=buffers                                     " Save buffers
@@ -738,6 +739,10 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{AsyncStatuslineFlag()}           " Async process info
     endif
 
+    if exists('g:loaded_gutentags')
+        setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
+    endif
+
 "     if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
 "         setlocal statusline+=\                                  " Extra space
 "         setlocal statusline+=%{pomo#remaining_time().'m'}       " Pomodoro time
@@ -974,6 +979,9 @@ command! -nargs=? -complete=file B call <SID>backup(<f-args>)
 
 " Explorer
 command! -nargs=1 -complete=dir E execute "normal :!vifm <f-args><Enter>"
+
+" Universal Tags
+command! -nargs=0 -bang U GutentagsUpdate<bang>
 
 " Diff
 command! -nargs=0 D call <SID>file_diff(expand('%'))
@@ -1435,7 +1443,7 @@ function! s:generate_mask(type) abort
 
     let l:masked = system(l:command)
 
-    return [l:passphrase, (v:shell_error == 0 && strlen(l:masked) > 0 ? l:masked : 'Retry!')]
+    return [l:passphrase, (v:shell_error ==# 0 && strlen(l:masked) > 0 ? l:masked : 'Retry!')]
 endfunction
 
 " type (string)
@@ -1800,6 +1808,7 @@ Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}                " Run undo world
 Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
+Plug 'ludovicchabant/vim-gutentags'                             " Auto generate tags (not allowed 'for' option)
 " Plug 'Shougo/echodoc.vim', {'for': ['php', 'c', 'vim']}         " Show function signature in command line (weird)
 " Plug 'Shougo/context_filetype.vim', {'for': 'markdown'}         " Show/use context in markdown files
 
@@ -2697,6 +2706,47 @@ xmap <silent> <leader>b S
 
 " nnoremap <C-]> g<C-]>
 
+" GutenTags
+" @see https://github.com/ludovicchabant/vim-gutentags
+" @thanks https://www.reddit.com/r/vim/comments/d77t6j/guide_how_to_setup_ctags_with_gutentags_properly/
+let g:gutentags_enabled = 0
+let g:gutentags_add_default_project_roots = 0
+let g:gutentags_project_root = ['.git']
+let g:gutentags_cache_dir = expand('/tmp/ctags/')
+let g:gutentags_generate_on_new = 0
+let g:gutentags_generate_on_write = 0
+let g:gutentags_generate_on_missing = g:hasgit
+" let g:gutentags_generate_on_empty_buffer = 0 (default)
+" let g:gutentags_ctags_extra_args = ['--options=' . expand('~/.ctags')]
+let g:gutentags_ctags_extra_args = [
+      \ '--with-list-header=no',
+      \ '--machinable=yes',
+      \ '--tag-relative=yes',
+      \ '--fields=+aimlS',
+      \ '--extra=+q',
+      \
+      \ '--exclude="\.git/*"',
+      \ '--exclude="\.idea/*"',
+      \ '--exclude="\.vscode/*"',
+      \
+      \ '--kinds-c=+p',
+      \ '--kinds-c++=+p',
+      \
+      \ '--kinds-php=+cfi-vj',
+      \ '--regex-php="/^[   ]*trait[        ]+([a-z0_9_]+)/\1/t,traits/i"',
+      \ '--exclude="./bootstrap/*"',
+      \ '--exclude="./public/*"',
+      \ '--exclude="./config/*"',
+      \ '--exclude="./coverage/*"',
+      \ '--exclude="./bin/*"',
+      \ '--exclude="./var/*"',
+      \ '--exclude="./node_modules/*"',
+      \ '--exclude="./storage/*"',
+      \ '--exclude="./database/*"',
+      \ '--exclude="*Test.php"',
+      \ '--exclude="*phpunit*"',
+      \ ]
+
 " Fugitive
 " @see https://github.com/tpope/vim-fugitive
 let g:fugitive_no_maps = 1
@@ -3110,6 +3160,19 @@ augroup AutoCommands
     autocmd FileType vim setlocal keywordprg=:help commentstring=\"\ %s
     autocmd FileType git setlocal foldmethod=syntax foldlevel=1
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
+
+    " Dynamic GutenTags generation
+    autocmd FileType php,c,vim let g:gutentags_enabled = 1
+    autocmd FileType php let g:gutentags_ctags_extra_args += [
+                \ '--languages=PHP',
+                \ ]
+    autocmd FileType c let g:gutentags_ctags_extra_args += [
+                \ '--languages=C,C++',
+                \ ]
+    autocmd FileType vim let g:gutentags_ctags_extra_args += [
+                \ '--languages=Vim',
+                \ ]
+
     " autocmd FileType markdown,log,csv let b:coc_suggest_disable = 1
 
     " autocmd FileType html,css,javascript,vue EmmetInstall
@@ -4105,6 +4168,8 @@ augroup AutoCommands
     autocmd User AsyncRunPre call <SID>statusline('f')
     autocmd User AsyncRunStart call <SID>statusline('f')
     autocmd User AsyncRunStop call <SID>statusline('f')
+    autocmd User GutentagsUpdating call <SID>statusline('f')
+    autocmd User GutentagsUpdated call <SID>statusline('f')
     " After open terminal with fzf
     if exists("##ModeChanged") " (why nvim why!)
         autocmd ModeChanged *t:* call <SID>statusline(v:event.old_mode)
