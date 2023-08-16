@@ -950,6 +950,15 @@ sudo apt-get install -y bat
 ## bat file.php
 ## sudo apt-get remove bat && sudo apt-get autoremove
 ```
+## Best man
+
+[See](https://gitlab.com/dwt1/dotfiles)
+
+```bash
+echo '
+export MANPAGER="sh -c 'col -bx \| bat -l man -p'"
+export BAT_THEME="gruvbox-dark"' >> ~/.profile
+```
 
 # Vifm (Terminal File Manager with Vim Style)
 
