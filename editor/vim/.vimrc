@@ -2089,10 +2089,12 @@ let $FZF_DEFAULT_OPTS .= 'ctrl-d:preview-down,ctrl-u:preview-up,'
 let $FZF_DEFAULT_OPTS .= 'ctrl-n:down,ctrl-p:up,'
 " Move between history Ctrl+j and Ctrl+k
 let $FZF_DEFAULT_OPTS .= 'ctrl-j:next-history,ctrl-k:previous-history"'
-
 " History search using Ctrl+p and Ctrl+n (to move: Ctrl+j and Ctrl+k)
 " @thanks https://github.com/junegunn/fzf.vim/issues/290#issuecomment-303076880
 let $FZF_DEFAULT_OPTS .= ' --history=' . $HOME . '/.fzf_history'
+" Show hidden files in IFiles command
+" @thanks https://superuser.com/a/1113988
+let $FZF_DEFAULT_COMMAND="find . -path '*/\.*' -type d -prune -o -type f -print -o -type l -print 2> /dev/null | sed s/^..//"
 
 " String in current work directory
 nnoremap <silent> <Leader>f <Cmd>call <SID>find_filter('find', g:cwd)<Enter>
