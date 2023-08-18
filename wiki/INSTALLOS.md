@@ -172,8 +172,8 @@ sudo apt-get remove plymouth-* plymouth
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim xclip
-## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim xclip && sudo apt-get autoremove
+sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim xclip ncal
+## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim xclip ncal && sudo apt-get autoremove
 ```
 
 ## i3

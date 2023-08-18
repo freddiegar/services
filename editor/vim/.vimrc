@@ -35,6 +35,7 @@
 " @see https://skippi.medium.com/ideas-for-non-leader-vim-mappings-fd32a2769c87
 
 " ORIGIN
+" @see https://alug.us/pages/vim/vim.html
 " @see https://www.reddit.com/r/vim/wiki/why_hjkl
 " @see https://www.fcodelabs.com/2018/12/08/Vim-Cheats/
 " @mailing  https://groups.google.com/g/vim_dev
@@ -2716,8 +2717,8 @@ let g:gutentags_add_default_project_roots = 0
 let g:gutentags_project_root = ['.git']
 let g:gutentags_cache_dir = expand('/tmp/ctags/')
 let g:gutentags_generate_on_new = 0
-let g:gutentags_generate_on_write = 0
-let g:gutentags_generate_on_missing = g:hasgit
+let g:gutentags_generate_on_write = g:hasgit && index(['php', 'c', 'vim'], &filetype) >= 0
+let g:gutentags_generate_on_missing = g:hasgit && index(['php', 'c', 'vim'], &filetype) >= 0
 " let g:gutentags_generate_on_empty_buffer = 0 (default)
 " let g:gutentags_ctags_extra_args = ['--options=' . expand('~/.ctags')]
 let g:gutentags_ctags_extra_args = [
@@ -3091,12 +3092,7 @@ function! s:notes(append) abort
     silent execute 'keeppatterns keepjumps %g/^' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
 
     if !filereadable(l:filename) || len(l:matches) ==# 0
-        let l:formatoptions = &formatoptions
-        setlocal formatoptions-=r
-
-        silent execute "normal! Go\e<<i\r" . l:header . "\r\e"
-
-        let &formatoptions = l:formatoptions
+        silent execute "normal! Go\eS\r" . l:header . "\eo\eS\e"
     else
         silent execute "normal! Go\e"
     endif
@@ -3155,7 +3151,7 @@ augroup AutoCommands
     autocmd FileType crontab setlocal commentstring=#\ %s
     autocmd FileType debsources setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
-    autocmd FileType php setlocal commentstring=//\ %s iskeyword=@,48-57,_,192-255
+    autocmd FileType php setlocal commentstring=//\ %s iskeyword=@,48-57,_,192-255 " foldmethod=indent foldlevel=4 " foldcolumn=1
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
     autocmd FileType c,cpp setlocal path+=/usr/include include&
@@ -3326,9 +3322,60 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rff <Cmd>call <SID>rff()<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>R   <Cmd>call phpactor#ContextMenu()<Enter>
 
-    autocmd FileType php nmap <silent> <buffer> gd <Cmd>call phpactor#GotoDefinition()<Enter>
+    autocmd FileType php nmap <silent> <buffer> gd <Cmd>call <SID>phpgd()<Enter>
+    " autocmd FileType php nmap <silent> <buffer> gd <Cmd>call phpactor#GotoDefinition()<Enter>
     " autocmd FileType php nmap <silent> <buffer> gy <Cmd>call phpactor#GotoImplementations()<Enter>
     " autocmd FileType php nmap <silent> <buffer> gr <Cmd>call phpactor#FindReferences()<Enter>
+
+    function! s:phpgd() abort
+        let l:message = ''
+        let l:ccurpos = getcurpos()
+
+        silent execute ":keeppatterns normal! mzF\ h\"zyiw"
+        let l:bword = trim(@z)
+        silent execute ":keeppatterns normal! `z:delmarks z\r"
+
+        silent execute ":keeppatterns normal! mzF\ l\"zyiw"
+        let l:cword = trim(@z)
+        silent execute ":keeppatterns normal! `z:delmarks z\r"
+
+        if index(['new'], l:bword) >= 0 || l:cword =~# "\\u"
+            try
+                call PhpactorGotoType
+
+                echo 'Using types.'
+
+                return
+            catch
+                let l:message = 'Catch: ' . <SID>exception()
+            endtry
+
+            " Is imposible detect error in this command
+            " Use 'silent' to avoid show message in commandline
+            silent call phpactor#GotoType()
+        else
+            try
+                call PhpactorGotoDefinition
+
+                echo 'Using definitions.'
+
+                return
+            catch
+                let l:message = 'Catch: ' . <SID>exception()
+            endtry
+
+            " Is imposible detect error in this command
+            " Use 'silent' to avoid show message in commandline
+            call phpactor#GotoDefinition()
+        endif
+
+        " Guess: if change file in phpactor#* command
+        if len(l:message) > 0 && l:ccurpos ==# getcurpos()
+            echo 'Using tags.'
+
+            silent call feedkeys("\<C-]>", 'n')
+        endif
+    endfunction
 
     " transformer (string)
     function! s:phpactor(transformer) abort
@@ -4159,7 +4206,7 @@ augroup AutoCommands
                     \ && getline('.')[col('.') - 2] =~ '\K'
                     \ && getline('.')[col('.') - 1] !~ '\K'
 
-            call feedkeys("\<C-x>\<C-p>", 'n')
+            call feedkeys("\<C-x>\<C-n>", 'n')
         end
     endfun
 
