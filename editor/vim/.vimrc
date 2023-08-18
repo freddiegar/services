@@ -3088,9 +3088,9 @@ function! s:notes(append) abort
         return 0
     endif
 
-    silent execute 'keeppatterns %g/' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
+    silent execute 'keeppatterns keepjumps %g/^' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
 
-    if !filereadable(l:filename) || len(l:matches) == 0
+    if !filereadable(l:filename) || len(l:matches) ==# 0
         let l:formatoptions = &formatoptions
         setlocal formatoptions-=r
 

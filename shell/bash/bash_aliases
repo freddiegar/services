@@ -264,6 +264,11 @@ alias gss="git stash show"
 alias grh="git reset HEAD"
 alias grH="git reset HEAD~"
 
+# WARNING!: Overwrite local history with remote history
+#   > Use ONLY when remote branch diverge of local branch
+# @thanks https://stackoverflow.com/a/9589927/15601185
+alias gfr="git reset --hard HEAD && git fetch --all && git reset --hard FETCH_HEAD && git clean -df"
+
 alias gff="git flow init -d"
 alias gffs="git flow feature start"
 alias gfff="git flow feature finish"
