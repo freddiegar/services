@@ -35,8 +35,15 @@ set $inactive-bg-color      #1D2021
 set $text-color             #F3F4F5
 set $inactive-text-color    #676E7D
 set $urgent-bg-color        #E53935
-set $active-bg-color        #B9B9B9
+# set $active-bg-color        #AF3A03
+set $active-bg-color        #FDFC01
 set $indicator-color        #00FF00
+
+# Set gaps (after 4.22.0)
+# @see https://www.reddit.com/r/i3wm/comments/1017y35/i3_v422_released_including_gaps/
+gaps inner 5
+gaps outer 1
+smart_gaps on
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -258,21 +265,34 @@ mode "resize" {
     bindsym Shift+l resize grow   width   10 px or 10 ppt
 
     # Borders                                                                 -30 -25
+    # Resolution 2048 1080
     bindsym a           floating enable, resize set 1024 576,   move position 866 479
     bindsym s           floating enable, resize set 854 480,    move position 1036 575
     bindsym d           floating enable, resize set 640 360,    move position 1250 695
     bindsym f           floating enable, resize set 426 240,    move position 1464 815
     bindsym g           floating enable, resize set 256 144,    move position 1634 911
 
-    bindsym v           floating enable, resize set 854 540,    move position 1046 515, sticky enable
-    bindsym m           floating enable, resize set 720 500,    move position 1180 555, sticky enable
-    bindsym t           floating enable, resize set 720 500,    move position 1180 555, sticky enable
-
     bindsym Shift+a     floating enable, resize set 1024 576,   move position 20 479
     bindsym Shift+s     floating enable, resize set 854 480,    move position 20 575
     bindsym Shift+d     floating enable, resize set 640 360,    move position 20 695
     bindsym Shift+f     floating enable, resize set 426 240,    move position 20 815
     bindsym Shift+g     floating enable, resize set 256 144,    move position 20 911
+
+    # Borders                                                                 -25 -27
+    # Resolution 1440 900
+    bindsym q           floating enable, resize set 854 480,    move position 561 393
+    bindsym w           floating enable, resize set 640 360,    move position 775 513
+    bindsym e           floating enable, resize set 426 240,    move position 989 633
+    bindsym r           floating enable, resize set 256 144,    move position 1159 729
+
+    bindsym Shift+q     floating enable, resize set 854 480,    move position 10 393
+    bindsym Shift+w     floating enable, resize set 640 360,    move position 10 513
+    bindsym Shift+e     floating enable, resize set 426 240,    move position 10 633
+    bindsym Shift+r     floating enable, resize set 256 144,    move position 10 729
+
+    bindsym v           floating enable, resize set 854 540,    move position 1046 515, sticky enable
+    bindsym m           floating enable, resize set 720 500,    move position 1180 555, sticky enable
+    bindsym t           floating enable, resize set 720 500,    move position 1180 555, sticky enable
 
     bindsym Shift+v     floating enable, resize set 854 540,    move position 20 515, sticky enable
     bindsym Shift+m     floating enable, resize set 720 500,    move position 20 555, sticky enable
@@ -322,10 +342,12 @@ client.background                           $bg-color
 
 # Nice borders
 hide_edge_borders smart
-# Deprecated in 4.15
-new_window pixel 1
-new_float pixel 1
 focus_follows_mouse no
+# Deprecated (after 4.15.0)
+# new_window pixel 1
+# new_float pixel 1
+default_border pixel 2
+default_floating_border pixel 2
 
 # Return a last workspace
 # workspace_auto_back_and_forth yes
