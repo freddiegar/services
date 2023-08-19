@@ -768,6 +768,11 @@ let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 noremap <Space> <Nop>
 
+" Best Regex (?) using [v]ery magic
+" @see :h /\v
+nnoremap / /\v
+nnoremap ? ?\v
+
 " Purify! in Normal|Select|Operator Mode
 noremap <Up> <Nop>
 noremap <Down> <Nop>
@@ -1035,11 +1040,12 @@ command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
 nmap <silent> <F1> <Nop>
 
 " Open explore in current work directory (toggle)
-nmap <silent> <expr> <F2>
+nmap <silent> <expr> <C-w>.
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd() <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>"
 
 " Open explore in current file directory (toggle)
-nmap <silent> <expr> <S-F2>
+" @overwrite :h CTRL-W_:
+nmap <silent> <expr> <C-w>:
             \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>"
 
 " Fast Vim configuration (and plugins)
@@ -1048,8 +1054,6 @@ nmap <silent> <expr> <F10>
             \ &filetype ==# 'vim-plug' ? ":silent execute \"normal! :bdelete!\\r\"<Enter>" :
             \ filereadable('.vimrc') ? ":silent execute 'edit .vimrc'<Enter>" :
             \ ":silent execute 'edit ~/.vimrc'<Enter>"
-
-nnoremap <silent> <S-F10> :PlugClean<Enter>
 
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
@@ -1792,6 +1796,7 @@ Plug 'SirVer/ultisnips'                                         " Performance us
 Plug 'sniphpets/sniphpets', {'for': 'php'}                      " PHP snippet with namespace resolve (needs ultisnips)
 
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GV, GB and GBrowse commands, etc)
+Plug 'rickhowe/diffchar.vim'                                    " Better diff view
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 Plug 'junegunn/gv.vim', {'on': 'GV'}                            " - Commits filter extension (needs vim-fugitive) -> :GV[!], GV?
 Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (needs vim-fugitive, no conditional) -> :GBrowse
@@ -2027,7 +2032,6 @@ let g:python3_host_prog = '/usr/bin/python3'
 " let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav'
 
 " nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
-" nmap <silent> <S-F3> :PomodoroStatus<Enter>
 
 " " Context
 " " @see https://github.com/wellle/context.vim
@@ -2075,7 +2079,7 @@ nmap <silent> <F8> :TagbarToggle<Enter>
 
 " Undo Tree
 " @see https://github.com/mbbill/undotree
-nmap <silent> <S-F8> :UndotreeToggle<Enter>
+nmap <silent> <C-w>u :UndotreeToggle<Enter>
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
@@ -2796,11 +2800,20 @@ nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo '
 "   [c  -> Preview change (not conflict!)
 "   ]c  -> Next change (not conflict!)
 "   \r  -> Go to file
-nnoremap <silent> <Leader>hh /\v[<\|>\|=]{7}<Enter>
+
+" Go [h]ighligth [h]unk
+nnoremap <silent> <Leader>hh /\v^[<\|>\|=]{7}.*<Enter>
 
 " if &diff <-- fails with diff mode opens from vim-fugitive
-    nnoremap <silent> <Leader>gt :diffthis<Enter>
-    nnoremap <silent> <Leader>go :diffoff<Enter>
+    " Diff [b]uffer
+    nnoremap <silent> <expr> <Leader>gb
+                \ &diff ? ":execute 'diffoff'<Enter>" :
+                \ ":execute 'diffthis'<Enter>"
+
+    " Diff [w]indow
+    nnoremap <silent> <expr> <Leader>gw
+                \ &diff ? ":execute 'windo diffoff'<Enter>" :
+                \ ":execute 'windo diffthis'<Enter>"
 
     nnoremap <silent> <Leader>gf :diffget //2<Enter>
     nnoremap <silent> <Leader>gj :diffget //3<Enter>
@@ -3075,8 +3088,8 @@ function! s:exception() abort
 endfunction
 
 " Open notes in Normal|Select|Operator Mode
-nmap <silent> <F9> <Cmd>call <SID>notes(v:true)<Enter>
-nmap <silent> <S-F9> <Cmd>call <SID>notes(v:false)<Enter>
+nmap <silent> <C-w>, <Cmd>call <SID>notes(v:true)<Enter>
+nmap <silent> <C-w>; <Cmd>call <SID>notes(v:false)<Enter>
 
 function! s:notes(append) abort
     let l:matches = []
@@ -3646,6 +3659,16 @@ augroup AutoCommands
     autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=((b*100)/a)-100\r\e")
     " [t]inker sql
     autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyy\"zpIDB::select(\"\eA\")\edd'z:delmarks z\r")
+    " [e]xplain sql
+    autocmd BufEnter,BufNewFile *.sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
+    " [j]son explain sql
+    autocmd BufEnter,BufNewFile *.sql call setreg('j', "IEXPLAIN FORMAT=json \eEa SQL_NO_CACHE\e")
+    " [u]ndo explain sql
+    autocmd BufEnter,BufNewFile *.sql call setreg('u', "vip:s/EXPLAIN \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e")
+    " [d]ebug explain sql
+    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('d', "@evip:R\r:sleep 500m\r\<C-w>wggjyG\<C-w>w\<C-w>op@u") | endif
+    " [r]un sql
+    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('r', "vip:R\r:sleep 500m\r\<C-w>wggjyG\<C-w>w\<C-w>op") | endif
 
     " Cleanup queries log
     autocmd BufRead \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
@@ -4278,8 +4301,8 @@ function! s:get_hlinfo() abort
                 \ . ' -> ' . g:colors_name
 endfunction
 
-nmap <silent> <F5> <Cmd>call <SID>vpm()<Enter>
-nmap <silent> <S-F5> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
+nmap <silent> <C-w>m <Cmd>call <SID>vpm()<Enter>
+nmap <silent> <C-w>M :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
 
 let g:vpm = 0
 
@@ -4330,33 +4353,16 @@ endif
 
 if g:isneovim && !has('gui_running')
     " Same to ... (why nvim why!)
-    " <S-F2>
-    nmap <silent> <nowait> <expr> <Esc>O2Q
-                \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>"
-    " <S-F9>
-    nmap <silent> <F21> <Cmd>call <SID>notes(v:false)<Enter>
-    " <S-F10>
-    nnoremap <silent> <nowait> <F22> :PlugClean<Enter>
-    " <S-F6>
-    inoremap <silent> <F18> <C-r>=strftime('%Y-%m-%d')<Enter>
-    inoremap <silent> <F19> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
-    cnoremap <F18> <C-r>=strftime('%Y-%m-%d')<Enter>
-    " <S-F7>
-    nnoremap <silent> <F18> :execute "normal i\<F18>\e"<Enter>
-    nnoremap <silent> <F19> :execute "normal i\<F19>\e"<Enter>
-    cnoremap <F19> <C-r>=strftime('%Y-%m-%d-%H-%M-%S')<Enter>
-    " <S-F3>
-    " nmap <silent> <nowait> <Esc>O2R :PomodoroStatus<Enter>
-    " " <S-F5>
-    " nmap <silent> <nowait> <F17> :set relativenumber! number! showmode! showcmd! hidden! ruler!<Enter>
-    inoremap <silent> <expr> <S-Tab>
-                \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
-                \ pumvisible() ? "\<C-p>" :
-                \ "\<C-d>"
-    snoremap <silent> <expr> <S-Tab>
-                \ UltiSnips#CanJumpBackwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
-                \ pumvisible() ? "\<C-p>" :
-                \ "\<C-d>"
+    imap <silent> <F18> <S-F6>
+    nmap <silent> <F18> <S-F6>
+    cmap <F18> <S-F6>
+
+    imap <silent> <F19> <S-F7>
+    nmap <silent> <F19> <S-F7>
+    cmap <F19> <S-F7>
+
+    imap <silent> <S-Tab> <Esc>[Z
+    smap <silent> <S-Tab> <Esc>[Z
 endif
 
 try
