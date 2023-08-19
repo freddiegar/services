@@ -299,22 +299,12 @@ cd ctags
 make
 make install
 
-echo "--recurse=yes
---tag-relative=yes
---exclude=.git
---exclude=.idea
---exclude=.vscode
---exclude=composer.phar
---exclude=*.js
---exclude=*.vim
---langmap=php:.engine.inc.module.theme.install.php
---regex-php=/^[ \t]*trait[ \t]+([a-z0_9_]+)/\1/t,traits/i
---PHP-kinds=+cfi-vj
-" > ~/.ctags
-
 ## sudo rm /usr/local/bin/ctags
 ```
 > /usr/local/bin/ctags
+> man ctags
+> ctags --list-languages
+> ctags --list-kinds
 
 ```bash
 # Need: Plug 'vim-scripts/autotags'
@@ -1487,5 +1477,7 @@ python3 --version | awk '{print $2}'
 # 3.11.4
 ruby --version | awk '{print $2}'
 # 3.1.2p20
+ctags --version | head -1 | awk '{print $3}'
+# 6.0.0(p6.0.20230813.0)
 dpkg --list | wc --lines
 # 2336

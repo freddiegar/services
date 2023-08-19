@@ -18,6 +18,7 @@
 " @see http://www.rayninfo.co.uk/vimtips.html
 " @see http://www.angelwatt.com/coding/notes/vim-commands.html
 " @see https://blog.sanctum.geek.nz/vim-annoyances/
+" @see https://mmmnnnmmm.com/#tutorial_vimscript
 
 " CVE
 " @see https://www.cvedetails.com/vendor/8218/VIM.html
@@ -819,14 +820,15 @@ nnoremap <silent> <expr> <C-w>+ (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>+"
 nnoremap <silent> <expr> <C-w>< (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w><"
 nnoremap <silent> <expr> <C-w>> (v:count > 0 ? "<Esc>" . v:count : 5) . "<C-w>>"
 
+nnoremap <silent> <BS> *``cgn
+nnoremap <Leader><BS> :g/\<C-r><C-w>\>/
+
 " [R]eplace [l]ocal or [g]lobal with [c]onfirmation easily. Don't add silent
 " @thanks https://stackoverflow.com/questions/597687/how-to-quickly-change-variable-names-in-vim
 " @see :h :s_flags
 "   [g]lobal ocurrences
 "   [I]gnore smartcase and ignorecase setup
 "   [c]onfirmation
-nnoremap <BS> *``cgn
-nnoremap <Leader><BS> :g/\<\>/
 nnoremap <Leader>rll *``[{V%::s/<C-r>///gIc<Left><Left><Left><Left>
 nnoremap <Leader>rgg *``:%s/<C-r>///gIc<Left><Left><Left><Left>
 
@@ -1819,7 +1821,7 @@ Plug 'ludovicchabant/vim-gutentags'                             " Auto generate 
 " Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 " Plug 'wellle/context.vim'                                       " Show context code (slower)
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
-" Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
+Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
 
@@ -2711,22 +2713,25 @@ xmap <silent> <leader>b S
 
 " GutenTags
 " @see https://github.com/ludovicchabant/vim-gutentags
+" @see https://ericjmritz.wordpress.com/2013/05/22/finding-php-traits-with-exuberant-ctags/
 " @thanks https://www.reddit.com/r/vim/comments/d77t6j/guide_how_to_setup_ctags_with_gutentags_properly/
 let g:gutentags_enabled = 0
 let g:gutentags_add_default_project_roots = 0
 let g:gutentags_project_root = ['.git']
 let g:gutentags_cache_dir = expand('/tmp/ctags/')
 let g:gutentags_generate_on_new = 0
-let g:gutentags_generate_on_write = g:hasgit && index(['php', 'c', 'vim'], &filetype) >= 0
-let g:gutentags_generate_on_missing = g:hasgit && index(['php', 'c', 'vim'], &filetype) >= 0
+let g:gutentags_exclude_filetypes = index(['php', 'c'], &filetype) < 0 ? [&filetype] : []
+let g:gutentags_generate_on_write = g:hasgit && index(['php', 'c'], &filetype)
+let g:gutentags_generate_on_missing = g:hasgit && index(['php', 'c'], &filetype)
+" Enable :GutentagsToggleEnabled
+let g:gutentags_define_advanced_commands = 1
 " let g:gutentags_generate_on_empty_buffer = 0 (default)
-" let g:gutentags_ctags_extra_args = ['--options=' . expand('~/.ctags')]
 let g:gutentags_ctags_extra_args = [
       \ '--with-list-header=no',
       \ '--machinable=yes',
       \ '--tag-relative=yes',
       \ '--fields=+aimlS',
-      \ '--extra=+q',
+      \ '--extras=+q',
       \
       \ '--exclude="\.git/*"',
       \ '--exclude="\.idea/*"',
@@ -2735,8 +2740,7 @@ let g:gutentags_ctags_extra_args = [
       \ '--kinds-c=+p',
       \ '--kinds-c++=+p',
       \
-      \ '--kinds-php=+cfi-vj',
-      \ '--regex-php="/^[   ]*trait[        ]+([a-z0_9_]+)/\1/t,traits/i"',
+      \ '--kinds-php=+acdifnt-lv',
       \ '--exclude="./bootstrap/*"',
       \ '--exclude="./public/*"',
       \ '--exclude="./config/*"',
@@ -3130,6 +3134,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=4
     autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
     autocmd BufRead,BufNewFile *.vpm setfiletype vpm
+    autocmd BufRead,BufNewFile /tmp/ctags/*tags* setfiletype tags
 
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType sql let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
@@ -3160,15 +3165,12 @@ augroup AutoCommands
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
 
     " Dynamic GutenTags generation
-    autocmd FileType php,c,vim let g:gutentags_enabled = 1
+    autocmd FileType php,c let g:gutentags_enabled = 1
     autocmd FileType php let g:gutentags_ctags_extra_args += [
                 \ '--languages=PHP',
                 \ ]
     autocmd FileType c let g:gutentags_ctags_extra_args += [
                 \ '--languages=C,C++',
-                \ ]
-    autocmd FileType vim let g:gutentags_ctags_extra_args += [
-                \ '--languages=Vim',
                 \ ]
 
     " autocmd FileType markdown,log,csv let b:coc_suggest_disable = 1
@@ -3203,11 +3205,11 @@ augroup AutoCommands
                     \ | setlocal colorcolumn=0
                     \ | setlocal nolist
                     \ | if getbufvar(bufnr('%'), 'term_title')[-4 :] ==# '/zsh'
-                        \ | startinsert
+                    \ |     startinsert
                     \ | endif
                     \ | if getbufvar(bufnr('%'), 'term_title')[-3 :] !=? 'fzf'
-                        \ | tnoremap <silent> <buffer> <Esc> <C-\><C-n><Enter>
-                        \ | nnoremap <silent> <buffer> <Enter> i<Enter>
+                    \ |     tnoremap <silent> <buffer> <Esc> <C-\><C-n><Enter>
+                    \ |     nnoremap <silent> <buffer> <Enter> i<Enter>
                     \ | endif
                     \ | endif
 
@@ -3642,7 +3644,7 @@ augroup AutoCommands
     " Custom register by filetype
     " Diff [t]ime operation
     autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=((b*100)/a)-100\r\e")
-    " Tinker [s]ql operation
+    " [t]inker sql
     autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyy\"zpIDB::select(\"\eA\")\edd'z:delmarks z\r")
 
     " Cleanup queries log
@@ -3855,7 +3857,7 @@ augroup AutoCommands
 
     function! s:mustbeignore() abort
         return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
-                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*\|hosts\|crontab\|errors\.err')
+                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*\|hosts\|crontab\|errors\.err\|tags')
                     \ || get(v:argv, 1, '') ==# '-'
                     \ || (len(g:working) > 0 && g:working[0] =~? 'plugged')
                     \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-')
@@ -3908,7 +3910,7 @@ augroup AutoCommands
 
     function! s:sessionremoveitem(item) abort
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
-                    \ || index(['netrw', 'diff', 'undotree'], getbufvar(a:item, '&filetype')) >= 0
+                    \ || index(['netrw', 'diff', 'undotree', 'tags'], getbufvar(a:item, '&filetype')) >= 0
                     \ || buflisted(a:item) == 0
                     \ || split(a:item, '\.')[-1] ==# 'dbout'
                     \ || isdirectory(a:item)
@@ -3958,7 +3960,7 @@ augroup AutoCommands
         call writefile(['call setqflist(' . a:qflist . ')', 'call setqflist([], "a", ' . a:qfinfo . ')'], g:session_file, 'a')
     endfunction
 
-    " nnoremap <Leader>w <Cmd>call <SID>sessionsave()<Enter>
+    " nnoremap <Leader>w <Cmd>call <SID>sessionsave() <Bar> echo 'Session saved.'<Enter>
 
     function! s:sessionsave() abort
         if <SID>mustbeignore()
@@ -4186,7 +4188,8 @@ augroup AutoCommands
     autocmd InsertLeave * call <SID>diagnostics()
 
     " @see https://gist.github.com/maxboisvert/a63e96a67d0a83d71e9f49af73e71d93
-    autocmd InsertCharPre * noautocmd call <SID>autocomplete()
+    " Not use, kill <BS> mapping replace
+    " autocmd InsertCharPre * noautocmd call <SID>autocomplete()
 
     function! s:autocomplete() abort
         " Trigger local autocompletion after writes 3 chars in one word
