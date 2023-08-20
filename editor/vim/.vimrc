@@ -1697,6 +1697,10 @@ cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.e
 cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')<Enter>
 cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<Enter>
 
+" Open sql file
+" @overwrite :h CTRL-W_q
+nnoremap <silent> <C-w>q :edit =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<Enter><Enter>
+
 " Use them inside dir project!
 cnoremap <C-x><C-y> <C-u>='!cp -p '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
 cnoremap <C-x><C-m> <C-u>='!mv -i '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
@@ -3666,9 +3670,9 @@ augroup AutoCommands
     " [u]ndo explain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('u', "vip:s/EXPLAIN \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e")
     " [d]ebug explain sql
-    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('d', "@evip:R\r:sleep 500m\r\<C-w>wggjyG\<C-w>w\<C-w>op@u") | endif
+    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('d', "@evip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp@u") | endif
     " [r]un sql
-    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('r', "vip:R\r:sleep 500m\r\<C-w>wggjyG\<C-w>w\<C-w>op") | endif
+    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('r', "vip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp") | endif
 
     " Cleanup queries log
     autocmd BufRead \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
