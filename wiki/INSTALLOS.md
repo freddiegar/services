@@ -1470,7 +1470,7 @@ npm --version
 node --version
 # v18.16.0
 mysql --version | awk '{print $3}'
-# 8.0.33-0ubuntu0.23.04.4
+# 8.0.34-0ubuntu0.23.04.1
 stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
@@ -1480,4 +1480,4 @@ ruby --version | awk '{print $2}'
 ctags --version | head -1 | awk '{print $3}'
 # 6.0.0(p6.0.20230813.0)
 dpkg --list | wc --lines
-# 2336
+# 2354

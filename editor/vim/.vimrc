@@ -143,9 +143,9 @@
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
 "           Version                         BARE(ms)    PLUG-NC(ms) PLUG-C(ms)  DATE
-"   Vim9:   9.0.1-749 (vimscript)           4.086       101.880     238.182     2023-05-10
-"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)      25.311      74.522      149.765     2023-05-10
-"   Diff:                                   519.4       -26.8     -37.1%
+"   Vim9:   9.0.1-749 (vimscript)           2.251       81.961      166.764     2023-08-19
+"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)      4.699       54.002      100.346     2023-08-19
+"   Diff:                                   108.7%      -34.1%      -39.8%
 " @see https://neovim.io/doc/user/vim_diff.html
 " @see https://www.murilopereira.com/the-values-of-emacs-the-neovim-revolution-and-the-vscode-gorilla/
 
@@ -387,7 +387,7 @@ set clipboard^=unnamedplus                                      " Shared SO clip
 set splitbelow                                                  " :split  opens window below (default: off)
 set splitright                                                  " :vsplit opens window right (default: off)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
-set nocursorline                                                " Highligth current line (slower) (default: off)
+set cursorline                                                  " Highligth current line (slower) (default: off)
 set cmdheight=2                                                 " More spaces, less "Enter to continue..." messages (default: 1)
 set report=5                                                    " Less verbose (default: 2)
 " set virtualedit=block                                           " Allow in Visual block mode (default: empty), use: yov
@@ -406,7 +406,7 @@ set sidescroll=3                                                " Scroll horizon
 set sidescrolloff=5                                             " Preview horizontally scroll (default: 0=edge)
 
 " Custom View
-set number                                                      " Number in cursorline, no zero (default: off)
+set number                                                      " Number in cursorline, using relativenumber show zero (default: off)
 set numberwidth=5                                               " Number size, aka: 9999␣ (default: 4=999␣)
 set relativenumber                                              " Relative number (slower) (default: off)
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
@@ -751,7 +751,7 @@ function! s:statusline(lastmode) abort
 "     endif
 
     setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
-    setlocal statusline+=%{&filetype!=#''?&filetype:':\|'}      " Is it require description?
+    setlocal statusline+=%{&filetype!=#''?&filetype:&buftype}   " Is it require description?
     setlocal statusline+=%{GetVersion('/usr/local/bin/phpx')}   " PHP version
 
     setlocal statusline+=\%<                                    " Truncate long statusline here
@@ -768,10 +768,10 @@ let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 noremap <Space> <Nop>
 
-" Best Regex (?) using [v]ery magic
-" @see :h /\v
-nnoremap / /\v
-nnoremap ? ?\v
+" " Best Regex (?) using [v]ery magic
+" " @see :h /\v
+" nnoremap / /\v
+" nnoremap ? ?\v
 
 " Purify! in Normal|Select|Operator Mode
 noremap <Up> <Nop>
