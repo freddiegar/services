@@ -177,7 +177,29 @@ git rebase -i HEAD~N -x "git commit -S --amend --author 'Freddie Gar <freddie@ga
 git push --force
 ```
 
+Change order commits in git
 
+[See](https://stackoverflow.com/a/44173773/15601185)
+
+```bash
+git rebase -i HEAD~N
+
+# Before
+pick df89a81 Something committed too early.
+pick 4968dbd Fixing an error in commit df89a81.
+pick acb05b3 Some final commit.
+
+# After
+pick df89a81 Something committed too early.
+squash 4968dbd Fixing an error in commit df89a81.
+pick acb05b3 Some final commit.
+
+# Insert|Change message commit and close editor
+
+# Now
+648q9oq New message commit after sqush
+acb05b3 Some final commit.
+```
 
 Supervisor error
 
