@@ -1816,16 +1816,31 @@ Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Lea
 Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
 Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
 " Plug 'romainl/vim-qf'                                           " Run Cfilter using wrapper: Keep|Filter, Reject|Filter!, Restore
-Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}                " Run undo world: g-, g+
-Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install --no-dev -o'} " LSP and refactor tool for PHP
+Plug 'mbbill/undotree', {'on': [
+            \ 'UndotreeToggle',
+            \ 'UndotreeHide'
+            \ ]}                                                " Run undo world: g-, g+
+Plug 'phpactor/phpactor', {
+            \ 'for': 'php',
+            \ 'do': 'composer install --no-dev -o'
+            \ }                                                 " LSP and refactor tool for PHP
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
 Plug 'ludovicchabant/vim-gutentags'                             " Auto generate tags (not allowed 'for' option)
 " Plug 'Shougo/echodoc.vim', {'for': ['php', 'c', 'vim']}         " Show function signature in command line (weird)
 " Plug 'Shougo/context_filetype.vim', {'for': 'markdown'}         " Show/use context in markdown files
 
-" Plug 'AndrewRadev/tagalong.vim', {'for': ['html', 'xml', 'vue']}" Rename html tags easily
-" Plug 'mattn/emmet-vim', {'for': ['html', 'css', 'javascript', 'vue']}   " Performance using emmet syntax
+" Plug 'AndrewRadev/tagalong.vim', {'for': [
+"             \ 'html',
+"             \ 'xml',
+"             \ 'vue'
+"             \ ]}                                                " Rename html tags easily
+" Plug 'mattn/emmet-vim', {'for': [
+"             \ 'html',
+"             \ 'css',
+"             \ 'javascript',
+"             \ 'vue'
+"             \ ]}                                                " Performance using emmet syntax
 
 " Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 " Plug 'wellle/context.vim'                                       " Show context code (slower)
@@ -2728,8 +2743,9 @@ let g:gutentags_add_default_project_roots = 0
 let g:gutentags_project_root = ['.git']
 let g:gutentags_cache_dir = expand('/tmp/ctags/')
 let g:gutentags_generate_on_new = 0
-let g:gutentags_exclude_filetypes = index(['php', 'c'], &filetype) < 0 ? [&filetype] : []
-let g:gutentags_generate_on_write = g:hasgit && index(['php', 'c'], &filetype)
+" Weird behaviour; sometimes command are unknow
+" let g:gutentags_exclude_filetypes = index(['php', 'c'], &filetype) < 0 ? [&filetype] : []
+" let g:gutentags_generate_on_write = g:hasgit && index(['php', 'c'], &filetype)
 let g:gutentags_generate_on_missing = g:hasgit && index(['php', 'c'], &filetype)
 " Enable :GutentagsToggleEnabled
 let g:gutentags_define_advanced_commands = 1
@@ -3144,14 +3160,15 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
     autocmd BufRead,BufNewFile */i3/config setfiletype i3config | setlocal commentstring=#\ %s
     autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
-    autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log
-    autocmd BufRead,BufNewFile *.log setlocal filetype=log
-    autocmd BufRead,BufNewFile *.{csv,tsv} setlocal filetype=csv list
+    autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log noundofile
+    autocmd BufRead,BufNewFile *.log setlocal filetype=log noundofile
+    autocmd BufRead,BufNewFile *.{csv,tsv} setlocal filetype=csv list noundofile
+    autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=4 noundofile
     autocmd BufRead,BufNewFile make setlocal noexpandtab tabstop=4
-    autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=4
     autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
     autocmd BufRead,BufNewFile *.vpm setfiletype vpm
-    autocmd BufRead,BufNewFile /tmp/ctags/*tags* setfiletype tags
+    autocmd BufRead,BufNewFile /tmp/ctags/*tags* setfiletype tags noundofile
+    autocmd BufRead,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType sql let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
@@ -3305,7 +3322,7 @@ augroup AutoCommands
 
     autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> execute ":TestNearest --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> execute ":TestFile --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> execute ":TestSuite --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> execute ":TestSuite --testdox -vvv " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
 
     " PHP Linter
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
@@ -3970,6 +3987,10 @@ augroup AutoCommands
 
             let l:index = l:index + 1
         endwhile
+
+        if len(getbufinfo("undotree_2")) > 0
+            silent UndotreeHide
+        endif
     endfunction
 
     " Preserve current quickfix in session
