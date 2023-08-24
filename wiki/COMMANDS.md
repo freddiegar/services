@@ -1888,3 +1888,16 @@ sudo cp -p /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.backup
 sudo sed -i '/default = default_sect/a legacy = legacy_sect' /etc/ssl/openssl.cnf
 sudo sed -i '/^\[default_sect\]/a activate = 1\n\[legacy_sect\]\nactivate = 1' /etc/ssl/openssl.cnf
 ```
+
+Diagrams from CLI
+
+[See](https://d2lang.com/tour/intro/)
+
+```bash
+curl -L https://github.com/terrastruct/d2/releases/download/v0.6.0/d2-v0.6.0-linux-amd64.tar.gz -o d2.tar.gz
+sudo tar -xfv d2.tar.gz -C /opt && rm -Rf d2.tar.gz
+
+mkdir /tmp/d2
+sudo ln -s /opt/d2-v0.6.0/bin/d2 /usr/bin/d2
+## rm -Rf /usr/bin/d2 /tmp/d2
+```

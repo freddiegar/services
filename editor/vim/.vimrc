@@ -1144,6 +1144,9 @@ nnoremap <silent> yos :<C-u>set wrapscan!<Enter>
 nnoremap <silent> yot :<C-u>set <C-r>=(&colorcolumn > 0)
             \ ? 'colorcolumn=0'
             \ : 'colorcolumn=121'<Enter><Enter>
+nnoremap <silent> yob :<C-u>set <C-r>=(&background ==# 'light')
+            \ ? 'background=dark'
+            \ : 'background=light' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
 nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
@@ -1874,6 +1877,7 @@ endif
 " Plug 'MTDL9/vim-log-highlighting', {'for': 'log'}               " Better highlight log syntax
 " Plug 'ekalinin/dockerfile.vim', {'for': 'dockerfile'}           " Better highlight dockerfile syntax (better?)
 " Plug 'pangloss/vim-javascript', {'for': 'javascript'}           " Better highlight javascript syntax
+Plug 'terrastruct/d2-vim', {'for': 'd2'}                        " Better highlight d2 syntax
 
 if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
@@ -2080,6 +2084,10 @@ let g:python3_host_prog = '/usr/bin/python3'
 " " Echodoc
 " " @see https://github.com/Shougo/echodoc.vim
 " let g:echodoc#enable_at_startup = 1
+
+" Diagrams
+" @see https://github.com/terrastruct/d2-vim
+let g:d2_block_string_syntaxes = {'php': ['php']}
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
@@ -2561,13 +2569,18 @@ endfunction
 nnoremap <silent> <Plug>GoUrlRepeatable <Cmd>call <SID>go_url(expand('<cWORD>'))<Enter>
 nmap <silent> gx <Plug>GoUrlRepeatable
 
-" url (string), [string repeatable]
-function! s:go_url(url, ...) abort
-    let l:running = system('ps -fea | ' . g:filterprg . ' "/opt/firefox/firefox-bin" |  ' . g:filterprg  . ' --invert-match "' . g:filterprg . '"')
+" dependency (string): void
+function! s:isrunning(dependency) abort
+    let l:running = system('ps -fe | ' . g:filterprg . ' " ' . a:dependency . ' " | ' . g:filterprg  . ' --invert-match " rg | grep | grepx "')
 
-    if len(l:running) ==# 0
+    return len(l:running) > 0
+endfunction
+
+" url (string), [string repeatable]: void
+function! s:go_url(url, ...) abort
+    if !<SID>isrunning('/opt/firefox/firefox-bin')
         echohl WarningMsg
-        echo 'Not running browser'
+        echo 'Not running browser.'
         echohl None
 
         return 1
@@ -2919,7 +2932,7 @@ function! s:run(range, interactive, ...) abort
     let l:execute = ''
     let l:ignorechars = []
     let l:runner = &filetype
-    let l:runners = ['&bash', '&php', '&sql']
+    let l:runners = ['&bash', '&php', '&sql', '&d2']
 
     if l:runner ==# ''
         let l:runner = confirm('Select runner:', join(l:runners, "\n"), 2, 'Q')
@@ -2944,6 +2957,20 @@ function! s:run(range, interactive, ...) abort
     elseif (l:runner ==# 3 || index(['sql'], l:runner) >= 0) && <SID>db() !=# ''
         " Don't add silent
         execute join(['DB', <SID>db(), l:command], ' ')
+
+        return
+    elseif (l:runner ==# 4 || index(['d2'], l:runner) >= 0) && !g:isneovim
+        if !<SID>isrunning('/opt/firefox/firefox-bin')
+            echohl WarningMsg
+            echo 'Not running browser.'
+            echohl None
+
+            return 1
+        endif
+
+        if !<SID>isrunning('d2')
+            execute ':terminal ++hidden ++kill=int d2 --watch ' . expand('%:p') . ' /tmp/d2/' . expand('%:t')
+        endif
 
         return
     else
@@ -3189,6 +3216,7 @@ augroup AutoCommands
     autocmd FileType apache setlocal commentstring=#\ %s
     autocmd FileType crontab setlocal commentstring=#\ %s
     autocmd FileType debsources setlocal commentstring=#\ %s
+    autocmd FileType snippets setlocal commentstring=#\ %s
     autocmd FileType html,xml setlocal matchpairs+=<:>
     autocmd FileType php setlocal commentstring=//\ %s iskeyword=@,48-57,_,192-255 " foldmethod=indent foldlevel=4 " foldcolumn=1
     autocmd FileType php,c setlocal matchpairs-=<:>
@@ -3293,6 +3321,15 @@ augroup AutoCommands
     autocmd FileType vpm nnoremap <silent> <buffer> >W :.!toilet -w 200 -f standard -W<Enter>
     autocmd FileType vpm nnoremap <silent> <buffer> >b :.!toilet -w 200 -f term -F border<Enter>
     autocmd FileType vpm xnoremap <silent> <buffer> >b :!toilet -w 200 -f term -F border<Enter>
+
+    " D2: Diagrams from CLI
+    autocmd BufWritePost *.d2 :R
+    autocmd BufDelete * if fnamemodify(expand('<afile>'), ':e') ==# 'd2'
+                \ |     let bterminals = term_list()
+                \ |     for bterminal in bterminals
+                \ |         call feedkeys(":bdelete! " . bterminal . "\r", 'n')
+                \ |     endfor
+                \ | endif
 
     " PHP Customization
     " autocmd FileType php inoremap <silent> <buffer> -> -><C-x><C-n>
@@ -3650,6 +3687,16 @@ augroup AutoCommands
     endfunction
 
     autocmd FileType vim-plug nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
+
+    autocmd FileType d2 nnoremap <silent> <buffer> <F1> <Cmd>call <SID>d2fixer() <Bar> call <SID>statusline('f')<Enter>
+
+    function! s:d2fixer() abort
+        if bufname('%') !=# ''
+            silent update!
+        endif
+
+        silent execute '%r!d2 fmt ' . expand('%:p')
+    endfunction
 
     autocmd FileType json nnoremap <silent> <buffer> <F1> <Cmd>call <SID>jsonfixer() <Bar> call <SID>statusline('f')<Enter>
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
@@ -4284,7 +4331,7 @@ augroup AutoCommands
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql :call <SID>cleanup('te')
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2 :call <SID>cleanup('te')
 
     " One <C-x><C-f> to auto-complet files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories
