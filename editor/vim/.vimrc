@@ -1112,34 +1112,34 @@ nnoremap <silent> <Plug>DeleteFinalRepeatable <Cmd>call <SID>append_char('d')<En
 nmap <silent> <Leader>sa <Plug>DeleteFinalRepeatable
 
 " @simple https://github.com/tpope/vim-unimpaired
-nnoremap <silent> <C-1> :<C-u>cfirst<Enter>
-nnoremap <silent> <C-k> :<C-u>copen<Enter>
-nnoremap <silent> <C-j> :<C-u>cclose<Enter>
-nnoremap <silent> <C-h> :<C-u>colder<Enter>
-nnoremap <silent> <C-l> :<C-u>cnewer<Enter>
-" nnoremap <silent> <C-9> :<C-u>clast<Enter>
+nnoremap <silent> <C-1> :<C-u>silent! cfirst<Enter>
+nnoremap <silent> <C-k> :<C-u>silent! copen<Enter>
+nnoremap <silent> <C-j> :<C-u>silent! cclose<Enter>
+nnoremap <silent> <C-h> :<C-u>silent! colder<Enter>
+nnoremap <silent> <C-l> :<C-u>silent! cnewer<Enter>
+nnoremap <silent> <C-9> :<C-u>silent! clast<Enter>
 
-nnoremap <silent> [q :<C-u>cprevious<Enter>zzzv
-nnoremap <silent> ]q :<C-u>cnext<Enter>zzzv
-nnoremap <silent> [Q :<C-u>cfirst<Enter>zzzv
-nnoremap <silent> ]Q :<C-u>clast<Enter>zzzv
+nnoremap <silent> [q :<C-u>silent! cprevious<Enter>zzzv
+nnoremap <silent> ]q :<C-u>silent! cnext<Enter>zzzv
+nnoremap <silent> [Q :<C-u>silent! cfirst<Enter>zzzv
+nnoremap <silent> ]Q :<C-u>silent! clast<Enter>zzzv
 
-nnoremap <silent> <A-1> :<C-u>lfirst<Enter>
-nnoremap <silent> <A-k> :<C-u>lopen<Enter>
-nnoremap <silent> <A-j> :<C-u>lclose<Enter>
-nnoremap <silent> <A-h> :<C-u>lolder<Enter>
-nnoremap <silent> <A-l> :<C-u>lnewer<Enter>
-" nnoremap <silent> <A-9> :<C-u>llast<Enter>
+nnoremap <silent> <A-1> :<C-u>silent! lfirst<Enter>
+nnoremap <silent> <A-k> :<C-u>silent! lopen<Enter>
+nnoremap <silent> <A-j> :<C-u>silent! lclose<Enter>
+nnoremap <silent> <A-h> :<C-u>silent! lolder<Enter>
+nnoremap <silent> <A-l> :<C-u>silent! lnewer<Enter>
+nnoremap <silent> <A-9> :<C-u>silent! llast<Enter>
 
-nnoremap <silent> [l :<C-u>lprevious<Enter>zzzv
-nnoremap <silent> ]l :<C-u>lnext<Enter>zzzv
-nnoremap <silent> [L :<C-u>lfirst<Enter>zzzv
-nnoremap <silent> ]L :<C-u>llast<Enter>zzzv
+nnoremap <silent> [l :<C-u>silent! lprevious<Enter>zzzv
+nnoremap <silent> ]l :<C-u>silent! lnext<Enter>zzzv
+nnoremap <silent> [L :<C-u>silent! lfirst<Enter>zzzv
+nnoremap <silent> ]L :<C-u>silent! llast<Enter>zzzv
 
-nnoremap <silent> [b :<C-u>bprevious<Enter>
-nnoremap <silent> ]b :<C-u>bnext<Enter>
-nnoremap <silent> [B :<C-u>bfirst<Enter>
-nnoremap <silent> ]B :<C-u>blast<Enter>
+nnoremap <silent> [b :<C-u>silent! bprevious<Enter>
+nnoremap <silent> ]b :<C-u>silent! bnext<Enter>
+nnoremap <silent> [B :<C-u>silent! bfirst<Enter>
+nnoremap <silent> ]B :<C-u>silent! blast<Enter>
 
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
@@ -3329,7 +3329,7 @@ augroup AutoCommands
 
     " D2: Diagrams from CLI
     autocmd BufWritePost *.d2 :R
-    autocmd BufDelete * if fnamemodify(expand('<afile>'), ':e') ==# 'd2'
+    autocmd BufDelete * if !g:isneovim && fnamemodify(expand('<afile>'), ':e') ==# 'd2' && <SID>isrunning('d2')
                 \ |     let bterminals = term_list()
                 \ |     for bterminal in bterminals
                 \ |         call feedkeys(":bdelete! " . bterminal . "\r", 'n')
