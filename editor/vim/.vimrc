@@ -133,7 +133,6 @@
 " 5. Colorscheme built-in have weird colors                 -> @see https://www.reddit.com/r/neovim/comments/4urlge/vim_and_neovim_same_airline_theme_different/
 " 6. Colorscheme in :terminal have weird colors             -> @see #5 (colors are old respect a Vim9) -> links colors in $VIMRUNTIME
 " 7. In Linux terminal shows weird chars                    -> xdpyinfo?
-" 8. Font size is always smaller (11pt)                     -> @see https://github.com/neovim/neovim/issues/6798
 " n. Don't need installation
 " @see https://vimhelp.org/version9.txt.html#new-9
 
@@ -427,10 +426,16 @@ else
 endif
 
 set winaltkeys=no                                               " Never use alt-keys for GUI menus (default: menu)
-set guicursor=                                                  " Keep font size in nvim (why nvim why!). See #8
+
+" @thanks https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
+" @see :h termcap-cursor-shape
+if !g:isneovim                                                  " Visual feedback in Insert Mode: line and Others Modes: block
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"                    " Use line (1=|) on [S]tart [I]nsert Mode
+    let &t_SR = "\<Esc>]50;CursorShape=2\x7"                    " Use underline (2=_) on [S]tart [R]eplace Mode
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"                    " Use block (0) on [E]nd [I]nsert (or Replace) Mode
+endif
 
 if has('gui_running')
-    set guicursor=a:block                                       " Always cursor has same shape: block
     set guicursor+=a:blinkon0                                   " Never blink the cursor (default: on)
 
     set guioptions=                                             " Reset option (default: aegimrLrT)
