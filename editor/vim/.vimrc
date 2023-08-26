@@ -2799,6 +2799,28 @@ let g:gutentags_ctags_extra_args = [
 " Fugitive
 " @see https://github.com/tpope/vim-fugitive
 let g:fugitive_no_maps = 1
+nmap <silent> <C-w>e <Cmd>call <SID>gbrowse(v:false)<Enter>
+nmap <silent> <C-w>E <Cmd>call <SID>gbrowse(v:true)<Enter>
+
+function! s:gbrowse(copy) abort
+    if !a:copy && !<SID>isrunning('/opt/firefox/firefox-bin')
+        echohl WarningMsg
+        echo 'Not running browser.'
+        echohl None
+
+        return 1
+    endif
+
+    try
+        if a:copy
+            GBrowse! @
+        else
+            GBrowse @
+        endif
+    catch
+        echo 'Nothing to do.'
+    endtry
+endfunction
 
 function! s:git_alias() abort
     let l:aliases = []
