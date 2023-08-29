@@ -185,6 +185,7 @@ assign [class="VirtualBox Manager"]                                         $wor
 assign [class="VirtualBox Machine"]                                         $workspace8
 assign [class="^VirtualBox$"]                                               $workspace8
 assign [class="^Virt-manager$"]                                             $workspace8
+assign [class="obs"]                                                        $workspace8
 assign [class="Nautilus"]                                                   $workspace9
 assign [class="Opera"]                                                      $workspace10
 

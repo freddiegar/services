@@ -1192,8 +1192,12 @@ sudo apt-get install -y kcachegrind
 ## OBS - Open Broadcasting Software
 
 ```bash
+# Oldest
 sudo add-apt-repository ppa:obsproject/obs-studio
+##
+
 sudo apt-get install -y ffmpeg obs-studio
+mkdir $HOME/obs
 ## sudo apt-get remove obs-studio ffmpeg && sudo apt-get autoremove && echo "\n" | sudo add-apt-repository --remove ppa:obsproject/obs-studio
 ```
 
