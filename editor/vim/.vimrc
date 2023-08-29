@@ -371,8 +371,8 @@ set completeopt=                                                " Show preview i
 set completeopt+=longest                                        " Don't select the first option, allow insert more words
 set completeopt+=menu                                           " Show list only if items > 1, if only once option is selected
 " @see autocomplete function, they are necesary to don't select first item random
-set completeopt+=menuone                                        " Use the popup menu also when there is only one match.
-set completeopt+=noinsert                                       " Do not insert any text for a match until the user selects a match from the menu
+" set completeopt+=menuone                                        " Use the popup menu also when there is only one match.
+" set completeopt+=noinsert                                       " Do not insert any text for a match until the user selects a match from the menu
 set pumheight=10                                                " Maximum options showed in popup menu (default: 0=all)
 
 " Custom Interface
@@ -773,10 +773,10 @@ let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 noremap <Space> <Nop>
 
-" " Best Regex (?) using [v]ery magic
-" " @see :h /\v
-" nnoremap / /\v
-" nnoremap ? ?\v
+" Best Regex (?) using [v]ery magic
+" @see :h /\v
+nnoremap / /\v
+nnoremap ? ?\v
 
 " Purify! in Normal|Select|Operator Mode
 noremap <Up> <Nop>
@@ -1798,7 +1798,7 @@ Plug 'tpope/vim-surround'                                       " cs"' ([c]hange
 Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
-" Plug 'Raimondi/delimitMate'                                     " Append close: ', ", ), ], etc
+Plug 'cohama/lexima.vim'                                        " Append close: ', ", ), ], etc
 
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'dense-analysis/ale', {'for': 'php'}                       " Diagnostic code on-the-fly
@@ -1922,12 +1922,9 @@ let g:phpactorPhpBin = '/usr/bin/php8.1'
 
 " command! -nargs=* -range S call search#start(<q-args>, visualmode(), <range>)
 
-" " DelitMate
-" " @see https://github.com/Raimondi/delimitMate
-" let g:delimitMate_expand_cr = 1
-" let g:delimitMate_smart_quotes = 1
-" let g:delimitMate_expand_inside_quotes = 0
-" let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
+" Autoclose
+" @see https://github.com/cohama/lexima.vim
+" @thanks https://www.slideshare.net/cohama/auto-closing-parenthesis-vim-conf2014-41290298
 
 " @thanks https://github.com/skanehira/translate.vim
 " channel (channel), message (string)
