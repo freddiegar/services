@@ -1798,7 +1798,8 @@ Plug 'tpope/vim-surround'                                       " cs"' ([c]hange
 Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
-Plug 'cohama/lexima.vim'                                        " Append close: ', ", ), ], etc
+" Keep disabled! mappings fails
+" Plug 'cohama/lexima.vim'                                        " Append close: ', ", ), ], etc
 
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
 Plug 'dense-analysis/ale', {'for': 'php'}                       " Diagnostic code on-the-fly
@@ -1921,10 +1922,6 @@ let g:phpactorPhpBin = '/usr/bin/php8.1'
 " xmap <silent> <Leader>S <Plug>SearchVisual
 
 " command! -nargs=* -range S call search#start(<q-args>, visualmode(), <range>)
-
-" Autoclose
-" @see https://github.com/cohama/lexima.vim
-" @thanks https://www.slideshare.net/cohama/auto-closing-parenthesis-vim-conf2014-41290298
 
 " @thanks https://github.com/skanehira/translate.vim
 " channel (channel), message (string)
@@ -3749,16 +3746,25 @@ augroup AutoCommands
     " Custom register by filetype
     " Diff [t]ime operation
     autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=((b*100)/a)-100\r\e")
+
     " [t]inker sql
     autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyy\"zpIDB::select(\"\eA\")\edd'z:delmarks z\r")
+    " [s]tatement sql
+    autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyy\"zpIDB::statement(\"\eA\")\edd'z:delmarks z\r")
     " [e]xplain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
     " [j]son explain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('j', "IEXPLAIN FORMAT=json \eEa SQL_NO_CACHE\e")
     " [u]ndo explain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('u', "vip:s/EXPLAIN \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e")
-    " [d]ebug explain sql
-    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('d', "@evip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp@u") | endif
+    " [d]esribe sql
+    autocmd BufEnter,BufNewFile *.sql call setreg('d', "_/\\c from \rEw\"zyiwODESCRIBE `\e\"zpA`;\e0")
+    " show [i]ndexes
+    autocmd BufEnter,BufNewFile *.sql call setreg('i', "_/\\c from \rEw\"zyiwOSHOW INDEXES FROM `\e\"zpA`;\e0")
+    " show [c]reate
+    autocmd BufEnter,BufNewFile *.sql call setreg('c', "_/\\c from \rEw\"zyiwOSHOW CREATE TABLE `\e\"zpA`;\e0")
+    " [v]isualizate explain sql
+    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('v', "@evip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp@u") | endif
     " [r]un sql
     autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('r', "vip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp") | endif
 
