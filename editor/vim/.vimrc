@@ -1042,7 +1042,7 @@ endfunction
 command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
 
 " Sorry but :help is better
-nmap <silent> <F1> <Nop>
+nmap <silent> <F1> mzgg=G`z
 
 " Open explore in current work directory (toggle)
 nmap <silent> <expr> <C-w>.
@@ -4031,7 +4031,7 @@ augroup AutoCommands
 
     function! s:sessionremoveitem(item) abort
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
-                    \ || index(['netrw', 'diff', 'undotree', 'tags'], getbufvar(a:item, '&filetype')) >= 0
+                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive'], getbufvar(a:item, '&filetype')) >= 0
                     \ || buflisted(a:item) == 0
                     \ || split(a:item, '\.')[-1] ==# 'dbout'
                     \ || isdirectory(a:item)

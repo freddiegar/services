@@ -23,6 +23,27 @@ services:
           cpus: $DB_CORE
           memory: $DB_MEMORY
 
+  db80:
+    container_name: db80
+    build:
+      context: .
+      dockerfile: ./db80/Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+    volumes:
+      - $DB_PATH_DATA/db80:/var/lib/mysql
+      - $DB_PATH_LOG/db80:/var/log/mysql
+    networks:
+      development:
+        ipv4_address: $DB80_IP_ADDRESS
+    ports:
+    - $DB80_PORT:3306
+    deploy:
+      resources:
+        limits:
+          cpus: $DB_CORE
+          memory: $DB_MEMORY
+
   dbrx:
     container_name: dbrx
     build:
