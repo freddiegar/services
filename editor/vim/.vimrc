@@ -3242,7 +3242,7 @@ augroup AutoCommands
     autocmd FileType php setlocal commentstring=//\ %s iskeyword=@,48-57,_,192-255 " foldmethod=indent foldlevel=4 " foldcolumn=1
     autocmd FileType php,c setlocal matchpairs-=<:>
     autocmd FileType yaml,json setlocal softtabstop=2 shiftwidth=2
-    autocmd FileType c,cpp setlocal path+=/usr/include include&
+    autocmd FileType c,cpp setlocal commentstring=//\ %s path+=/usr/include include&
     autocmd FileType vim setlocal keywordprg=:help commentstring=\"\ %s
     autocmd FileType git setlocal foldmethod=syntax foldlevel=1
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
@@ -3748,20 +3748,22 @@ augroup AutoCommands
     autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=((b*100)/a)-100\r\e")
 
     " [t]inker sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyy\"zpIDB::select(\"\eA\")\edd'z:delmarks z\r")
+    autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\r{jIDB::select(\"\e}kA\")\e{jd}\"_dd'z:delmarks z\r")
     " [s]tatement sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyy\"zpIDB::statement(\"\eA\")\edd'z:delmarks z\r")
+    autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\r{jIDB::statement(\"\e}kA\")\e{jd}\"_dd'z:delmarks z\r")
     " [e]xplain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
     " [j]son explain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('j', "IEXPLAIN FORMAT=json \eEa SQL_NO_CACHE\e")
+    " [a]nalize sql > MySQL 8.0
+    autocmd BufEnter,BufNewFile *.sql call setreg('a', "IEXPLAIN ANALYZE \eEa SQL_NO_CACHE\e")
     " [u]ndo explain sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('u', "vip:s/EXPLAIN \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e")
+    autocmd BufEnter,BufNewFile *.sql call setreg('u', "vip:s/\\cEXPLAIN \\|ANALYZE \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e")
     " [d]esribe sql
     autocmd BufEnter,BufNewFile *.sql call setreg('d', "_/\\c from \rEw\"zyiwODESCRIBE `\e\"zpA`;\e0")
-    " show [i]ndexes
+    " [i]ndexes show
     autocmd BufEnter,BufNewFile *.sql call setreg('i', "_/\\c from \rEw\"zyiwOSHOW INDEXES FROM `\e\"zpA`;\e0")
-    " show [c]reate
+    " [c]reate show
     autocmd BufEnter,BufNewFile *.sql call setreg('c', "_/\\c from \rEw\"zyiwOSHOW CREATE TABLE `\e\"zpA`;\e0")
     " [v]isualizate explain sql
     autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('v', "@evip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp@u") | endif
@@ -3802,7 +3804,7 @@ augroup AutoCommands
 
         let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
 
-        let l:initial_command = printf(l:finder_command, shellescape(a:query))
+        let l:initial_command = printf(l:finder_command, fzf#shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
         let l:spec = {'options': ['--phony', '--prompt', l:prompt, '--query', a:query, '--bind', 'change:reload:' . l:reload_command]}
 
@@ -4361,7 +4363,7 @@ augroup AutoCommands
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2 :call <SID>cleanup('te')
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c :call <SID>cleanup('te')
 
     " One <C-x><C-f> to auto-complet files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories

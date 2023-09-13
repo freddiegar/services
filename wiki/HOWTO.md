@@ -339,3 +339,11 @@ sudo apt-get install -y ffmpeg
 # Download
 python3 /usr/local/bin/youtube-dl --ignore-errors --yes-playlist --yes-playlist --extract-audio -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' https://music.youtube.com/watch?v=jiP2uZu5fBY&list=RDAOy1jlKyX_GYhAAPvBR43tFQ
 ```
+
+Speed-up load GTK applications
+
+[See](https://unix.stackexchange.com/a/594553)
+
+```bash
+dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
+```
