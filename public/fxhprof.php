@@ -10,6 +10,7 @@
 if (\extension_loaded('xhprof')
     && !empty($_SERVER['SCRIPT_URL'])
     && strpos($_SERVER['SCRIPT_URL'], '_debugbar') === false
+    && strpos($_SERVER['HTTP_USER_AGENT'] ?? '', 'curl') === false
 ) {
     $xhprof = '/var/www/html/xhprof';
     $version = str_replace('.', '', substr(\PHP_VERSION, 0, 3));

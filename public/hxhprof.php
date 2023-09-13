@@ -10,6 +10,7 @@
 if (\extension_loaded('xhprof')
     && !empty($_SERVER['SCRIPT_URL'])
     && strpos($_SERVER['SCRIPT_URL'], '_debugbar') === false
+    && strpos($_SERVER['HTTP_USER_AGENT'] ?? '', 'curl') === false
 ) {
     // @see https://github.com/longxinH/xhprof
     // @see https://github.com/perftools/xhgui
