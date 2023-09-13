@@ -1,4 +1,4 @@
--- https://dev.mysql.com/doc/refman/5.7/en/optimization.html
+-- https://dev.mysql.com/doc/refman/8.0/en/optimization.html
 -- https://orangematter.solarwinds.com/2019/02/05/the-left-prefix-index-rule/
 -- https://www.forknerds.com/reduce-the-size-of-mysql/
 
@@ -198,7 +198,38 @@ desc events_statements_summary_by_digest;
 -- 6. Repeat from 1.
 
 /*
+
+@see https://en.wikipedia.org/wiki/Big_O_notation
+@see https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
 @see https://dev.mysql.com/doc/workbench/en/wb-performance-explain.html
+@see https://www.sitepoint.com/using-explain-to-write-better-mysql-queries/
+
++----+-------------+----------------------+------------+------+---------------+------+---------+------+-------+----------+-------------+
+| id | select_type | table                | partitions | type | possible_keys | key  | key_len | ref  | rows  | filtered | Extra       |
++----+-------------+----------------------+------------+------+---------------+------+---------+------+-------+----------+-------------+
+|  1 | SIMPLE      | transaction_messages | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 15982 |     6.67 | Using where |
++----+-------------+----------------------+------------+------+---------------+------+---------+------+-------+----------+-------------+
+
+TL:DR;
+Indexes ONLY applies if: Are same type and same size
+Indexes must be explicit, then, use USE|FORCE INDEX (name_index)
+@see https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-join-types
+type: ALL   -> cartesian from ALL rows in each table, then: 3961 * 4 = 15844 rows
+      index -> === ALL (except that the index tree is scanned). Shows "Using index" in Extra column
+@see https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_ref
+ref:  NULL  -> There aren't join or there are a range condition (in, between, etc)
+      const -> There are matching column AND is INDEXED. Very fast because they are read only once.
+      eq_ref -> There are matching ALL index columns in query. 2nd faster.
+
++----+-------------+------------------------------+------------+-------+---------------------------------------------+---------------------------------------------+---------+---------------------+------+----------+------------------------------------+
+| id | select_type | table                        | partitions | type  | possible_keys                               | key                                         | key_len | ref                 | rows | filtered | Extra                              |
++----+-------------+------------------------------+------------+-------+---------------------------------------------+---------------------------------------------+---------+---------------------+------+----------+------------------------------------+
+|  1 | SIMPLE      | transactions (3977)          | NULL       | range | transactions_created_at_merchant_id_index   | transactions_created_at_merchant_id_index   | 5       | NULL                | 3961 |     3.00 | Using index condition; Using where |
+|  1 | SIMPLE      | transaction_messages (15935) | NULL       | ref   | transaction_messages_transaction_id_foreign | transaction_messages_transaction_id_foreign | 4       | mpi.transactions.id |    4 |    20.00 | Using where                        |
++----+-------------+------------------------------+------------+-------+---------------------------------------------+---------------------------------------------+---------+---------------------+------+----------+------------------------------------+
+
+Because type is ALL for each table, this output indicates that MySQL is generating a Cartesian product of all the tables; that is, every combination of rows. This takes quite a long time, because the product of the number of rows in each table must be examined. For the case at hand, this product is 74 × 2135 × 74 × 3872 = 45,268,558,720 rows. If the tables were bigger, you can only imagine how long it would take.
+
 System Name     Color   Text on Visual Diagram  Tooltip Related Information
 ----------------|---------|-----------------------------------------------------|------------------------------------------------------------------------------------------------
 SYSTEM          | Blue    | Single row: system constant                         | Very low cost

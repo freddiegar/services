@@ -27,7 +27,7 @@ RIGHT
 endsnippet
 
 snippet w "Where" iw
-WHERE $0
+WHERE ${1:id}$0
 endsnippet
 
 snippet & "And" iw
@@ -78,7 +78,7 @@ snippet . "Concatenate" iw
 CONCAT($1)$0
 endsnippet
 
-snippet p "Update" b
+snippet u "Update" b
 UPDATE $1 SET $0
 endsnippet
 
@@ -102,7 +102,7 @@ snippet c "Create table" b
 CREATE TABLE $1;$0
 endsnippet
 
-snippet u "Create user" b
+snippet @ "Create user" b
 CREATE USER $1@'${2:172.20.0.%}' IDENTIFIED BY '$3';$0
 endsnippet
 

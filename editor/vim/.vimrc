@@ -740,6 +740,7 @@ function! s:statusline(lastmode) abort
     setlocal statusline+=%{&wrapscan==0?'[s]':''}               " Wrapscan flag
     setlocal statusline+=%{&paste==0?'':'[p]'}                  " Paste flag
     setlocal statusline+=%{&diff==0?'':'[d]'}                   " Diff mode flag
+    setlocal statusline+=%{&undofile==0?'[n]':''}               " No undofile flag
     setlocal statusline+=%{&virtualedit=~#'all'?'[v]':''}       " Virtual edit flag
 
     if exists('g:loaded_test')
@@ -3224,14 +3225,26 @@ augroup AutoCommands
                 \ match(getline('.')[col('.') - 2], '\W') >= 0 && match(getline('.')[col('.') - 2], '\.') < 0 ? "\<C-x>\<C-n>" :
                 \ pumvisible() ?  "\<C-n>" :
                 \ "\<C-x>\<C-o>"
-    autocmd FileType sql nnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer() <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType sql nnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:false) <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType sql vnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:true) <Bar> call <SID>statusline('f')<Enter>
 
-    function! s:sqlfixer() abort
+    function! s:sqlfixer(onselection) abort
         if bufname('%') !=# ''
             silent update!
         endif
 
-        silent execute '%!sqlformat --keywords upper --identifiers lower -'
+        if a:onselection
+            silent execute "normal \egv"
+            silent execute "'<,'>!sqlformat --reindent --wrap_after 140 --keywords upper --identifiers lower -"
+            silent execute "normal \e"
+
+            return
+        endif
+
+        silent execute "normal mz"
+        silent execute '%!sqlformat --wrap_after 140 --keywords upper --identifiers lower -'
+        silent execute "normal 'z"
+        silent execute "delmarks z"
     endfunction
 
     autocmd FileType apache setlocal commentstring=#\ %s
