@@ -347,3 +347,9 @@ Speed-up load GTK applications
 ```bash
 dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
 ```
+
+Get plain password's WiFi
+
+```bash
+sudo vim /etc/NetworkManager/system-connections
+```

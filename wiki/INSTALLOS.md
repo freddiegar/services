@@ -1279,6 +1279,12 @@ sudo apt install microsoft-edge-stable
 > -rw-r--r-- 1 root root 2794 Mar 26  2021 ubuntu-keyring-2012-cdimage.gpg
 > -rw-r--r-- 1 root root 1733 Mar 26  2021 ubuntu-keyring-2018-archive.gpg
 
+## GNUPG (Legacy)
+
+```bash
+sudo apt-get install -y gnupg1
+```
+
 ## Onefetch
 
 Not snap please
@@ -1483,5 +1489,7 @@ ruby --version | awk '{print $2}'
 # 3.1.2p20
 ctags --version | head -1 | awk '{print $3}'
 # 6.0.0(p6.0.20230813.0)
+gpg1 --version | head -1 | awk '{print $3}'
+# 1.4.23
 dpkg --list | wc --lines
-# 2354
+# 2462

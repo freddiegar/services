@@ -85,6 +85,7 @@ ctt() {
 alias \?="apropos"
 alias x="exit"
 alias v=$EDITOR
+alias e=$EDITOR
 alias g="grepx"
 alias n="neovide"
 alias m="man"

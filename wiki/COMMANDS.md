@@ -1289,9 +1289,10 @@ done
 ' > ~/mysqlrestore.sh
 ```
 
-Install GPG v1
+Install GPG v1 (P2P) [See](https://installati.one/install-gnupg1-ubuntu-22-04/)
 ```bash
-apt-get install -y gpgv1
+# sudo apt-get install -y gpgv1 <<< NOT!
+sudo apt-get install -y gnupg1
 ```
 
 Create GPG v1 Key
