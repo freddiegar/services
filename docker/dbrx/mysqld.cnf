@@ -40,8 +40,27 @@ key_buffer_size                         = 409M                              # 20
 # https://dev.mysql.com/doc/mysql/en/innodb-buffer-pool-resize.html
 # https://dev.mysql.com/doc/mysql/en/innodb-init-startup-configuration.html
 # https://www.percona.com/blog/10-mysql-performance-tuning-settings-after-installation/
+
+# @see https://youtu.be/LZTXuR0xS40?t=819
+# Run data in memory in better, Buffer Pool Size is important!
+# select format_bytes(@@innodb_buffer_pool_size) BufferPoolSize, format(A.num*100.0/B.num,2) BufferPoolFullPct, format(C.num*100.0/D.num,2) BufferPoolDirtyPct from (select variable_value num from performance_schema.global_status where variable_name = 'Innodb_buffer_pool_pages_data') A, (select variable_value num from performance_schema.global_status where variable_name = 'Innodb_buffer_pool_pages_total') B, (select variable_value num from performance_schema.global_status where variable_name = 'Innodb_buffer_pool_pages_dirty') C, (select variable_value num from performance_schema.global_status where variable_name = 'Innodb_buffer_pool_pages_total') D;
+# select format(A.num*100/B.num,2) DiskReadRatioPct from (select variable_value num from performance_schema.global_status where variable_name = 'Innodb_buffer_pool_reads') A, (select variable_value num from performance_schema.global_status where variable_name = 'Innodb_buffer_pool_read_requests') B;
+
+# show variables like '%innodb_buffer_pool_size%';
+# show variables like '%innodb_log_file_size%';
+# show variables like '%innodb_redo_log_capacity%';
+# show variables like '%innodb_flush_method%';
+
+# https://dev.mysql.com/doc/refman/8.0/en/innodb-dedicated-server.html
+# innodb_dedicated_server                 = 1
+# innodb_buffer_pool_size               | 128M  |
+# innodb_log_file_size                  | 50M   |
+# innodb_redo_log_capacity              | 104M  |
+# innodb_flush_method                   | fsync |
+
 innodb_buffer_pool_size                 = 1024M                             # 50% - 70% of total RAM and >= innodb_buffer_pool_instances * innodb_buffer_pool_chunk_size
-innodb_log_file_size                    = 256M                              # 25% of innodb_buffer_pool_size
+# innodb_log_file_size                    = 256M                              # 25% of innodb_buffer_pool_size
+innodb_redo_log_capacity                  = 256M                            # 25% of innodb_buffer_pool_size (only 8.0.30+)
 innodb_flush_method                     = O_DIRECT                          # Avoid double buffering
 innodb_file_per_table                   = 1
 innodb_stats_on_metadata                = 0

@@ -33,7 +33,7 @@ cp -p docker-compose.override.yml.example docker-compose.override.yml
 ```
 
 ```yaml
-version: "3.2"
+version: "3.8"
 
 services:
   # This service is shutdown
@@ -217,6 +217,21 @@ mysqltuner.pl --host 172.20.0.10 --forcemem [RAM in MB] --cvefile
 # Updated
 # mysqltuner.pl --checkversion --updateversion
 ```
+
+### Throuble
+
+It it testing MySQL are slow? then
+
+https://wiki.archlinux.org/title/Ext4
+
+```bash
+sudo /etc/fstab
+
+# For example:
+# # / was on /dev/ubuntu-vg/ubuntu-lv during curtin installation
+# /dev/disk/by-id/dm-uuid-LVM-6QF7koNeY90W4g5etmQrf76ZKUZF03CkDp0I3iy2iBF8GgRv97rDTldeckBx3HRk / ext4 defaults,commit=60 0 1
+```
+> NOT uses barrier=0
 
 ### Restart
 
