@@ -16,6 +16,8 @@ ARG PDFTK_ENABLE=off
 ENV PDFTK_ENABLE="$PDFTK_ENABLE"
 ARG GNUPG_ENABLE=off
 ENV GNUPG_ENABLE="$GNUPG_ENABLE"
+ARG OPJDK_ENABLE=off
+ENV OPJDK_ENABLE="$OPJDK_ENABLE"
 
 COPY ./ssl/* /var/www/ssl/
 COPY ./vhosts/apache2.conf /etc/apache2/
@@ -125,6 +127,7 @@ RUN set -eux \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y default-jdk pdftk; fi \
     && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y gnupg1; fi \
+    && if [ "$OPJDK_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y openjdk-17-jre-headless; fi \
     # @see https://www.practicalnetworking.net/practical-tls/openssl-3-and-legacy-providers/
     && sed -i '/^# default = default_sect/a legacy = legacy_sect' /etc/ssl/openssl.cnf \
     && sed -i 's/^# default = default_sect/default = default_sect/g' /etc/ssl/openssl.cnf \

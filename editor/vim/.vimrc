@@ -5,6 +5,7 @@
 " endif
 
 " PHILOSOPHY
+" @see https://xkcd.com/927/
 " @see https://www.moolenaar.net/habits.html
 " @see http://www.viemu.com/a-why-vi-vim.html
 " @see https://blog.sanctum.geek.nz/vim-koans/

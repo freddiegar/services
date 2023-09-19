@@ -112,6 +112,7 @@ services:
         - XHPROF_ENABLE=${XHPROF_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
+        - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -141,6 +142,7 @@ services:
         - XHPROF_ENABLE=${XHPROF_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
+        - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -170,6 +172,7 @@ services:
         - XHPROF_ENABLE=${XHPROF_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
+        - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -199,6 +202,7 @@ services:
         - XHPROF_ENABLE=${XHPROF_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
+        - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -227,6 +231,7 @@ services:
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
+        - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -255,6 +260,7 @@ services:
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
+        - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -283,6 +289,7 @@ services:
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
+        - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -311,6 +318,7 @@ services:
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
+        - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
@@ -339,6 +347,7 @@ services:
         - XDEBUG_ENABLE=${XDEBUG_ENABLE:-off}
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
+        - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
     networks:
