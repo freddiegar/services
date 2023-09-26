@@ -53,7 +53,7 @@ osi() {
 #   - pcs
 #   - pcs 7.4
 pcs() {
-    phplint $(ls -1 -d */ | grepx -v 'vendor|node_modules|.git' | xargs -I {} echo -n ' {}') "$@"
+    phplint $(command ls -1 -d */ | grepx -v 'vendor|node_modules|.git' | xargs -I {} echo -n ' {}') "$@"
 
     return $?
 }
@@ -61,7 +61,7 @@ pcs() {
 # Change Dir Project
 #   - cdp /var/www/html/flexphp
 cdp() {
-    cd "$@"/$(cd "$@" && ls -L1 | fzf) && $EDITOR
+    cd "$@"/$(cd "$@" && command ls -L1 | fzf) && $EDITOR
 
     return $?
 }
@@ -105,10 +105,11 @@ alias p="ps -fea -U \$USER -u \$USER --forest"
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
 alias di="diff -rq --suppress-common-lines"
-alias ll="ls -lh"
+alias ll="command ls -lh"
+alias lg="exa --git"
 alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
-alias lsd="ls -la | grep '^d'"
-alias lsn="ls -L1"
+alias lsd="command ls -la | grep '^d'"
+alias lsn="command ls -L1"
 alias __="ssh-add"
 alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}'"
 alias npkg="dpkg --list | wc --lines"
@@ -323,7 +324,7 @@ alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
 alias yy="xclip -selection clipboard"
 alias pp="xclip -selection clipboard -o"
 
-alias ff="ls -L1 | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
+alias ff="command ls -L1 | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
 alias fa="find . -type f -print | shuf | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
 alias fj="pkill ffplay"
 alias fn="ps -fea | g ffplay | g -F hide_banner | sed 's#^.*-- ##g'"

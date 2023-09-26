@@ -515,8 +515,8 @@ launch.json example for local and remote debugging multiple root
 
 ```bash
 # Ubuntu
-phpenmod xdebug
-phpdismod xdebug
+sudo phpenmod xdebug
+sudo phpdismod xdebug
 
 # Docker
 # vim /usr/local/etc/php/conf.d/xdebug.ini
