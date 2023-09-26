@@ -353,3 +353,9 @@ Get plain password's WiFi
 ```bash
 sudo vim /etc/NetworkManager/system-connections
 ```
+
+Error connecting to agent: No such file or directory
+
+```bash
+eval `ssh-agent | tee ~/.ssh/agent.env`
+```

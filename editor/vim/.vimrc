@@ -51,6 +51,7 @@
 " @see https://vimsnake.com/
 " @see https://www.openvim.com/
 " @see http://www.vimgenius.com/
+" @see https://vim-racer.com
 
 " MAPS and MODES
 "   n  Normal Mode: When typing commands.

@@ -207,6 +207,7 @@ for_window [class="(?i)zoom" title="Zoom Meeting"]                          floa
 for_window [class="Gnome-calculator"]                                       floating enable
 for_window [class="obs"]                                                    floating enable
 for_window [class="Pavucontrol"]                                            floating enable
+for_window [class="Gcr-prompter"]                                           floating enable, focus floating
 
 # Utilities
 for_window [title="^Event Tester$"]                                         floating enable
