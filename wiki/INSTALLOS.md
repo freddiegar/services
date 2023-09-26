@@ -972,7 +972,19 @@ sudo ln -s ~/.config/composer/vendor/bin/rector /usr/local/bin/phprector
 ## phprector -c /var/www/html/freddiegar/services/rector.php process src
 ## phprector -c /var/www/html/freddiegar/services/rector.php -n process src tests
 ## phprector -c /var/www/html/freddiegar/services/rector.php --no-diffs process src tests
-## composer global remove rector/rector
+## composer global remove rector/rector --dev
+```
+
+# Phan
+
+[See](https://github.com/phan/phan)
+
+```bash
+composer global require phan/phan --dev
+sudo ln -s ~/.config/composer/vendor/bin/phan /usr/local/bin/phan
+## Command
+## phan -k /var/www/html/freddiegar/services/phan.php src
+## composer global remove phan/phan --dev
 ```
 
 # Infection AST

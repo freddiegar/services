@@ -449,7 +449,18 @@ zend_extension=/usr/lib/php/20210902/xdebug.so
 ```
 > For Windows use php.ini
 
-> For Linux use path: `/etc/php/{vr}/mods-available/xdebug.ini` aka: `vim /etc/php/7.4/mods-available/xdebug.ini`
+> For Linux use path: `/etc/php/{vr}/mods-available/xdebug.ini` aka: `vim /etc/php/8.1/mods-available/xdebug.ini`
+
+## AST
+
+```bash
+sudo pecl install -f ast
+
+echo 'extension=/usr/lib/php/20210902/ast.so' | sudo tee /etc/php/8.1/mods-available/ast.ini
+
+sudo phpenmod ast
+sudo phpdismod ast
+```
 
 ### Troubles
 
