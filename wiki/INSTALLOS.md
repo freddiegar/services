@@ -1125,7 +1125,13 @@ phpize && ./configure && make && make install && cd /var/www/html
 
 # Extra (Optionals)
 
-# VSCode (Dont use snap for this, security risk)
+## Filezilla
+
+```bash
+sudo apt-get install -y filezilla
+```
+
+## VSCode (Dont use snap for this, security risk)
 
 ```bash
 # VS Code

@@ -179,7 +179,9 @@ assign [class="(?i)microsoft-edge"]                                         $wor
 assign [class="(?i)zoom" title="Zoom Cloud Meetings"]                       $workspace3
 assign [class="Mysql-workbench-bin"]                                        $workspace4
 assign [class="(?i)firefox" title="(?=(?i)private).*"]                      $workspace5
+assign [class="(?i)google-chrome"]                                          $workspace5
 assign [class="(?i)postman"]                                                $workspace6
+assign [class="(?i)FileZilla"]                                              $workspace6
 assign [class="AWS VPN Client"]                                             $workspace7
 assign [class="VirtualBox Manager"]                                         $workspace8
 assign [class="VirtualBox Machine"]                                         $workspace8
