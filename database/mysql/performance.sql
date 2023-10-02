@@ -15,6 +15,15 @@ FROM information_schema.TABLES
 ORDER BY (data_length + index_length) DESC
 LIMIT 10;
 
+-- Size in MB of tables by schema
+
+SELECT table_schema AS database_name, TABLE_NAME, round(sum((data_length + index_length)) / power(1024, 2), 2) `Size in MB`, round(sum((data_length + index_length + data_free)) / power(1024, 2), 2) `Allocated in MB`
+FROM information_schema.tables
+WHERE table_schema = 'aceitar'
+  AND table_type = 'BASE TABLE'
+GROUP BY table_schema, TABLE_NAME
+ORDER BY used_mb DESC;
+
 -- 10 more expensive queries
 
 SELECT

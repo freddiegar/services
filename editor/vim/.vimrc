@@ -1172,6 +1172,9 @@ nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
 nnoremap <silent> <Leader>gS :let @+=system("date +'%Y-%m-%d %H:%M:%S' -ud @" . expand('<cword>'))
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
+nnoremap <silent> <Leader>ge :let @+=<SID>get_fake()
+            \ <Bar> echomsg 'Copied:   ' . @+<Enter>
+
 " Shortcuts for Date/Times in Insert Mode
 inoremap <silent> <F6> <C-r>='Y-m-d'<Enter>
 inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d')<Enter>
@@ -1504,6 +1507,38 @@ function! s:get_masked(type) abort
     if len(l:repeatable) > 0
         silent! call repeat#set("\<Plug>" . l:repeatable . 'Repeatable', a:type)
     endif
+endfunction
+
+" type (string): string
+" @see https://fakerphp.github.io/
+function! s:get_fake() abort
+    let l:type = confirm('Select faker:', "&email\n&name\n&document\n&phone\n&card\n&all", 6, 'Q')
+
+    if l:type ==# 0
+        return ''
+    elseif l:type ==# 1
+        let l:method = 'email()'
+    elseif l:type ==# 2
+        let l:method = 'name()'
+    elseif l:type ==# 3
+        let l:method = "numerify('10########')"
+    elseif l:type ==# 4
+        let l:method = "numerify('+57 31# #######')"
+    elseif l:type ==# 5
+        let l:method = "creditCardNumber('Visa')"
+    elseif l:type ==# 6
+        let l:all = system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->name();\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->numerify('10########');\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->email();\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->numerify('+57 31# #######');\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->creditCardNumber('Visa');\"")
+
+        echo l:all
+
+        return
+    endif
+
+    return system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->" . l:method . ";\"")
 endfunction
 
 " string (string), [ignorechars (List)]: string
@@ -3214,7 +3249,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log noundofile
     autocmd BufRead,BufNewFile *.log setlocal filetype=log noundofile
     autocmd BufRead,BufNewFile *.{csv,tsv} setlocal filetype=csv list noundofile
-    autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=4 noundofile
+    autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=25 softtabstop=25 shiftwidth=25 noundofile
     autocmd BufRead,BufNewFile make setlocal noexpandtab tabstop=4
     autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
     autocmd BufRead,BufNewFile *.vpm setfiletype vpm

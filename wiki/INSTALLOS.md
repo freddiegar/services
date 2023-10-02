@@ -987,6 +987,14 @@ sudo ln -s ~/.config/composer/vendor/bin/phan /usr/local/bin/phan
 ## composer global remove phan/phan --dev
 ```
 
+# Faker
+
+```bash
+composer global require fakerphp/faker --dev
+require_once '/home/freddie/.config/composer/vendor/autoload.php';echo (Faker\Factory::create())->email();
+## composer global remove fakerphp/faker --dev
+```
+
 # Infection AST
 
 ```bash

@@ -21,7 +21,7 @@ FMODIFING=`git diff --name-only --cached | xargs -r -l echo | grepx ".php$" | wc
 FCOMPOSER=`git diff --name-only --cached | xargs -r -l echo | grepx "composer.[json|lock]" | wc -l`
 FPHP=$(($FSTAGING + $FMODIFING + $FCOMPOSER))
 
-phpx /usr/local/bin/composer validate --no-check-all --strict || exit $1
+phpx /usr/local/bin/composer validate --no-check-all --strict || exit $?
 
 phpx /usr/local/bin/composer audit || exit $?
 

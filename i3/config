@@ -435,9 +435,9 @@ bindsym --release XF86AudioMute        exec --no-startup-id pactl set-sink-mute 
 # bindsym XF85MonBrightnessDown exec --no-startup-id xbacklight -dec 20
 
 # Shorcut controls
-bindsym --release XF86Mail      exec  $browser outlook.live.com, workspace $workspace2
-bindsym --release XF86Search    exec  $browser duckduckgo.com, workspace $workspace2
-bindsym --release XF86Tools     exec  $browser music.youtube.com, workspace $workspace2
+bindsym --release XF86Mail      exec  $browser outlook.live.com,    workspace $workspace2
+bindsym --release XF86Search    exec  $browser duckduckgo.com,      workspace $workspace2
+bindsym --release XF86Tools     exec  $browser music.youtube.com,   workspace $workspace2
 
 # Screenshot
 bindsym --release Print         exec maim ~/Pictures/Screenshot\ from\ $(date +%Y-%m-%d-%H-%M-%S).png    | sleep 3 | ls ~/Pictures -1 -t | head -1 | xargs -I {} echo ~/Pictures/{} | tr -d "\n" | xclip -selection clipboard
