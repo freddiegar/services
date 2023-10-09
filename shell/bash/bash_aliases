@@ -149,7 +149,7 @@ alias c1="phpx `which composer_v1`"
 alias ci="phpx `which composer` -vvv install"
 alias cu="phpx `which composer` -vvv update"
 alias ct="phpx `which composer` test"
-alias cda="phpx `which composer` -vvv dump-autoload"
+alias cda="phpx `which composer` -vvv dump-autoload --optimize"
 alias cii="phpx `which composer` -vvv install --ignore-platform-reqs"
 alias cui="phpx `which composer` -vvv update --ignore-platform-reqs"
 alias cip="phpx `which composer` -vvv install --no-dev"
@@ -217,12 +217,19 @@ alias gt="git tag"
 alias gst="git status"
 alias gsts="git status --short"
 alias gls="git ls-files"
+# List modified traked files
 alias glsm="git ls-files --modified"
+# List deleted traked files
 alias glsd="git ls-files --deleted"
+# List ALL untraked files
 alias glso="git ls-files --others"
-alias glsf="git ls-files --full-name"
+# List ALL untraked files ignoring default exclusions: *.log
 alias glsu="git ls-files --others --exclude-standard"
+# List using root directory (usable inside NOT root directory)
+alias glsf="git ls-files --full-name"
+# List staged files
 alias glss="git diff --name-only --cached | xargs -r -l echo"
+# List assumed unchanged files
 alias glsa="git ls-files -v | rg '^h ' | awk '{print \$2}'"
 
 alias gd="git diff -w"

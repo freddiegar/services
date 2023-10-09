@@ -1517,5 +1517,9 @@ ctags --version | head -1 | awk '{print $3}'
 # 6.0.0(p6.0.20230813.0)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
+ftp about:version | head -1 | awk '{print $3}'
+# 20210827
+ncftpput --version | head -1 | awk '{print $2}'
+# 3.2.6
 dpkg --list | wc --lines
 # 2462

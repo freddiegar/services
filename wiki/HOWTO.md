@@ -359,3 +359,16 @@ Error connecting to agent: No such file or directory
 ```bash
 eval `ssh-agent | tee ~/.ssh/agent.env`
 ```
+
+Upload tree in FTP
+
+```bash
+sudo apt-get install -y ncftp
+
+ncftpput -R -m -v -P 21 -t 3600 -f file.cfg /public_html/app /var/www/html/app
+
+# file.cfg
+host fpt
+user username
+pass *****
+```

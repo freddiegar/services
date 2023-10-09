@@ -3,7 +3,7 @@
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
 # Shortcuts base available:
-#   Shifted:      B, D, U, Y, Z
+#   Shifted:      B, D, U, Y
 #   Unshifted:    c, g, i, n, o, p, t, u, x, y, z
 
 # Detect keys pressed
@@ -377,6 +377,7 @@ bindsym $mod+Shift+o exec --no-startup-id opera
 bindsym $mod+Shift+p exec --no-startup-id postman
 bindsym $mod+Shift+t exec --no-startup-id microsoft-edge
 bindsym $mod+Shift+v exec --no-startup-id virt-manager
+bindsym $mod+Shift+z exec --no-startup-id filezilla
 
 # @see https://www.reddit.com/r/i3wm/comments/2y9aj9/what_are_your_favourite_configuration_tips/
 # Move workspace between layouts (monitors)
