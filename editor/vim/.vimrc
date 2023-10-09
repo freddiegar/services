@@ -464,7 +464,8 @@ if has('gui_running')
         endif
 
         " @see :h 'conceallevel'
-        autocmd FileType markdown setlocal conceallevel=2 " concealcursor=nv
+        " Always is weird
+        " autocmd FileType markdown setlocal conceallevel=2 " concealcursor=nv
 
         " Cleans garbage, annoyoning flash!
         " autocmd FocusGained * redraw!
@@ -2944,7 +2945,7 @@ nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
 function! s:db() abort
     let l:url = <SID>env('DATABASE_URL')
 
-    if l:url ==# ''
+    if l:url ==# '' || match(l:url, 'serverVersion') > 0
         let l:conn = <SID>env('DB_CONNECTION')
         let l:host = <SID>env('DB_HOST')
         let l:port = <SID>env('DB_PORT')
@@ -3241,8 +3242,8 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile .php_cs* setfiletype php
     autocmd BufRead,BufNewFile *.conf setfiletype apache
     autocmd BufRead,BufNewFile *.json.*,*.lock setfiletype json
-    autocmd BufRead,BufNewFile *.twig setfiletype html | setlocal commentstring=\{#\ %s\ #\}
-    autocmd BufRead,BufNewFile *.blade.php setfiletype html | setlocal commentstring=\{\{--\ %s\ --\}\}
+    autocmd BufRead,BufNewFile *.twig setlocal filetype=html | setlocal commentstring=\{#\ %s\ #\}
+    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html | setlocal commentstring=\{\{--\ %s\ --\}\}
     autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
     autocmd BufRead,BufNewFile */i3/config setfiletype i3config | setlocal commentstring=#\ %s
     autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
@@ -3272,14 +3273,14 @@ augroup AutoCommands
 
         if a:onselection
             silent execute "normal \egv"
-            silent execute "'<,'>!sqlformat --reindent --wrap_after 140 --keywords upper --identifiers lower -"
+            silent execute "'<,'>!sqlformat --reindent --keywords upper -"
             silent execute "normal \e"
 
             return
         endif
 
         silent execute "normal mz"
-        silent execute '%!sqlformat --wrap_after 140 --keywords upper --identifiers lower -'
+        silent execute '%!sqlformat --wrap_after 140 --keywords upper -'
         silent execute "normal 'z"
         silent execute "delmarks z"
     endfunction
@@ -3313,7 +3314,7 @@ augroup AutoCommands
     " @see https://github.com/tpope/vim-vinegar/issues/13#issuecomment-47133890
     autocmd FileType netrw setlocal bufhidden=delete
     " Weird behaviour using this mapping
-    autocmd FileType netrw map <silent> <buffer> <C-l> <Nop>
+    autocmd FileType netrw,fugitive map <silent> <buffer> <C-l> <Nop>
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
