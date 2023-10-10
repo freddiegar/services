@@ -1018,7 +1018,7 @@ function! s:file_diff(file) abort
     setlocal noloadplugins
     setfiletype diff
     silent execute "normal! i" . l:result
-    setlocal nowrap nolist readonly nomodifiable nomodified nobuflisted bufhidden=delete
+    setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
     normal! gg
 endfunction
 
@@ -1037,7 +1037,7 @@ function! s:file_filter(isregex, file, filter) abort
     setlocal noswapfile
     setlocal noloadplugins
     silent execute join([':0read', '!' . (a:isregex ? g:filterprg : substitute(g:filterprg, ' -E', '', 'g') . ' -F'), shellescape(a:filter), fnameescape(a:file)])
-    setlocal nowrap nolist readonly nomodifiable nomodified nobuflisted bufhidden=delete
+    setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
     normal! gg
 endfunction
 
@@ -1157,6 +1157,7 @@ nnoremap <silent> yob :<C-u>set <C-r>=(&background ==# 'light')
             \ ? 'background=dark'
             \ : 'background=light' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
+nnoremap <silent> yom :<C-u>setlocal modifiable!<Enter>
 nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
@@ -3317,6 +3318,8 @@ augroup AutoCommands
     autocmd FileType netrw,fugitive map <silent> <buffer> <C-l> <Nop>
 
     " Return to last edit position when opening files
+    autocmd BufReadPost composer.lock setlocal nomodifiable
+    autocmd BufReadPost {node_modules,vendor}/* setlocal nomodifiable
     autocmd BufReadPost *
                 \ if &filetype !=# '\%(^git\%(config\)\@!\|commit\)' && line("'\"") > 0 && line("'\"") <= line('$') |
                 \   silent execute "normal! g`\"" |
@@ -3599,7 +3602,7 @@ augroup AutoCommands
         endif
 
         normal! "zpgg=G
-        setlocal nowrap nolist readonly nomodifiable nomodified nobuflisted bufhidden=delete
+        setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
         normal! gg
     endfunction
 
