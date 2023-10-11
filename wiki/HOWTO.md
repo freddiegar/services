@@ -197,9 +197,17 @@ pick acb05b3 Some final commit.
 # Insert|Change message commit and close editor
 
 # Now
-648q9oq New message commit after sqush
+648q9oq New message commit after squash
 acb05b3 Some final commit.
 ```
+
+Squash commits in git
+
+```bash
+git reset --soft HEAD~N &&
+git commit
+```
+N = number of commits to squash
 
 Supervisor error
 
