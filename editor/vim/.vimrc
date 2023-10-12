@@ -3410,6 +3410,10 @@ augroup AutoCommands
                 \ |     endfor
                 \ | endif
 
+    " Symfony: Setup
+    autocmd BufWritePost config/{routes,packages}/*.yaml :execute "!phpx bin/console cache:clear"
+    autocmd BufWritePost config/services.yaml :execute "!phpx bin/console cache:clear"
+
     " PHP Customization
     " autocmd FileType php inoremap <silent> <buffer> -> -><C-x><C-n>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>uu <Cmd>call phpactor#UseAdd()<Enter>
@@ -3841,6 +3845,20 @@ augroup AutoCommands
                 \ | execute "g/[n\\|x\\|o\\v]  <Plug>/d_"
                 \ | %sort
                 \ | execute "normal gg/^o\rO\egg/^s\rO\egg/^v\rO\e/^x\rO\e"
+                \ | endif
+    " Cleanup notes
+    autocmd BufFilePost weekly-*.md if !exists('b:cleanup')
+                \ | let b:cleanup = 1
+                \ | silent! keeppatterns
+                \ | execute "normal! gg:CS\r\"_d}"
+                \ | execute "g/^@@.*/d_"
+                \ | execute "g/^- .*/d_"
+                \ | execute "g/^\\s\\{9}.*/d_"
+                \ | execute "g/^\\s\\{1}\\w.* \\w.*/d_"
+                \ | execute "normal! gg0\<C-v>G0\"_x"
+                \ | execute "g/^\\s\\{4}[A-Z]*$/normal! ATL;DR;-----"
+                \ | execute "g/^[T|-]/normal! >>>>"
+                \ | execute "normal! ggIT: TO-DOI: IN-PROGRESSP: PULL-REQUESTQ: QA-TO-CERTIFYD: DONES: STOPPED\e"
                 \ | endif
 
     " Open files with external application
@@ -4365,6 +4383,7 @@ augroup AutoCommands
 
     " Hide sensible information (maybe share all screen or pair programming)
     autocmd FocusLost *.asc,hosts.yml let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
+    autocmd FocusLost * silent! wall
 
     autocmd User ALELintPost call <SID>diagnostics()
     autocmd InsertEnter * call <SID>popup_hide()
