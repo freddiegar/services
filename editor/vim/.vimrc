@@ -846,6 +846,10 @@ nnoremap <Leader><BS> :g/\<C-r><C-w>\>/
 nnoremap <Leader>rll *``[{V%::s/<C-r>///gIc<Left><Left><Left><Left>
 nnoremap <Leader>rgg *``:%s/<C-r>///gIc<Left><Left><Left><Left>
 
+" NOTE: <Esc> is used to remove the range that Vim may insert (something like the CTRL-U does)
+nnoremap <silent> <expr> H (v:count > 0 ? "<Esc>" : '') . v:count1 . 'F$'
+nnoremap <silent> <expr> L (v:count > 0 ? "<Esc>" : '') . v:count1 . 'f$'
+
 " Marks using exact position in Normal|Select|Operator Mode
 noremap ` '
 noremap ' `
@@ -3413,9 +3417,6 @@ augroup AutoCommands
     autocmd FileType php nmap     <silent> <buffer> <i <Plug>AddIncompleteMarkRepeatable
     autocmd FileType php nnoremap <silent> <buffer> <Plug>DropIncompleteMarkRepeatable <Cmd>call <SID>append_char('I')<Enter>
     autocmd FileType php nmap     <silent> <buffer> >i <Plug>DropIncompleteMarkRepeatable
-    " NOTE: <Esc> is used to remove the range that Vim may insert (something like the CTRL-U does)
-    autocmd FileType php nnoremap <silent> <expr> <buffer> H (v:count > 0 ? "<Esc>" : '') . v:count1 . 'F$'
-    autocmd FileType php nnoremap <silent> <expr> <buffer> L (v:count > 0 ? "<Esc>" : '') . v:count1 . 'f$'
 
     " I (almost) never used hashtag in PHP, better avoid annoyoning type!
     autocmd FileType php inoremap <silent> <buffer> # $
@@ -3459,6 +3460,7 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rdd <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rdu <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rrd <Cmd>call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Esc> <Cmd>call <SID>popup_hide()<Enter>
 
     autocmd FileType php nnoremap <silent> <Plug>SimplifyNamespaceRepeatable <Cmd>call <SID>rsn('word')<Enter>
     autocmd FileType php nmap <silent> <buffer> <Leader>rsn <Plug>SimplifyNamespaceRepeatable
