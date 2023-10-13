@@ -1692,6 +1692,11 @@ inoremap <silent> <C-f> <C-o>W
 " Same behaviour in Insert Mode
 inoremap <silent> <C-z> <Esc><C-z>
 
+if has('gui_running')
+    nnoremap <silent> <C-z> :M<Enter>
+    inoremap <silent> <C-z> <Esc>:M<Enter>
+endif
+
 " Completions using only current buffer (avoids delay with <C-n> or <C-p> when I open bigger logs files :)
 " IMPORTANT: Kill context completion using <C-x><C-p> and <C-x><C-n>
 inoremap <silent> <expr> <C-n>
@@ -3332,8 +3337,8 @@ augroup AutoCommands
     " Hide signcolumn in Terminal Mode
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
-        " " Tab Terminal
-        " command! -nargs=? M tabnew <Bar> terminal
+        " Tab Terminal
+        command! -nargs=? M tabnew <Bar> terminal
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
         autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=250}
@@ -3366,7 +3371,7 @@ augroup AutoCommands
             silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() =~# '^%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
-        " command! -nargs=? M tab terminal
+        command! -nargs=? M tab terminal
 
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
                     \ | setlocal bufhidden=wipe
