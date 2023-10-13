@@ -3,7 +3,7 @@
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
 # Shortcuts base available:
-#   Shifted:      B, D, U, Y
+#   Shifted:      B, U, Y
 #   Unshifted:    c, g, i, n, o, p, t, u, x, y, z
 
 # Detect keys pressed
@@ -189,6 +189,7 @@ assign [class="^VirtualBox$"]                                               $wor
 assign [class="^Virt-manager$"]                                             $workspace8
 assign [class="obs"]                                                        $workspace8
 assign [class="Nautilus"]                                                   $workspace9
+assign [class="FreeCAD"]                                                    $workspace9
 assign [class="Opera"]                                                      $workspace10
 
 # Enable floating
@@ -368,6 +369,7 @@ default_floating_border pixel 3
 
 # @see https://www.youtube.com/watch?v=8-S0cWnLBKg&list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf&index=2
 bindsym $mod+Shift+a exec --no-startup-id /opt/awsvpnclient/AWS\ VPN\ Client
+bindsym $mod+Shift+d exec --no-startup-id freecad
 bindsym $mod+Shift+e exec --no-startup-id nautilus --no-desktop
 bindsym $mod+Shift+f exec --no-startup-id firefox
 bindsym $mod+Shift+g exec --no-startup-id gvim

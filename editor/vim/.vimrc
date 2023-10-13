@@ -804,7 +804,7 @@ cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
 " Convenience, same to ZZ BUT: keeps splits
-nnoremap <silent> ZZ :update <Bar> qall<Enter>
+nnoremap <silent> ZZ :update <Bar> if has('gui_running') <Bar> wall <Bar> cd $HOME <Bar> else <Bar> qall <Bar> endif <Enter>
 
 " Utility
 " @tip Macro until end of buffer: VG:normal @x
@@ -4374,7 +4374,7 @@ augroup AutoCommands
     if has('gui_running')
         " Load session when :cd command is executed
         if exists("##DirChangedPre") " (why nvim why!)
-            autocmd DirChangedPre global if expand('<afile>') !=# g:cwd | silent messages clear | silent call <SID>sessionsave() | silent! execute '1,$bdelete' | endif
+            autocmd DirChangedPre global if expand('<afile>') !=# g:cwd | silent messages clear | call <SID>sessionsave() | silent! execute '1,$bdelete' | endif
         endif
 
         " @thanks https://github.com/valacar/vimfiles/commit/4d0b79096fd1b2b6f5fc0c7225f7de7751fada64
