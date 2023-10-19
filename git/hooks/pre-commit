@@ -45,14 +45,26 @@ fi
 # Cherry picks not allowed skip testing
 # exit 0
 
-# Run test before add message to commit
-if [ "`phpx /usr/local/bin/composer list | grepx -F "test-ci"`" != "" ]; then
-    COMMAND="$(jq '.scripts."test-ci"' composer.json | sed 's/\"//g')"
+COMMAND=""
 
-    if [ "`echo "$COMMAND" | grepx -F "^@php "`" = "" ]; then
+# Run test before add message to commit
+if [ "`phpx /usr/local/bin/composer list | grepx -F "  test-ci  "`" != "" ]; then
+    COMMAND="$(jq '.scripts."test-ci"' composer.json | sed 's/\"//g')"
+elif [ "`phpx /usr/local/bin/composer list | grepx -F "  test  "`" != "" ]; then
+    COMMAND="$(jq '.scripts."test"' composer.json | sed 's/\"//g')"
+fi
+
+if [ "$COMMAND" != "" ]; then
+    if [ "$COMMAND" = "null"]; then
+        COMMAND=""
+    elif [ "`echo "$COMMAND" | grepx -F "^["`" != "" ]; then
+        COMMAND=""
+    elif [ "`echo "$COMMAND" | grepx -F "^@php "`" = "" ]; then
         COMMAND="phpx $COMMAND"
     fi
-elif [ -f "testx.sh" ]; then
+fi
+
+if [ "$COMMAND" = "" ] && [ -f "testx.sh" ]; then
     COMMAND="sh testx.sh"
 else
     COMMAND="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
