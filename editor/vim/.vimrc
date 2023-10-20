@@ -1630,7 +1630,7 @@ function s:go_docs(word) abort
         endif
     elseif expand('%:t') ==# 'package.json'
         let l:docsurl = 'https://www.npmjs.com/package/'
-    elseif expand('%:t') ==# 'Dockerfile' && match(getline('.'), 'FROM') >= 0
+    elseif (&filetype ==# 'dockerfile' || expand('%:t') ==# 'Dockerfile') && match(getline('.'), 'FROM') >= 0
         let l:docsurl = 'https://hub.docker.com/r/'
         let l:saved_unnamed_register = @@
 
@@ -3264,6 +3264,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile make setlocal noexpandtab tabstop=4
     autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
     autocmd BufRead,BufNewFile *.vpm setfiletype vpm
+    autocmd BufRead,BufNewFile *.pipelines setfiletype dockerfile
     autocmd BufRead,BufNewFile /tmp/ctags/*tags* setfiletype tags noundofile
     autocmd BufRead,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
@@ -3859,7 +3860,7 @@ augroup AutoCommands
                 \ | execute "g/^@@.*/d_"
                 \ | execute "g/^- .*/d_"
                 \ | execute "g/^\\s\\{9}.*/d_"
-                \ | execute "g/^\\s\\{1}\\w.* \\w.*/d_"
+                \ | execute "g/^\\s\\{1}\\w.* \\w.*/normal S"
                 \ | execute "normal! gg0\<C-v>G0\"_x"
                 \ | execute "g/^\\s\\{4}[A-Z]*$/normal! ATL;DR;-----"
                 \ | execute "g/^[T|-]/normal! >>>>"
@@ -4114,7 +4115,7 @@ augroup AutoCommands
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
                     \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive'], getbufvar(a:item, '&filetype')) >= 0
                     \ || buflisted(a:item) == 0
-                    \ || split(a:item, '\.')[-1] ==# 'dbout'
+                    \ || (match(a:item, '.') >= 0 && split(a:item, '\.')[-1] ==# 'dbout')
                     \ || isdirectory(a:item)
                     \ || (a:item =~? '\/notes\/' && getbufvar(a:item, '&filetype') ==# 'markdown')
                     \ || (a:item !~? 'editor/' && a:item =~? '.vimrc*' && getbufvar(a:item, '&filetype') ==# 'vim')
@@ -4133,17 +4134,24 @@ augroup AutoCommands
             let l:index = l:index + 1
         endwhile
 
-        let l:index = 0
-        let l:buffers = filter(range(1, bufnr('$')), 'buflisted(v:val)')
+        let l:index = 1
+        let l:buffers = range(1, bufnr('$'))
 
         while l:index < len(l:buffers)
-            let l:lbuffer = getbufinfo(buffers[l:index])[0]['name']
+            let l:lbufinfo = getbufinfo(buffers[l:index])
+            let l:index = l:index + 1
 
-            if <SID>sessionremoveitem(l:lbuffer)
-                silent execute 'bdelete! ' . fnameescape(l:lbuffer)
+            if empty(l:lbufinfo)
+                continue
             endif
 
-            let l:index = l:index + 1
+            let l:lbufinfo = l:lbufinfo[0]
+
+            if l:lbufinfo['name'] ==# '' || l:lbufinfo['listed'] == 0
+                silent execute 'bwipeout! ' . l:lbufinfo['bufnr']
+            elseif <SID>sessionremoveitem(l:lbufinfo['name'])
+                silent execute 'bdelete! ' . l:lbufinfo['bufnr']
+            endif
         endwhile
 
         if len(getbufinfo("undotree_2")) > 0

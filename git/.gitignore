@@ -4,5 +4,6 @@ vendor
 node_modules
 testx.sh
 *.log
+*.diff
 storage/oauth-public.key.*
 storage/oauth-private.key.*
