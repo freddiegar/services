@@ -175,8 +175,11 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:dsource = isdirectory(g:cwd . '/app') ? g:cwd . '/app' : g:cwd . '/src'
         let g:dtests = isdirectory(g:cwd . '/tests') ? g:cwd . '/tests' : g:cwd
         let g:cache = {}
+        " For [e]nvironment files
         let g:cache['e'] = {}
+        " For ver[x]ion files
         let g:cache['x'] = {}
+        " For [t]ypes files
         let g:cache['t'] = {}
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
@@ -1906,17 +1909,12 @@ Plug 'ludovicchabant/vim-gutentags'                             " Auto generate 
 "             \ 'xml',
 "             \ 'vue'
 "             \ ]}                                                " Rename html tags easily
-" Plug 'mattn/emmet-vim', {'for': [
-"             \ 'html',
-"             \ 'css',
-"             \ 'javascript',
-"             \ 'vue'
-"             \ ]}                                                " Performance using emmet syntax
+Plug 'mattn/emmet-vim', {'on': 'EmmetInstall'}                  " Performance using emmet syntax
 
 " Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 " Plug 'wellle/context.vim'                                       " Show context code (slower)
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
-Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
+" Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
 
@@ -1945,7 +1943,7 @@ endif
 " Plug 'MTDL9/vim-log-highlighting', {'for': 'log'}               " Better highlight log syntax
 " Plug 'ekalinin/dockerfile.vim', {'for': 'dockerfile'}           " Better highlight dockerfile syntax (better?)
 " Plug 'pangloss/vim-javascript', {'for': 'javascript'}           " Better highlight javascript syntax
-Plug 'terrastruct/d2-vim', {'for': 'd2'}                        " Better highlight d2 syntax
+" Plug 'terrastruct/d2-vim', {'for': 'd2'}                        " Better highlight d2 syntax
 
 if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
@@ -2081,9 +2079,9 @@ let g:python3_host_prog = '/usr/bin/python3'
 " " Emmet
 " " @see https://github.com/mattn/emmet-vim
 " " Only enable in [I]nsert Mode, in [N]ormal Mode f, F, t, T don't work!
-" let g:user_emmet_mode = 'i'
-" let g:user_emmet_leader_key = ','
-" let g:user_emmet_install_global = 0
+let g:user_emmet_mode = 'i'
+let g:user_emmet_leader_key = ','
+let g:user_emmet_install_global = 0
 
 " " Vim Sneak
 " " @see https://github.com/justinmk/vim-sneak
@@ -3333,7 +3331,7 @@ augroup AutoCommands
 
     " autocmd FileType markdown,log,csv let b:coc_suggest_disable = 1
 
-    " autocmd FileType html,css,javascript,vue EmmetInstall
+    autocmd FileType html,css,javascript,vue EmmetInstall
 
     " @see https://github.com/tpope/vim-vinegar/issues/13#issuecomment-47133890
     autocmd FileType netrw setlocal bufhidden=delete
