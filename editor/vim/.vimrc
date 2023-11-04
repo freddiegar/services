@@ -1893,7 +1893,7 @@ Plug 'mbbill/undotree', {'on': [
             \ ]}                                                " Run undo world: g-, g+
 Plug 'phpactor/phpactor', {
             \ 'for': 'php',
-            \ 'do': 'composer install --no-dev -o'
+            \ 'do': 'composer install --no-dev -optimize-autoloader'
             \ }                                                 " LSP and refactor tool for PHP
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
@@ -2309,9 +2309,9 @@ function! s:test_strategy() abort
     doautocmd <nomodeline> User AsyncRunPre
 endfunction
 
-nnoremap <silent> <Leader>tt :cclose <Bar> execute ":TestNearest -strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tf :cclose <Bar> execute ":TestFile -strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>ts :cclose <Bar> execute ":TestSuite " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tt :cclose <Bar> execute ":TestNearest " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tf :cclose <Bar> execute ":TestFile    " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>ts :cclose <Bar> execute ":TestSuite   " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
 nnoremap <silent> <Leader>tl :cclose <Bar> TestLast<Enter>
 nnoremap <silent> <Leader>tg :cclose <Bar> TestVisit<Enter>
 nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
@@ -3456,9 +3456,9 @@ augroup AutoCommands
         \ 'all': '--no-coverage --stop-on-failure',
     \}
 
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> execute ":TestNearest --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> execute ":TestFile --testdox -vvv -strategy=" . (g:isneovim ? 'neovim' : 'vimterminal')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> execute ":TestSuite --testdox -vvv " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> execute ":TestNearest --testdox -vvv " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> execute ":TestFile    --testdox -vvv " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> execute ":TestSuite   --testdox -vvv " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
 
     " PHP Linter
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
