@@ -20,6 +20,8 @@
 " @see http://www.angelwatt.com/coding/notes/vim-commands.html
 " @see https://blog.sanctum.geek.nz/vim-annoyances/
 " @see https://mmmnnnmmm.com/#tutorial_vimscript
+" @see https://github.com/iggredible/Learn-Vim
+" @see https://www.reddit.com/r/vim/comments/17j7hfa/best_place_to_learn_advance_vim/
 
 " CVE
 " @see https://www.cvedetails.com/vendor/8218/VIM.html
@@ -40,6 +42,7 @@
 " @see https://alug.us/pages/vim/vim.html
 " @see https://www.reddit.com/r/vim/wiki/why_hjkl
 " @see https://www.fcodelabs.com/2018/12/08/Vim-Cheats/
+" @see https://pikuma.com/blog/origins-of-vim-text-editor
 " @mailing  https://groups.google.com/g/vim_dev
 
 " FROM SCRATCH TO PRO
@@ -52,6 +55,9 @@
 " @see https://www.openvim.com/
 " @see http://www.vimgenius.com/
 " @see https://vim-racer.com
+
+" TOOLS (Vim-ish)
+" @see https://vim.reversed.top/
 
 " MAPS and MODES
 "   n  Normal Mode: When typing commands.
@@ -135,6 +141,7 @@
 " 5. Colorscheme built-in have weird colors                 -> @see https://www.reddit.com/r/neovim/comments/4urlge/vim_and_neovim_same_airline_theme_different/
 " 6. Colorscheme in :terminal have weird colors             -> @see #5 (colors are old respect a Vim9) -> links colors in $VIMRUNTIME
 " 7. In Linux terminal shows weird chars                    -> xdpyinfo?
+" 8. In wrap lines is faster!                               -> Vim rules!
 " n. Don't need installation
 " @see https://vimhelp.org/version9.txt.html#new-9
 
@@ -382,9 +389,15 @@ set autoread                                                    " Reload after e
 set autowrite                                                   " Save on lost focus (cycling buffers) (default: off)
 " set autoindent                                                  " Same indent after Enter, if Esc indent is deleted, less Spaces (default: off)
 set backspace=indent,eol,start                                  " Allow backspacing over everything (default: depends)
-set clipboard^=unnamedplus                                      " Shared SO clipboard (macros are slower)
-                                                                "     then: buffer -> (no vim) => "+yy
-                                                                "     then: (no vim) -> buffer => "+p or <S-Insert>
+set clipboard^=unnamedplus                                      " Shared SO clipboard + and * (macros are slower)
+                                                                " In X11:
+                                                                "   @see https://tronche.com/gui/x/icccm/sec-2.html#s-2.6.1
+                                                                "   +: Paste from Clipboard aka: MS Windows-style clipboard operations. Select+Copy. The data resides in the buffer.
+                                                                "       Right click Copy and <C-S-V>
+                                                                "   *: Paste from Primary aka: Selection is typically used by e.g. terminals when selecting text and pasting it by pressing middle mouse button.
+                                                                "       Copy highlighting and <MiddleMouse> or <S-Insert>
+                                                                "   then: buffer -> (no vim) => "+yy
+                                                                "   then: (no vim) -> buffer => "+p or <S-Insert>
 set splitbelow                                                  " :split  opens window below (default: off)
 set splitright                                                  " :vsplit opens window right (default: off)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
@@ -3338,8 +3351,8 @@ augroup AutoCommands
     " Hide signcolumn in Terminal Mode
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
-        " Tab Terminal
-        command! -nargs=? M tabnew <Bar> terminal
+        " Tab Ter[M]inal
+        command! -nargs=? M tabnew <Bar> terminal <f-args>
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
         autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=250}
@@ -3372,7 +3385,7 @@ augroup AutoCommands
             silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() =~# '^%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
-        command! -nargs=? M tab terminal
+        command! -nargs=? M tab terminal <f-args>
 
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
                     \ | setlocal bufhidden=wipe
@@ -4059,11 +4072,13 @@ augroup AutoCommands
     endfunction
 
     function! s:mustbeignore() abort
-        return argc() > 0 && (index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
+        return argc() > 0 && (
+                    \ index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
                     \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*\|hosts\|crontab\|errors\.err\|tags')
                     \ || get(v:argv, 1, '') ==# '-'
                     \ || (len(g:working) > 0 && g:working[0] =~? 'plugged')
-                    \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-')
+                    \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-'
+                    \ )
     endfunction
 
     function! s:sessionload() abort
