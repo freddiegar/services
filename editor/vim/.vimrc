@@ -712,6 +712,7 @@ if !g:isneovim
 endif
 
 set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
+set showtabline=0                                               " Never show tabs (default: 1=tabs > 1)
 
 " lastmode (string)
 function! s:statusline(lastmode) abort
@@ -2853,8 +2854,9 @@ let g:gutentags_ctags_extra_args = [
 " Fugitive
 " @see https://github.com/tpope/vim-fugitive
 let g:fugitive_no_maps = 1
-nmap <silent> <C-w>e <Cmd>call <SID>gbrowse(v:false)<Enter>
-nmap <silent> <C-w>E <Cmd>call <SID>gbrowse(v:true)<Enter>
+" nmap <silent> <C-w>e <Cmd>call <SID>gbrowse(v:false)<Enter>
+nmap <silent> <C-w>e <Cmd>edit .env<Enter>
+nmap <silent> <C-w>E <Cmd>call <SID>gbrowse(v:false)<Enter>
 
 function! s:gbrowse(copy) abort
     if !a:copy && !<SID>isrunning('/opt/firefox/firefox-bin')
@@ -2865,11 +2867,13 @@ function! s:gbrowse(copy) abort
         return 1
     endif
 
+    silent GB
+
     try
         if a:copy
-            GBrowse! @
+            execute 'GBrowse! ' . getreg('+')
         else
-            GBrowse @
+            execute 'GBrowse ' . getreg('+')
         endif
     catch
         echo 'Nothing to do.'
