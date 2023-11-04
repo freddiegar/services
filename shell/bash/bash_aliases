@@ -82,6 +82,103 @@ ctt() {
     fi
 }
 
+# Init git repository to use worktree strategy
+#   - gwi git@github.com:freddiegar/services
+#   - gwi git@github.com:freddiegar/services ro-services
+# @thanks https://morgan.cugerone.com/blog/how-to-use-git-worktree-and-in-a-clean-way/
+# @thanks https://morgan.cugerone.com/blog/workarounds-to-git-worktree-using-bare-repository-and-cannot-fetch-remote-branches/
+gwi() {
+    PWD=`pwd`
+    BASENAME=${1##*/}
+    NAME=${2:-${BASENAME%.*}}
+
+    if [ -d $PWD/$NAME ]; then
+        echo "\e[31mRepository [$NAME] exists!\e[0m"
+
+        return 1
+    fi
+
+    mkdir $PWD/$NAME
+
+    cd $PWD/$NAME
+
+    git clone --bare "$1" $PWD/$NAME/.bare
+
+    echo "gitdir: $PWD/$NAME/.bare" $PWD/$NAME/.git
+
+    cd $PWD/$NAME/.bare
+
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+
+    cd $PWD/$NAME
+}
+
+# Git worktree branch
+#   - gwb hotfix master
+gwb() {
+    ORIGIN=${2:-${1}}
+
+    gwa $1 $ORIGIN
+}
+
+# Git worktree add
+#   - gwa master
+gwa() {
+    ORIGIN=${2:-${1}}
+
+    git worktree add .bare/branches/$1 $ORIGIN
+
+    if [ "$?" -ne 0 ]; then
+        return 1
+    fi
+
+    if [ -f `pwd`/.env ]; then
+        ln `pwd`/.env `pwd`/.bare/branches/$1/.env
+    fi
+
+    if [ -f `pwd`/.env.testing ]; then
+        ln `pwd`/.env.testing `pwd`/.bare/branches/$1/.env.testing
+    fi
+
+    if [ ! -d `pwd`/current ]; then
+        gwc $1
+    fi
+}
+
+# Git worktree remove
+#   - gwa master
+gwr() {
+    if [ ! -d "`pwd`/.bare" ]; then
+        echo "\e[31mMove to root directory!\e[0m"
+
+        return 1
+    fi
+
+    git worktree remove `pwd`/.bare/branches/$1
+}
+
+# Git worktree change|current to
+#   - gwc master
+gwc() {
+    if [ ! -d "`pwd`/.bare" ]; then
+        echo "\e[31mMove to root directory!\e[0m"
+
+        return 1
+    fi
+
+    if [ ! -d "`pwd`/.bare/branches/$1" ]; then
+        echo "\e[31mBranch $1 doesn't exists!\e[0m"
+
+        return 1
+    fi
+
+    rm -f `pwd`/current
+
+    ln -s `pwd`/.bare/branches/$1 `pwd`/current
+
+    chown $USER:www-data `pwd`/current -Rf
+}
+
 alias \?="apropos"
 alias x="exit"
 alias v=$EDITOR
@@ -277,6 +374,9 @@ alias gsb="git stash branch"
 alias gss="git stash show"
 alias grh="git reset HEAD"
 alias grH="git reset HEAD~"
+
+alias gw="git worktree"
+alias gwl="git worktree list"
 
 # WARNING!: Overwrite local history with remote history
 #   > Use ONLY when remote branch diverge of local branch
