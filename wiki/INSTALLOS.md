@@ -1120,7 +1120,7 @@ Or download as old times
 curl -fsL "http://pecl.php.net/get/xhprof-2.3.9.tgz" -o /tmp/xhprof.tgz
 mkdir -p /var/www/html/xhprof/82 && tar -xf /tmp/xhprof.tgz -C /var/www/html/xhprof/82
 cd /var/www/html/xhprof/82/xhprof-2.3.9/extension
-phpize && ./configure && make && make install && cd /var/www/html
+phpize && ./configure && make && sudo make install && cd /var/www/html
 ```
 
 # Extra (Optionals)

@@ -198,6 +198,7 @@ alias s="bash ~/working/mysqlog.sh"
 alias r="bash ~/working/mysqlget.sh"
 alias q="bash ~/working/evertec/queues.sh"
 alias p="ps -fea -U \$USER -u \$USER --forest"
+alias u="cd /var/www/html/universal-ctags/ctags && glo master && ./autogen.sh && ./configure && make && sudo make install"
 
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
