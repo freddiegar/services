@@ -54,16 +54,16 @@ snippet nn "Not Null" iw
 IS NOT NULL$0
 endsnippet
 
-snippet is "In string" iw
-IN ('$1')$0
+snippet "(n)?is" "In string" iwr
+`!p snip.rv='NOT ' if match.group(1) == 'n' else ''`IN ('$1')$0
 endsnippet
 
-snippet ii "In int" iw
-IN ($1)$0
+snippet "(n)?ii" "In int" iwr
+`!p snip.rv='NOT ' if match.group(1) == 'n' else ''`IN ($1)$0
 endsnippet
 
-snippet iq "In query" iw
-IN (SELECT ${1:id} FROM ${2} WHERE $3)$0
+snippet "(n)?iq" "In query" iwr
+`!p snip.rv='NOT ' if match.group(1) == 'n' else ''`IN (SELECT ${1:id} FROM ${2})$0
 endsnippet
 
 snippet o "Order by" iw

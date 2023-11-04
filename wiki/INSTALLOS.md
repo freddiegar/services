@@ -1445,7 +1445,7 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 23.04
 uname -r
-# 6.2.0-26-generic
+# 6.2.0-34-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.37
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -1462,8 +1462,8 @@ bash --version | grep -e "bash" | awk '{print $4}'
 # 5.2.15(1)-release
 zsh --version | awk '{print $2}'
 # 5.9
-echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included " | awk '{print $3}'`
-# 9.0.1-1000
+echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
+# 9.0. Included patches: 1-1000, 1087, 1117-1118, 1129, 1165, 1143-1145, 1189, 1530, 1840, 1846-1848, 1857, 1331, 1858, 1873, 1969, 1992, 2010
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
 # Stable:   v0.7.2-LuaJIT 2.1.0-beta3
 # Unstable: v0.10.0-dev-LuaJIT 2.1.0-beta3
@@ -1476,7 +1476,7 @@ git --version | awk '{print $3}'
 git lfs version
 # git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.3)
 docker --version | awk '{print $3}'
-# 24.0.5
+# 24.0.7
 docker-compose --version | awk '{print $4}'
 # v2.20.2
 feh --version | grep version | awk '{print $3}'
@@ -1498,7 +1498,7 @@ bat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 13.0.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.1.21
+# 8.1.24
 nvm --version
 # 0.39.3
 npm --version
@@ -1522,4 +1522,4 @@ ftp about:version | head -1 | awk '{print $3}'
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 dpkg --list | wc --lines
-# 2462
+# 2627

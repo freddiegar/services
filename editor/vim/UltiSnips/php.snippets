@@ -13,7 +13,7 @@ def autocomplete(t, options):
 def proptypes():
 	return ['string', 'int', 'bool', 'float', 'DateTimeInterface', 'array']
 
-def retutypes():
+def returntypes():
 	return proptypes() + ['void']
 
 def functypes():
@@ -101,7 +101,7 @@ public function __construct($0);
 endsnippet
 
 snippet fix "Function Interface X" b
-public function $1($2): $3`!p snip.rv=autocomplete(t[3], retutypes())`;
+public function $1($2): $3`!p snip.rv=autocomplete(t[3], returntypes())`;
 endsnippet
 
 snippet fif "Function Interface Full" b
@@ -132,7 +132,7 @@ public function __construct($1 $$2$3)
 endsnippet
 
 snippet ffx "Function X" b
-$1`!p snip.rv=autocomplete(t[1], functypes())` function $2($3): $4`!p snip.rv=autocomplete(t[4], retutypes())`
+$1`!p snip.rv=autocomplete(t[1], functypes())` function $2($3): $4`!p snip.rv=autocomplete(t[4], returntypes())`
 {
     $0
 }
