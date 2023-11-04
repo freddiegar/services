@@ -325,8 +325,8 @@ openssl x509 -in duckduckgo.com.pem -noout -checkend 2592000
 [See](https://www.reddit.com/r/Ubuntu/comments/owbdc3/boot_error_bluetooth_failed_to_send_firmware_data/)
 
 ```bash
-# dmesg| g Blue
 # > Bluetooth: hci0: Failed to send firmware data (-110)
+# sudo dmesg | grep Blue | grep Failed
 sudo apt remove --purge --auto-remove bluez
 sudo rfkill list
 rfkill unblock bluetooth
@@ -379,4 +379,17 @@ ncftpput -R -m -v -P 21 -t 3600 -f file.cfg /public_html/app /var/www/html/app
 host fpt
 user username
 pass *****
+```
+
+Connection Bluetooth Device
+
+```bash
+hcitool dev
+# Devices:
+# 	hci0	78:AF:08:2A:EF:71
+# Enable pairing in device
+hcitool -i hci0 scan
+# Enable connection
+bluetoothctl trust AC:80:0A:14:76:5C
+bluetoothctl connect AC:80:0A:14:76:5C
 ```
