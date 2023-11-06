@@ -1070,13 +1070,38 @@ command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
 nmap <silent> <F1> mzgg=G`z
 
 " Open explore in current work directory (toggle)
-nmap <silent> <expr> <C-w>.
-            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore ' . getcwd() <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>"
+nmap <silent> <C-w>. <Cmd>call <SID>toggle_netrw(getcwd())<Enter>
 
 " Open explore in current file directory (toggle)
 " @overwrite :h CTRL-W_:
-nmap <silent> <expr> <C-w>:
-            \ &filetype ==# 'netrw' ? ":bdelete!<Enter>" : ":silent execute '20Vexplore' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>"
+nmap <silent> <C-w>: <Cmd>call <SID>toggle_netrw(expand('%:p:h'))<Enter>
+
+let g:netrwopen = 0
+
+" @thanks https://github.com/Shock9616/nvim-config/blob/3fab5bd94ba435f0b38028cb1cbbd91c6c948eb4/.vimrc#L80C1-L96C12
+function! s:toggle_netrw(dir) abort
+    if g:netrwopen
+        let l:nbuffer = bufnr('$')
+
+        while (l:nbuffer >= 1)
+            if (getbufvar(l:nbuffer, '&filetype') ==# 'netrw')
+                silent execute 'bwipeout ' . l:nbuffer
+
+                break
+            endif
+
+            let l:nbuffer -= 1
+        endwhile
+
+        let g:netrwopen = 0
+    else
+        let g:netrwopen = 1
+
+        silent execute '20Vexplore ' . a:dir
+    endif
+
+    doautocmd <nomodeline> User UpdateStatusline
+endfunction
 
 " Fast Vim configuration (and plugins)
 nmap <silent> <expr> <F10>
