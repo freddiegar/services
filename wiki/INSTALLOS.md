@@ -1131,12 +1131,14 @@ phpize && ./configure && make && sudo make install && cd /var/www/html
 sudo apt-get install -y filezilla
 ```
 
-## VSCode (Dont use snap for this, security risk)
+## VSCode (Don't use snap for this, security risk)
+
+[Download](https://code.visualstudio.com/docs/?dv=linux64_deb)
 
 ```bash
 # VS Code
 cd ~
-curl -L "https://az764295.vo.msecnd.net/stable/b3e4e68a0bc097f0ae7907b217c1119af9e03435/code_1.78.2-1683731010_amd64.deb" -o vscode.deb
+curl -L "https://az764295.vo.msecnd.net/stable/d037ac076cee195194f93ce6fe2bdfe2969cc82d/code_1.84.0-1698839401_amd64.deb" -o vscode.deb
 sudo dpkg -i vscode.deb
 rm -f vscode.deb
 ## sudo apt-get remove code && sudo apt-get autoremove

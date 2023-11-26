@@ -1892,7 +1892,7 @@ Plug 'machakann/vim-swap'                                       " Swap args: g>,
 " Keep disabled! mappings fails
 " Plug 'cohama/lexima.vim'                                        " Append close: ', ", ), ], etc
 
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP)
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP), it needs npm...
 Plug 'dense-analysis/ale', {'for': 'php'}                       " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', {'do': { -> fzf#install() }}               " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
@@ -1922,7 +1922,7 @@ Plug 'mbbill/undotree', {'on': [
             \ ]}                                                " Run undo world: g-, g+
 Plug 'phpactor/phpactor', {
             \ 'for': 'php',
-            \ 'do': 'composer install --no-dev -optimize-autoloader'
+            \ 'do': 'composer install --no-dev --optimize-autoloader'
             \ }                                                 " LSP and refactor tool for PHP
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
@@ -1939,7 +1939,7 @@ Plug 'mattn/emmet-vim', {'on': 'EmmetInstall'}                  " Performance us
 
 " Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 " Plug 'wellle/context.vim'                                       " Show context code (slower)
-Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files
+Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files (not allowed 'for' option)
 " Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
@@ -3553,6 +3553,8 @@ augroup AutoCommands
             " Is imposible detect error in this command
             " Use 'silent' to avoid show message in commandline
             silent call phpactor#GotoType()
+
+            echo 'Using types..'
         else
             try
                 call PhpactorGotoDefinition
@@ -3566,11 +3568,15 @@ augroup AutoCommands
 
             " Is imposible detect error in this command
             " Use 'silent' to avoid show message in commandline
-            call phpactor#GotoDefinition()
+            silent call phpactor#GotoDefinition()
+
+            echo 'Using definitions..'
         endif
 
         " Guess: if change file in phpactor#* command
         if len(l:message) > 0 && l:ccurpos ==# getcurpos()
+            silent redraw!
+
             echo 'Using tags.'
 
             silent call feedkeys("\<C-]>", 'n')
