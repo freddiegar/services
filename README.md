@@ -627,7 +627,7 @@ sudo update-ca-certificates
 curl -I https://development.local
 ```
 
-> It must be return: 302 | 200 HTTP Code
+> It must be return: 200 | 302 | 403 HTTP Code
 
 ### On Windows
 
@@ -672,7 +672,7 @@ curl -I https://development.local
 
 ```bash
 # Config file to use in process
-export OPENSSL_CONF=/var/www/html/freddiegar/services/ssl/openssl.cnf
+export OPENSSL_CONF=/var/www/html/freddiegar/services/docker/ssl/openssl.cnf
 
 mkdir /var/www/ssl
 cd /var/www/ssl
@@ -726,13 +726,13 @@ ll /var/www/ssl/intermediate/certs/ca-chain.cert.pem
 
 # Copy new files in docker services
 
-cp -p /var/www/ssl/certs/ca.cert.pem /var/www/html/freddiegar/services/ssl/
-cp -p /var/www/ssl/intermediate/certs/ca-chain.cert.pem /var/www/html/freddiegar/services/ssl/
-cp -p /var/www/ssl/intermediate/certs/development.local.cert.pem /var/www/html/freddiegar/services/ssl/
-cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/freddiegar/services/ssl/
+cp -p /var/www/ssl/certs/ca.cert.pem /var/www/html/freddiegar/services/docker/ssl/
+cp -p /var/www/ssl/intermediate/certs/ca-chain.cert.pem /var/www/html/freddiegar/services/docker/ssl/
+cp -p /var/www/ssl/intermediate/certs/development.local.cert.pem /var/www/html/freddiegar/services/docker/ssl/
+cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/freddiegar/services/docker/ssl/
 
 ```
-> Upload new CA in browser: /var/www/html/freddiegar/services/ssl/ca.cert.pem
+> Upload new CA in browser: /var/www/html/freddiegar/services/docker/ssl/ca.cert.pem
 
 ### Re-generate Expired
 
@@ -740,19 +740,21 @@ cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/
 
 ```bash
 # Config file to use in process
-export OPENSSL_CONF=/var/www/html/freddiegar/services/ssl/openssl.cnf
+export OPENSSL_CONF=/var/www/html/freddiegar/services/docker/ssl/openssl.cnf
 
 cd /var/www/ssl
 
 echo 'unique_subject = no' > index.txt.attr
 
 cd /var/www/ssl/intermediate
-# echo `expr $(cat serial) + 1` > serial
+echo `expr $(cat serial) + 1` > serial
+# N3m!!
 openssl genrsa -aes256 -out private/intermediate.key.pem 4096
 
 openssl req -sha256 -new -key private/intermediate.key.pem -out certs/intermediate.csr.pem
 
 cd /var/www/ssl
+# N3u!
 openssl ca -keyfile private/ca.key.pem -cert certs/ca.cert.pem -extensions v3_ca -notext -md sha256 -in intermediate/certs/intermediate.csr.pem -out intermediate/certs/intermediate.cert.pem
 
 # Verification
@@ -774,6 +776,7 @@ openssl ca -keyfile private/ca.key.pem -cert certs/ca.cert.pem -extensions usr_c
 find . -type d -exec chmod 755 {} +
 find . -type f -exec chmod 644 {} +
 chown $USER:$USER . -R
+
 ll /var/www/ssl/intermediate/certs/development.local.cert.pem
 ll /var/www/ssl/intermediate/private/development.local.key.pem
 ll /var/www/ssl/intermediate/certs/ca-chain.cert.pem
@@ -781,13 +784,13 @@ ll /var/www/ssl/intermediate/certs/ca-chain.cert.pem
 
 # Copy new files in docker services
 
-cp -p /var/www/ssl/certs/ca.cert.pem /var/www/html/freddiegar/services/ssl/
-cp -p /var/www/ssl/intermediate/certs/ca-chain.cert.pem /var/www/html/freddiegar/services/ssl/
-cp -p /var/www/ssl/intermediate/certs/development.local.cert.pem /var/www/html/freddiegar/services/ssl/
-cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/freddiegar/services/ssl/
+cp -p /var/www/ssl/certs/ca.cert.pem /var/www/html/freddiegar/services/docker/ssl/
+cp -p /var/www/ssl/intermediate/certs/ca-chain.cert.pem /var/www/html/freddiegar/services/docker/ssl/
+cp -p /var/www/ssl/intermediate/certs/development.local.cert.pem /var/www/html/freddiegar/services/docker/ssl/
+cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/freddiegar/services/docker/ssl/
 
 ```
-> Upload new CA in browser: /var/www/html/freddiegar/services/ssl/ca.cert.pem
+> Upload new CA in browser: /var/www/html/freddiegar/services/docker/ssl/ca.cert.pem
 
 ### Update OpenSSL binary
 
