@@ -3365,6 +3365,8 @@ augroup AutoCommands
     " @see https://github.com/tpope/vim-vinegar/issues/13#issuecomment-47133890
     autocmd FileType netrw setlocal bufhidden=delete
     " Weird behaviour using this mapping
+    autocmd FileType netrw map <silent> <buffer> p <Nop>
+    autocmd FileType netrw map <silent> <buffer> P <Nop>
     autocmd FileType netrw,fugitive map <silent> <buffer> <C-l> <Nop>
 
     " Return to last edit position when opening files

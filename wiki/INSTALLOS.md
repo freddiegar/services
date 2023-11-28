@@ -123,7 +123,8 @@ sudo update-grub
 grep "GRUB_CMDLINE_LINUX_DEFAULT=\|GRUB_CMDLINE_LINUX=\|GRUB_TERMINAL=" /etc/default/grub
 
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT/#GRUB_CMDLINE_LINUX_DEFAULT/g' /etc/default/grub
-sudo sed -i 's/GRUB_CMDLINE_LINUX="*"/GRUB_CMDLINE_LINUX="text"/g' /etc/default/grub
+# Non necesary in 23.10
+# sudo sed -i 's/GRUB_CMDLINE_LINUX="*"/GRUB_CMDLINE_LINUX="text"/g' /etc/default/grub
 sudo sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
 
 grep "GRUB_CMDLINE_LINUX_DEFAULT=\|GRUB_CMDLINE_LINUX=\|GRUB_TERMINAL=" /etc/default/grub
@@ -150,9 +151,14 @@ sudo systemctl restart systemd-logind
 
 ```bash
 sudo apt-get install -y unattended-upgrades update-notifier-common
+
+grep 'Remove-Unused-Kernel-Packages\|Remove-Unused-Dependencies\|Automatic-Reboot-Time' /etc/apt/apt.conf.d/50unattended-upgrades
+
 sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Kernel-Packages "[true|false]*";/Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Dependencies "[true|false]*";/Unattended-Upgrade::Remove-Unused-Dependencies "true";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 sudo sed -i 's/\/\/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/g' /etc/apt/apt.conf.d/50unattended-upgrades
+
+grep 'Remove-Unused-Kernel-Packages\|Remove-Unused-Dependencies\|Automatic-Reboot-Time' /etc/apt/apt.conf.d/50unattended-upgrades
 ```
 
 # Disabled IPP Service: 631 (Internet Printer Protocol)
@@ -204,7 +210,8 @@ sudo update-alternatives --config x-session-manager
 [See](https://www.reddit.com/r/i3wm/comments/72oiwl/how_do_i_set_environment_variables_so_that_they/)
 
 ```bash
-echo 'exec i3' >> ~/.xinitrc
+echo 'dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
+exec i3' >> ~/.xinitrc
 ```
 
 ## Konsole Profile
@@ -246,7 +253,7 @@ ln -s `pwd`/editor/vim/phpactor.json ~/.config/phpactor/phpactor.json
 
 ```bash
 # Check: +xterm_clipboard
-vim --version | grep xterm
+vim --version | grep xterm_clipboard
 # if -xterm_clipboard then
 # sudo apt-get install -y vim-gtk3
 ## In olders versions use: vim-gnome
@@ -256,7 +263,7 @@ vim --version | grep xterm
 ## Vim SQL Development
 
 ```bash
-sudo apt install sqlformat
+sudo apt-get install sqlformat
 # sudo apt remove sqlformat && sudo apt-get autoremove
 ```
 
@@ -269,7 +276,7 @@ sudo apt install sqlformat
 
 ```bash
 cd ~
-sudo apt install libncurses5
+# sudo apt-get install libncurses5
 curl -SL https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz | tar -xJC .
 sudo mv clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04 /usr/local/clang_16.0.0
 # /usr/local/clang_16.0.0/bin/clangd --version
@@ -297,7 +304,7 @@ cd ctags
 ./autogen.sh
 ./configure
 make
-make install
+sudo make install
 
 ## sudo rm /usr/local/bin/ctags
 ```
@@ -526,6 +533,8 @@ fi' >> ~/.zshenv
 
 ```bash
 echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only oldest Ubuntu or with oldest version's PHP (Tune ubuntu version is required :|)
+# @see https://devtutorial.io/how-to-install-php-8-3-on-ubuntu-23-10-p3206.html
+vim /etc/apt/sources.list.d/ondrej-ubuntu-php-mantic.sources
 sudo apt-get install -y php8.1-cli
 sudo apt-get install -y php8.1-dev
 sudo apt-get install -y php8.1-mbstring
@@ -554,7 +563,7 @@ curl -L https://getcomposer.org/installer -o composer-setup.php
 sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 rm -Rf composer-setup.php
 ## Update
-## composer self-update
+## sudo composer self-update
 ## rm -Rf /usr/local/bin/composer
 ```
 
@@ -644,7 +653,7 @@ lxqt-leave
 ```bash
 cd ~
 # @see https://github.com/docker/compose/releases
-sudo curl -L https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -756,6 +765,8 @@ export GPG_TTY=$(tty)' >> ~/.zshrc
 ## GPG TTL (in seconds)
 
 ```bash
+cat ~/.gnupg/gpg-agent.conf
+
 echo 'default-cache-ttl 86400
 max-cache-ttl 864000
 default-cache-ttl-ssh 86400
@@ -766,7 +777,21 @@ max-cache-ttl-ssh 864000' > ~/.gnupg/gpg-agent.conf
 
 ```bash
 cd ~
-sudo snap install postman
+curl -L "https://dl.pstmn.io/download/latest/linux_64" -o postman.tar.gz
+sudo tar -xvf postman.tar.gz -C /opt && rm -Rf postman.tar.gz
+sudo ln -s /opt/Postman/Postman /usr/bin/postman
+## rm -Rf /usr/bin/postman
+```
+
+# Opera
+
+```bash
+cd ~
+curl -L "https://download.opera.com/download/get/?partner=www&opsys=Linux" -o opera.deb
+sudo dpkg -i opera.deb
+rm -f opera.deb
+
+## sudo apt-get remove opera && sudo apt-get autoremove
 ```
 
 # Firefox (Dont use snap for this, security risk)
@@ -930,7 +955,7 @@ sudo apt-get install -y ripgrep
 # [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
 cd ~
 # @see https://github.com/sharkdp/bat/releases
-sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.23.0/bat_0.23.0_amd64.deb -o bat.deb
+sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.24.0/bat_0.24.0_amd64.deb -o bat.deb
 sudo dpkg -i bat.deb && rm -f bat.deb
 
 # [L|X]Ubuntu 18.10+ | Rg v0.22.1
@@ -1445,21 +1470,21 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 ## Commands
 
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
-# Ubuntu 23.04
+# Ubuntu 23.10
 uname -r
-# 6.2.0-34-generic
+# 6.5.0-13-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
-# 2.37
+# 2.38
 gcc --version | grep -e "^gcc" | awk '{print $4}'
-# 12.3.0
+# 13.2.0
 openssl version | awk '{print $2}'
-# 3.0.8
+# 3.0.10
 i3 --version | awk '{print $3}'
 # 4.22
 i3status --version | grep -e "i3status" | awk '{print $2}'
 # 2.14-non-git
 konsole --version | awk '{print $2}'
-# 22.12.3
+# 23.08.1
 bash --version | grep -e "bash" | awk '{print $4}'
 # 5.2.15(1)-release
 zsh --version | awk '{print $2}'
@@ -1472,35 +1497,35 @@ echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | gr
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.12
 curl --version | grep -e "^curl " | awk '{print $2}'
-# 7.88.1
+# 8.2.1
 git --version | awk '{print $3}'
-# 2.39.2
+# 2.40.1
 git lfs version
-# git-lfs/3.3.0 (GitHub; linux amd64; go 1.19.3)
+# git-lfs/3.4.0 (GitHub; linux amd64; go 1.21.0)
 docker --version | awk '{print $3}'
 # 24.0.7
 docker-compose --version | awk '{print $4}'
-# v2.20.2
+# v2.23.3
 feh --version | grep version | awk '{print $3}'
-# 3.9.1
+# 3.10
 maim --version | awk '{print $1}'
 # v5.7.4
 unzip -v | grep "^UnZip.*\.$" | awk '{print $2}'
 # 6.00
 tree --version | awk '{print $2}'
-# v2.1.0
+# v2.1.1
 nmap --version | grep "^Nmap" | awk '{print $3}'
-# 7.93
+# 7.94SVN
 htop --version | grep "^htop" | awk '{print $2}'
 # 3.2.2
 man xcompmgr | grep "^X Version" | awk '{print $5}'
 # 1.1.8
 bat --version | awk '{print $2}'
-# 0.23.0
+# 0.24.0
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 13.0.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.1.24
+# 8.1.26
 nvm --version
 # 0.39.3
 npm --version
@@ -1508,20 +1533,20 @@ npm --version
 node --version
 # v18.16.0
 mysql --version | awk '{print $3}'
-# 8.0.34-0ubuntu0.23.04.1
+# 8.0.35-0ubuntu0.23.10.1
 stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
-# 3.11.4
+# 3.11.6
 ruby --version | awk '{print $2}'
 # 3.1.2p20
 ctags --version | head -1 | awk '{print $3}'
-# 6.0.0(p6.0.20230813.0)
+# 6.0.0(fae067a),
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
-# 20210827
+# 20230507
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 dpkg --list | wc --lines
-# 2627
+# 2660

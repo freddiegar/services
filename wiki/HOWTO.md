@@ -393,3 +393,17 @@ hcitool -i hci0 scan
 bluetoothctl trust AC:80:0A:14:76:5C
 bluetoothctl connect AC:80:0A:14:76:5C
 ```
+
+Remove snap
+
+[See](https://www.debugpoint.com/remove-snap-ubuntu/)
+
+```bash
+sudo snap list
+sudo snap remove --purge *
+sudo apt remove --autoremove snapd
+
+echo 'Package: snapd
+Pin: release a=*
+Pin-Priority: -10' | sudo tee /etc/apt/preferences.d/nosnap.pref
+```
