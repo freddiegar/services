@@ -238,6 +238,7 @@ alias sar="sudo apt-get remove -y"
 alias sau="sudo apt-get update && sudo apt-get upgrade -y && sac"
 alias sac="sudo apt-get autoremove --purge -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
 alias sap="dpkg -l | grepx ^rc | grepx -v grub | awk '{print \$2}' | xargs -t sudo apt-get -y purge"
+alias say="sudo apt policy"
 
 alias xpa='echo "\n" | sudo add-apt-repository'
 alias xpr='echo "\n" | sudo add-apt-repository --remove'

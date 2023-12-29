@@ -3290,6 +3290,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile phplint,phpx,grepx,datex setfiletype sh
     autocmd BufRead,BufNewFile *.tphp setfiletype php
     autocmd BufRead,BufNewFile .php_cs* setfiletype php
+    autocmd BufRead,BufNewFile * if match(getline(1), '<\?php.*') >= 0 | setfiletype php | endif
     autocmd BufRead,BufNewFile *.conf setfiletype apache
     autocmd BufRead,BufNewFile *.json.*,*.lock setfiletype json
     autocmd BufRead,BufNewFile *.twig setlocal filetype=html | setlocal commentstring=\{#\ %s\ #\}
