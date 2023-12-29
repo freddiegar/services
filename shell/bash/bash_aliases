@@ -209,6 +209,9 @@ alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage
 alias lsd="command ls -la | grep '^d'"
 alias lsn="command ls -L1"
 alias __="ssh-add"
+# @thanks https://unix.stackexchange.com/a/90869
+# ssh-add -l: List identities register
+alias ___="trap 'test -n "\$SSH_AUTH_SOCK" && eval \`/usr/bin/ssh-agent -k\`' 0"
 alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}'"
 alias npkg="dpkg --list | wc --lines"
 

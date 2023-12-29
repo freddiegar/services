@@ -855,7 +855,7 @@ sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/f
 cd ~
 sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
 # @see https://github.com/nvm-sh/nvm/releases
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 # Only oldest Ubuntu
 echo '
@@ -869,8 +869,8 @@ nvm ls-remote
 # Ubuntu 18
 # @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
 # ldd --version
-nvm install v18.16.0
-# nvm alias default v18.16.0
+nvm install v20.10.0
+# nvm alias default v20.10.0
 # nvm current
 ## Enabled to all users in [L|X]Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
