@@ -796,8 +796,8 @@ noremap <Space> <Nop>
 
 " Best Regex (?) using [v]ery magic
 " @see :h /\v
-nnoremap / /\v
-nnoremap ? ?\v
+" nnoremap / /\v
+" nnoremap ? ?\v
 
 " Purify! in Normal|Select|Operator Mode
 noremap <Up> <Nop>
@@ -1083,7 +1083,7 @@ function! s:toggle_netrw(dir) abort
     if g:netrwopen
         let l:nbuffer = bufnr('$')
 
-        while (l:nbuffer >= 1)
+        while l:nbuffer >= 1
             if (getbufvar(l:nbuffer, '&filetype') ==# 'netrw')
                 silent execute 'bwipeout ' . l:nbuffer
 
@@ -1720,16 +1720,16 @@ xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 
 " @simple https://github.com/tpope/vim-rsi
 " Insert Mode navigation (Forget Arrows)
-inoremap <silent> <C-a> <C-o>^
-inoremap <silent> <expr> <C-e>
-            \ pumvisible() ? "\<lt>C-e>" :
-            \ "\<C-o>$"
-inoremap <silent> <C-k> <C-g>u<Up>
-inoremap <silent> <C-j> <C-g>u<Down>
-inoremap <silent> <C-h> <C-g>u<Left>
-inoremap <silent> <C-l> <C-g>u<Right>
-inoremap <silent> <C-b> <C-o>B
-inoremap <silent> <C-f> <C-o>W
+" inoremap <silent> <C-a> <C-o>^
+" inoremap <silent> <expr> <C-e>
+"             \ pumvisible() ? "\<lt>C-e>" :
+"             \ "\<C-o>$"
+" inoremap <silent> <C-k> <C-g>u<Up>
+" inoremap <silent> <C-j> <C-g>u<Down>
+" inoremap <silent> <C-h> <C-g>u<Left>
+" inoremap <silent> <C-l> <C-g>u<Right>
+" inoremap <silent> <C-b> <C-o>B
+" inoremap <silent> <C-f> <C-o>W
 
 " Same behaviour in Insert Mode
 inoremap <silent> <C-z> <Esc><C-z>
@@ -2343,17 +2343,17 @@ nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
 " Vim Debug
 " @see https://github.com/vim-vdebug/vdebug
 let g:vdebug_keymap = #{
-            \ run : "<Home>",
-            \ run_to_cursor : "<S-Home>",
-            \ step_over : "<Right>",
-            \ step_into : "<Down>",
-            \ step_out : "<Up>",
-            \ detach : "<Left>",
-            \ close : "<End>",
-            \ set_breakpoint : "<Leader>q",
-            \ get_context : "<Leader>Q",
-            \ eval_under_cursor : "<Leader>v",
-            \ eval_visual : "<Leader>V",
+            \ run: "<Home>",
+            \ run_to_cursor: "<S-Home>",
+            \ step_over: "<Right>",
+            \ step_into: "<Down>",
+            \ step_out: "<Up>",
+            \ detach: "<Left>",
+            \ close: "<End>",
+            \ set_breakpoint: "<Leader>q",
+            \ get_context: "<Leader>Q",
+            \ eval_under_cursor: "<Leader>v",
+            \ eval_visual: "<Leader>V",
             \}
 
 if !exists('g:vdebug_options')
@@ -2361,14 +2361,14 @@ if !exists('g:vdebug_options')
 endif
 
 let g:vdebug_options = #{
-            \ port : 9003,
-            \    timeout : 10,
-            \    on_close : 'detach',
-            \    break_on_open : 0,
-            \    watch_window_style : 'compact',
-            \    simplified_status : 1,
-            \    continuous_mode : 1,
-            \    ide_key : 'PHPSTORM',
+            \ port: 9003,
+            \ timeout: 10,
+            \ on_close: 'detach',
+            \ break_on_open: 0,
+            \ watch_window_style: 'compact',
+            \ simplified_status: 1,
+            \ continuous_mode: 1,
+            \ ide_key: 'PHPSTORM',
             \}
 
 " ALE
