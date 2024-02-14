@@ -3298,7 +3298,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
     autocmd BufRead,BufNewFile */i3/config setfiletype i3config | setlocal commentstring=#\ %s
     autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
-    autocmd BufRead,BufNewFile */{log,logs}/* setlocal filetype=log noundofile
+    autocmd BufRead,BufNewFile */{log,logs}/* setfiletype log | setlocal noundofile
     autocmd BufRead,BufNewFile *.log setlocal filetype=log noundofile
     autocmd BufRead,BufNewFile *.{csv,tsv} setlocal filetype=csv list noundofile
     autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=25 softtabstop=25 shiftwidth=25 noundofile
@@ -3534,6 +3534,10 @@ augroup AutoCommands
         let l:message = ''
         let l:ccurpos = getcurpos()
 
+        silent execute ":keeppatterns normal! mz\"zyiw"
+        let l:iword = trim(@z)
+        silent execute ":keeppatterns normal! `z:delmarks z\r"
+
         silent execute ":keeppatterns normal! mzF\ h\"zyiw"
         let l:bword = trim(@z)
         silent execute ":keeppatterns normal! `z:delmarks z\r"
@@ -3576,14 +3580,27 @@ augroup AutoCommands
             echo 'Using definitions..'
         endif
 
-        " Guess: if change file in phpactor#* command
-        if len(l:message) > 0 && l:ccurpos ==# getcurpos()
-            silent redraw!
+        " Guess Options
+        "   scopes: Special Laravel's function
+        "   tags:   Relative tags
+        let l:commands = {
+                    \ "scopes": "silent! tag scope" . substitute(l:iword, '\<.', '\u&', 'g'),
+                    \ "tags": "silent! tag " . l:iword,
+                    \ }
 
-            echo 'Using tags.'
+        for [l:name, l:command] in items(l:commands)
+            if len(l:message) > 0 && l:ccurpos ==# getcurpos()
+                silent redraw!
 
-            silent call feedkeys("\<C-]>", 'n')
-        endif
+                echo 'Using ' . l:name . '.'
+
+                silent execute l:command
+            endif
+
+            if l:ccurpos !=# getcurpos()
+                break
+            endif
+        endfor
     endfunction
 
     " transformer (string)
