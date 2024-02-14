@@ -820,6 +820,9 @@ cnoremap <Down> <Nop>
 cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
+" Close popup from any filetype using Esc
+nnoremap <silent> <Esc> <Cmd>call <SID>popup_hide()<Enter>
+
 " Convenience, same to ZZ BUT: keeps splits
 nnoremap <silent> ZZ :update <Bar> if has('gui_running') <Bar> wall <Bar> cd $HOME <Bar> else <Bar> qall <Bar> endif <Enter>
 
@@ -3513,7 +3516,6 @@ augroup AutoCommands
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rdd <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rdu <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rrd <Cmd>call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Esc> <Cmd>call <SID>popup_hide()<Enter>
 
     autocmd FileType php nnoremap <silent> <Plug>SimplifyNamespaceRepeatable <Cmd>call <SID>rsn('word')<Enter>
     autocmd FileType php nmap <silent> <buffer> <Leader>rsn <Plug>SimplifyNamespaceRepeatable
