@@ -3885,6 +3885,9 @@ augroup AutoCommands
     " [r]un sql
     autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('r', "vip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp") | endif
 
+    " [t]ag release
+    autocmd FileType zsh call setreg('t', "gg_ da\"pI\"\eggJf[lyE_/-a\rWviWPGA\"\e")
+
     " Cleanup queries log
     autocmd BufRead \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
     " Cleanup profiles log
