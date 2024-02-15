@@ -263,8 +263,15 @@ vim --version | grep xterm_clipboard
 ## Vim SQL Development
 
 ```bash
-sudo apt-get install sqlformat
+sudo apt-get install -y sqlformat
 # sudo apt remove sqlformat && sudo apt-get autoremove
+```
+
+## Vim XML Development
+
+```bash
+sudo apt-get install -y libxml2-utils
+# sudo apt remove libxml2-utils && sudo apt-get autoremove
 ```
 
 ## Vim C Development

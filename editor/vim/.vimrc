@@ -3340,6 +3340,25 @@ augroup AutoCommands
         silent execute "delmarks z"
     endfunction
 
+    autocmd FileType xml nnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:false) <Bar> call <SID>statusline('f')<Enter> ":silent %!xmllint --format --recover - 2>/dev/null"
+    autocmd FileType xml vnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:true) <Bar> call <SID>statusline('f')<Enter> ":silent %!xmllint --format --recover - 2>/dev/null"
+
+    function! s:xmlfixer(onselection) abort
+        if bufname('%') !=# ''
+            silent update!
+        endif
+
+        if a:onselection
+            silent execute "normal \egv"
+            silent execute "'<,'>!xmllint --format --recover -"
+            silent execute "normal \e"
+
+            return
+        endif
+
+        silent execute '%!xmllint --format --recover -'
+    endfunction
+
     autocmd FileType apache setlocal commentstring=#\ %s
     autocmd FileType crontab setlocal commentstring=#\ %s
     autocmd FileType debsources setlocal commentstring=#\ %s
