@@ -4008,11 +4008,20 @@ augroup AutoCommands
 
     " Git blame
     " @thanks https://gist.github.com/romainl/5b827f4aafa7ee29bdc70282ecc31640
-    command! -range GB call <SID>get_blame(<line1>, <line2>)
+    command! -range GB call <SID>get_blame(<line1>, <line2>, repeat('-C ', 1))
+    command! -range GBB call <SID>get_blame(<line1>, <line2>, repeat('-C ', 2))
+    command! -range GBBB call <SID>get_blame(<line1>, <line2>, repeat('-C ', 3))
 
-    " line1 (int), line2 (int)
-    function! s:get_blame(line1, line2) abort
-        let l:result = systemlist('git -C ' . shellescape(expand('%:p:h')) . ' blame -L ' . a:line1 . ',' . a:line2 . ' ' . expand('%:t'))
+    " line1 (int), line2 (int), options (string)
+    function! s:get_blame(line1, line2, options) abort
+        " @see https://git-scm.com/docs/git-blame#_options
+        "  -w: Ignores whitespaces
+        "  -M: Detect moved or copied lines within a file
+        "  -C: Detect moved or copied lines from others files in same commit
+        "  -C: Or the commit that created the file
+        "  -C: Or any commit
+        "  -L: Line range
+        let l:result = systemlist('git blame -w -M ' . a:options . '-L ' . a:line1 . ',' . a:line2 . ' ' . shellescape(expand('%:p')))
 
         let l:commit = len(l:result) > 0 ? split(l:result[0])[0] : '0000000000'
 
