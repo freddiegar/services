@@ -178,8 +178,8 @@ sudo apt-get remove plymouth-* plymouth
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim xclip ncal
-## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol maim xclip ncal && sudo apt-get autoremove
+sudo apt-get install -y unzip curl tree nmap htop i3 xcompmgr feh pavucontrol pulseaudio-utils maim xclip ncal
+## sudo apt-get remove unzip curl tree nmap htop i3 xcompmgr feh pavucontrol pulseaudio-utils maim xclip ncal && sudo apt-get autoremove
 ```
 
 ## i3
@@ -978,7 +978,9 @@ sudo apt-get install -y bat
 
 ```bash
 echo '
-export MANPAGER="sh -c 'col -bx \| bat -l man -p'"
+# @thanks https://github.com/sharkdp/bat/issues/2753
+export MANPAGER="sh -c '"'"'col -bx \| bat -l man -p'"'"'"
+export MANROFFOPT="-c"
 export BAT_THEME="gruvbox-dark"' >> ~/.profile
 ```
 
