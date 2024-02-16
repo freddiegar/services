@@ -413,10 +413,12 @@ Show deprecations details in PHPUnit 10
 In phpunit.xml file [adds](https://stackoverflow.com/a/77101546/15601185)
 
 ```xml
+
 displayDetailsOnIncompleteTests="true"
 displayDetailsOnSkippedTests="true"
 displayDetailsOnTestsThatTriggerDeprecations="true"
 displayDetailsOnTestsThatTriggerErrors="true"
 displayDetailsOnTestsThatTriggerNotices="true"
 displayDetailsOnTestsThatTriggerWarnings="true">
+
 ```

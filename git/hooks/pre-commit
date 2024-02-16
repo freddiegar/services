@@ -48,25 +48,34 @@ fi
 COMMAND=""
 
 # Run test before add message to commit
-if [ "`phpx /usr/local/bin/composer list | grepx -F "  test-ci  "`" != "" ]; then
+if [ "`phpx /usr/local/bin/composer list | grepx -F '  test-ci  '`" != "" ]; then
     COMMAND="$(jq '.scripts."test-ci"' composer.json | sed 's/\"//g')"
-elif [ "`phpx /usr/local/bin/composer list | grepx -F "  test  "`" != "" ]; then
+elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpunit  '`" != "" ]; then
+    COMMAND="$(jq '.scripts."phpunit"' composer.json | sed 's/\"//g')"
+elif [ "`phpx /usr/local/bin/composer list | grepx -F '  test  '`" != "" ]; then
     COMMAND="$(jq '.scripts."test"' composer.json | sed 's/\"//g')"
 fi
 
 if [ "$COMMAND" != "" ]; then
-    if [ "$COMMAND" = "null"]; then
+    if [ "$COMMAND" = "null" ]; then
         COMMAND=""
-    elif [ "`echo "$COMMAND" | grepx -F "^["`" != "" ]; then
+    elif [ "`echo "$COMMAND" | grepx -F "["`" != "" ]; then
+        # [
+        #     "@phpcs",
+        #     "@phpstan",
+        #     "@phpunit"
+        # ]
         COMMAND=""
-    elif [ "`echo "$COMMAND" | grepx -F "^@php "`" = "" ]; then
+    elif [ "`echo "$COMMAND" | grepx "^phpunit "`" != "" ]; then
+        COMMAND="vendor/bin/$COMMAND"
+    elif [ "`echo "$COMMAND" | grepx "^@php "`" != "" ]; then
         COMMAND="phpx $COMMAND"
     fi
 fi
 
 if [ "$COMMAND" = "" ] && [ -f "testx.sh" ]; then
     COMMAND="sh testx.sh"
-else
+elif [ "$COMMAND" = "" ]; then
     COMMAND="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
 fi
 
