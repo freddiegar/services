@@ -198,10 +198,12 @@ alias s="bash ~/working/mysqlog.sh"
 alias r="bash ~/working/mysqlget.sh"
 alias q="bash ~/working/evertec/queues.sh"
 alias p="ps -fea -U \$USER -u \$USER --forest"
-alias u="cd /var/www/html/universal-ctags/ctags && glo master && ./autogen.sh && ./configure && make && sudo make install"
+alias u="cd /var/www/html/universal-ctags/ctags && git clean -f -d && git pull origin master && ./autogen.sh && ./configure && make && sudo make install && cd -1"
+alias y="bash ~/working/syntaxer.sh"
 
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
+alias ht="history | awk '{print \$4}' | sort | uniq -c | sort -nr | head -10"
 alias di="diff -rq --suppress-common-lines"
 alias ll="command ls -lh"
 alias lg="exa --git"
@@ -211,7 +213,7 @@ alias lsn="command ls -L1"
 alias __="ssh-add"
 # @thanks https://unix.stackexchange.com/a/90869
 # ssh-add -l: List identities register
-alias ___="trap 'test -n "\$SSH_AUTH_SOCK" && eval \`/usr/bin/ssh-agent -k\`' 0"
+alias ___="trap '(test -z "\$SSH_AUTH_SOCK" -o ! -e "\$SSH_AUTH_SOCK") && eval \`/usr/bin/ssh-agent\`' 0"
 alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}'"
 alias npkg="dpkg --list | wc --lines"
 
@@ -437,6 +439,7 @@ alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
 alias yy="xclip -selection clipboard"
 alias pp="xclip -selection clipboard -o"
 
+alias ft="ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner --"
 alias ff="command ls -L1 | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
 alias fa="find . -type f -print | shuf | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
 alias fj="pkill ffplay"
