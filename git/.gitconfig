@@ -5,6 +5,8 @@
 [core]
 	editor = vim
 	excludesFile = ~/.gitignore
+	untrackedcache = true
+	fsmonitor = true
 [commit]
 	gpgsign = true
 [mergetool]
@@ -30,3 +32,11 @@
 	required = true
 [pull]
 	rebase = false
+[rerere]
+	enabled = true
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[fetch]
+	writeCommitGraph = true

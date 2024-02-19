@@ -1778,7 +1778,7 @@ cnoremap <C-f> <C-Right>
 " Replace because annoyoning wait after typing % in [s]ubstitution command
 cnoreabbrev <expr> %% (getcmdtype() ==# ':' && getcmdline() !~# '^%%' && getcmdline() =~# '%%') ? fnameescape(expand('%')) : '%%'
 
-" Available: <C-x><C-cjkpv>
+" Available: <C-x><C-cjpv>
 " Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-x>)
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
 cnoremap <C-x><C-x> <C-a>
@@ -1791,6 +1791,7 @@ cnoremap <C-x><C-n> noautocmd cdo
 cnoremap <C-x><C-d> ~/Downloads/
 cnoremap <C-x><C-l> ~/.vimrc.local
 cnoremap <C-x><C-h> /var/www/html/
+cnoremap <C-x><C-k> .git/hooks/pre-commit
 cnoremap <C-x><C-a> ~/.bash_aliases
 cnoremap <C-x><C-f> <C-u>set filetype=
 cnoremap <C-x><C-b> <C-u>='!sha256sum %'<Enter>
