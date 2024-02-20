@@ -399,6 +399,14 @@ git commit -m "Added lfs support"
 git lfs migrate export --include="*.sql.gz" --everything
 ```
 
+## GIT Stats
+
+[See](https://github.com/arzzen/git-quick-stats)
+
+```bash
+sudo apt-get install -y git-quick-stats
+```
+
 ## GIT CLI
 
 [See](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
