@@ -802,7 +802,7 @@ cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/
 openssl version
 # Future version
 cd ~
-curl -L https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_1_1_1k.tar.gz -o openssl.tar.gz
+curl -L https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_1_1_1w.tar.gz -o openssl.tar.gz
 tar -zxf openssl.tar.gz
 cd openssl*
 # Prepare new version
@@ -816,6 +816,7 @@ sudo ldconfig
 # Check version
 openssl version
 # Clean house
+cd ..
 rm -Rf openssl*
 ```
 > Dependencies require: sudo apt-get install make gcc

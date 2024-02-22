@@ -208,7 +208,7 @@ alias di="diff -rq --suppress-common-lines"
 alias ll="command ls -lh"
 alias lg="exa --git"
 alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
-alias lsd="command ls -la | grep '^d'"
+alias lsd="command ls -lA | grep '^d'"
 alias lsn="command ls -L1"
 alias __="ssh-add"
 # @thanks https://unix.stackexchange.com/a/90869

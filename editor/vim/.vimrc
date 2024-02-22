@@ -187,6 +187,9 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
         let g:qfcommand = get(g:, 'qfcommand', '')
 
+        " File is large from 2MB
+        let g:maxsize = 1024 * 1024 * 2
+
         " Viminfofile setup
         let g:infofile = ''
 
@@ -390,7 +393,7 @@ set pumheight=10                                                " Maximum option
 " Custom Interface
 set autoread                                                    " Reload after external changes (default: off)
 set autowrite                                                   " Save on lost focus (cycling buffers) (default: off)
-" set autoindent                                                  " Same indent after Enter, if Esc indent is deleted, less Spaces (default: off)
+set autoindent                                                  " Same indent after Enter, if Esc indent is deleted, less Spaces (default: off)
 set backspace=indent,eol,start                                  " Allow backspacing over everything (default: depends)
 set clipboard^=unnamedplus                                      " Shared SO clipboard + and * (macros are slower)
                                                                 " In X11:
@@ -466,9 +469,13 @@ if has('gui_running')
     augroup GUIOptions
         if exists('g:neovide') " (why nvim why!)
             " @see https://neovide.dev/
-            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h14
+            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h15
                         \ | let g:neovide_confirm_quit = v:false
+                        \ | let g:neovide_floating_shadow = v:false
+                        \ | let g:neovide_hide_mouse_when_typing = v:true
                         \ | let g:neovide_remember_window_size = v:true
+                        \ | let g:neovide_theme = 'auto'
+                        \ | let g:neovide_transparency = 0.96
         else
             autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Fira Code Retina 17', '')
                         \ | set guiligatures=!\"#$%&()*+-./:<=>?@[]^_{\|~
@@ -2784,13 +2791,11 @@ function! s:check_large_file(file) abort
         return
     endif
 
-    " File is large from 2MB
-    let l:maxsize = 1024 * 1024 * 2
     let l:fsize = getfsize(a:file)
     let l:hfsize = l:fsize / 1024 / 1024
-    let l:hmaxsize = l:maxsize / 1024 / 1024
+    let l:hmaxsize = g:maxsize / 1024 / 1024
 
-    if l:fsize > l:maxsize || l:fsize == -2
+    if l:fsize > g:maxsize || l:fsize == -2
         syntax off
         filetype off
         " No syntax highlighting event

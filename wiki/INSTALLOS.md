@@ -1557,6 +1557,8 @@ python3 --version | awk '{print $2}'
 # 3.11.6
 ruby --version | awk '{print $2}'
 # 3.1.2p20
+rustc --version | awk '{print $2}'
+# 1.76.0
 ctags --version | head -1 | awk '{print $3}'
 # 6.0.0(fae067a),
 gpg1 --version | head -1 | awk '{print $3}'
