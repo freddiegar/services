@@ -1507,7 +1507,7 @@ bash --version | grep -e "bash" | awk '{print $4}'
 zsh --version | awk '{print $2}'
 # 5.9
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
-# 9.0. Included patches: 1-1000, 1087, 1117-1118, 1129, 1165, 1143-1145, 1189, 1530, 1840, 1846-1848, 1857, 1331, 1858, 1873, 1969, 1992, 2010
+# 9.0. Included patches: 1-1672, 1729, 1747, 2107, 1840, 1846-1848, 1857-1858, 1873, 1969, 1992, 2010, 2068, 2106, 2108-2112, 2121
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
 # Stable:   v0.7.2-LuaJIT 2.1.0-beta3
 # Unstable: v0.10.0-dev-LuaJIT 2.1.0-beta3

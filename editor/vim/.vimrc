@@ -135,8 +135,10 @@
 
 " WHY DON'T TRY NEOVIM
 " 1. :W command -> Save as sudo don't work                  -> @see https://github.com/neovim/neovim/issues/1716 -> use suda.vim
+"   - Edit mutiple files with non-root is painfull, it requires password for EACH file
 " 2. :X command -> Encryption don't exist                   -> @see https://github.com/neovim/neovim/issues/701 -> use vim-gnupg
 " 3. :R command -> Command with sudo don't work             -> @see #1
+"   - Run command using sudo is aborted
 " 4. Mappings using <S-F#> don't work nativaly              -> @see https://github.com/neovim/neovim/issues/7384 -> Add extra mappings
 " 5. Colorscheme built-in have weird colors                 -> @see https://www.reddit.com/r/neovim/comments/4urlge/vim_and_neovim_same_airline_theme_different/
 " 6. Colorscheme in :terminal have weird colors             -> @see #5 (colors are old respect a Vim9) -> links colors in $VIMRUNTIME
@@ -383,11 +385,12 @@ set complete+=w                                                 " Buffers in oth
 set complete+=b                                                 " Buffers loaded in [b]uffers list (aka use RAM)
 set complete+=u                                                 " Buffers [u]nloaded in buffers list (aka no use RAM: open but inactive)
 set completeopt=                                                " Show preview in popup menu (default: menu,preview)
-set completeopt+=longest                                        " Don't select the first option, allow insert more words
-set completeopt+=menu                                           " Show list only if items > 1, if only once option is selected
+" set completeopt+=menu                                           " Show list only if items > 1, if only once option is selected
+" set completeopt+=longest                                        " Don't select the first option, allow insert more words. Clear word with asyncomplete active
 " @see autocomplete function, they are necesary to don't select first item random
-" set completeopt+=menuone                                        " Use the popup menu also when there is only one match.
-" set completeopt+=noinsert                                       " Do not insert any text for a match until the user selects a match from the menu
+set completeopt+=menuone                                        " Use the popup menu also when there is only one match.
+set completeopt+=noinsert                                       " Do not insert any text for a match until the user selects a match from the menu
+set completeopt+=noselect                                       " Do not select any option for a match until the user selects a match from the menu
 set pumheight=10                                                " Maximum options showed in popup menu (default: 0=all)
 
 " Custom Interface
@@ -469,7 +472,7 @@ if has('gui_running')
     augroup GUIOptions
         if exists('g:neovide') " (why nvim why!)
             " @see https://neovide.dev/
-            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h15
+            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h14
                         \ | let g:neovide_confirm_quit = v:false
                         \ | let g:neovide_floating_shadow = v:false
                         \ | let g:neovide_hide_mouse_when_typing = v:true
@@ -513,6 +516,7 @@ set tabstop=4                                                   " Tabs (if exist
 set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
 set shiftwidth=4                                                " 1 tab === 4 spaces (default: 8)
 set shiftround                                                  " Indentation to multiples of &shiftwidth 3>4>8 (default: off)
+" Needs a Tab char? Sure!: <C-v><C-i>
 set expandtab                                                   " Don't use tabs please (default: off)
 set fileformat=unix                                             " End of line as Unix format. Always! (default: depends)
 
@@ -1036,6 +1040,12 @@ command! -nargs=0 D call <SID>file_diff(expand('%'))
 
 " file (string): void
 function! s:file_diff(file) abort
+    if !g:hasgit
+        echo 'Nothing to do (no git).'
+
+        return 1
+    endif
+
     let l:result = system('git diff ' . a:file)
 
     if l:result ==# ''
@@ -1196,10 +1206,10 @@ nnoremap <silent> ]l :<C-u>silent! lnext<Enter>zzzv
 nnoremap <silent> [L :<C-u>silent! lfirst<Enter>zzzv
 nnoremap <silent> ]L :<C-u>silent! llast<Enter>zzzv
 
-nnoremap <silent> [b :<C-u>silent! bprevious<Enter>
-nnoremap <silent> ]b :<C-u>silent! bnext<Enter>
-nnoremap <silent> [B :<C-u>silent! bfirst<Enter>
-nnoremap <silent> ]B :<C-u>silent! blast<Enter>
+" nnoremap <silent> [b :<C-u>silent! bprevious<Enter>
+" nnoremap <silent> ]b :<C-u>silent! bnext<Enter>
+" nnoremap <silent> [B :<C-u>silent! bfirst<Enter>
+" nnoremap <silent> ]B :<C-u>silent! blast<Enter>
 
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
@@ -1910,6 +1920,11 @@ Plug 'junegunn/fzf.vim'                                         " Using a fuzzy 
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
 Plug 'sniphpets/sniphpets', {'for': 'php'}                      " PHP snippet with namespace resolve (needs ultisnips)
 
+Plug 'prabirshrestha/asyncomplete.vim'                          " Autocomplete on the fly
+Plug 'prabirshrestha/asyncomplete-buffer.vim'                   " ... from words in buffers
+" Plug 'prabirshrestha/asyncomplete-file.vim'                     " ... from files
+" Plug 'prabirshrestha/asyncomplete-tags.vim', {'for': ['php', 'c']} " ... from tags
+
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GV, GB and GBrowse commands, etc)
 Plug 'rickhowe/diffchar.vim'                                    " Better diff view
 Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
@@ -2113,9 +2128,15 @@ let g:loaded_python_provider = 0
 " Explicitly tells to use python3 (why nvim why!)
 let g:python3_host_prog = '/usr/bin/python3'
 
-" " Emmet
-" " @see https://github.com/mattn/emmet-vim
-" " Only enable in [I]nsert Mode, in [N]ormal Mode f, F, t, T don't work!
+" Asyncomplete
+" @see https://github.com/prabirshrestha/asyncomplete.vim
+let g:asyncomplete_min_chars = 5
+let g:asyncomplete_matchfuzzy = 0
+let g:asyncomplete_auto_completeopt = 0
+
+" Emmet
+" @see https://github.com/mattn/emmet-vim
+" Only enable in [I]nsert Mode, in [N]ormal Mode f, F, t, T don't work!
 let g:user_emmet_mode = 'i'
 let g:user_emmet_leader_key = ','
 let g:user_emmet_install_global = 0
@@ -2212,12 +2233,13 @@ let g:fzf_buffers_jump = 1
 " Hidden preview if visible columns are lesser 70
 let g:fzf_preview_window = ['right,50%,<70(hidden)', 'Ctrl-/']
 " @see https://github.com/junegunn/fzf/blob/master/src/options.go
+" @see https://github.com/junegunn/fzf/issues/546 -> Alt+backspace to: backward-kill-word
 let $FZF_DEFAULT_OPTS = '--bind "'
 " Extend in preview Ctrl+d and Ctrl+u
 let $FZF_DEFAULT_OPTS .= 'ctrl-d:preview-down,ctrl-u:preview-up,'
 " Move between results Ctrl+n and Ctrl+p
 let $FZF_DEFAULT_OPTS .= 'ctrl-n:down,ctrl-p:up,'
-" Move between history Ctrl+j and Ctrl+k
+" Move between history Ctrl+j and Ctrl+k (Keep last for quote)
 let $FZF_DEFAULT_OPTS .= 'ctrl-j:next-history,ctrl-k:previous-history"'
 " History search using Ctrl+p and Ctrl+n (to move: Ctrl+j and Ctrl+k)
 " @thanks https://github.com/junegunn/fzf.vim/issues/290#issuecomment-303076880
@@ -2942,6 +2964,7 @@ nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo '
 "   .   -> Ready to command
 "   =   -> [=]toggle [>]show|[<]hide inline changes
 "   -   -> [-]toggle [u]n|[s]tage file
+"   u   -> [n]nstage current
 "   U   -> [U]nstage everything
 "   X   -> Di[X]card change (checkout or reset)
 "   I   -> [I]include [P]atch from file
@@ -3296,7 +3319,7 @@ augroup AutoCommands
 
     " Customization
     autocmd BufRead,BufNewFile .env.* setfiletype sh
-    autocmd BufRead,BufNewFile phplint,phpx,grepx,datex setfiletype sh
+    autocmd BufRead,BufNewFile phplint,phpx,grepx,datex,bash_aliases setfiletype sh
     autocmd BufRead,BufNewFile *.tphp setfiletype php
     autocmd BufRead,BufNewFile .php_cs* setfiletype php
     autocmd BufRead,BufNewFile * if match(getline(1), '<\?php.*') >= 0 | setfiletype php | endif
@@ -3400,6 +3423,7 @@ augroup AutoCommands
 
     " Return to last edit position when opening files
     autocmd BufReadPost composer.lock setlocal nomodifiable
+    autocmd BufReadPost package-lock.json setlocal nomodifiable
     autocmd BufReadPost {node_modules,vendor}/* setlocal nomodifiable
     autocmd BufReadPost *
                 \ if &filetype !=# '\%(^git\%(config\)\@!\|commit\)' && line("'\"") > 0 && line("'\"") <= line('$') |
@@ -3486,6 +3510,39 @@ augroup AutoCommands
                 \ |         call feedkeys(":bdelete! " . bterminal . "\r", 'n')
                 \ |     endfor
                 \ | endif
+
+    " @see https://github.com/prabirshrestha/asyncomplete-buffer.vim
+    autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+            \ 'name': 'buffer',
+            \ 'allowlist': ['*'],
+            \ 'blocklist': ['sql'],
+            \ 'completor': function('asyncomplete#sources#buffer#completor'),
+            \ 'config': {
+            \    'max_buffer_size': g:maxsize,
+            \  },
+            \ }))
+
+"     " @see https://github.com/prabirshrestha/asyncomplete-file.vim
+"     autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+"         \ 'name': 'file',
+"         \ 'allowlist': ['*'],
+"         \ 'priority': 10,
+"         \ 'completor': function('asyncomplete#sources#file#completor')
+"         \ }))
+
+"     " @see https://github.com/prabirshrestha/asyncomplete-tags.vim
+"     autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
+"         \ 'name': 'tags',
+"         \ 'allowlist': ['c'],
+"         \ 'completor': function('asyncomplete#sources#tags#completor'),
+"         \ 'config': {
+"         \    'max_file_size': 50000000,
+"         \  },
+"         \ }))
+
+    " To auto close preview window when completion is done.
+    " @see https://github.com/prabirshrestha/asyncomplete.vim
+    autocmd CompleteDone * if pumvisible() > 0 | pclose | endif
 
     " Symfony: Setup
     autocmd BufWritePost config/{routes,packages}/*.yaml :execute "!phpx bin/console cache:clear"
@@ -4464,6 +4521,7 @@ augroup AutoCommands
             highlight! link ExtraWhitespace Error
             highlight! link WeirdWhitespace Warning
 
+            " @see https://vitormv.github.io/fzf-themes/
             let g:fzf_colors = {
                         \ 'fg':      ['fg', 'Normal'],
                         \ 'bg':      ['bg', 'Normal'],
@@ -4558,7 +4616,7 @@ augroup AutoCommands
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c :call <SID>cleanup('te')
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c :call <SID>cleanup('te')
 
     " One <C-x><C-f> to auto-complet files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories
