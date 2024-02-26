@@ -1,3 +1,13 @@
+cat() {
+    if [ "`command -v bat &> /dev/null`" -eq 0 ]; then
+        command bat --paging=never --style=changes "$@"
+
+        return $?
+    fi
+
+    command cat "$@"
+}
+
 # Dynamic Docker Run (based in current path):
 #   - drun db bash
 drun() {
@@ -180,25 +190,26 @@ gwc() {
 }
 
 alias \?="apropos"
-alias x="exit"
-alias v=$EDITOR
-alias e=$EDITOR
-alias g="grepx"
-alias n="neovide"
-alias m="man"
-alias l="less"
-alias t="sh testx.sh"
-alias h="history"
-alias d="diff"
-alias f="fzf"
 alias a="alias"
-alias w="which"
+# alias [c]omposer
+alias d="diff"
+alias e=$EDITOR
+alias f="fzf"
+alias g="grepx"
+alias h="history"
+alias l="less"
+alias m="man"
+alias n="neovide"
 alias o="xargs -t -r -I {}"
-alias s="bash ~/working/mysqlog.sh"
-alias r="bash ~/working/mysqlget.sh"
-alias q="bash ~/working/evertec/queues.sh"
 alias p="ps -fea -U \$USER -u \$USER --forest"
+alias q="bash ~/working/evertec/queues.sh"
+alias r="bash ~/working/mysqlget.sh"
+alias s="bash ~/working/mysqlog.sh"
+alias t="sh testx.sh"
 alias u="cd /var/www/html/universal-ctags/ctags && git clean -f -d && git pull origin master && ./autogen.sh && ./configure && make && sudo make install && cd -1"
+alias v=$EDITOR
+alias w="which"
+alias x="exit"
 alias y="bash ~/working/syntaxer.sh"
 
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
@@ -208,6 +219,8 @@ alias di="diff -rq --suppress-common-lines"
 alias ll="command ls -lh"
 alias lg="exa --git"
 alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
+# lsd | awk '{print $9}' | o sh -c "cd {} && git gc --prune=now && cd .."
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f artisan ] && [ -f .env ] ; then phpx artisan migrate --force; fi && cd .."
 alias lsd="command ls -lA | grep '^d'"
 alias lsn="command ls -L1"
 alias __="ssh-add"
@@ -234,7 +247,7 @@ alias vv="test \"$EDITOR\" = \"nvim\" && vim || nvim"
 
 alias rz="source ~/.zshrc"
 alias ra="source ~/.bash_aliases"
-alias ri="i3-msg 'restart'"
+alias r3="i3-msg 'restart'"
 
 alias sas="sudo apt-cache search"
 alias sad="sudo apt-cache show"
@@ -252,7 +265,6 @@ alias c="phpx `which composer`"
 alias c1="phpx `which composer_v1`"
 alias ci="phpx `which composer` -vvv install"
 alias cu="phpx `which composer` -vvv update"
-alias ct="phpx `which composer` test"
 alias cda="phpx `which composer` -vvv dump-autoload --optimize"
 alias cii="phpx `which composer` -vvv install --ignore-platform-reqs"
 alias cui="phpx `which composer` -vvv update --ignore-platform-reqs"
@@ -275,7 +287,6 @@ alias pex="sudo phpenmod xdebug"
 alias pdx="sudo phpdismod xdebug"
 alias prx='export XDEBUG_SESSION=1 && export XDEBUG_CONFIG="idekey=PHPSTORM" && phpx'
 alias psw="sudo update-alternatives --config php"
-alias prf="phprector -c /var/www/html/freddiegar/services/rector.php process"
 
 alias vt="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
 alias vT="phpx vendor/bin/phpunit --testdox -vvv"
@@ -357,6 +368,8 @@ alias gmu="git merge upstream/master"
 alias gma="git merge --abort"
 alias gp="git push"
 alias gpo="git push origin"
+alias gpt="git push --tags"
+alias gptd="git push --delete origin"
 # Whoops git pull and push revert rescue!
 alias glw="git reset --keep HEAD@{1}"
 alias gpw="git reset --soft HEAD^"
@@ -364,7 +377,7 @@ alias gpa="git push --all"
 alias gb="git branch"
 alias gbc="git branch --merged | grep -i -v -w -E 'master|main|develop' | xargs -r git branch -d"
 alias gbn="git checkout master && git branch -M master && git push -u origin master"
-alias gbb="git rev-parse --abbrev-ref HEAD | yy"
+alias gbb="git rev-parse --abbrev-ref HEAD | tr -d '\n' | yy"
 alias ggc="git gc --prune=now"
 alias gck="git fsck --full --progress"
 alias gfx="ggc && gck"
@@ -382,6 +395,7 @@ alias gsl="git stash list"
 alias gsp="git stash pop"
 alias gsb="git stash branch"
 alias gss="git stash show"
+alias gsv="git stash save"
 alias grh="git reset HEAD"
 alias grH="git reset HEAD~"
 

@@ -34,8 +34,8 @@
 	rebase = false
 [rerere]
 	enabled = true
-[column]
-	ui = auto
+; [column]
+; 	ui = auto
 [branch]
 	sort = -committerdate
 [fetch]
