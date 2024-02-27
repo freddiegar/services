@@ -1370,6 +1370,22 @@ sudo apt-get install onefetch
 # echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
 ```
 
+## Auto-cpufreq
+
+[See](https://github.com/AdnanHodzic/auto-cpufreq?tab=readme-ov-file#auto-cpufreq-installer)
+
+```bash
+git clone --depth=1 https://github.com/AdnanHodzic/auto-cpufreq.git
+cd auto-cpufreq
+sudo ./auto-cpufreq-installer
+sudo auto-cpufreq --install
+auto-cpufreq --stats
+sudo systemctl enable auto-cpufreq
+sudo systemctl status auto-cpufreq
+
+sudo auto-cpufreq --update=/var/www/html/AdnanHodzic/auto-cpufreq
+```
+
 ## Virtual Machine
 
 ### Virt-Manager

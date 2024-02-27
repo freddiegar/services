@@ -141,10 +141,12 @@
 "   - Run command using sudo is aborted
 " 4. Mappings using <S-F#> don't work nativaly              -> @see https://github.com/neovim/neovim/issues/7384 -> Add extra mappings
 " 5. Colorscheme built-in have weird colors                 -> @see https://www.reddit.com/r/neovim/comments/4urlge/vim_and_neovim_same_airline_theme_different/
-" 6. Colorscheme in :terminal have weird colors             -> @see #5 (colors are old respect a Vim9) -> links colors in $VIMRUNTIME
-" 7. In Linux terminal shows weird chars                    -> xdpyinfo?
-" 8. In wrap lines is faster!                               -> Vim rules!
-" n. Don't need installation
+"   - Colorscheme in :terminal have weird colors
+" 6. In Linux terminal shows weird chars                    -> xdpyinfo?
+"   - In wrap lines is faster!                              -> Vim rules!
+"   - Syntax highlight expects Tree-sitter dependency for many languages
+" 7. Go to definition doesn't work in ALL cases
+" n. Needs installation
 " @see https://vimhelp.org/version9.txt.html#new-9
 
 " WHY TRY NEOVIM

@@ -210,6 +210,7 @@ alias e=$EDITOR
 alias f="fzf"
 alias g="grepx"
 alias h="history"
+alias i="sudo auto-cpufreq --update=/var/www/html/AdnanHodzic/auto-cpufreq"
 alias l="less"
 alias m="man"
 alias n="neovide"

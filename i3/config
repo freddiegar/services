@@ -552,13 +552,14 @@ mode "move" {
 bindsym $mod+m mode "move" focus floating
 
 # Open new tab in browser
-set $mode_browser (b)itbucket, (w)akatime, (G|g)ithub, (l)inkedin, tra(n)slate, (o)utlook, (r)eddit, (S|s)earch, (T|t)witch, (u)rban, (Y|y)outube
+set $mode_browser (b)itbucket, (G|g)ithub, (l)inkedin, (m)onkey, tra(n)slate, (o)utlook, (r)eddit, (S|s)earch, (T|t)witch, (u)rban, (w)akatime, (Y|y)outube
 
 mode "$mode_browser" {
     bindsym b exec  $browser bitbucket.org,         mode "default"
     bindsym g exec  $browser github.com,            mode "default"
     bindsym l exec  $browser linkedin.com,          mode "default"
 
+    bindsym m exec  $browser dev.monkeytype.com,    mode "default"
     bindsym n exec  $browser translate.google.com,  mode "default"
     bindsym o exec  $browser outlook.live.com,      mode "default"
     bindsym r exec  $browser reddit.com,            mode "default"
