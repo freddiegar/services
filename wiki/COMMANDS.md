@@ -1902,3 +1902,17 @@ mkdir /tmp/d2
 sudo ln -s /opt/d2-v0.6.0/bin/d2 /usr/bin/d2
 ## rm -Rf /usr/bin/d2 /tmp/d2
 ```
+
+Install Rxvt-Unicode (Terminal Emulator)
+
+```bash
+sudo apt-get install -y rxvt-unicode
+
+sudo ln -s `pwd`/emulator/urxvt/resize-font /usr/lib/x86_64-linux-gnu/urxvt/perl/resize-font
+sudo ln -s `pwd`/emulator/urxvt/config-reload /usr/lib/x86_64-linux-gnu/urxvt/perl/config-reload
+
+ln -s `pwd`/emulator/urxvt/Dark.Xresources ~/.Xdefaults
+ln -s `pwd`/emulator/urxvt/Dark.Xresources ~/.Xresources
+
+xrdb ~/.Xresources
+```

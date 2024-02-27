@@ -79,6 +79,7 @@ cdp() {
 # Change Terminal Theme
 #   - ctm Light
 ctt() {
+    # Konsole
     sed -i "s/ColorScheme=.*/ColorScheme=${1}/g" /var/www/html/freddiegar/services/emulator/konsole/konsole.profile
 
     konsoleprofile colors=$1
@@ -89,6 +90,18 @@ ctt() {
     else
         export BAT_THEME="gruvbox-light"
         sed -i 's/BAT_THEME="gruvbox-dark"/BAT_THEME="gruvbox-light"/g' ~/.profile
+    fi
+
+    # URxvt
+    if [ -f ~/.Xresources ]; then
+        rm -f ~/.Xresources ~/.Xdefaults
+
+        ln -s /var/www/html/freddiegar/services/emulator/urxvt/$1.Xresources ~/.Xresources
+        ln -s /var/www/html/freddiegar/services/emulator/urxvt/$1.Xresources ~/.Xdefaults
+
+        xrdb ~/.Xresources
+
+        killall -SIGHUP urxvt
     fi
 }
 

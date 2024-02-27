@@ -3317,6 +3317,9 @@ augroup AutoCommands
                 \ |     PlugInstall
                 \ | endif
 
+    " Reload Xresources
+    autocmd BufWritePost *.Xresources call system("xrdb -I$HOME ~/.Xresources")
+
     " Customization
     autocmd BufRead,BufNewFile .env.* setfiletype sh
     autocmd BufRead,BufNewFile phplint,phpx,grepx,datex,bash_aliases setfiletype sh
@@ -3339,6 +3342,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile *.vpm setfiletype vpm
     autocmd BufRead,BufNewFile *.pipelines setfiletype dockerfile
     autocmd BufRead,BufNewFile /tmp/ctags/*tags* setfiletype tags noundofile
+    autocmd BufRead,BufNewFile *.Xresources setfiletype xdefaults
     autocmd BufRead,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
     autocmd FileType sql setlocal commentstring=--\ %s
@@ -3400,6 +3404,7 @@ augroup AutoCommands
     autocmd FileType vim setlocal keywordprg=:help commentstring=\"\ %s
     autocmd FileType git setlocal foldmethod=syntax foldlevel=1
     autocmd FileType gitcommit setlocal foldmethod=syntax foldlevel=1 textwidth=72
+    autocmd FileType xdefaults setlocal commentstring=!\ %s
 
     " Dynamic GutenTags generation
     autocmd FileType php,c let g:gutentags_enabled = 1
@@ -4616,7 +4621,7 @@ augroup AutoCommands
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c :call <SID>cleanup('te')
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c,*Xresources :call <SID>cleanup('te')
 
     " One <C-x><C-f> to auto-complet files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories
@@ -4704,7 +4709,7 @@ if has('termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-    set t_Co=256                                                " Number colors, tty! (default: tty=8 konsole=256 gvim=16777216)
+    set t_Co=256                                                " Number colors, tty! (default: tty=8 xreources=16 konsole=256 gvim=16777216)
     set termguicolors                                           " Vivid colours? Please! (default: off)
 endif
 

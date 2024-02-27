@@ -501,15 +501,17 @@ zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
 # Normal mode
-bindkey '^P' history-beginning-search-backward-end
+bindkey '^A' beginning-of-line
+bindkey '^B' backward-word
+bindkey '^E' end-of-line
+bindkey '^F' forward-word
+bindkey '^J' down-line-or-history
+bindkey '^K' up-line-or-history
 bindkey '^N' history-beginning-search-forward-end
+bindkey '^P' history-beginning-search-backward-end
 bindkey '^R' history-incremental-search-backward
-
-# Insert mode
-bindkey -M viins '^A' beginning-of-line
-bindkey -M viins '^B' backward-word
-bindkey -M viins '^F' forward-word
-bindkey -M viins '^E' end-of-line
+bindkey '^S' history-incremental-search-forward
+bindkey '^T' transpose-chars
 
 # Command mode
 bindkey -M vicmd 'vv' edit-command-line
