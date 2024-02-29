@@ -1,5 +1,5 @@
 cat() {
-    if [ "`command -v bat &> /dev/null`" -eq 0 ]; then
+    if [ "`command -v bat`" != "" ]; then
         command bat --paging=never --style=changes "$@"
 
         return $?
@@ -79,11 +79,6 @@ cdp() {
 # Change Terminal Theme
 #   - ctm Light
 ctt() {
-    # Konsole
-    sed -i "s/ColorScheme=.*/ColorScheme=${1}/g" /var/www/html/freddiegar/services/emulator/konsole/konsole.profile
-
-    konsoleprofile colors=$1
-
     if [ "$1" = "Dark" ] ; then
         export BAT_THEME='gruvbox-dark'
         sed -i 's/BAT_THEME="gruvbox-light"/BAT_THEME="gruvbox-dark"/g' ~/.profile
@@ -92,8 +87,15 @@ ctt() {
         sed -i 's/BAT_THEME="gruvbox-dark"/BAT_THEME="gruvbox-light"/g' ~/.profile
     fi
 
+    # Konsole
+    if [ "`command -v konsole`" != "" ]; then
+        sed -i "s/ColorScheme=.*/ColorScheme=${1}/g" /var/www/html/freddiegar/services/emulator/konsole/konsole.profile
+
+        konsoleprofile colors=$1
+    fi
+
     # URxvt
-    if [ -f ~/.Xresources ]; then
+    if [ "`command -v urxvt`" != "" ] && [ -f ~/.Xresources ]; then
         rm -f ~/.Xresources ~/.Xdefaults
 
         ln -s /var/www/html/freddiegar/services/emulator/urxvt/$1.Xresources ~/.Xresources

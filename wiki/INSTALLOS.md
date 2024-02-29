@@ -1370,7 +1370,7 @@ sudo apt-get install onefetch
 # echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
 ```
 
-## Auto-cpufreq
+## Auto-cpufreq (well: bluetooth fails)
 
 [See](https://github.com/AdnanHodzic/auto-cpufreq?tab=readme-ov-file#auto-cpufreq-installer)
 
@@ -1384,6 +1384,8 @@ sudo systemctl enable auto-cpufreq
 sudo systemctl status auto-cpufreq
 
 sudo auto-cpufreq --update=/var/www/html/AdnanHodzic/auto-cpufreq
+## sudo systemctl disable auto-cpufreq
+## sudo auto-cpufreq --remove
 ```
 
 ## Virtual Machine

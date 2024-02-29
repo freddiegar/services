@@ -1564,9 +1564,8 @@ ln -s `pwd`/editor/vim/coc-settings.json ~/.config/nvim/coc-settings.json
 ```
 > GUI?:
 > @see https://neovide.dev/installation.html#linux-source
->       sudo snap install neovide
->       sudo snap install neovide --channel=latest/beta
->       sudo snap remove neovide
+>   cargo install --git https://github.com/neovide/neovide
+>   cargo uninstall neovide
 > Allow call from i3:
 >       sudo ln -s /home/$USER/.cargo/bin/neovide /usr/bin/neovide
 

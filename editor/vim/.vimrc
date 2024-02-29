@@ -3429,6 +3429,7 @@ augroup AutoCommands
     autocmd FileType netrw,fugitive map <silent> <buffer> <C-l> <Nop>
 
     " Return to last edit position when opening files
+    autocmd BufReadPost vendor/* setlocal nomodifiable
     autocmd BufReadPost composer.lock setlocal nomodifiable
     autocmd BufReadPost package-lock.json setlocal nomodifiable
     autocmd BufReadPost {node_modules,vendor}/* setlocal nomodifiable
@@ -4727,6 +4728,26 @@ if g:isneovim && !has('gui_running')
 
     imap <silent> <S-Tab> <Esc>[Z
     smap <silent> <S-Tab> <Esc>[Z
+endif
+
+" @thanks https://vi.stackexchange.com/questions/17225/some-function-keys-switch-cases-of-letters-under-and-after-the-cursor
+if g:isneovim && $TERM =~# 'rxvt'
+    " Same to ... (:|)
+    imap <silent> <F16> <S-F6>
+    nmap <silent> <F16> <S-F6>
+    cmap <F16> <S-F6>
+
+    imap <silent> <F17> <S-F7>
+    nmap <silent> <F17> <S-F7>
+    cmap <F17> <S-F7>
+elseif $TERM =~# 'rxvt'
+    imap <silent> [29~ <S-F6>
+    nmap <silent> [29~ <S-F6>
+    cmap [29~ <S-F6>
+
+    imap <silent> [31~ <S-F7>
+    nmap <silent> [31~ <S-F7>
+    cmap [31~ <S-F7>
 endif
 
 try

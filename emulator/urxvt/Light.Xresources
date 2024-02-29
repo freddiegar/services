@@ -44,10 +44,10 @@ URxvt.keysym.Control-Right:  \033[1;5C
 
 ! Colors
 URxvt.background:   [95]#F9F5D7
-URxvt.foreground:   #282828
+URxvt.foreground:   #3C3836
 
 ! black
-URxvt.color0:       #FBF1C7
+URxvt.color0:       #F9F5D7
 URxvt.color8:       #928374
 ! red
 URxvt.color1:       #CC241D
@@ -68,5 +68,5 @@ URxvt.color13:      #8F3F71
 URxvt.color6:       #689D6A
 URxvt.color14:      #427B58
 ! white
-URxvt.color7:       #7C6F64
+URxvt.color7:       #A89984
 URxvt.color15:      #3C3836
