@@ -1922,8 +1922,8 @@ Plug 'junegunn/fzf.vim'                                         " Using a fuzzy 
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
 Plug 'sniphpets/sniphpets', {'for': 'php'}                      " PHP snippet with namespace resolve (needs ultisnips)
 
-Plug 'prabirshrestha/asyncomplete.vim'                          " Autocomplete on the fly
-Plug 'prabirshrestha/asyncomplete-buffer.vim'                   " ... from words in buffers
+" Plug 'prabirshrestha/asyncomplete.vim'                          " Autocomplete on the fly
+" Plug 'prabirshrestha/asyncomplete-buffer.vim'                   " ... from words in buffers
 " Plug 'prabirshrestha/asyncomplete-file.vim'                     " ... from files
 " Plug 'prabirshrestha/asyncomplete-tags.vim', {'for': ['php', 'c']} " ... from tags
 
@@ -1952,6 +1952,7 @@ Plug 'phpactor/phpactor', {
             \ 'for': 'php',
             \ 'do': 'composer install --no-dev --optimize-autoloader'
             \ }                                                 " LSP and refactor tool for PHP
+" Plug 'RRethy/vim-illuminate', {'for': ['vim', 'php', 'c']}      " Highligth current cursor word
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
 Plug 'ludovicchabant/vim-gutentags'                             " Auto generate tags (not allowed 'for' option)
@@ -2130,11 +2131,11 @@ let g:loaded_python_provider = 0
 " Explicitly tells to use python3 (why nvim why!)
 let g:python3_host_prog = '/usr/bin/python3'
 
-" Asyncomplete
-" @see https://github.com/prabirshrestha/asyncomplete.vim
-let g:asyncomplete_min_chars = 5
-let g:asyncomplete_matchfuzzy = 0
-let g:asyncomplete_auto_completeopt = 0
+" " Asyncomplete
+" " @see https://github.com/prabirshrestha/asyncomplete.vim
+" let g:asyncomplete_min_chars = 5
+" let g:asyncomplete_matchfuzzy = 0
+" let g:asyncomplete_auto_completeopt = 0
 
 " Emmet
 " @see https://github.com/mattn/emmet-vim
@@ -2865,6 +2866,15 @@ xmap <silent> <leader>b S
 
 " nnoremap <C-]> g<C-]>
 
+" " Illuminate
+" " @see https://github.com/RRethy/vim-illuminate
+" let g:Illuminate_delay = 100
+" let g:Illuminate_ftwhitelist = ['vim', 'php', 'c']
+" let g:Illuminate_ftHighlightGroups = {
+"       \ 'vim': ['vimVar', 'vimFuncName', 'vimFunction', 'vimUserFunc', 'vimFunc'],
+"       \ 'php': ['phpIdentifier', 'phpFunction', 'phpMethodsVar']
+"       \ }
+
 " GutenTags
 " @see https://github.com/ludovicchabant/vim-gutentags
 " @see https://ericjmritz.wordpress.com/2013/05/22/finding-php-traits-with-exuberant-ctags/
@@ -3519,16 +3529,16 @@ augroup AutoCommands
                 \ |     endfor
                 \ | endif
 
-    " @see https://github.com/prabirshrestha/asyncomplete-buffer.vim
-    autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-            \ 'name': 'buffer',
-            \ 'allowlist': ['*'],
-            \ 'blocklist': ['sql'],
-            \ 'completor': function('asyncomplete#sources#buffer#completor'),
-            \ 'config': {
-            \    'max_buffer_size': g:maxsize,
-            \  },
-            \ }))
+    " " @see https://github.com/prabirshrestha/asyncomplete-buffer.vim
+    " autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+    "         \ 'name': 'buffer',
+    "         \ 'allowlist': ['*'],
+    "         \ 'blocklist': ['sql'],
+    "         \ 'completor': function('asyncomplete#sources#buffer#completor'),
+    "         \ 'config': {
+    "         \    'max_buffer_size': g:maxsize,
+    "         \  },
+    "         \ }))
 
 "     " @see https://github.com/prabirshrestha/asyncomplete-file.vim
 "     autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
@@ -3548,9 +3558,9 @@ augroup AutoCommands
 "         \  },
 "         \ }))
 
-    " To auto close preview window when completion is done.
-    " @see https://github.com/prabirshrestha/asyncomplete.vim
-    autocmd CompleteDone * if pumvisible() > 0 | pclose | endif
+"     " To auto close preview window when completion is done.
+"     " @see https://github.com/prabirshrestha/asyncomplete.vim
+"     autocmd CompleteDone * if pumvisible() > 0 | pclose | endif
 
     " Symfony: Setup
     autocmd BufWritePost config/{routes,packages}/*.yaml :execute "!phpx bin/console cache:clear"

@@ -261,6 +261,15 @@ vim --version | grep xterm_clipboard
 # Check again ;)
 ```
 
+## Vim JSON Development (and Git Hooks)
+
+[See](https://jqlang.github.io/jq/)
+
+```bash
+sudo apt-get install -y jq
+# sudo apt remove jq && sudo apt-get autoremove
+```
+
 ## Vim SQL Development
 
 ```bash
