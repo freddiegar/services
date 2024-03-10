@@ -392,7 +392,18 @@ hcitool -i hci0 scan
 # Enable connection
 bluetoothctl trust AC:80:0A:14:76:5C
 bluetoothctl connect AC:80:0A:14:76:5C
+# Show
+bluetoothctl devices
 ```
+> Sudio
+> bluetoothctl
+> power on
+> scan on
+> agent on
+> devices
+> pair 41:42:2F:7A:4C:D4
+> trust 41:42:2F:7A:4C:D4
+> connect 41:42:2F:7A:4C:D4
 
 Remove snap
 

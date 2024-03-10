@@ -88,14 +88,14 @@ ctt() {
     fi
 
     # Konsole
-    if [ "`command -v konsole`" != "" ]; then
-        sed -i "s/ColorScheme=.*/ColorScheme=${1}/g" /var/www/html/freddiegar/services/emulator/konsole/konsole.profile
+    sed -i "s/ColorScheme=.*/ColorScheme=${1}/g" /var/www/html/freddiegar/services/emulator/konsole/konsole.profile
 
+    if [ "`command -v konsoleprofile`" != "" ]; then
         konsoleprofile colors=$1
     fi
 
     # URxvt
-    if [ "`command -v urxvt`" != "" ] && [ -f ~/.Xresources ]; then
+    if [ -f ~/.Xresources ]; then
         rm -f ~/.Xresources ~/.Xdefaults
 
         ln -s /var/www/html/freddiegar/services/emulator/urxvt/$1.Xresources ~/.Xresources
@@ -212,7 +212,7 @@ alias e=$EDITOR
 alias f="fzf"
 alias g="grepx"
 alias h="history"
-alias i="sudo auto-cpufreq --update=/var/www/html/AdnanHodzic/auto-cpufreq"
+# alias i=""
 alias l="less"
 alias m="man"
 alias n="neovide"
@@ -232,8 +232,8 @@ alias y="bash ~/working/syntaxer.sh"
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
 alias ht="history | awk '{print \$4}' | sort | uniq -c | sort -nr | head -10"
 alias di="diff -rq --suppress-common-lines"
-alias ll="command ls -lh"
-alias lg="exa --git"
+# alias ll="command ls -lh"
+# alias lg="exa --git"
 alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
 # lsd | awk '{print $9}' | o sh -c "cd {} && git gc --prune=now && cd .."
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f artisan ] && [ -f .env ] ; then phpx artisan migrate --force; fi && cd .."

@@ -3320,7 +3320,7 @@ augroup AutoCommands
                 \ | endif
 
     " Reload Xresources
-    autocmd BufWritePost *.Xresources call system("xrdb -I$HOME ~/.Xresources")
+    autocmd BufWritePost *.Xresources call system('xrdb -I$HOME ~/.Xresources')
 
     " Customization
     autocmd BufRead,BufNewFile .env.* setfiletype sh
@@ -4740,14 +4740,15 @@ if g:isneovim && $TERM =~# 'rxvt'
     imap <silent> <F17> <S-F7>
     nmap <silent> <F17> <S-F7>
     cmap <F17> <S-F7>
-elseif $TERM =~# 'rxvt'
-    imap <silent> [29~ <S-F6>
-    nmap <silent> [29~ <S-F6>
-    cmap [29~ <S-F6>
+" elseif $TERM =~# 'rxvt'
+    " Breaks Esc key
+"     imap <silent> [29~ <S-F6>
+"     nmap <silent> [29~ <S-F6>
+"     cmap [29~ <S-F6>
 
-    imap <silent> [31~ <S-F7>
-    nmap <silent> [31~ <S-F7>
-    cmap [31~ <S-F7>
+"     imap <silent> [31~ <S-F7>
+"     nmap <silent> [31~ <S-F7>
+"     cmap [31~ <S-F7>
 endif
 
 try

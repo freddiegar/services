@@ -211,6 +211,7 @@ sudo update-alternatives --config x-session-manager
 
 ```bash
 echo 'dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
+xrdb -I$HOME ~/.Xresources
 exec i3' >> ~/.xinitrc
 ```
 
@@ -670,7 +671,7 @@ lxqt-leave
 ```bash
 cd ~
 # @see https://github.com/docker/compose/releases
-sudo curl -L https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.24.7/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -1509,13 +1510,14 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 23.10
 uname -r
-# 6.5.0-13-generic
+# 6.5.0-21-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.38
 gcc --version | grep -e "^gcc" | awk '{print $4}'
 # 13.2.0
 openssl version | awk '{print $2}'
 # 3.0.10
+# 1.1.1w
 i3 --version | awk '{print $3}'
 # 4.22
 i3status --version | grep -e "i3status" | awk '{print $2}'
@@ -1527,7 +1529,7 @@ bash --version | grep -e "bash" | awk '{print $4}'
 zsh --version | awk '{print $2}'
 # 5.9
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
-# 9.0. Included patches: 1-1672, 1729, 1747, 2107, 1840, 1846-1848, 1857-1858, 1873, 1969, 1992, 2010, 2068, 2106, 2108-2112, 2121
+# 9.0.Included patches: 1-1672, 1729, 1747, 2107, 1840, 1846-1848, 1857-1858, 1873, 1969, 1992, 2010, 2068, 2106, 2108-2112, 2121
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
 # Stable:   v0.7.2-LuaJIT 2.1.0-beta3
 # Unstable: v0.10.0-dev-LuaJIT 2.1.0-beta3
@@ -1539,16 +1541,18 @@ git --version | awk '{print $3}'
 # 2.40.1
 git lfs version
 # git-lfs/3.4.0 (GitHub; linux amd64; go 1.21.0)
-docker --version | awk '{print $3}'
-# 24.0.7
+docker --version | awk '{print $3}' | sed 's/,//g'
+# 25.0.4,
 docker-compose --version | awk '{print $4}'
-# v2.23.3
+# v2.24.7
 feh --version | grep version | awk '{print $3}'
 # 3.10
 maim --version | awk '{print $1}'
 # v5.7.4
 unzip -v | grep "^UnZip.*\.$" | awk '{print $2}'
 # 6.00
+jq --version | sed 's/jq-//g'
+# 1.6
 tree --version | awk '{print $2}'
 # v2.1.1
 nmap --version | grep "^Nmap" | awk '{print $3}'
@@ -1562,15 +1566,15 @@ bat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 13.0.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.1.26
-nvm --version
-# 0.39.3
+# 8.1.27
+# nvm --version
+# # 0.39.3
 npm --version
-# 9.8.1
+# 10.5.0
 node --version
-# v18.16.0
+# v20.10.0
 mysql --version | awk '{print $3}'
-# 8.0.35-0ubuntu0.23.10.1
+# 8.0.36-0ubuntu0.23.10.1
 stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
@@ -1579,8 +1583,8 @@ ruby --version | awk '{print $2}'
 # 3.1.2p20
 rustc --version | awk '{print $2}'
 # 1.76.0
-ctags --version | head -1 | awk '{print $3}'
-# 6.0.0(fae067a),
+ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
+# 6.1.0(87069765)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -1588,4 +1592,4 @@ ftp about:version | head -1 | awk '{print $3}'
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 dpkg --list | wc --lines
-# 2660
+# 2448

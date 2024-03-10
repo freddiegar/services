@@ -32,9 +32,9 @@ URxvt.scrollBar: false
 URxvt.transparent: false
 
 ! resize-font
-URxvt.keysym.C-minus:  resize-font:smaller
-URxvt.keysym.C-plus:   resize-font:bigger
-URxvt.keysym.C-equal:  resize-font:equal
+URxvt.keysym.Control-minus:  resize-font:smaller
+URxvt.keysym.Control-plus:   resize-font:bigger
+URxvt.keysym.Control-equal:  resize-font:equal
 
 ! move between words
 URxvt.keysym.Control-Up:     \033[1;5A
