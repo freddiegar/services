@@ -453,12 +453,25 @@ endif
 
 set winaltkeys=no                                               " Never use alt-keys for GUI menus (default: menu)
 
+" Themes
+" Allowed 24 bit colors, by default only accept 8 bit, tty!
+" @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
+" @see https://github.com/vim/vim/issues/993#issuecomment-255651605
+if has('termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+    set t_Co=256                                                " Number colors, tty! (default: tty=8 xreources=16 konsole=256 gvim=16777216)
+    set termguicolors                                           " Vivid colours? Please! (default: off)
+endif
+
 " @thanks https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
+" Must be after termguicolors!
 " @see :h termcap-cursor-shape
-if !g:isneovim                                                  " Visual feedback in Insert Mode: line and Others Modes: block
-    let &t_SI = "\<Esc>]50;CursorShape=1\x7"                    " Use line (1=|) on [S]tart [I]nsert Mode
-    let &t_SR = "\<Esc>]50;CursorShape=2\x7"                    " Use underline (2=_) on [S]tart [R]eplace Mode
-    let &t_EI = "\<Esc>]50;CursorShape=0\x7"                    " Use block (0) on [E]nd [I]nsert (or Replace) Mode
+if !g:isneovim                                                  " Visual feedback
+    let &t_SI = "\e[6 q"                                        " Use solid line (6=|) on [S]tart [I]nsert Mode
+    let &t_SR = "\e[4 q"                                        " Use solid underline (4=_) on [S]tart [R]eplace Mode
+    let &t_EI = "\e[2 q"                                        " Use solid block (2) on [E]nd [I]nsert (or Replace) Mode
 endif
 
 if has('gui_running')
@@ -4744,18 +4757,6 @@ function! s:vpm() abort
         let g:vpm = 0
     endif
 endfunction
-
-" Themes
-" Allowed 24 bit colors, by default only accept 8 bit, tty!
-" @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
-" @see https://github.com/vim/vim/issues/993#issuecomment-255651605
-if has('termguicolors')
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-
-    set t_Co=256                                                " Number colors, tty! (default: tty=8 xreources=16 konsole=256 gvim=16777216)
-    set termguicolors                                           " Vivid colours? Please! (default: off)
-endif
 
 if g:isneovim && !has('gui_running')
     " Same to ... (why nvim why!)
