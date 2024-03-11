@@ -562,7 +562,7 @@ let g:netrw_keepdir = 1                                         " Keep current d
 let g:netrw_preview = 1                                         " Preview in vertical mode (default: horizontal)
 let g:netrw_alto = 1                                            " Change from above to below splitting (default: depends)
 let g:netrw_altv = 1                                            " Change from left to right splitting (default: depends)
-let g:netrw_browse_split = 4                                    " Open file vertically (default: 0=same window)
+let g:netrw_browse_split = 0                                    " Open file in same window after <Enter> (default: 0=same window)
 let g:netrw_winsize = 20                                        " Keep same size after open file in previews (default: 50=50%)
 let g:netrw_liststyle = 3                                       " Show as tree: folders and files always. Cycling: i
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive (default: cp)
@@ -575,7 +575,7 @@ let g:filterprg = split(&grepprg)[0] ==# 'rg'
             \ : split(&grepprg)[0] . ' -E'
 
 function! GetNameCurrentPath() abort
-    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree'], &filetype) < 0
+    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish'], &filetype) < 0
                 \ ? split(g:cwd, '/')[-1] . (expand('%:t') !=# '' ? ' ' : '')
                 \ : ''
 endfunction
@@ -604,7 +604,7 @@ function! GetNameCurrentFile() abort
 endfunction
 
 function! GetNameBranch() abort
-    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree'], &filetype) >= 0
+    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
         return ' '
     endif
 
@@ -615,7 +615,7 @@ endfunction
 
 " executable (string)
 function! GetVersion(executable) abort
-    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree'], &filetype) >= 0
+    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
         return ''
     endif
 
@@ -641,7 +641,7 @@ endfunction
 function! GetTypeCurrentFile() abort
     let l:path = expand('%:p')
 
-    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree'], &filetype) >= 0
+    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
         return ''
     endif
 
@@ -668,7 +668,7 @@ endfunction
 
 function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
-                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree'], &filetype) >= 0
+                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
         return g:test_strategy ==# 'background' ? '[A]' : ''
     endif
@@ -854,6 +854,8 @@ xnoremap <silent> $ $h
 nnoremap <silent> gl `.zzzv
 " Re-select last just paste
 nnoremap <silent> gV `[v`]
+" Line-wise Visual mode
+nnoremap <silent> vv _vg_
 
 " Emphasis in window, like <C-w>o, but don't close others
 nnoremap <silent> <C-w>O :silent wincmd _ <Bar> silent wincmd <Bar><Enter>
@@ -1092,17 +1094,18 @@ command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
 nmap <silent> <F1> mzgg=G`z
 
 " Open explore in current work directory (toggle)
-nmap <silent> <C-w>. <Cmd>call <SID>toggle_netrw(getcwd())<Enter>
+nmap <silent> <C-w>. <Cmd>call <SID>toggle_netrw(getcwd(), v:false)<Enter>
 
 " Open explore in current file directory (toggle)
 " @overwrite :h CTRL-W_:
-nmap <silent> <C-w>: <Cmd>call <SID>toggle_netrw(expand('%:p:h'))<Enter>
+nmap <silent> <C-w>: <Cmd>call <SID>toggle_netrw(expand('%:p:h'), v:false)<Enter>
 
-let g:netrwopen = 0
+let g:netrwopen = get(g:, 'netrwopen', 0)
 
 " @thanks https://github.com/Shock9616/nvim-config/blob/3fab5bd94ba435f0b38028cb1cbbd91c6c948eb4/.vimrc#L80C1-L96C12
-function! s:toggle_netrw(dir) abort
-    if g:netrwopen
+" dir (string), force (bool): void
+function! s:toggle_netrw(dir, force) abort
+    if g:netrwopen || a:force
         let l:nbuffer = bufnr('$')
 
         while l:nbuffer >= 1
@@ -1119,10 +1122,11 @@ function! s:toggle_netrw(dir) abort
     else
         let g:netrwopen = 1
 
-        silent execute '20Vexplore ' . a:dir
+        silent execute 'Explore! ' . a:dir
     endif
 
-    doautocmd <nomodeline> User UpdateStatusline
+    " Force reload statusline, with doautocmd doesn't work
+    silent call <SID>statusline('f')
 endfunction
 
 " Fast Vim configuration (and plugins)
@@ -1162,7 +1166,9 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
-            \ index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree'], &filetype) >= 0
+            \ &filetype ==# 'netrw'
+            \ ? ":let g:netrwopen = 0 <Bar> bwipeout<Enter>"
+            \ : index(['', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
             \ ? ":bdelete!<Enter>"
             \ : ":update
             \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
@@ -1742,16 +1748,16 @@ xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 
 " @simple https://github.com/tpope/vim-rsi
 " Insert Mode navigation (Forget Arrows)
-" inoremap <silent> <C-a> <C-o>^
-" inoremap <silent> <expr> <C-e>
-"             \ pumvisible() ? "\<lt>C-e>" :
-"             \ "\<C-o>$"
-" inoremap <silent> <C-k> <C-g>u<Up>
-" inoremap <silent> <C-j> <C-g>u<Down>
-" inoremap <silent> <C-h> <C-g>u<Left>
-" inoremap <silent> <C-l> <C-g>u<Right>
-" inoremap <silent> <C-b> <C-o>B
-" inoremap <silent> <C-f> <C-o>W
+inoremap <silent> <C-a> <C-o>^
+inoremap <silent> <expr> <C-e>
+            \ pumvisible() ? "\<lt>C-e>" :
+            \ "\<C-o>$"
+inoremap <silent> <C-k> <C-g>u<Up>
+inoremap <silent> <C-j> <C-g>u<Down>
+inoremap <silent> <C-h> <C-g>u<Left>
+inoremap <silent> <C-l> <C-g>u<Right>
+inoremap <silent> <C-b> <C-o>B
+inoremap <silent> <C-f> <C-o>W
 
 " Same behaviour in Insert Mode
 inoremap <silent> <C-z> <Esc><C-z>
@@ -1912,6 +1918,7 @@ Plug 'tpope/vim-surround'                                       " cs"' ([c]hange
 Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
+" Plug 'justinmk/vim-dirvish'                                     " Vifm but from Vim
 " Keep disabled! mappings fails
 " Plug 'cohama/lexima.vim'                                        " Append close: ', ", ), ], etc
 
@@ -2024,7 +2031,7 @@ call plug#end()
 
 " PHPActor
 " @see https://github.com/phpactor/phpactor
-let g:phpactorPhpBin = '/usr/bin/php8.1'
+let g:phpactorPhpBin = '/usr/bin/php8.2'
 
 " LSP Vue
 " npm -g install vls eslint eslint-plugin-vue -D
@@ -2184,7 +2191,7 @@ let g:user_emmet_install_global = 0
 
 " " file (string): void
 " function! s:show_context(file) abort
-"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree'], &filetype) >= 0
+"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
 "         if exists(':ContextActivate')
 "             silent execute 'ContextDisable'
 "         endif
@@ -2212,6 +2219,10 @@ let g:d2_block_string_syntaxes = {'php': ['php']}
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
 let g:highlightedyank_highlight_duration = 250
+
+" " Dirvish
+" " @see https://github.com/justinmk/vim-dirvish
+" let g:dirvish_relative_paths = 1
 
 " TagBar
 " @see https://github.com/preservim/tagbar
@@ -3436,13 +3447,33 @@ augroup AutoCommands
     " Weird behaviour using this mapping
     autocmd FileType netrw map <silent> <buffer> p <Nop>
     autocmd FileType netrw map <silent> <buffer> P <Nop>
+    autocmd FileType netrw map <silent> <buffer> o <Nop>
+    autocmd FileType netrw map <silent> <buffer> O <Nop>
+    autocmd FileType netrw map <silent> <buffer> v <Nop>
+    autocmd FileType netrw map <silent> <buffer> - <Nop>
     autocmd FileType netrw,fugitive map <silent> <buffer> <C-l> <Nop>
 
-    " Return to last edit position when opening files
+    " Manipulate current directory or file using dot (.) and [y]ank
+    " @thanks https://vi.stackexchange.com/a/39410
+    autocmd FileType netrw nmap <nowait> <buffer> . :<C-u>! =netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))<Enter><Home><C-Right>
+    autocmd FileType netrw nmap <silent> <buffer> yy :let @+=="netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))"<Enter><Enter>
+
+    " Like many others (vim-plug, GV, undotree) q is [q]uit. So sorry Tim!
+    autocmd FileType help map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
+    autocmd FileType netrw map <silent> <nowait> <buffer> q <Cmd>call <SID>toggle_netrw(getcwd(), v:true)<Enter>
+    autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
+    autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq
+
+"     " Fixed toggle netrw after close from any other way, trigger always, then, don't use please
+"     autocmd BufDelete,BufUnload * if expand('<afile>') ==# 'NetrwTreeListing' | let g:netrwopen = 0 | endif | call <SID>statusline('f')
+
+    " Some files are prohibited
     autocmd BufReadPost vendor/* setlocal nomodifiable
+    autocmd BufReadPost node_modules/* setlocal nomodifiable
     autocmd BufReadPost composer.lock setlocal nomodifiable
     autocmd BufReadPost package-lock.json setlocal nomodifiable
-    autocmd BufReadPost {node_modules,vendor}/* setlocal nomodifiable
+
+    " Return to last edit position when opening files
     autocmd BufReadPost *
                 \ if &filetype !=# '\%(^git\%(config\)\@!\|commit\)' && line("'\"") > 0 && line("'\"") <= line('$') |
                 \   silent execute "normal! g`\"" |
@@ -4295,7 +4326,7 @@ augroup AutoCommands
 
     function! s:sessionremoveitem(item) abort
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
-                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive'], getbufvar(a:item, '&filetype')) >= 0
+                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive', 'dirvish'], getbufvar(a:item, '&filetype')) >= 0
                     \ || buflisted(a:item) == 0
                     \ || (match(a:item, '.') >= 0 && split(a:item, '\.')[-1] ==# 'dbout')
                     \ || isdirectory(a:item)

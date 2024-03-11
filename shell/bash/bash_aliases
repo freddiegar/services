@@ -477,7 +477,9 @@ alias vdf="cdp /var/www/html/freddiegar"
 
 alias cdd="cd /home/$USER/Downloads"
 
+# wr source dest
 alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
+alias wh="convert -resize 1920x1080"
 alias yy="xclip -selection clipboard"
 alias pp="xclip -selection clipboard -o"
 
