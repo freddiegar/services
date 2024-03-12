@@ -143,15 +143,15 @@
 " 5. Colorscheme built-in have weird colors                 -> @see https://www.reddit.com/r/neovim/comments/4urlge/vim_and_neovim_same_airline_theme_different/
 "   - Colorscheme in :terminal have weird colors
 " 6. In Linux terminal shows weird chars                    -> xdpyinfo?
-"   - In wrap lines is faster!                              -> Vim rules!
-"   - Syntax highlight expects Tree-sitter dependency for many languages
+"   - In wrap lines is slower!                              -> Vim rules!
+"   - Syntax highlight expects Treesitter dependency for many languages
 " 7. Go to definition doesn't work in ALL cases
 " n. Needs installation
 " @see https://vimhelp.org/version9.txt.html#new-9
 
 " WHY TRY NEOVIM
 " 1. No brake changes :(vim9script, yeah):                  -> @see https://www.youtube.com/watch?v=zPQSST-M3fM -> vim9script transpiler
-" 2. Better syntax highlighting (on comments by example)
+" 2. Better syntax highlighting (on comments by example) without Treesitter
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
 "           Version                         BARE(ms)    PLUG-NC(ms) PLUG-C(ms)  DATE
@@ -797,10 +797,10 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
 
-"     if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
-"         setlocal statusline+=\                                  " Extra space
-"         setlocal statusline+=%{pomo#remaining_time().'m'}       " Pomodoro time
-"     endif
+    " if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
+    "     setlocal statusline+=\                                  " Extra space
+    "     setlocal statusline+=%{pomo#remaining_time().'m'}       " Pomodoro time
+    " endif
 
     setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
     setlocal statusline+=%{&filetype!=#''?&filetype:&buftype}   " Is it require description?
@@ -2022,6 +2022,7 @@ endif
 
 if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'on': []} " Highligth ++
 else
     Plug 'markonm/traces.vim'                                   " See range, substitution and global preview
     Plug 'machakann/vim-highlightedyank'                        " See yank preview
@@ -2192,7 +2193,7 @@ let g:user_emmet_install_global = 0
 " " @see https://github.com/tricktux/pomodoro.vim
 " let g:pomodoro_time_work = 50
 " let g:pomodoro_time_slack = 10
-" let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav'
+" let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav && i3-msg --quiet "exec i3-nagbar --font \"pango:fira code retina\" --type warning --message \"Time to chill out!\", fullscreen disable"'
 
 " nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
 
@@ -3492,6 +3493,49 @@ augroup AutoCommands
                 \   silent execute "normal! g`\"" |
                 \ endif
 
+    if g:isneovim
+        " Lazy load
+        autocmd BufReadPost * ++once silent call <SID>treesitter()
+
+        " @thanks https://gist.github.com/kawarimidoll/d566e367591acae6e41295722803534d
+        function! s:treesitter() abort
+            if exists('g:plug_treesitter_loaded')
+                return
+            endif
+
+            let g:plug_treesitter_loaded = 1
+
+            call plug#load('nvim-treesitter')
+
+            silent execute 'luafile' g:plug_home .. '/nvim-treesitter/plugin/nvim-treesitter.lua'
+
+" Don't indent!
+lua << EOF
+require 'nvim-treesitter.configs'.setup({
+    auto_install = true,
+    ensure_installed = {
+        'vim'
+    },
+    highlight = {
+        enable = true,
+        additional_vim_regex_highlighting = false,
+    },
+    indent = {
+        enable = false,
+    },
+    incremental_selection = {
+        enable = false,
+    },
+    textobjects = {
+        enable = false,
+    },
+})
+EOF
+
+            TSBufEnable highlight
+        endfunction
+    endif
+
     " Hide signcolumn in Terminal Mode
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
@@ -4704,7 +4748,11 @@ augroup AutoCommands
     " autocmd VimResized * wincmd =
 augroup END
 
-nmap <silent> <F4> <Cmd>call <SID>get_hlinfo()<Enter>
+if g:isneovim
+    nmap <silent> <F4> <Cmd>Inspect<Enter>
+else
+    nmap <silent> <F4> <Cmd>call <SID>get_hlinfo()<Enter>
+endif
 
 " @thanks https://stackoverflow.com/questions/9464844/how-to-get-group-name-of-highlighting-under-cursor-in-vim#9464929
 function! s:get_hlinfo() abort
