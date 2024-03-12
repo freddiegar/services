@@ -1915,3 +1915,15 @@ ln -s `pwd`/emulator/urxvt/Dark.Xresources ~/.Xresources
 
 xrdb ~/.Xresources
 ```
+
+Install Alacritty (Terminal Emulator)
+
+[See](https://github.com/alacritty/alacritty/blob/master/INSTALL.md#cargo-installation)
+
+```bash
+cargo install alacritty
+mkdir -p ~/.config/alacritty
+ln -s `pwd`/emulator/alacritty/Dark.alacritty.toml ~/.config/alacritty/alacritty.toml
+
+## cargo uninstall alacritty
+```

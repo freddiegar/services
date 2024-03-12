@@ -105,6 +105,12 @@ ctt() {
 
         killall -SIGHUP urxvt
     fi
+
+    # Alacritty
+    if [ -f ~/.config/alacritty/alacritty.toml ]; then
+        rm -f ~/.config/alacritty/alacritty.toml
+        ln -s /var/www/html/freddiegar/services/emulator/alacritty/$1.alacritty.toml ~/.config/alacritty/alacritty.toml
+    fi
 }
 
 # Init git repository to use worktree strategy
