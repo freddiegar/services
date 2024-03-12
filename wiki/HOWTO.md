@@ -433,3 +433,21 @@ displayDetailsOnTestsThatTriggerNotices="true"
 displayDetailsOnTestsThatTriggerWarnings="true">
 
 ```
+
+Enable autosuggestions in oh-my-zsh
+
+```bash
+git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+plugins=(
+    zsh-autosuggestions
+    # zsh-syntax-highlighting
+)
+> /home/freddie/.zshrc
+
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+
+# @see https://www.gnu.org/software/bash/manual/bash.html#Event-Designators
+# !*
+```

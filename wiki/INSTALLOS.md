@@ -535,6 +535,15 @@ bindkey -M menuselect 'j' vi-down-line-or-history" >> ~/.zshrc
 > @see ~/.oh-my-zsh/plugins/
 > man zshzle
 
+# Ignore aliasses
+
+echo "
+# Ignores in History
+# @see https://unix.stackexchange.com/a/6104
+# @thanks https://github.com/ohmyzsh/ohmyzsh/blob/6a65ac90259d87f7549c581372403405ef01b7d2/lib/history.zsh#L35
+setopt HIST_REDUCE_BLANKS
+HISTORY_IGNORE='..|__|___|a|a *|alias|alias *|v|v[vlnd]|x|reset|htop|[rv][azh3]|f|f[adfjmnotug|ls|ls *|cd ..|cd *|cd[eatx]|g[sfvVMN]|gst|ga .|gd|gdc|glo[gpf]|rm *|cd[etxf]|vd[etxf]|k[dl]|pkill *|startx|reboot|sa[irsy]|s[uc] *|h[ht]|fo *' >> ~/.zshrc
+
 # Aliases
 
 ```bash
