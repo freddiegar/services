@@ -1,6 +1,7 @@
 # i3 config file (v4)
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
+# Introduction: https://www.youtube.com/watch?v=QnYN2CTb1hM& (by Author)
 
 # Shortcuts base available:
 #   Shifted:      B, U, Y
@@ -13,8 +14,6 @@
 set $mod Mod4
 # Alt Key
 set $meta Mod1
-# eTerminal
-set $emulator konsole
 # Browser
 set $browser firefox --new-tab
 set $browser-private firefox --new-tab --private-window
@@ -53,7 +52,8 @@ font pango:$font_family $font_size
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id "$emulator -p font='$font_family,$font_size_scratch'"
+# bindsym $mod+Return exec --no-startup-id "konsole -p font='$font_family,$font_size_scratch'"
+bindsym $mod+Return exec --no-startup-id "urxvt"
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -241,11 +241,20 @@ for_window [class="^Gimp$" title="^Quit GIMP$"]                             floa
 
 # Scratchpad (help: --list-profile-properties)
 # NOTE: They are lazy loading now
-for_window [title="^::scratchpad::"]    move scratchpad
-bindsym --release $mod+minus            exec --no-startup-id ([ "`ps -fea | rg -F '::scratchpad::' | rg -v -F ' rg '`" = "" ] && $emulator -p tabtitle='::scratchpad::' &); [title="^::scratchpad::"] scratchpad show, move position center
 
-for_window [title="^::xcratchpad::"]    move scratchpad
-bindsym --release $mod+Shift+minus      exec --no-startup-id ([ "`ps -fea | rg -F '::xcratchpad::' | rg -v -F ' rg '`" = "" ] && $emulator -p tabtitle='::xcratchpad::' &); [title="^::xcratchpad::"] scratchpad show, move position center
+# Konsole
+# for_window [title="^::scratchpad::"]    move scratchpad
+# bindsym --release $mod+minus            exec --no-startup-id ([ "`ps -fea | rg -F '::scratchpad::' | rg -v -F ' rg '`" = "" ] && konsole -p tabtitle='::scratchpad::' &); [title="^::scratchpad::"] scratchpad show, move position center
+
+# for_window [title="^::xcratchpad::"]    move scratchpad
+# bindsym --release $mod+Shift+minus      exec --no-startup-id ([ "`ps -fea | rg -F '::xcratchpad::' | rg -v -F ' rg '`" = "" ] && konsole -p tabtitle='::xcratchpad::' &); [title="^::xcratchpad::"] scratchpad show, move position center
+
+# URxvt
+for_window [instance="^::scratchpad::"] move scratchpad
+bindsym --release $mod+minus            exec --no-startup-id ([ "`ps -fea | rg -F '::scratchpad::' | rg -v -F ' rg '`" = "" ] && urxvt -name ::scratchpad:: &); [instance="^::scratchpad::"] scratchpad show, move position center
+
+for_window [instance="^::xcratchpad::"] move scratchpad
+bindsym --release $mod+Shift+minus      exec --no-startup-id ([ "`ps -fea | rg -F '::xcratchpad::' | rg -v -F ' rg '`" = "" ] && urxvt -name ::xcratchpad:: &); [instance="^::xcratchpad::"] scratchpad show, move position center
 
 # @see https://www.reddit.com/r/i3wm/comments/ejn0iz/what_is_the_difference_between_reload_and_restart/
 # reload the configuration file
@@ -393,7 +402,8 @@ bindsym $mod+Shift+s sticky toggle
 
 # On startup
 # Init terminal
-exec --no-startup-id $emulator
+# exec --no-startup-id konsole
+exec --no-startup-id urxvt
 # Init battery warning
 exec --no-startup-id ~/.config/i3/battery-popup -L 20 -l 10 -t 2m -m "Battery is low!"
 # Init background image
@@ -477,7 +487,7 @@ bindsym $mod+Shift+x mode "$mode_display"
 # @see https://olinux.net/xrandr/
 # Add new resolution (T490s)
 # cvt 1440 810
-exec --no-startup-id xrandr --newmode  "1440x810_60.00" 95.00   1440 1520 1664 1888  810 813 818 841 -hsync +vsync; xrandr --addmode eDP-1 1440x810_60.00; xrandr --output eDP-1 --mode 1440x810_60.00 --primary
+# exec --no-startup-id xrandr --newmode  "1440x810_60.00" 95.00   1440 1520 1664 1888  810 813 818 841 -hsync +vsync; xrandr --addmode eDP-1 1440x810_60.00; xrandr --output eDP-1 --mode 1440x810_60.00 --primary
 
 # Add new resolution (T14 Gen3)
 # cvt 1440 900
@@ -507,19 +517,26 @@ mode "$mode_system" {
 bindsym $mod+Escape mode "$mode_system"
 
 # Controls
+
+# URxvt
+for_window [instance="^__.*$"]  fullscreen enable
+
 set $mode_control Control (k)eys, (n)etwork, (s)ound, (r)esources, (d)ocker
 
 mode "$mode_control" {
     # Control Keys
     bindsym k exec          --no-startup-id [ "`pgrep screenkey`" = "" ] && screenkey --no-systray --font-size small || pkill -f screenkey, mode "default"
     # Control Network
-    bindsym n exec          $emulator --nofork --fullscreen -e 'nmtui', mode "default"
+    # bindsym n exec          konsole --nofork --fullscreen -e 'nmtui', mode "default"
+    bindsym n exec          urxvt -name __nmtui -e sh -c 'nmtui', mode "default"
     # Control Volume
     bindsym s exec          --no-startup-id pavucontrol, mode "default"
     # Control Resources
-    bindsym r exec          $emulator --nofork --fullscreen -e 'htop', mode "default"
+    # bindsym r exec          konsole --nofork --fullscreen -e 'htop', mode "default"
+    bindsym r exec          urxvt -name __htop -e sh -c 'htop', mode "default"
     # Docker Stats
-    bindsym d exec          $emulator --nofork --fullscreen -e 'docker stats', mode "default"
+    # bindsym d exec          konsole --nofork --fullscreen -e 'docker stats', mode "default"
+    bindsym d exec          urxvt -name __dockerstats -e sh -c 'docker stats', mode "default"
 
     # back to normal
     bindsym Return          mode "default"

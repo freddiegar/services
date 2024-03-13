@@ -1540,8 +1540,10 @@ i3 --version | awk '{print $3}'
 # 4.22
 i3status --version | grep -e "i3status" | awk '{print $2}'
 # 2.14-non-git
-konsole --version | awk '{print $2}'
-# 23.08.1
+# konsole --version | awk '{print $2}'
+# # 23.08.1
+urxvt -help 2>&1 | head -n 1 | awk '{print $3}'
+# v9.31
 bash --version | grep -e "bash" | awk '{print $4}'
 # 5.2.15(1)-release
 zsh --version | awk '{print $2}'
