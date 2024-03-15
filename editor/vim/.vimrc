@@ -1153,6 +1153,7 @@ nmap <silent> <expr> <F10>
 nnoremap <silent> <nowait> <expr> <Enter>
             \ &buftype ==# 'quickfix' ? "\rzzzv" :
             \ &buftype ==# 'nofile' && index(['vim', ''], &filetype) >= 0 ? "\r" :
+            \ exists('w:winpopup') ? ":silent execute \"normal \\e\"<Enter>" :
             \ ":nohlsearch<Enter>"
 
 " Preserve default register ("x) in Normal|Select|Operator Mode
@@ -1227,10 +1228,10 @@ nnoremap <silent> ]l :<C-u>silent! lnext<Enter>zzzv
 nnoremap <silent> [L :<C-u>silent! lfirst<Enter>zzzv
 nnoremap <silent> ]L :<C-u>silent! llast<Enter>zzzv
 
-" nnoremap <silent> [b :<C-u>silent! bprevious<Enter>
-" nnoremap <silent> ]b :<C-u>silent! bnext<Enter>
-" nnoremap <silent> [B :<C-u>silent! bfirst<Enter>
-" nnoremap <silent> ]B :<C-u>silent! blast<Enter>
+nnoremap <silent> [b :<C-u>silent! bprevious<Enter>
+nnoremap <silent> ]b :<C-u>silent! bnext<Enter>
+nnoremap <silent> [B :<C-u>silent! bfirst<Enter>
+nnoremap <silent> ]B :<C-u>silent! blast<Enter>
 
 nnoremap <silent> yol :<C-u>set list!<Enter>
 nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
@@ -3000,6 +3001,7 @@ nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo '
 " Using path in vim-fugitive:
 "   .   -> Ready to command
 "   =   -> [=]toggle [>]show|[<]hide inline changes
+"   s   -> [s]tage current file (in Visual Mode patch)
 "   -   -> [-]toggle [u]n|[s]tage file
 "   u   -> [n]nstage current
 "   U   -> [U]nstage everything
@@ -3476,10 +3478,8 @@ augroup AutoCommands
     autocmd FileType help map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType netrw map <silent> <nowait> <buffer> q <Cmd>call <SID>toggle_netrw(getcwd(), v:true)<Enter>
     autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
+    autocmd FileType checkhealth map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq
-
-"     " Fixed toggle netrw after close from any other way, trigger always, then, don't use please
-"     autocmd BufDelete,BufUnload * if expand('<afile>') ==# 'NetrwTreeListing' | let g:netrwopen = 0 | endif | call <SID>statusline('f')
 
     " Some files are prohibited
     autocmd BufReadPost vendor/* setlocal nomodifiable
@@ -3521,7 +3521,7 @@ require 'nvim-treesitter.configs'.setup({
         additional_vim_regex_highlighting = false,
     },
     indent = {
-        enable = false,
+        enable = true, -- must be on ... or indent fails!
     },
     incremental_selection = {
         enable = false,

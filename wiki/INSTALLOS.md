@@ -248,6 +248,7 @@ ln -s `pwd`/editor/vim/coc-settings.json ~/.vim/coc-settings.json
 ## PHPActor Settings
 mkdir -p ~/.config/phpactor
 ln -s `pwd`/editor/vim/phpactor.json ~/.config/phpactor/phpactor.json
+sudo ln -s ~/.vim/plugged/phpactor/bin/phpactor /usr/local/bin/phpactor
 ```
 
 ## Vim Copy/Paste (Share SO)
@@ -287,6 +288,8 @@ sudo apt-get install -y libxml2-utils
 ## Vim C Development
 
 ### LSP
+
+#### C
 
 [See](https://llvm.org/docs/GettingStarted.html#overview)
 [See 2](https://www.jianshu.com/p/3c7eae5c0c68)

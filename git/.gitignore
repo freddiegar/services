@@ -2,6 +2,7 @@
 .vscode
 vendor
 node_modules
+.phpactor.json
 testx.sh
 *.log
 *.diff
