@@ -302,6 +302,14 @@ sudo mv clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04 /usr/local/clang_16.0.0
 # /usr/local/clang_16.0.0/bin/clangd --version
 ```
 
+#### Vim
+
+[See](https://github.com/iamcco/vim-language-server)
+
+```bash
+npm install -g vim-language-server
+```
+
 ### C Tags
 
 [See](https://docs.ctags.io/en/latest/autotools.html#gnu-linux-distributions)

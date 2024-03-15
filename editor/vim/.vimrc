@@ -1973,6 +1973,7 @@ Plug 'phpactor/phpactor', {
             \ 'for': 'php',
             \ 'do': 'composer install --no-dev --optimize-autoloader'
             \ }                                                 " LSP and refactor tool for PHP
+" Plug 'prabirshrestha/vim-lsp'                                   " LSP tool for Vim
 " Plug 'RRethy/vim-illuminate', {'for': ['vim', 'php', 'c']}      " Highligth current cursor word
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
