@@ -437,7 +437,7 @@ set relativenumber                                              " Relative numbe
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
 set synmaxcol=256                                               " Only highlight the first N columns (default: 3000)
 "              └ weight in bytes
-set updatetime=300                                              " Time (in ms) await for any: git-gutter, events. RIP :redir
+set updatetime=200                                              " Time (in ms) await for any: git-gutter, events. RIP :redir
 
 " @see https://utf8-icons.com/
 set fillchars+=vert:│                                           " Better vertical split char
@@ -2239,7 +2239,7 @@ let g:d2_block_string_syntaxes = {'php': ['php']}
 
 " HighlightedYank
 " @see https://github.com/machakann/vim-highlightedyank
-let g:highlightedyank_highlight_duration = 250
+let g:highlightedyank_highlight_duration = 200
 
 " " Dirvish
 " " @see https://github.com/justinmk/vim-dirvish
@@ -2329,6 +2329,10 @@ xnoremap <silent> <Leader>p :<C-u>Files<Enter>
 " WFiles or Files in current work directory
 nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
 xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
+
+" Files [n]otes directory
+nnoremap <silent> <Leader>n <Cmd>Files ~/working/notes<Enter>
+xnoremap <silent> <Leader>n :<C-u>Files ~/working/notes<Enter>
 
 " Marks in current project directory
 nnoremap <silent> <Leader>M :Marks<Enter>
@@ -3367,6 +3371,7 @@ function! s:notes(append) abort
     return 0
 endfunction
 
+" @see https://vi.stackexchange.com/a/36593
 augroup AutoCommands
     autocmd!
 
@@ -3380,29 +3385,29 @@ augroup AutoCommands
     autocmd BufWritePost *.Xresources call system('xrdb -I$HOME ~/.Xresources')
 
     " Customization
-    autocmd BufRead,BufNewFile .env.* setfiletype sh
-    autocmd BufRead,BufNewFile phplint,phpx,grepx,datex,bash_aliases setfiletype sh
-    autocmd BufRead,BufNewFile *.tphp setfiletype php
-    autocmd BufRead,BufNewFile .php_cs* setfiletype php
-    autocmd BufRead,BufNewFile * if match(getline(1), '<\?php.*') >= 0 | setfiletype php | endif
-    autocmd BufRead,BufNewFile *.conf setfiletype apache
-    autocmd BufRead,BufNewFile *.json.*,*.lock setfiletype json
-    autocmd BufRead,BufNewFile *.twig setlocal filetype=html | setlocal commentstring=\{#\ %s\ #\}
-    autocmd BufRead,BufNewFile *.blade.php setlocal filetype=html | setlocal commentstring=\{\{--\ %s\ --\}\}
-    autocmd BufRead,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
-    autocmd BufRead,BufNewFile */i3/config setfiletype i3config | setlocal commentstring=#\ %s
-    autocmd BufRead,BufNewFile /etc/hosts setlocal commentstring=#\ %s
-    autocmd BufRead,BufNewFile */{log,logs}/* setfiletype log | setlocal noundofile
-    autocmd BufRead,BufNewFile *.log setlocal filetype=log noundofile
-    autocmd BufRead,BufNewFile *.{csv,tsv} setlocal filetype=csv list noundofile
-    autocmd BufRead,BufNewFile *.tsv setlocal noexpandtab tabstop=25 softtabstop=25 shiftwidth=25 noundofile
-    autocmd BufRead,BufNewFile make setlocal noexpandtab tabstop=4
-    autocmd BufRead,BufNewFile .gitignore setfiletype gitignore
-    autocmd BufRead,BufNewFile *.vpm setfiletype vpm
-    autocmd BufRead,BufNewFile *.pipelines setfiletype dockerfile
-    autocmd BufRead,BufNewFile /tmp/ctags/*tags* setfiletype tags noundofile
-    autocmd BufRead,BufNewFile *.Xresources setfiletype xdefaults
-    autocmd BufRead,BufNewFile,BufWritePre /tmp/* setlocal noundofile
+    autocmd BufReadPost,BufNewFile .env.* setfiletype sh
+    autocmd BufReadPost,BufNewFile phplint,phpx,grepx,datex,bash_aliases setfiletype sh
+    autocmd BufReadPost,BufNewFile *.tphp setfiletype php
+    autocmd BufReadPost,BufNewFile .php_cs* setfiletype php
+    autocmd BufReadPost,BufNewFile * if match(getline(1), '<\?php.*') >= 0 | setfiletype php | endif
+    autocmd BufReadPost,BufNewFile *.conf setfiletype apache
+    autocmd BufReadPost,BufNewFile *.json.*,*.lock setfiletype json
+    autocmd BufReadPost,BufNewFile *.twig setlocal filetype=html | setlocal commentstring=\{#\ %s\ #\}
+    autocmd BufReadPost,BufNewFile *.blade.php setlocal filetype=html | setlocal commentstring=\{\{--\ %s\ --\}\}
+    autocmd BufReadPost,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
+    autocmd BufReadPost,BufNewFile */i3/config setfiletype i3config | setlocal commentstring=#\ %s
+    autocmd BufReadPost,BufNewFile /etc/hosts setlocal commentstring=#\ %s
+    autocmd BufReadPost,BufNewFile */{log,logs}/* setfiletype log | setlocal noundofile
+    autocmd BufReadPost,BufNewFile *.log setlocal filetype=log noundofile
+    autocmd BufReadPost,BufNewFile *.{csv,tsv} setlocal filetype=csv list noundofile
+    autocmd BufReadPost,BufNewFile *.tsv setlocal noexpandtab tabstop=25 softtabstop=25 shiftwidth=25 noundofile
+    autocmd BufReadPost,BufNewFile make setlocal noexpandtab tabstop=4
+    autocmd BufReadPost,BufNewFile .gitignore setfiletype gitignore
+    autocmd BufReadPost,BufNewFile *.vpm setfiletype vpm
+    autocmd BufReadPost,BufNewFile *.pipelines setfiletype dockerfile
+    autocmd BufReadPost,BufNewFile /tmp/ctags/*tags* setfiletype tags noundofile
+    autocmd BufReadPost,BufNewFile *.Xresources setfiletype xdefaults
+    autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType sql silent let b:db=<SID>db() | sleep 500ms | setlocal omnifunc=vim_dadbod_completion#omni
@@ -3563,7 +3568,7 @@ EOF
         command! -nargs=? M tabnew <Bar> terminal <f-args>
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
-        autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=250}
+        autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=200}
 
         " Starts :terminal in Insert Mode (Same to Vim behaviour)
         " Enter: Close output view from vim-test (Same to Vim behaviour)
@@ -4116,12 +4121,12 @@ EOF
     autocmd FileType zsh call setreg('t', "gg_ da\"pI\"\eggJf[lyE_/-a\rWviWPGA\"\e")
 
     " Cleanup queries log
-    autocmd BufRead \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
+    autocmd BufReadPost \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
     " Cleanup profiles log
-    autocmd BufRead profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
+    autocmd BufReadPost profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
     " Debug mappings
     " redir! > editor/vim/vimkeys.txt | silent verbose map | redir END
-    autocmd BufRead vimkeys.txt if !exists('b:cleanup')
+    autocmd BufReadPost vimkeys.txt if !exists('b:cleanup')
                 \ | let b:cleanup = 1
                 \ | silent! keeppatterns
                 \ | execute "g/^$/d_"
@@ -4761,7 +4766,7 @@ EOF
     autocmd VimLeavePre * call <SID>sessionsave()
     autocmd VimLeave * call <SID>settitle('$USER@$HOST')
     " Auto-source syntax in *.vpm
-    autocmd BufNewFile,BufRead *.vpm
+    autocmd BufReadPost,BufNewFile *.vpm
         \ if filereadable(expand('syntax.vim')) |
         \   silent execute 'source ' . expand('syntax.vim') |
         \ endif
