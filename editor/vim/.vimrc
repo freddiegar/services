@@ -3049,7 +3049,7 @@ endfor
 " let g:gitgutter_realtime = 0 (¿?)
 let g:gitgutter_map_keys = 0
 let g:gitgutter_max_signs = 750
-" let g:gitgutter_sign_priority = 100000
+let g:gitgutter_sign_priority = 100000
 " let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_preview_win_floating = 1
 let g:gitgutter_close_preview_on_escape = 1
@@ -3061,6 +3061,18 @@ nmap <silent> <expr> <Leader>j &diff ? "]czzzv" : ":GitGutterNextHunk<Enter>zzzv
 nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
 nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
 nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
+nmap <silent> <Leader>hq <Cmd>GitGutterQuickFixCurrentFile <Bar> copen <Enter>
+nmap <silent> <Leader>hf <Cmd>GitGutterFold<Enter>
+
+" After stage hunk, reload fugitive if it's open
+" @thanks https://github.com/zldrobit/dotfiles/blob/566b47a939cb90cfc37b1629b3c49ecf4f869cb0/.vimrc#L357
+function! s:reloadfugitive(...) abort
+    for l:window in getwininfo()
+        if bufname(l:window.bufnr) =~# '^fugitive://'
+            silent execute l:window.winnr . 'windo e | wincmd p'
+        endif
+    endfor
+endfunction
 
 " DadBod
 " @see https://github.com/tpope/vim-dadbod
@@ -3386,7 +3398,7 @@ augroup AutoCommands
     autocmd BufRead,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
     autocmd FileType sql setlocal commentstring=--\ %s
-    autocmd FileType sql let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
+    autocmd FileType sql silent let b:db=<SID>db() | sleep 500ms | setlocal omnifunc=vim_dadbod_completion#omni
     autocmd FileType sql inoremap <silent> <expr> <buffer> <C-n>
                 \ match(getline('.')[col('.') - 2], '\W') >= 0 && match(getline('.')[col('.') - 2], '\.') < 0 ? "\<C-x>\<C-n>" :
                 \ pumvisible() ?  "\<C-n>" :
@@ -3413,8 +3425,8 @@ augroup AutoCommands
         silent execute "delmarks z"
     endfunction
 
-    autocmd FileType xml nnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:false) <Bar> call <SID>statusline('f')<Enter> ":silent %!xmllint --format --recover - 2>/dev/null"
-    autocmd FileType xml vnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:true) <Bar> call <SID>statusline('f')<Enter> ":silent %!xmllint --format --recover - 2>/dev/null"
+    autocmd FileType xml nnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:false) <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType xml vnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:true) <Bar> call <SID>statusline('f')<Enter>
 
     function! s:xmlfixer(onselection) abort
         if bufname('%') !=# ''
@@ -4670,9 +4682,10 @@ EOF
     autocmd FocusLost *.asc,hosts.yml let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
     autocmd FocusLost * silent! wall
 
-    autocmd User ALELintPost call <SID>diagnostics()
     autocmd InsertEnter * call <SID>popup_hide()
     autocmd InsertLeave * call <SID>diagnostics()
+    autocmd User ALELintPost call <SID>diagnostics()
+    autocmd User GitGutterStage silent call timer_start(0, function('s:reloadfugitive'))
 
     " @see https://gist.github.com/maxboisvert/a63e96a67d0a83d71e9f49af73e71d93
     " Not use, kill <BS> mapping replace

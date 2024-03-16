@@ -1143,6 +1143,7 @@ zend_extension=/usr/lib/php/20210902/xdebug.so' | sudo tee /etc/php/8.1/mods-ava
 # PHP 7.4: zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 sudo phpenmod xdebug
 ```
+> In docker is loaded in: /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 ## Upgrade
 
