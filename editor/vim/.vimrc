@@ -1736,6 +1736,11 @@ function s:go_docs(word) abort
         let l:docsurl = 'https://dev.mysql.com/doc/search/?q='
     elseif index(['help'], &filetype) >= 0
         let l:docsurl = 'https://duckduckgo.com/?sites=vimhelp.org&ia=web&q='
+    elseif g:hasgit && index([8, 9], len(l:word)) >= 0 && index(['markdown'], &filetype) >= 0 && executable('git')
+        " GBrowse ignores current file directory
+        " execute 'GBrowse ' . l:word
+        let l:repourl = system("git config --get remote.origin.url | sed 's/^git@\\(.*\\).git/\\1/g' | sed 's/.git$//g' | sed 's/\\(\\.[a-z]\\{2,3\\}\\)\\(:\\)/\\1\\//g' | tr -d '\\n'")
+        let l:docsurl = l:repourl =~# '^http' ? l:repourl .. '/commits/' : 'https://' .. l:repourl .. '/commits/'
     elseif index(['vim'], &filetype) >= 0
         silent call <SID>show_documentation()
 
@@ -2995,6 +3000,8 @@ endfunction
 
 nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
 nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo 'Assume h: ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
+" Use directory project over directory of current file
+nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' describe --abbrev=0 ' . expand('<cWORD>'))" <Bar> echo 'Tagged in: ' . @t <Bar> call <SID>statusline('f')<Enter>
 
 " Resolve conflicts
 " @see https://vim.fandom.com/wiki/A_better_Vimdiff_Git_mergetool
