@@ -493,7 +493,7 @@ if has('gui_running')
                         \ | let g:neovide_hide_mouse_when_typing = v:true
                         \ | let g:neovide_remember_window_size = v:true
                         \ | let g:neovide_theme = 'auto'
-                        \ | let g:neovide_transparency = 0.96
+                        \ | if &background ==# 'dark' | let g:neovide_transparency = 0.95 | endif
         else
             autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Fira Code Retina 17', '')
                         \ | set guiligatures=!\"#$%&()*+-./:<=>?@[]^_{\|~
@@ -899,12 +899,13 @@ nnoremap <silent> <expr> H (v:count > 0 ? "<Esc>" : '') . v:count1 . 'F$'
 nnoremap <silent> <expr> L (v:count > 0 ? "<Esc>" : '') . v:count1 . 'f$'
 
 " Marks using exact position in Normal|Select|Operator Mode
-noremap ` '
-noremap ' `
-noremap '' ``
-noremap `` ''
+" Only activate in Normal Mode, with :noremap fails Snippets (and LSP)
+nnoremap ` '
+nnoremap ' `
+nnoremap '' ``
+nnoremap `` ''
 " Center screen (zz) after search mark and open folds (zv)
-noremap <silent> <expr> ' printf('`%czzzv', getchar())
+nnoremap <silent> <expr> ' printf('`%czzzv', getchar())
 
 " Not use [*|#]``zzzv, it throws error on 1 ocurrence
 " Center screen (zz) after each search and open folds (zv)
@@ -1790,16 +1791,26 @@ endif
 " IMPORTANT: Kill context completion using <C-x><C-p> and <C-x><C-n>
 inoremap <silent> <expr> <C-n>
             \ pumvisible() ? "\<Down>" :
-            \ "\<C-x>\<C-n>"
+            \ "\<C-x>\<C-n>\<C-r>=<SID>pum_autoselect()\<Enter>"
 inoremap <silent> <expr> <C-x><C-n>
             \ pumvisible() ? "\<Down>" :
-            \ "\<C-n>"
+            \ "\<C-n>\<C-r>=<SID>pum_autoselect()\<Enter>"
 inoremap <silent> <expr> <C-p>
             \ pumvisible() ? "\<Up>" :
-            \ "\<C-x>\<C-p>"
+            \ "\<C-x>\<C-p>\<C-r>=<SID>pum_autoselect()\<Enter>"
 inoremap <silent> <expr> <C-x><C-p>
             \ pumvisible() ? "\<Up>" :
-            \ "\<C-p>"
+            \ "\<C-p>\<C-r>=<SID>pum_autoselect()\<Enter>"
+
+" Only one option? Select it!
+function! s:pum_autoselect() abort
+    if len(complete_info()['items']) ==# 1
+        return "\<Down>\<C-y>"
+    endif
+
+    " Avoid weird chars in autocompletion
+    return ''
+endfunction
 
 " Expected behaviour when pum is visible
 inoremap <silent> <expr> <C-d>
