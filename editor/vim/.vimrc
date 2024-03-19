@@ -151,6 +151,7 @@
 
 " WHY TRY NEOVIM
 " 1. No brake changes :(vim9script, yeah):                  -> @see https://www.youtube.com/watch?v=zPQSST-M3fM -> vim9script transpiler
+"                                                           -> @see https://news.ycombinator.com/item?id=31936725
 " 2. Better syntax highlighting (on comments by example) without Treesitter
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
@@ -797,6 +798,10 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
 
+    if exists('g:plug_autocompleted_loaded')
+        setlocal statusline+=%{'[L]'}                           " LSP enabled
+    endif
+
     " if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
     "     setlocal statusline+=\                                  " Extra space
     "     setlocal statusline+=%{pomo#remaining_time().'m'}       " Pomodoro time
@@ -906,6 +911,8 @@ nnoremap '' ``
 nnoremap `` ''
 " Center screen (zz) after search mark and open folds (zv)
 nnoremap <silent> <expr> ' printf('`%czzzv', getchar())
+" Use ñ with same behaviour
+nnoremap <silent> <expr> ñ printf('`%czzzv', getchar())
 
 " Not use [*|#]``zzzv, it throws error on 1 ocurrence
 " Center screen (zz) after each search and open folds (zv)
@@ -1988,8 +1995,10 @@ Plug 'mbbill/undotree', {'on': [
 Plug 'phpactor/phpactor', {
             \ 'for': 'php',
             \ 'do': 'composer install --no-dev --optimize-autoloader'
-            \ }                                                 " LSP and refactor tool for PHP
-" Plug 'prabirshrestha/vim-lsp'                                   " LSP tool for Vim
+            \ }                                                 " LSP tool for PHP (and refactor)
+Plug 'prabirshrestha/vim-lsp', {
+            \ 'for': 'vim',
+            \ }                                                 " LSP tool for Vim
 " Plug 'RRethy/vim-illuminate', {'for': ['vim', 'php', 'c']}      " Highligth current cursor word
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
@@ -2007,7 +2016,7 @@ Plug 'mattn/emmet-vim', {'on': 'EmmetInstall'}                  " Performance us
 " Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 " Plug 'wellle/context.vim'                                       " Show context code (slower)
 Plug 'jamessan/vim-gnupg'                                       " Transparent editing of gpg encrypted files (not allowed 'for' option)
-" Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
+Plug 'kshenoy/vim-signature'                                    " Show marks in signcolumn
 " Plug 'voldikss/vim-browser-search'                              " Search in browser
 " Plug 'junegunn/vader.vim', {'on': 'Vader'}                      " Vim Jedi Mode
 
@@ -2041,9 +2050,22 @@ endif
 if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'on': []} " Highligth ++
+
+    if has('gui_running')
+        Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
+        Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
+        " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
+        Plug 'hrsh7th/cmp-buffer'                                 " Integrate for buffer
+        " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
+        Plug 'hrsh7th/cmp-nvim-lsp'                               " Integrate for LSP
+        Plug 'dmitmel/cmp-vim-lsp'                                " Integrate for Vim
+        Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
+    endif
 else
     Plug 'markonm/traces.vim'                                   " See range, substitution and global preview
     Plug 'machakann/vim-highlightedyank'                        " See yank preview
+
+"     Plug 'yegappan/lsp'                                         " LSP -> Not integrate mappings from UltiSnips
 endif
 
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
@@ -3421,7 +3443,7 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
     autocmd FileType sql setlocal commentstring=--\ %s
-    autocmd FileType sql silent let b:db=<SID>db() | sleep 500ms | setlocal omnifunc=vim_dadbod_completion#omni
+    autocmd FileType sql silent let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
     autocmd FileType sql inoremap <silent> <expr> <buffer> <C-n>
                 \ match(getline('.')[col('.') - 2], '\W') >= 0 && match(getline('.')[col('.') - 2], '\.') < 0 ? "\<C-x>\<C-n>" :
                 \ pumvisible() ?  "\<C-n>" :
@@ -3511,8 +3533,10 @@ augroup AutoCommands
     autocmd FileType netrw nmap <silent> <buffer> yy :let @+=="netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))"<Enter><Enter>
 
     " Like many others (vim-plug, GV, undotree) q is [q]uit. So sorry Tim!
+    autocmd FileType qf map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType help map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType netrw map <silent> <nowait> <buffer> q <Cmd>call <SID>toggle_netrw(getcwd(), v:true)<Enter>
+    autocmd FileType tagbar map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
     autocmd FileType checkhealth map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq
@@ -3529,8 +3553,9 @@ augroup AutoCommands
                 \   silent execute "normal! g`\"" |
                 \ endif
 
-    if g:isneovim
+    if has('gui_running') && g:isneovim
         " Lazy load
+        " @see :h autocmd-once
         autocmd BufReadPost * ++once silent call <SID>treesitter()
 
         " @thanks https://gist.github.com/kawarimidoll/d566e367591acae6e41295722803534d
@@ -3555,6 +3580,15 @@ require 'nvim-treesitter.configs'.setup({
     highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
+        -- @thanks https://github.com/MariaSolOs/dotfiles/blob/b0578418a0a275ff449ad366fa99f9b1ff72b93b/.config/nvim/lua/plugins/treesitter.lua#L64
+        -- disable = function(_, buf)
+        --     if not vim.bo[buf].modifiable then
+        --         return false
+        --     end
+
+        --     local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+        --     return ok and stats and stats.size > (1024 * 1024 * 2)
+        -- end,
     },
     indent = {
         enable = true, -- must be on ... or indent fails!
@@ -3570,6 +3604,180 @@ EOF
 
             TSBufEnable highlight
         endfunction
+
+        autocmd BufReadPost * ++once silent call <SID>nautocomplete()
+
+        autocmd FileType sql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion' } } }
+
+        " @see https://github.com/hrsh7th/nvim-cmp
+        " @see https://vonheikemen.github.io/devlog/tools/neovim-lsp-client-guide/
+        " @see https://vonheikemen.github.io/devlog/tools/setup-nvim-lspconfig-plus-nvim-cmp/
+        function! s:nautocomplete() abort
+            if exists('g:plug_autocompleted_loaded')
+                return
+            endif
+
+            let g:plug_autocompleted_loaded = 1
+
+" Don't indent!
+lua <<EOF
+    local cmp = require'cmp'
+    require('lspconfig.ui.windows').default_options.border = 'single'
+
+    cmp.setup({
+        snippet = {
+            expand = function(args)
+            vim.fn["UltiSnips#Anon"](args.body)
+            end,
+        },
+
+        -- window = {
+        --     completion = cmp.config.window.bordered(),
+        --     documentation = cmp.config.window.bordered(),
+        -- },
+
+        mapping = cmp.mapping.preset.insert({
+            -- ['<C-n>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert }, --> Default
+            -- ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert }, --> Default
+            ['<C-d>'] = cmp.mapping.scroll_docs(4),
+            ['<C-u>'] = cmp.mapping.scroll_docs(-4),
+            -- ['<C-y>'] = cmp.mapping.confirm(), --> Default
+            -- ['<C-e>'] = cmp.mapping.abort(), --> Default
+            -- ['<C-c>'] = cmp.mapping.abort(), --> Like native <C-e>, but doesn't work as expects
+            ['<Enter>'] = cmp.mapping( -- Required
+                cmp.mapping.confirm {
+                    behavior = cmp.ConfirmBehavior.Insert,
+                    select = true,
+                },
+                { "i", "c" }
+            ),
+            -- ['<C-Space>'] = cmp.mapping.complete(), -- Use native <C-n>/<C-p> mappings
+        }),
+
+        sources = cmp.config.sources({
+            { name = 'nvim_lsp', keyword_length = 3 },
+        }, {
+            { name = 'buffer', keyword_length = 5 },
+            -- { name = 'path', keyword_length = 5 },
+            -- { name = 'ultisnips' }, -- Really?
+        })
+    })
+
+    -- Really distracting (and annoyoning). Check trigger
+    -- cmp.setup.cmdline({ '/', '?' }, {
+    --     mapping = cmp.mapping.preset.cmdline(),
+    --     sources = {
+    --         { name = 'buffer', keyword_length = 5 }
+    --     }
+    -- })
+
+    -- Really distracting (and annoyoning). Check trigger
+    -- cmp.setup.cmdline(':', {
+    --     mapping = cmp.mapping.preset.cmdline(),
+    --     sources = cmp.config.sources({
+    --         { name = 'path', keyword_length = 5 }
+    --     }, {
+    --         name = 'cmdline',
+    --         keyword_length = 5,
+    --         option = {
+    --             ignore_cmds = { 'Man', '!' }
+    --         }
+    --     }
+    -- })
+
+    -- @see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+    -- @see https://github.com/prabirshrestha/vim-lsp/wiki/Servers-Vim
+    require('lspconfig').vimls.setup {
+        capabilities = capabilities
+    }
+
+    -- @see https://phpactor.readthedocs.io/en/master/reference/configuration.html
+    require('lspconfig').phpactor.setup {
+        capabilities = capabilities,
+        -- Turn off a lot diagnostics "invalid" messages
+        init_options = {
+            ['logging.enabled'] = false,
+            ['language_server_code_transform.import_globals'] = true,
+            ['language_server_completion.trim_leading_dollar'] = true,
+            ['language_server.diagnostics_on_update'] = false,
+            ['language_server.diagnostics_on_open'] = false,
+            ['language_server.diagnostics_on_save'] = false,
+            ['language_server_php_cs_fixer.enabled'] = false,
+            ['language_server_phpstan.enabled'] = false,
+            ['language_server_psalm.enabled'] = false,
+            ['completion_worse.completor.local_variable.enabled'] = false,
+            -- ['completion_worse.snippets'] = false, -- Disable autocompletion
+            ['completion_worse.completor.scf_class.enabled'] = false,
+            ['behat.enabled'] = false,
+            ['php_code_sniffer.enabled'] = false,
+            ['phpunit.enabled'] = true,
+            ['prophecy.enabled'] = false,
+            ['symfony.enabled'] = false,
+            ['file_path_resolver.enable_logging'] = false,
+            ['indexer.exclude_patterns'] = {
+                '.git/**/*',
+                '/node_modules/**/*',
+                '/var/**/*',
+                '/storage/**/*',
+                '/tests/coverage/**/*',
+                '/vendor/**/Tests/**/*',
+                '/vendor/**/tests/**/*',
+                '/vendor/composer/**/*',
+            }
+        }
+    }
+
+    -- require('lspconfig').clangd.setup {
+    --     cmd = {
+    --         'clangd',
+    --         '--clang-tidy',
+    --         '--header-insertion=iwyu',
+    --         '--completion-style=detailed',
+    --         '--function-arg-placeholders',
+    --         '--fallback-style=none',
+    --      },
+    --      capabilities = capabilities
+    -- }
+EOF
+        endfunction
+    else
+        " " @see https://github.com/yegappan/lsp/blob/main/doc/lsp.txt#
+        "             " \ aleSupport: v:true,
+        " autocmd User LspSetup call LspOptionsSet(#{
+        "             \ autoComplete: v:true,
+        "             \ ultisnipsSupport: v:true,
+        "             \ useBufferCompletion: v:true,
+        "             \ filterCompletionDuplicates: v:true,
+        "             \ echoSignature: v:false,
+        "             \ omniComplete: v:true,
+        "             \ diagSignErrorText: 'E',
+        "             \ diagSignHintText: 'H',
+        "             \ diagSignInfoText: 'I',
+        "             \ diagSignWarningText: 'W',
+        "             \ })
+
+        " autocmd FileType vim call LspAddServer([#{
+        "             \    name: 'vimls',
+        "             \    filetype: ['vim'],
+        "             \    path: 'vim-language-server',
+        "             \    args: ['--stdio']
+        "             \  }])
+
+        " autocmd FileType php call LspAddServer([#{
+        "             \    name: 'phpactor',
+        "             \    filetype: ['php'],
+        "             \    path: 'phpactor',
+        "             \    args: ['language-server']
+        "             \  }])
+
+        " autocmd FileType c,cpp call LspAddServer([#{
+        "             \    name: 'clangd',
+        "             \    filetype: ['c', 'cpp'],
+        "             \    path: '/usr/local/clang_16.0.0/bin/clangd',
+        "             \    args: ['--background-index']
+        "             \  }])
     endif
 
     " Hide signcolumn in Terminal Mode
@@ -4414,6 +4622,12 @@ EOF
             let l:message = substitute(l:message, '##INF##', '', '')
 
             echomsg l:message
+        endif
+
+        if has('gui_running') && g:isneovim
+            " Enable in file load after open session session
+            silent call <SID>treesitter()
+            silent call <SID>nautocomplete()
         endif
     endfunction
 
