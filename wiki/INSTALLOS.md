@@ -1574,7 +1574,7 @@ git --version | awk '{print $3}'
 git lfs version
 # git-lfs/3.4.0 (GitHub; linux amd64; go 1.21.0)
 docker --version | awk '{print $3}' | sed 's/,//g'
-# 25.0.4,
+# 25.0.4
 docker-compose --version | awk '{print $4}'
 # v2.24.7
 feh --version | grep version | awk '{print $3}'

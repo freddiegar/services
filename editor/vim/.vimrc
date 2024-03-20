@@ -65,8 +65,8 @@
 "   v  Visual Mode: When typing commands while the Visual area is highlighted.
 "   s  Select Mode: like Visual but typing text replaces the selection.
 "   x  Visual Mode and Select Mode
-"   c  Command-line Mode: When entering a ":" or "/" command.
-"   o  Operator-pending Mode: When an operator is pending (after "d", "y", "c", etc.).
+"   c  Command-line Mode: When entering a ':' or '/' command.
+"   o  Operator-pending Mode: When an operator is pending (after 'd', 'y', 'c', etc.).
 "      Terminal Mode: When typing in a |:terminal| buffer.
 
 " The following characters may be displayed before the {rhs} of the map:
@@ -89,9 +89,9 @@
 " different instance    isnot           isnot#          isnot?
 
 " Examples:
-"   "abc" ==# "Abc"         evaluates to 0
-"   "abc" ==? "Abc"         evaluates to 1
-"   "abc" ==  "Abc"         evaluates to 1 if 'ignorecase' is set, 0 otherwise
+"   'abc' ==# 'Abc'         evaluates to 0
+"   'abc' ==? 'Abc'         evaluates to 1
+"   'abc' ==  'Abc'         evaluates to 1 if 'ignorecase' is set, 0 otherwise
 
 " SEARCHING
 "     \v    \m       \M       \V         matches ~
@@ -199,7 +199,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:infofile = ''
 
         " Save|Load undos
-        " For Unix, if a directory ends in two path separators "//"
+        " For Unix, if a directory ends in two path separators '//'
         " >  the swap file name will be built from the complete path to
         " >  the file with all path separators substituted to percent '%' signs.
         " >  This will ensure file name uniqueness in the preserve directory.
@@ -414,12 +414,12 @@ set splitbelow                                                  " :split  opens 
 set splitright                                                  " :vsplit opens window right (default: off)
 set signcolumn=yes                                              " Always show signs next to number (default: auto)
 set cursorline                                                  " Highligth current line (slower) (default: off)
-set cmdheight=2                                                 " More spaces, less "Enter to continue..." messages (default: 1)
+set cmdheight=2                                                 " More spaces, less 'Enter to continue...' messages (default: 1)
 set report=5                                                    " Less verbose (default: 2)
 " set virtualedit=block                                           " Allow in Visual block mode (default: empty), use: yov
 
 if has('mouse')
-    set mouse=                                                  " Mouse disable always, allows copying from cmdline (default: "")
+    set mouse=                                                  " Mouse disable always, allows copying from cmdline (default: empty)
 endif
 
 set nowrap                                                      " No cut lines (default: on)
@@ -528,7 +528,7 @@ if has('gui_running')
 endif
 
 " Custom identation
-set tabstop=4                                                   " Tabs (if exists) are "showed" (aka: idented) as spaces (default: 8)
+set tabstop=4                                                   " Tabs (if exists) are 'showed' (aka: idented) as spaces (default: 8)
 set softtabstop=4                                               " Tabs calculate required spaces (default: 0)
 set shiftwidth=4                                                " 1 tab === 4 spaces (default: 8)
 set shiftround                                                  " Indentation to multiples of &shiftwidth 3>4>8 (default: off)
@@ -643,7 +643,7 @@ function! GetVersion(executable) abort
 
     if l:ftime != l:ctime
         if filereadable('composer.json')
-            let g:cache['x'][a:executable] = [l:ftime, system(a:executable . " --version | " . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0 : 2]]
+            let g:cache['x'][a:executable] = [l:ftime, system(a:executable . ' --version | ' . g:filterprg . " \"^PHP\" | awk '{print $2}' | tr -d \"\n\"")[0 : 2]]
         else
             return ''
         endif
@@ -718,22 +718,22 @@ set showcmd                                                     " Current pendin
 
 set shortmess=                                                  " Reset option (default: filnxtToOS)
 set shortmess+=a                                                " Enable [a]ll abbreviations
-set shortmess+=W                                                " Don't give the "written" or "[w]" when [W]riting a file
+set shortmess+=W                                                " Don't give the 'written' or '[w]' when [W]riting a file
 set shortmess+=F                                                " Don't give the file in[F]o when editing a file
-set shortmess+=A                                                " Don't give the "[A]TTENTION" message when swap is found
+set shortmess+=A                                                " Don't give the [A]TTENTION message when swap is found
 set shortmess+=I                                                " Don't give the [I]ntro message when starting Vim
 set shortmess+=c                                                " Don't give ins-[c]ompletion-menu messages
-                                                                "   - "-- XXX completion (YYY)"
-                                                                "   - "match 1 of 2"
-                                                                "   - "The only match"
-                                                                "   - "Pattern not found"
-                                                                "   - "Back at original"
-set shortmess+=s                                                " Don't give "[s]earch hit BOTTOM, continuing at TOP"
+                                                                "   - '-- XXX completion (YYY)'
+                                                                "   - 'match 1 of 2'
+                                                                "   - 'The only match'
+                                                                "   - 'Pattern not found'
+                                                                "   - 'Back at original'
+set shortmess+=s                                                " Don't give '[s]earch hit BOTTOM, continuing at TOP'
 set shortmess+=T                                                " Truncate o[T]hers message [...]
 set shortmess+=t                                                " [t]runcate file message [<]
 
 if !g:isneovim
-    set shortmess+=C                                            " Don't give the "s[C]anning" message (Vim: >= 9.0.0738)
+    set shortmess+=C                                            " Don't give the s[C]anning message (Vim: >= 9.0.0738)
     set smoothscroll                                            " Scrolling works with screen lines (default: off)
     set ttyscroll=3                                             " Lines to scroll (default: 999)
 endif
@@ -1012,9 +1012,9 @@ function! s:get_reverse(type) abort
     let @@ = l:saved_unnamed_register
 
     if get(l:options, l:word, '') !=# ''
-        silent execute "normal! ciw" . l:options[l:word] . "\e"
+        silent execute 'normal! ciw' . l:options[l:word] . "\e"
     elseif get(l:inverts, l:word, '') !=# ''
-        silent execute "normal! ciw" . l:inverts[l:word] . "\e"
+        silent execute 'normal! ciw' . l:inverts[l:word] . "\e"
     else
         echohl WarningMsg
         echo 'Nothing to do.'
@@ -1083,7 +1083,7 @@ function! s:file_diff(file) abort
     setlocal noswapfile
     setlocal noloadplugins
     setfiletype diff
-    silent execute "normal! i" . l:result
+    silent execute 'normal! i' . l:result
     setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
     normal! gg
 endfunction
@@ -1323,7 +1323,7 @@ function! s:delete_call(flags, type) abort
 
     silent execute "normal! \"_dyi)\"_da)P"
 
-    silent execute "normal! F("
+    silent execute 'normal! F('
 
     silent! call repeat#set("\<Plug>Delete" . a:type . 'CallRepeatable')
 endfunction
@@ -1343,7 +1343,7 @@ function! s:find_function(flags) abort
     if (l:visual)
         let l:start = searchpos(l:pattern, l:fcursor . l:fbackward, line('.'))
 
-        silent execute "normal! v"
+        silent execute 'normal! v'
 
         let l:end = searchpos(l:pattern, 'ce', line('.'))
     else
@@ -2235,7 +2235,7 @@ let g:user_emmet_install_global = 0
 " let g:pomodoro_time_slack = 10
 " let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav && i3-msg --quiet "exec i3-nagbar --font \"pango:fira code retina\" --type warning --message \"Time to chill out!\", fullscreen disable"'
 
-" nmap <silent> <F3> :execute "PomodoroStart in " . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
+" nmap <silent> <F3> :execute 'PomodoroStart in ' . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
 
 " " Context
 " " @see https://github.com/wellle/context.vim
@@ -2378,7 +2378,7 @@ let g:asyncrun_skip = 1
 " Disable local errorformats (default: 1)
 let g:asyncrun_local = 0
 " Action to run on stop job (default: empty)
-let g:asyncrun_exit = "silent\ call\ AsyncRunFinished()"
+let g:asyncrun_exit = 'silent\ call\ AsyncRunFinished()'
 " Icon used in statusline (custom setup)
 let g:asyncrun_icon = ''
 
@@ -2438,9 +2438,9 @@ function! s:test_strategy() abort
     doautocmd <nomodeline> User AsyncRunPre
 endfunction
 
-nnoremap <silent> <Leader>tt :cclose <Bar> execute ":TestNearest " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tf :cclose <Bar> execute ":TestFile    " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
-nnoremap <silent> <Leader>ts :cclose <Bar> execute ":TestSuite   " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tt :cclose <Bar> execute ':TestNearest ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tf :cclose <Bar> execute ':TestFile    ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>ts :cclose <Bar> execute ':TestSuite   ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
 nnoremap <silent> <Leader>tl :cclose <Bar> TestLast<Enter>
 nnoremap <silent> <Leader>tg :cclose <Bar> TestVisit<Enter>
 nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
@@ -2448,17 +2448,17 @@ nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
 " Vim Debug
 " @see https://github.com/vim-vdebug/vdebug
 let g:vdebug_keymap = #{
-            \ run: "<Home>",
-            \ run_to_cursor: "<S-Home>",
-            \ step_over: "<Right>",
-            \ step_into: "<Down>",
-            \ step_out: "<Up>",
-            \ detach: "<Left>",
-            \ close: "<End>",
-            \ set_breakpoint: "<Leader>q",
-            \ get_context: "<Leader>Q",
-            \ eval_under_cursor: "<Leader>v",
-            \ eval_visual: "<Leader>V",
+            \ run: '<Home>',
+            \ run_to_cursor: '<S-Home>',
+            \ step_over: '<Right>',
+            \ step_into: '<Down>',
+            \ step_out: '<Up>',
+            \ detach: '<Left>',
+            \ close: '<End>',
+            \ set_breakpoint: '<Leader>q',
+            \ get_context: '<Leader>Q',
+            \ eval_under_cursor: '<Leader>v',
+            \ eval_visual: '<Leader>V',
             \}
 
 if !exists('g:vdebug_options')
@@ -2718,8 +2718,8 @@ endfunction
 
 " " Code navigation
 " nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gy <Plug>(coc-implementation)
 " nmap <silent> gr <Plug>(coc-references)
+" nmap <silent> gy <Plug>(coc-implementation)
 
 " Use K to show documentation in preview window
 nnoremap <silent> K <Cmd>call <SID>show_documentation()<Enter>
@@ -3464,10 +3464,10 @@ augroup AutoCommands
             return
         endif
 
-        silent execute "normal mz"
+        silent execute 'normal mz'
         silent execute '%!sqlformat --wrap_after 140 --keywords upper -'
         silent execute "normal 'z"
-        silent execute "delmarks z"
+        silent execute 'delmarks z'
     endfunction
 
     autocmd FileType xml nnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:false) <Bar> call <SID>statusline('f')<Enter>
@@ -3624,6 +3624,7 @@ lua <<EOF
     local cmp = require'cmp'
     require('lspconfig.ui.windows').default_options.border = 'single'
 
+    -- @see https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/config/default.lua
     cmp.setup({
         snippet = {
             expand = function(args)
@@ -3649,17 +3650,28 @@ lua <<EOF
                     behavior = cmp.ConfirmBehavior.Insert,
                     select = true,
                 },
-                { "i", "c" }
+                { 'i', 'c' }
             ),
-            -- ['<C-Space>'] = cmp.mapping.complete(), -- Use native <C-n>/<C-p> mappings
+            ['<C-Space>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
         }),
 
         sources = cmp.config.sources({
-            { name = 'nvim_lsp', keyword_length = 3 },
+            {
+                name = 'nvim_lsp',
+                keyword_length = 3,
+            },
         }, {
-            { name = 'buffer', keyword_length = 5 },
-            -- { name = 'path', keyword_length = 5 },
-            -- { name = 'ultisnips' }, -- Really?
+            {
+                name = 'buffer',
+                keyword_length = 5,
+            },
+            -- {
+            --     name = 'path',
+            --     keyword_length = 5,
+            -- },
+            -- {
+            --     name = 'ultisnips', -- Really?
+            -- },
         })
     })
 
@@ -3667,7 +3679,10 @@ lua <<EOF
     -- cmp.setup.cmdline({ '/', '?' }, {
     --     mapping = cmp.mapping.preset.cmdline(),
     --     sources = {
-    --         { name = 'buffer', keyword_length = 5 }
+    --         {
+    --             name = 'buffer',
+    --             keyword_length = 5,
+    --         }
     --     }
     -- })
 
@@ -3675,7 +3690,10 @@ lua <<EOF
     -- cmp.setup.cmdline(':', {
     --     mapping = cmp.mapping.preset.cmdline(),
     --     sources = cmp.config.sources({
-    --         { name = 'path', keyword_length = 5 }
+    --         {
+    --             name = 'path',
+    --             keyword_length = 5,
+    --         }
     --     }, {
     --         name = 'cmdline',
     --         keyword_length = 5,
@@ -3696,7 +3714,7 @@ lua <<EOF
     -- @see https://phpactor.readthedocs.io/en/master/reference/configuration.html
     require('lspconfig').phpactor.setup {
         capabilities = capabilities,
-        -- Turn off a lot diagnostics "invalid" messages
+        -- Turn off a lot diagnostics 'invalid' messages
         init_options = {
             ['logging.enabled'] = false,
             ['language_server_code_transform.import_globals'] = true,
@@ -3787,7 +3805,7 @@ EOF
         command! -nargs=? M tabnew <Bar> terminal <f-args>
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
-        autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=200}
+        autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup='IncSearch', timeout=200}
 
         " Starts :terminal in Insert Mode (Same to Vim behaviour)
         " Enter: Close output view from vim-test (Same to Vim behaviour)
@@ -3895,8 +3913,8 @@ EOF
 "     autocmd CompleteDone * if pumvisible() > 0 | pclose | endif
 
     " Symfony: Setup
-    autocmd BufWritePost config/{routes,packages}/*.yaml :execute "!phpx bin/console cache:clear"
-    autocmd BufWritePost config/services.yaml :execute "!phpx bin/console cache:clear"
+    autocmd BufWritePost config/{routes,packages}/*.yaml :execute '!phpx bin/console cache:clear'
+    autocmd BufWritePost config/services.yaml :execute '!phpx bin/console cache:clear'
 
     " PHP Customization
     " autocmd FileType php inoremap <silent> <buffer> -> -><C-x><C-n>
@@ -3921,9 +3939,9 @@ EOF
         \ 'all': '--no-coverage --stop-on-failure',
     \}
 
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> execute ":TestNearest --testdox -vvv " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> execute ":TestFile    --testdox -vvv " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> execute ":TestSuite   --testdox -vvv " . (g:test_strategy ==# 'background' ? '-sound ' : '') . "-strategy=" . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> execute ':TestFile    --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> execute ':TestSuite   --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
 
     " PHP Linter
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
@@ -3961,8 +3979,8 @@ EOF
 
     autocmd FileType php nmap <silent> <buffer> gd <Cmd>call <SID>phpgd()<Enter>
     " autocmd FileType php nmap <silent> <buffer> gd <Cmd>call phpactor#GotoDefinition()<Enter>
-    " autocmd FileType php nmap <silent> <buffer> gy <Cmd>call phpactor#GotoImplementations()<Enter>
     " autocmd FileType php nmap <silent> <buffer> gr <Cmd>call phpactor#FindReferences()<Enter>
+    " autocmd FileType php nmap <silent> <buffer> gy <Cmd>call phpactor#GotoImplementations()<Enter>
 
     function! s:phpgd() abort
         let l:message = ''
@@ -4018,8 +4036,8 @@ EOF
         "   scopes: Special Laravel's function
         "   tags:   Relative tags
         let l:commands = {
-                    \ "scopes": "silent! tag scope" . substitute(l:iword, '\<.', '\u&', 'g'),
-                    \ "tags": "silent! tag " . l:iword,
+                    \ 'scopes': 'silent! tag scope' . substitute(l:iword, '\<.', '\u&', 'g'),
+                    \ 'tags': 'silent! tag ' . l:iword,
                     \ }
 
         for [l:name, l:command] in items(l:commands)
@@ -4105,7 +4123,7 @@ EOF
         new
         setlocal noswapfile
         setlocal noloadplugins
-        execute "setfiletype " . l:filetype
+        execute 'setfiletype ' . l:filetype
 
         if l:filetype ==# 'php'
             ALEDisableBuffer
@@ -4129,7 +4147,7 @@ EOF
         if l:lnum > 0 && l:col > 0
             silent call cursor(l:lnum, l:col)
             " Not use normal! <Bang>, it needs gd mapping
-            silent! execute "keepjumps normal 2Wgd"
+            silent! execute 'keepjumps normal 2Wgd'
         else
             echo 'Nothing to do.'
         endif
@@ -4723,7 +4741,7 @@ EOF
         set formatoptions=                                      " (default: croql)
         set formatoptions+=c                                    " Auto-wrap [c]omments using textwidth (broken Paste Mode)
         set formatoptions+=r                                    " Insert automatically comment char after Ente[r] in comments (broken Paste Mode)
-        set formatoptions+=q                                    " Allow formatting comments whit "gq"
+        set formatoptions+=q                                    " Allow formatting comments whit 'gq'
         set formatoptions+=l                                    " Don't broken [l]ong lines comments
         set formatoptions+=j                                    " Remove comment string in [j]oining comments
         set formatoptions+=n                                    " Detect list of [n]umbers (require autoindent enable)
