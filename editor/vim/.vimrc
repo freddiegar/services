@@ -677,6 +677,10 @@ function! GetTypeCurrentFile() abort
         let g:cache['t'][l:path] = [l:ftime, l:type]
     endif
 
+    if l:type ==# ''
+        return ''
+    endif
+
     return '  ' . l:type
 endfunction
 
@@ -779,6 +783,8 @@ function! s:statusline(lastmode) abort
     setlocal statusline+=%{GetNameCurrentPath()}                " Relative folder
     setlocal statusline+=%{GetNameCurrentFile()}                " Relative filename
     setlocal statusline+=%{GetTypeCurrentFile()}                " Type file
+    setlocal statusline+=\                                      " Extra space
+    setlocal statusline+=\#%n                                   " Buffer number
 
     setlocal statusline+=%=                                     " New group (align right)
     setlocal statusline+=\%m                                    " Modified flag
@@ -798,7 +804,7 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
 
-    if exists('g:plug_autocompleted_loaded')
+    if exists('g:plug_autocompleted_loaded') && luaeval('#vim.lsp.buf_get_clients() > 0')
         setlocal statusline+=%{'[L]'}                           " LSP enabled
     endif
 
@@ -1744,7 +1750,7 @@ function s:go_docs(word) abort
         let l:docsurl = 'https://dev.mysql.com/doc/search/?q='
     elseif index(['help'], &filetype) >= 0
         let l:docsurl = 'https://duckduckgo.com/?sites=vimhelp.org&ia=web&q='
-    elseif g:hasgit && index([8, 9], len(l:word)) >= 0 && index(['markdown'], &filetype) >= 0 && executable('git')
+    elseif g:hasgit && index([8, 9, 10], len(l:word)) >= 0 && index(['markdown', 'fugitiveblame'], &filetype) >= 0 && executable('git')
         " GBrowse ignores current file directory
         " execute 'GBrowse ' . l:word
         let l:repourl = system("git config --get remote.origin.url | sed 's/^git@\\(.*\\).git/\\1/g' | sed 's/.git$//g' | sed 's/\\(\\.[a-z]\\{2,3\\}\\)\\(:\\)/\\1\\//g' | tr -d '\\n'")
@@ -1996,9 +2002,9 @@ Plug 'phpactor/phpactor', {
             \ 'for': 'php',
             \ 'do': 'composer install --no-dev --optimize-autoloader'
             \ }                                                 " LSP tool for PHP (and refactor)
-Plug 'prabirshrestha/vim-lsp', {
-            \ 'for': 'vim',
-            \ }                                                 " LSP tool for Vim
+" Plug 'prabirshrestha/vim-lsp', {
+"             \ 'for': 'vim',
+"             \ }                                                 " LSP tool for Vim
 " Plug 'RRethy/vim-illuminate', {'for': ['vim', 'php', 'c']}      " Highligth current cursor word
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
@@ -2057,8 +2063,8 @@ if g:isneovim
         " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
         Plug 'hrsh7th/cmp-buffer'                                 " Integrate for buffer
         " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
-        Plug 'hrsh7th/cmp-nvim-lsp'                               " Integrate for LSP
-        Plug 'dmitmel/cmp-vim-lsp'                                " Integrate for Vim
+        Plug 'hrsh7th/cmp-nvim-lsp'                               " Integrate for built-in LSP
+        " Plug 'dmitmel/cmp-vim-lsp'                                " Integrate for Vim
         Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
     endif
 else
@@ -3537,9 +3543,11 @@ augroup AutoCommands
     autocmd FileType help map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType netrw map <silent> <nowait> <buffer> q <Cmd>call <SID>toggle_netrw(getcwd(), v:true)<Enter>
     autocmd FileType tagbar map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
-    autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
     autocmd FileType checkhealth map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
+    autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
+    autocmd FileType fugitiveblame map <silent> <nowait> <buffer> q gq
     autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq
+    autocmd BufReadPost,BufNewFile * if &modifiable ==# 0 || &readonly | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter> | endif
 
     " Some files are prohibited
     autocmd BufReadPost vendor/* setlocal nomodifiable
@@ -3654,6 +3662,14 @@ lua <<EOF
             ),
             ['<C-Space>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
         }),
+
+        matching = {
+            disallow_fuzzy_matching = true,
+            disallow_fullfuzzy_matching = true,
+            disallow_partial_fuzzy_matching = true,
+            disallow_partial_matching = true,
+            disallow_prefix_unmatching = true,
+        },
 
         sources = cmp.config.sources({
             {
