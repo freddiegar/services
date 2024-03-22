@@ -293,13 +293,17 @@ sudo apt-get install -y libxml2-utils
 
 [See](https://llvm.org/docs/GettingStarted.html#overview)
 [See 2](https://www.jianshu.com/p/3c7eae5c0c68)
+[See 3](https://github.com/llvm/llvm-project/releases)
+[See 4](https://apt.llvm.org/)
 
 ```bash
 cd ~
 # sudo apt-get install libncurses5
-curl -SL https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz | tar -xJC .
-sudo mv clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04 /usr/local/clang_16.0.0
-# /usr/local/clang_16.0.0/bin/clangd --version
+sudo apt-get install -y clang-17
+sudo ln -s /usr/bin/clangd-17 /usr/bin/clangd
+sudo ln -s /usr/bin/clang-tidy-17 /usr/bin/clang-tidy
+# clangd --version
+# clang-tidy --version
 ```
 
 #### Vim
@@ -309,6 +313,15 @@ sudo mv clang+llvm-16.0.0-x86_64-linux-gnu-ubuntu-18.04 /usr/local/clang_16.0.0
 ```bash
 npm install -g vim-language-server
 ```
+
+#### Rust
+
+```bash
+# curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
+rustup component add rust-analyzer
+```
+> rustup update
+> rustup self uninstall
 
 ### C Tags
 

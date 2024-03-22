@@ -22,6 +22,7 @@
 " @see https://mmmnnnmmm.com/#tutorial_vimscript
 " @see https://github.com/iggredible/Learn-Vim
 " @see https://www.reddit.com/r/vim/comments/17j7hfa/best_place_to_learn_advance_vim/
+" @see https://github.com/vbd/Fieldnotes/blob/main/vim.md
 
 " CVE
 " @see https://www.cvedetails.com/vendor/8218/VIM.html
@@ -166,6 +167,7 @@
 " 1. Update system
 " 2. Delete viminfo file!
 " 3. Delete session file!
+" 4. Delete fugitive folder: rm -Rf fugitive:
 
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
@@ -783,8 +785,8 @@ function! s:statusline(lastmode) abort
     setlocal statusline+=%{GetNameCurrentPath()}                " Relative folder
     setlocal statusline+=%{GetNameCurrentFile()}                " Relative filename
     setlocal statusline+=%{GetTypeCurrentFile()}                " Type file
-    setlocal statusline+=\                                      " Extra space
-    setlocal statusline+=\#%n                                   " Buffer number
+    " setlocal statusline+=\                                      " Extra space
+    " setlocal statusline+=\#%n                                   " Buffer number
 
     setlocal statusline+=%=                                     " New group (align right)
     setlocal statusline+=\%m                                    " Modified flag
@@ -2057,16 +2059,16 @@ if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'on': []} " Highligth ++
 
-    if has('gui_running')
-        Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
-        Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
-        " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
-        Plug 'hrsh7th/cmp-buffer'                                 " Integrate for buffer
-        " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
-        Plug 'hrsh7th/cmp-nvim-lsp'                               " Integrate for built-in LSP
-        " Plug 'dmitmel/cmp-vim-lsp'                                " Integrate for Vim
-        Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
-    endif
+    " if has('gui_running')
+    Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
+    Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
+    " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
+    Plug 'hrsh7th/cmp-buffer'                                 " Integrate for buffer
+    " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
+    Plug 'hrsh7th/cmp-nvim-lsp'                               " Integrate for built-in LSP
+    " Plug 'dmitmel/cmp-vim-lsp'                                " Integrate for Vim
+    Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
+    " endif
 else
     Plug 'markonm/traces.vim'                                   " See range, substitution and global preview
     Plug 'machakann/vim-highlightedyank'                        " See yank preview
@@ -3547,7 +3549,7 @@ augroup AutoCommands
     autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
     autocmd FileType fugitiveblame map <silent> <nowait> <buffer> q gq
     autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq
-    autocmd BufReadPost,BufNewFile * if &modifiable ==# 0 || &readonly | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter> | endif
+    autocmd BufEnter,BufReadPost,BufNewFile * if &modifiable ==# 0 || &readonly | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter> | endif
 
     " Some files are prohibited
     autocmd BufReadPost vendor/* setlocal nomodifiable
@@ -3555,13 +3557,16 @@ augroup AutoCommands
     autocmd BufReadPost composer.lock setlocal nomodifiable
     autocmd BufReadPost package-lock.json setlocal nomodifiable
 
+    " Some files are untouchable
+    autocmd BufReadPost fugitive://* setlocal nomodifiable readonly
+
     " Return to last edit position when opening files
     autocmd BufReadPost *
                 \ if &filetype !=# '\%(^git\%(config\)\@!\|commit\)' && line("'\"") > 0 && line("'\"") <= line('$') |
                 \   silent execute "normal! g`\"" |
                 \ endif
 
-    if has('gui_running') && g:isneovim
+    if g:isneovim
         " Lazy load
         " @see :h autocmd-once
         autocmd BufReadPost * ++once silent call <SID>treesitter()
@@ -3613,9 +3618,58 @@ EOF
             TSBufEnable highlight
         endfunction
 
+        command! -nargs=0 LI LspInfo
+        command! -nargs=0 LL LspLog
+
         autocmd BufReadPost * ++once silent call <SID>nautocomplete()
 
-        autocmd FileType sql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion' } } }
+        " So slower!(?)
+        autocmd FileType sql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion', keyword_length = 5 } } }
+
+" Don't indent!
+lua <<EOF
+    vim.api.nvim_create_autocmd('LspAttach', {
+        callback = function(event)
+            local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+            if client == nil then
+                return
+            end
+
+            local options = { silent = true, buffer = event.buf }
+
+            -- @run lua=vim.lsp.protocol.Methods
+            -- @see https://neovim.io/doc/user/lsp.html#lsp-api
+            if client.supports_method('textDocument/hover') then
+                vim.keymap.set('n', 'K', vim.lsp.buf.hover, options)
+            end
+
+            if client.supports_method('textDocument/definition') then
+                vim.keymap.set('n', 'gd', vim.lsp.buf.definition, options)
+            end
+
+            if client.supports_method('textDocument/declaration') then
+                vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, options)
+            end
+
+            if client.supports_method('textDocument/references') then
+                vim.keymap.set('n', 'gr', vim.lsp.buf.references, options)
+            end
+
+            if client.supports_method('textDocument/implementation') then
+                vim.keymap.set('n', 'gy', vim.lsp.buf.implementation, options)
+            end
+
+            if client.supports_method('textDocument/rename') then
+                vim.keymap.set('n', '<Leader>rll', vim.lsp.buf.rename, options)
+            end
+
+            if client.supports_method('textDocument/codeAction') then
+               vim.keymap.set('n', '<Leader>R', vim.lsp.buf.code_action, options)
+            end
+        end
+    })
+EOF
 
         " @see https://github.com/hrsh7th/nvim-cmp
         " @see https://vonheikemen.github.io/devlog/tools/neovim-lsp-client-guide/
@@ -3763,17 +3817,23 @@ lua <<EOF
         }
     }
 
-    -- require('lspconfig').clangd.setup {
-    --     cmd = {
-    --         'clangd',
-    --         '--clang-tidy',
-    --         '--header-insertion=iwyu',
-    --         '--completion-style=detailed',
-    --         '--function-arg-placeholders',
-    --         '--fallback-style=none',
-    --      },
-    --      capabilities = capabilities
-    -- }
+    require('lspconfig').clangd.setup {
+        -- cmd = {
+        --     'clangd',
+        --     '--background-index',
+        --     '--suggest-missing-includes',
+        --     '--clang-tidy',
+        --     '--header-insertion=iwyu',
+        -- },
+        capabilities = capabilities
+    }
+
+    require('lspconfig').rust_analyzer.setup {
+        checkOnSave = {
+            command = 'clippy',
+        },
+        capabilities = capabilities
+    }
 EOF
         endfunction
     else
@@ -4658,7 +4718,7 @@ EOF
             echomsg l:message
         endif
 
-        if has('gui_running') && g:isneovim
+        if g:isneovim
             " Enable in file load after open session session
             silent call <SID>treesitter()
             silent call <SID>nautocomplete()
