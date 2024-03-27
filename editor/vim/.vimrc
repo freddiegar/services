@@ -3619,6 +3619,9 @@ EOF
         endfunction
 
         command! -nargs=0 LI LspInfo
+        command! -nargs=0 LA LspStart
+        command! -nargs=0 LR LspRestart
+        command! -nargs=0 LS LspStop
         command! -nargs=0 LL LspLog
 
         autocmd BufReadPost * ++once silent call <SID>nautocomplete()
@@ -3687,10 +3690,25 @@ lua <<EOF
     require('lspconfig.ui.windows').default_options.border = 'single'
 
     -- @see https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/config/default.lua
+    -- @see :h cmp-config
     cmp.setup({
+        -- enabled = function() -- Using manual trigger
+        --     -- Disable completion if the cursor is `Comment` syntax group.
+        --     return not cmp.config.context.in_treesitter_capture('Comment')
+        -- end,
+
+        -- Manual trigger to avoid distracting (and annoyoning)
+        completion = {
+            autocomplete = false,
+        },
+
+        -- No use nothing until explicit selection
+        preselect = cmp.PreselectMode.None,
+
+        -- Enable snippets
         snippet = {
             expand = function(args)
-            vim.fn["UltiSnips#Anon"](args.body)
+                vim.fn["UltiSnips#Anon"](args.body)
             end,
         },
 
@@ -3699,30 +3717,61 @@ lua <<EOF
         --     documentation = cmp.config.window.bordered(),
         -- },
 
+        -- @see https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/config/mapping.lua
         mapping = cmp.mapping.preset.insert({
-            -- ['<C-n>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert }, --> Default
-            -- ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert }, --> Default
-            ['<C-d>'] = cmp.mapping.scroll_docs(4),
-            ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-            -- ['<C-y>'] = cmp.mapping.confirm(), --> Default
-            -- ['<C-e>'] = cmp.mapping.abort(), --> Default
-            -- ['<C-c>'] = cmp.mapping.abort(), --> Like native <C-e>, but doesn't work as expects
-            ['<Enter>'] = cmp.mapping( -- Required
+            ['<C-d>'] = cmp.mapping.scroll_docs(4), -- Define scroll in windows
+
+            ['<C-u>'] = cmp.mapping.scroll_docs(-4), -- Define scroll in windows
+
+            ['<C-n>'] = cmp.mapping(function() -- Overwrite to select unique option by default
+                if cmp.visible() then
+                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+                else
+                    cmp.complete()
+                end
+
+                if #cmp.get_entries() == 1 then
+                    cmp.confirm({ select = true })
+                end
+            end, {'i', 's'}),
+
+            -- ['<C-p>'] = cmp.mapping(function() -- Overwrite to select unique option by default, almost always I use <C-n>
+            --     if cmp.visible() then
+            --         cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+            --     else
+            --         cmp.complete()
+            --     end
+
+            --     if #cmp.get_entries() == 1 then
+            --         cmp.confirm({ select = true })
+            --     end
+            -- end, {'i', 's'}),
+
+            ['<Enter>'] = cmp.mapping( -- Define Enter behavior
                 cmp.mapping.confirm {
                     behavior = cmp.ConfirmBehavior.Insert,
                     select = true,
                 },
-                { 'i', 'c' }
+                { 'i', 's' }
             ),
-            ['<C-Space>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
+
+            -- ['<C-g>'] = function() -- Toggle docs view
+            --     if cmp.visible_docs() then
+            --         cmp.close_docs()
+            --     else
+            --         cmp.open_docs()
+            --     end
+            -- end,
+
+            ['<C-Space>'] = cmp.mapping.complete(),
         }),
 
         matching = {
             disallow_fuzzy_matching = true,
             disallow_fullfuzzy_matching = true,
-            disallow_partial_fuzzy_matching = true,
-            disallow_partial_matching = true,
-            disallow_prefix_unmatching = true,
+            -- disallow_partial_fuzzy_matching = true,
+            -- disallow_partial_matching = true,
+            -- disallow_prefix_unmatching = true,
         },
 
         sources = cmp.config.sources({
@@ -3743,6 +3792,13 @@ lua <<EOF
             --     name = 'ultisnips', -- Really?
             -- },
         })
+    })
+
+    -- Disable in this buffers documentation window
+    cmp.setup.filetype({ 'markdown', 'help' }, {
+        window = {
+            documentation = cmp.config.disable
+        },
     })
 
     -- Really distracting (and annoyoning). Check trigger
@@ -3824,14 +3880,12 @@ lua <<EOF
         --     '--suggest-missing-includes',
         --     '--clang-tidy',
         --     '--header-insertion=iwyu',
+        --     '--header-insertion-decorators',
         -- },
         capabilities = capabilities
     }
 
     require('lspconfig').rust_analyzer.setup {
-        checkOnSave = {
-            command = 'clippy',
-        },
         capabilities = capabilities
     }
 EOF

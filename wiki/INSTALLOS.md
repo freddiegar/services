@@ -299,11 +299,12 @@ sudo apt-get install -y libxml2-utils
 ```bash
 cd ~
 # sudo apt-get install libncurses5
-sudo apt-get install -y clang-17
+sudo apt-get install -y clang-17 clangd-17 lldb-17 lld-17
+sudo ln -s /usr/bin/clang-17 /usr/bin/clang
+sudo ln -s /usr/bin/clang++-17 /usr/bin/clang++
+sudo ln -s /usr/bin/clang-cpp-17 /usr/bin/clang-cpp
 sudo ln -s /usr/bin/clangd-17 /usr/bin/clangd
-sudo ln -s /usr/bin/clang-tidy-17 /usr/bin/clang-tidy
 # clangd --version
-# clang-tidy --version
 ```
 
 #### Vim
