@@ -324,6 +324,37 @@ rustup component add rust-analyzer
 > rustup update
 > rustup self uninstall
 
+```bash
+echo '
+# Enable rust
+if [ -d ~/.cargo/bin ]; then
+    . "$HOME/.cargo/env"
+fi' >> ~/.profile
+```
+
+#### Go
+
+[See](https://go.dev/doc/install)
+[See 2](https://go.dev/doc/install/source)
+[See 3](https://github.com/golang/wiki/blob/master/Ubuntu.md#using-ppa)
+
+```bash
+curl -L https://go.dev/dl/go1.22.1.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go-linux-amd64.tar.gz && rm go-linux-amd64.tar.gz
+go version
+
+sudo apt-get install -y gopls
+```
+> sudo apt-get remove gopls
+
+```bash
+echo '
+# Enable go
+if [ -d /usr/local/go/bin ]; then
+    export PATH=$PATH:/usr/local/go/bin
+fi' >> ~/.profile
+```
+
 ### C Tags
 
 [See](https://docs.ctags.io/en/latest/autotools.html#gnu-linux-distributions)
@@ -1629,6 +1660,8 @@ ruby --version | awk '{print $2}'
 # 3.1.2p20
 rustc --version | awk '{print $2}'
 # 1.76.0
+go version | awk '{print $3}' | sed 's/go//g'
+# 1.22.1
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
 # 6.1.0(87069765)
 gpg1 --version | head -1 | awk '{print $3}'

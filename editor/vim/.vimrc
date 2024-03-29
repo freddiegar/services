@@ -289,7 +289,7 @@ set wildmenu                                                    " Better command
 set wildignore=                                                 " We never want to see them in command tab-completion (default: empty)
 set wildignore+=**/.git/**                                      " VSC are slow in this cases
 set wildignore+=**/node_modules/**                              " Vendor are slow in this cases
-set wildignore+=*.gif,*.jpeg,*.jpg,*.png,*.ico,*.svg            " Image files aren't usable here
+set wildignore+=*.gif,*.jpeg,*.jpg,*.png,*.ico,*.svg,*.webp     " Image files aren't usable here
 set wildignore+=*.mp3,*.mp4                                     " Media files aren't usable here
 set wildignore+=*.zip,*.gz                                      " Compress files aren't usable here
 set wildignore+=*.deb                                           " Instalation files aren't usable here
@@ -1154,8 +1154,7 @@ function! s:toggle_netrw(dir, force) abort
         silent execute 'Explore! ' . a:dir
     endif
 
-    " Force reload statusline, with doautocmd doesn't work
-    silent call <SID>statusline('f')
+    doautocmd <nomodeline> User UpdateStatusline
 endfunction
 
 " Fast Vim configuration (and plugins)
@@ -2889,7 +2888,7 @@ augroup END
 
 " file (string)
 function! s:check_large_file(file) abort
-    if a:file ==# '' || index(['gif', 'jpeg', 'jpg', 'png', 'ico', 'svg', 'mp3', 'mp4', 'pdf'], expand(a:file . ':t')) >= 0
+    if a:file ==# '' || index(['gif', 'jpeg', 'jpg', 'png', 'ico', 'svg', 'webp', 'mp3', 'mp4', 'pdf'], expand(a:file . ':t')) >= 0
         return
     endif
 
@@ -3526,6 +3525,8 @@ augroup AutoCommands
 
     " @see https://github.com/tpope/vim-vinegar/issues/13#issuecomment-47133890
     autocmd FileType netrw setlocal bufhidden=delete
+    autocmd FileType netrw autocmd BufDelete <buffer> let g:netrwopen = 0
+
     " Weird behaviour using this mapping
     autocmd FileType netrw map <silent> <buffer> p <Nop>
     autocmd FileType netrw map <silent> <buffer> P <Nop>
@@ -3543,16 +3544,19 @@ augroup AutoCommands
     " Like many others (vim-plug, GV, undotree) q is [q]uit. So sorry Tim!
     autocmd FileType qf map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType help map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
-    autocmd FileType netrw map <silent> <nowait> <buffer> q <Cmd>call <SID>toggle_netrw(getcwd(), v:true)<Enter>
+    autocmd FileType netrw map <silent> <nowait> <buffer> q <Cmd>call <SID>toggle_netrw('', v:true)<Enter>
     autocmd FileType tagbar map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType checkhealth map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
     autocmd FileType fugitiveblame map <silent> <nowait> <buffer> q gq
     autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq
-    autocmd BufEnter,BufReadPost,BufNewFile * if &modifiable ==# 0 || &readonly | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter> | endif
+
+    " Not append last space before close if, its append a <Space>
+    autocmd BufEnter,BufReadPost,BufNewFile * if (&modifiable ==# 0 || &readonly) && empty(maparg('q', 'n')) | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>| endif
 
     " Some files are prohibited
     autocmd BufReadPost vendor/* setlocal nomodifiable
+    autocmd BufReadPost */plugged/* setlocal nomodifiable
     autocmd BufReadPost node_modules/* setlocal nomodifiable
     autocmd BufReadPost composer.lock setlocal nomodifiable
     autocmd BufReadPost package-lock.json setlocal nomodifiable
@@ -3670,6 +3674,8 @@ lua <<EOF
             if client.supports_method('textDocument/codeAction') then
                vim.keymap.set('n', '<Leader>R', vim.lsp.buf.code_action, options)
             end
+
+            vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
         end
     })
 EOF
@@ -3723,21 +3729,9 @@ lua <<EOF
 
             ['<C-u>'] = cmp.mapping.scroll_docs(-4), -- Define scroll in windows
 
-            ['<C-n>'] = cmp.mapping(function() -- Overwrite to select unique option by default
-                if cmp.visible() then
-                    cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-                else
-                    cmp.complete()
-                end
-
-                if #cmp.get_entries() == 1 then
-                    cmp.confirm({ select = true })
-                end
-            end, {'i', 's'}),
-
-            -- ['<C-p>'] = cmp.mapping(function() -- Overwrite to select unique option by default, almost always I use <C-n>
+            -- ['<C-n>'] = cmp.mapping(function() -- Overwrite to select unique option by default
             --     if cmp.visible() then
-            --         cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+            --         cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
             --     else
             --         cmp.complete()
             --     end
@@ -3746,6 +3740,18 @@ lua <<EOF
             --         cmp.confirm({ select = true })
             --     end
             -- end, {'i', 's'}),
+
+            ['<C-p>'] = cmp.mapping(function() -- Overwrite to select unique option by default
+                if cmp.visible() then
+                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+                else
+                    cmp.complete()
+                end
+
+                if #cmp.get_entries() == 1 then
+                    cmp.confirm({ select = true })
+                end
+            end, {'i', 's'}),
 
             ['<Enter>'] = cmp.mapping( -- Define Enter behavior
                 cmp.mapping.confirm {
@@ -3888,6 +3894,8 @@ lua <<EOF
     require('lspconfig').rust_analyzer.setup {
         capabilities = capabilities
     }
+
+    vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
 EOF
         endfunction
     else
@@ -4519,7 +4527,7 @@ EOF
                 \ | endif
 
     " Open files with external application
-    autocmd BufEnter *.gif,*.jpeg,*.jpg,*.png,*.ico,*.svg call <SID>go_url(expand('<afile>')) | bwipeout
+    autocmd BufEnter *.gif,*.jpeg,*.jpg,*.png,*.ico,*.svg,*.webp call <SID>go_url(expand('<afile>')) | bwipeout
     autocmd BufEnter *.mp3,*.mp4 call <SID>go_url(expand('<afile>')) | bwipeout
     autocmd BufEnter *.pdf call <SID>go_url(expand('<afile>')) | bwipeout
 
@@ -4777,6 +4785,8 @@ EOF
             silent call <SID>treesitter()
             silent call <SID>nautocomplete()
         endif
+
+        doautocmd <nomodeline> User UpdateStatusline
     endfunction
 
     function! s:sessionremoveitem(item) abort
@@ -5055,7 +5065,7 @@ EOF
         endif
 
         " @thanks https://github.com/valacar/vimfiles/commit/4d0b79096fd1b2b6f5fc0c7225f7de7751fada64
-        autocmd DirChanged global if expand('<afile>') !=# g:cwd | call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | call <SID>statusline('x') | filetype detect | endif
+        autocmd DirChanged global if expand('<afile>') !=# g:cwd | call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | filetype detect | endif
     endif
 
     autocmd BufEnter * call <SID>poststart() " | call <SID>show_context(expand('<afile>'))
@@ -5104,7 +5114,8 @@ EOF
         " | setlocal cursorline
     autocmd WinLeave,BufWinLeave * call <SID>statusline('f')
         " | setlocal nocursorline
-    autocmd User UpdateStatusline call <SID>statusline(mode())
+    " Use [f]orce to avoid error in netrw and VimEnter
+    autocmd User UpdateStatusline call <SID>statusline('f')
     autocmd User AsyncRunPre call <SID>statusline('f')
     autocmd User AsyncRunStart call <SID>statusline('f')
     autocmd User AsyncRunStop call <SID>statusline('f')
@@ -5123,7 +5134,7 @@ EOF
     autocmd ColorScheme * call <SID>postcolorscheme()
     autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c,*Xresources :call <SID>cleanup('te')
 
-    " One <C-x><C-f> to auto-complet files
+    " One <C-x><C-f> to auto-complete files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories
     autocmd CompleteDonePre *
                 \ if complete_info()['mode'] ==# 'files' && len(complete_info()['items']) > 0 && complete_info()['selected'] !=# -1 |
