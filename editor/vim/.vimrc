@@ -806,9 +806,17 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
 
-    if exists('g:plug_autocompleted_loaded') && luaeval('#vim.lsp.buf_get_clients() > 0')
-        setlocal statusline+=%{'[L]'}                           " LSP enabled
-    endif
+    " if g:isneovim && luaeval('#vim.lsp.buf_get_clients() > 0')
+    "     setlocal statusline+=%{'[L]'}                           " LSP enabled
+    " endif
+
+    " if g:isneovim && exists('g:plug_autocompleted_loaded')
+    "     setlocal statusline+=%{'[C]'}                           " Autocomplete enabled
+    " endif
+
+    " if g:isneovim && exists('g:plug_treesitter_loaded')
+    "     setlocal statusline+=%{'[T]'}                           " Treesitter enabled
+    " endif
 
     " if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
     "     setlocal statusline+=\                                  " Extra space
@@ -2056,7 +2064,7 @@ endif
 
 if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
-    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'on': []} " Highligth ++
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Highligth ++
 
     " if has('gui_running')
     Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
@@ -3573,7 +3581,7 @@ augroup AutoCommands
     if g:isneovim
         " Lazy load
         " @see :h autocmd-once
-        autocmd BufReadPost * ++once silent call <SID>treesitter()
+        autocmd BufReadPost * silent call <SID>treesitter() | silent call timer_start(0, function('s:reloadundofile'))
 
         " @thanks https://gist.github.com/kawarimidoll/d566e367591acae6e41295722803534d
         function! s:treesitter() abort
@@ -3582,10 +3590,6 @@ augroup AutoCommands
             endif
 
             let g:plug_treesitter_loaded = 1
-
-            call plug#load('nvim-treesitter')
-
-            silent execute 'luafile' g:plug_home .. '/nvim-treesitter/plugin/nvim-treesitter.lua'
 
 " Don't indent!
 lua << EOF
@@ -3598,14 +3602,14 @@ require 'nvim-treesitter.configs'.setup({
         enable = true,
         additional_vim_regex_highlighting = false,
         -- @thanks https://github.com/MariaSolOs/dotfiles/blob/b0578418a0a275ff449ad366fa99f9b1ff72b93b/.config/nvim/lua/plugins/treesitter.lua#L64
-        -- disable = function(_, buf)
-        --     if not vim.bo[buf].modifiable then
-        --         return false
-        --     end
+        disable = function(_, buf)
+            -- if not vim.bo[buf].modifiable then
+            --     return false
+            -- end
 
-        --     local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-        --     return ok and stats and stats.size > (1024 * 1024 * 2)
-        -- end,
+            local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+            return ok and stats and stats.size > (1024 * 1024 * 2)
+        end,
     },
     indent = {
         enable = true, -- must be on ... or indent fails!
@@ -3619,7 +3623,16 @@ require 'nvim-treesitter.configs'.setup({
 })
 EOF
 
-            TSBufEnable highlight
+            TSEnable highlight
+        endfunction
+
+        " Treesitter disables undofile...
+        function! s:reloadundofile(...) abort
+            if len(v:this_session) > 0 && &undofile ==# 0
+                set undofile
+
+                doautocmd <nomodeline> User UpdateStatusline
+            endif
         endfunction
 
         command! -nargs=0 LI LspInfo
@@ -5110,7 +5123,7 @@ EOF
 
     " BufWinEnter:  After cycling between buffers
     " BufHidden:    After close CTRL-W o
-    autocmd WinEnter,BufWinEnter,BufHidden * call <SID>statusline(mode())
+    autocmd WinEnter,BufWinEnter,BufHidden * call <SID>statusline('f')
         " | setlocal cursorline
     autocmd WinLeave,BufWinLeave * call <SID>statusline('f')
         " | setlocal nocursorline
