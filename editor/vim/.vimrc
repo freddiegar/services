@@ -806,17 +806,17 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
 
-    " if g:isneovim && luaeval('#vim.lsp.buf_get_clients() > 0')
-    "     setlocal statusline+=%{'[L]'}                           " LSP enabled
-    " endif
+    if g:isneovim && luaeval('#vim.lsp.buf_get_clients() > 0')
+        setlocal statusline+=%{'[L]'}                           " LSP enabled
+    endif
 
-    " if g:isneovim && exists('g:plug_autocompleted_loaded')
-    "     setlocal statusline+=%{'[C]'}                           " Autocomplete enabled
-    " endif
+    if g:isneovim && exists('g:plug_autocompleted_loaded')
+        setlocal statusline+=%{'[C]'}                           " Autocomplete enabled
+    endif
 
-    " if g:isneovim && exists('g:plug_treesitter_loaded')
-    "     setlocal statusline+=%{'[T]'}                           " Treesitter enabled
-    " endif
+    if g:isneovim && exists('g:plug_treesitter_loaded')
+        setlocal statusline+=%{'[T]'}                           " Treesitter enabled
+    endif
 
     " if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
     "     setlocal statusline+=\                                  " Extra space
@@ -3579,12 +3579,10 @@ augroup AutoCommands
                 \ endif
 
     if g:isneovim
-        " Lazy load
-        " @see :h autocmd-once
-        autocmd BufReadPost * silent call <SID>treesitter() | silent call timer_start(0, function('s:reloadundofile'))
+        autocmd BufReadPost * silent call <SID>ntreesitter() | silent call timer_start(0, function('s:reloadundofile'))
 
         " @thanks https://gist.github.com/kawarimidoll/d566e367591acae6e41295722803534d
-        function! s:treesitter() abort
+        function! s:ntreesitter() abort
             if exists('g:plug_treesitter_loaded')
                 return
             endif
@@ -3626,7 +3624,7 @@ EOF
             TSEnable highlight
         endfunction
 
-        " Treesitter disables undofile...
+        " Treesitter disables undofile... then turn on again after loaded
         function! s:reloadundofile(...) abort
             if len(v:this_session) > 0 && &undofile ==# 0
                 set undofile
@@ -3641,10 +3639,8 @@ EOF
         command! -nargs=0 LS LspStop
         command! -nargs=0 LL LspLog
 
-        autocmd BufReadPost * ++once silent call <SID>nautocomplete()
-
-        " So slower!(?)
-        autocmd FileType sql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion', keyword_length = 5 } } }
+        " LSP Hover not shows formatting chars
+        autocmd BufEnter,BufNewFile * if &filetype ==# 'markdown' && expand('%') ==# '' | setlocal conceallevel=3 concealcursor=nv | endif
 
 " Don't indent!
 lua <<EOF
@@ -3656,15 +3652,21 @@ lua <<EOF
                 return
             end
 
+            -- Not use noremap = true, it's not allow overwrite mapping for LSP
             local options = { silent = true, buffer = event.buf }
 
             -- @run lua=vim.lsp.protocol.Methods
             -- @see https://neovim.io/doc/user/lsp.html#lsp-api
+            if client.supports_method('textDocument/completion') then
+                vim.bo[event.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+            end
+
             if client.supports_method('textDocument/hover') then
                 vim.keymap.set('n', 'K', vim.lsp.buf.hover, options)
             end
 
             if client.supports_method('textDocument/definition') then
+                vim.bo[event.buf].tagfunc = 'v:lua.vim.lsp.tagfunc'
                 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, options)
             end
 
@@ -3692,6 +3694,11 @@ lua <<EOF
         end
     })
 EOF
+
+        autocmd BufReadPost * ++once silent call <SID>nautocomplete()
+
+        " So slower!(?)
+        autocmd FileType sql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion' } } }
 
         " @see https://github.com/hrsh7th/nvim-cmp
         " @see https://vonheikemen.github.io/devlog/tools/neovim-lsp-client-guide/
@@ -3796,16 +3803,16 @@ lua <<EOF
         sources = cmp.config.sources({
             {
                 name = 'nvim_lsp',
-                keyword_length = 3,
+                -- keyword_length = 3,
             },
         }, {
             {
                 name = 'buffer',
-                keyword_length = 5,
+                -- keyword_length = 5,
             },
             -- {
             --     name = 'path',
-            --     keyword_length = 5,
+            --     -- keyword_length = 5,
             -- },
             -- {
             --     name = 'ultisnips', -- Really?
@@ -3826,7 +3833,7 @@ lua <<EOF
     --     sources = {
     --         {
     --             name = 'buffer',
-    --             keyword_length = 5,
+    --             -- keyword_length = 5,
     --         }
     --     }
     -- })
@@ -3837,11 +3844,11 @@ lua <<EOF
     --     sources = cmp.config.sources({
     --         {
     --             name = 'path',
-    --             keyword_length = 5,
+    --             -- keyword_length = 5,
     --         }
     --     }, {
     --         name = 'cmdline',
-    --         keyword_length = 5,
+    --         -- keyword_length = 5,
     --         option = {
     --             ignore_cmds = { 'Man', '!' }
     --         }
@@ -3901,6 +3908,10 @@ lua <<EOF
         --     '--header-insertion=iwyu',
         --     '--header-insertion-decorators',
         -- },
+        capabilities = capabilities
+    }
+
+    require('lspconfig').gopls.setup {
         capabilities = capabilities
     }
 
@@ -4793,10 +4804,8 @@ EOF
             echomsg l:message
         endif
 
-        if g:isneovim
-            " Enable in file load after open session session
-            silent call <SID>treesitter()
-            silent call <SID>nautocomplete()
+        if g:isneovim && expand('%') !=# '' && index(['c', 'vim', 'php', 'rust', 'go'], &filetype) >= 0
+            silent LspStart
         endif
 
         doautocmd <nomodeline> User UpdateStatusline
