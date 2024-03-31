@@ -2183,6 +2183,7 @@ nnoremap <silent> <Leader>gW <Cmd>call <SID>go_url('https://www.wordreference.co
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
+" @see http://vimcasts.org/episodes/ultisnips-visual-placeholder/
 " @see https://developpaper.com/vim-code-snippet-plug-in-ultisnips-usage-tutorial/
 " @options https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L662
 " IMPORTANT: Custom g:UltiSnipsExpandTrigger MUST BE DIFF to <Tab> to integration CoC
@@ -3858,8 +3859,11 @@ lua <<EOF
     -- @see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-    -- @see https://github.com/prabirshrestha/vim-lsp/wiki/Servers-Vim
     require('lspconfig').vimls.setup {
+        capabilities = capabilities
+    }
+
+    require('lspconfig').lua_ls.setup {
         capabilities = capabilities
     }
 
@@ -4804,7 +4808,7 @@ EOF
             echomsg l:message
         endif
 
-        if g:isneovim && expand('%') !=# '' && index(['c', 'vim', 'php', 'rust', 'go'], &filetype) >= 0
+        if g:isneovim && expand('%') !=# '' && index(['c', 'vim', 'php', 'rust', 'go', 'lua'], &filetype) >= 0
             silent LspStart
         endif
 

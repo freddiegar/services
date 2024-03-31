@@ -301,8 +301,9 @@ lspci -nn | grep -E 'VGA|Display'
 ```bash
 gpg --list-keys
 gpg --edit-key O6QN77Q432NQRQ0S
-
-gpg> key O6QN77Q432NQRQ0S
+gpg> expire // encryption key: sec
+    1y
+gpg> key 1  // encryption subkey: ssb*
 gpg> expire
     1y
 gpg> save

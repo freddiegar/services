@@ -315,6 +315,22 @@ sudo ln -s /usr/bin/clangd-17 /usr/bin/clangd
 npm install -g vim-language-server
 ```
 
+#### Lua
+
+[See](https://luals.github.io/wiki/build/)
+
+```bash
+sudo apt-get install -y ninja-build
+mkdir /var/www/html/LuaLS
+cd /var/www/html/LuaLS
+git clone --depth=1 https://github.com/LuaLS/lua-language-server
+cd lua-language-server
+./make.sh
+
+# Enable globally
+sudo ln -s /var/www/html/LuaLS/lua-language-server/bin/lua-language-server /usr/local/bin/lua-language-server 
+```
+
 #### Rust
 
 ```bash
