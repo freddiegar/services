@@ -490,7 +490,7 @@ if has('gui_running')
     augroup GUIOptions
         if exists('g:neovide') " (why nvim why!)
             " @see https://neovide.dev/
-            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h14
+            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h15
                         \ | let g:neovide_confirm_quit = v:false
                         \ | let g:neovide_floating_shadow = v:false
                         \ | let g:neovide_hide_mouse_when_typing = v:true
@@ -1785,8 +1785,8 @@ nnoremap <silent> <Leader><Leader> :Buffers<Enter>
 nnoremap <silent> <Tab> <Cmd>call <SID>cycling_buffers(1)<Enter>
 
 xnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
-" Snippets using $VISUAL with :vnoremap fails!
-xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
+" Snippets using $VISUAL with :vnoremap fails!. First SELECT after expand snippet using <Tab>
+" xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
 
 " @simple https://github.com/tpope/vim-rsi
 " Insert Mode navigation (Forget Arrows)
@@ -2186,11 +2186,9 @@ nnoremap <silent> <Leader>gW <Cmd>call <SID>go_url('https://www.wordreference.co
 " @see http://vimcasts.org/episodes/ultisnips-visual-placeholder/
 " @see https://developpaper.com/vim-code-snippet-plug-in-ultisnips-usage-tutorial/
 " @options https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L662
-" IMPORTANT: Custom g:UltiSnipsExpandTrigger MUST BE DIFF to <Tab> to integration CoC
-" IMPORTANT: Custom g:UltiSnipsJumpForwardTrigger MUST BE KEEP diferent to g:UltiSnipsExpandTrigger
 let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsListSnippets = ''
-let g:UltiSnipsExpandTrigger = '<C-Tab>'
+let g:UltiSnipsExpandOrJumpTrigger = '<Tab>'
 let g:UltiSnipsRemoveSelectModeMappings = 0
 " After update to 9.0.1-1000 (from 9.0.1-749) this fix snippets :|
 let g:UltiSnipsSnippetDirectories = [$HOME . '/.vim/UltiSnips']
@@ -2683,32 +2681,32 @@ let g:suda#prompt = printf('[sudo] password for %s: ', $USER)
 "     inoremap <silent> <expr> <C-@> coc#refresh()
 " endif
 
-" Use <Tab> to select pum value or jump between placeholder in snippets
-inoremap <silent> <expr> <Tab>
-            \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
-            \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
-            \ pumvisible() ? "\<C-n>" :
-            \ "\<Tab>"
+" " Use <Tab> to select pum value or jump between placeholder in snippets
+" inoremap <silent> <expr> <Tab>
+"             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
+"             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
+"             \ pumvisible() ? "\<C-n>" :
+"             \ "\<Tab>"
 
-" In snippets with predefined values|content it uses Select Mode. WIP
-snoremap <silent> <expr> <Tab>
-            \ UltiSnips#CanExpandSnippet() ? "\<Esc>i\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
-            \ UltiSnips#CanJumpForwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
-            \ pumvisible() ? "\<C-n>" :
-            \ "\<Tab>"
+" " In snippets with predefined values|content it uses Select Mode. WIP
+" snoremap <silent> <expr> <Tab>
+"             \ UltiSnips#CanExpandSnippet() ? "\<Esc>i\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
+"             \ UltiSnips#CanJumpForwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
+"             \ pumvisible() ? "\<C-n>" :
+"             \ "\<Tab>"
 
-" Make <S-Tab> for snippet navigation (and complete)
-" Konsole change shortcut <S-Tab> to <C-S-Tab>
-" @see https://vim.fandom.com/wiki/Smart_mapping_for_tab_completion
-inoremap <silent> <expr> <Esc>[Z
-            \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
-            \ pumvisible() ? "\<C-p>" :
-            \ "\<C-d>"
+" " Make <S-Tab> for snippet navigation (and complete)
+" " Konsole change shortcut <S-Tab> to <C-S-Tab>
+" " @see https://vim.fandom.com/wiki/Smart_mapping_for_tab_completion
+" inoremap <silent> <expr> <Esc>[Z
+"             \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
+"             \ pumvisible() ? "\<C-p>" :
+"             \ "\<C-d>"
 
-snoremap <silent> <expr> <Esc>[Z
-            \ UltiSnips#CanJumpBackwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
-            \ pumvisible() ? "\<C-p>" :
-            \ "\<C-d>"
+" snoremap <silent> <expr> <Esc>[Z
+"             \ UltiSnips#CanJumpBackwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
+"             \ pumvisible() ? "\<C-p>" :
+"             \ "\<C-d>"
 
 " Make <Esc> close popup menu, keep pending (Conflict with <Esc>[Z aka <S-Tab>)
 " Use <nowait> is required
@@ -3438,7 +3436,7 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile phplint,phpx,grepx,datex,bash_aliases setfiletype sh
     autocmd BufReadPost,BufNewFile *.tphp setfiletype php
     autocmd BufReadPost,BufNewFile .php_cs* setfiletype php
-    autocmd BufReadPost,BufNewFile * if match(getline(1), '<\?php.*') >= 0 | setfiletype php | endif
+    autocmd BufReadPost,BufNewFile * if match(getline(1), '^<?php .*') >= 0 | setfiletype php | endif
     autocmd BufReadPost,BufNewFile *.conf setfiletype apache
     autocmd BufReadPost,BufNewFile *.json.*,*.lock setfiletype json
     autocmd BufReadPost,BufNewFile *.twig setlocal filetype=html | setlocal commentstring=\{#\ %s\ #\}
@@ -3520,7 +3518,7 @@ augroup AutoCommands
     autocmd FileType xdefaults setlocal commentstring=!\ %s
 
     " Dynamic GutenTags generation
-    autocmd FileType php,c let g:gutentags_enabled = 1
+    autocmd FileType php,c if !g:isneovim | let g:gutentags_enabled = 1 | endif
     autocmd FileType php let g:gutentags_ctags_extra_args += [
                 \ '--languages=PHP',
                 \ ]
