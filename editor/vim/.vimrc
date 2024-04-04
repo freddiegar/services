@@ -718,6 +718,16 @@ function! AsyncStatuslineFlag() abort
     return get(g:, 'asyncrun_icon', '')
 endfunction
 
+function! s:mustbeignore() abort
+    return argc() > 0 && (
+                \ index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
+                \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*\|hosts\|crontab\|errors\.err\|tags')
+                \ || get(v:argv, 1, '') ==# '-'
+                \ || (len(g:working) > 0 && g:working[0] =~? 'plugged')
+                \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-'
+                \ )
+endfunction
+
 set noruler                                                     " Position is showed in command-line (default: depends)
 set showcmd                                                     " Current pending command in command-line and visual
                                                                 " selection (default: depends) (slower)
@@ -2040,7 +2050,7 @@ Plug 'kshenoy/vim-signature'                                    " Show marks in 
 " Plug 'junegunn/limelight.vim', {'on': 'Limelight'}              " Zen mode ++
 " Plug 'tricktux/pomodoro.vim', {'on': 'PomodoroStart'}           " Zen mode +++
 
-if g:hasgit
+if g:hasgit && !<SID>mustbeignore()
     Plug 'wakatime/vim-wakatime'                                " Zen mode ++++
 endif
 
@@ -4752,16 +4762,6 @@ EOF
         silent execute (g:isneovim ? 'rshada ' : 'rviminfo ') . g:infofile
     endfunction
 
-    function! s:mustbeignore() abort
-        return argc() > 0 && (
-                    \ index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
-                    \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*\|hosts\|crontab\|errors\.err\|tags')
-                    \ || get(v:argv, 1, '') ==# '-'
-                    \ || (len(g:working) > 0 && g:working[0] =~? 'plugged')
-                    \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-'
-                    \ )
-    endfunction
-
     function! s:sessionload() abort
         let l:message = ''
         let l:envfile = <SID>envfile()
@@ -5089,7 +5089,7 @@ EOF
         endif
 
         " @thanks https://github.com/valacar/vimfiles/commit/4d0b79096fd1b2b6f5fc0c7225f7de7751fada64
-        autocmd DirChanged global if expand('<afile>') !=# g:cwd | call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | filetype detect | endif
+        autocmd DirChanged global if expand('<afile>') !=# g:cwd | call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | filetype detect | source $MYVIMRC | endif
     endif
 
     autocmd BufEnter * call <SID>poststart() " | call <SID>show_context(expand('<afile>'))
