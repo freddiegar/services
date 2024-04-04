@@ -3923,6 +3923,13 @@ lua <<EOF
         capabilities = capabilities
     }
 
+    require('lspconfig').solargraph.setup {
+        capabilities = capabilities
+    }
+
+    -- https://haskell-language-server.readthedocs.io/en/latest/installation.html
+    -- https://github.com/elixir-lsp/elixir-ls
+
     require('lspconfig').gopls.setup {
         capabilities = capabilities
     }
@@ -4806,7 +4813,7 @@ EOF
             echomsg l:message
         endif
 
-        if g:isneovim && expand('%') !=# '' && index(['c', 'vim', 'php', 'rust', 'go', 'lua'], &filetype) >= 0
+        if g:isneovim && expand('%') !=# '' && index(['c', 'vim', 'php', 'rust', 'go', 'lua', 'ruby'], &filetype) >= 0
             silent LspStart
         endif
 

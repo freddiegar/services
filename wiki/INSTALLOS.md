@@ -328,7 +328,7 @@ cd lua-language-server
 ./make.sh
 
 # Enable globally
-sudo ln -s /var/www/html/LuaLS/lua-language-server/bin/lua-language-server /usr/local/bin/lua-language-server 
+sudo ln -s /var/www/html/LuaLS/lua-language-server/bin/lua-language-server /usr/local/bin/lua-language-server
 ```
 
 #### Rust
@@ -369,6 +369,15 @@ echo '
 if [ -d /usr/local/go/bin ]; then
     export PATH=$PATH:/usr/local/go/bin
 fi' >> ~/.profile
+```
+
+#### Ruby
+
+[See](https://solargraph.org/guides/getting-started)
+
+```bash
+sudo apt-get install -y ruby-dev
+sudo gem install solargraph
 ```
 
 ### C Tags
