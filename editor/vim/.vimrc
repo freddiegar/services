@@ -606,7 +606,7 @@ function! GetNameCurrentFile() abort
     "   /var/www/html/repo/services/docker/conf/.gitignore > 60 -> d/c/.gitignore
     "   /home/user/.vimrc                                       -> ~/.vimrc
     "   /etc/hosts                                              -> /e/hosts
-    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree'], &filetype) > 0 || expand('%') ==# ''
+    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'checkhealth'], &filetype) > 0 || expand('%') ==# ''
         return ''
     elseif match(expand('%:p:h'), g:cwd) >= 0 && len(expand('%:~')) <= 60
         return expand('%:~')
@@ -620,7 +620,7 @@ function! GetNameCurrentFile() abort
 endfunction
 
 function! GetNameBranch() abort
-    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
+    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
         return ' '
     endif
 
@@ -631,7 +631,7 @@ endfunction
 
 " executable (string)
 function! GetVersion(executable) abort
-    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
+    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
         return ''
     endif
 
@@ -657,7 +657,7 @@ endfunction
 function! GetTypeCurrentFile() abort
     let l:path = expand('%:p')
 
-    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
+    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
         return ''
     endif
 
@@ -688,7 +688,7 @@ endfunction
 
 function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
-                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
+                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
         return g:test_strategy ==# 'background' ? '[A]' : ''
     endif
@@ -765,7 +765,7 @@ function! s:statusline(lastmode) abort
 
     set statusline=                                             " Start from scratch (default: empty)
 
-    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree'], &filetype) >= 0
+    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'checkhealth'], &filetype) >= 0
         setlocal statusline+=\                                  " Extra space
 
         return
@@ -1215,7 +1215,7 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 nnoremap <silent> <expr> <Leader>z
             \ &filetype ==# 'netrw'
             \ ? ":let g:netrwopen = 0 <Bar> bwipeout<Enter>"
-            \ : index(['', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
+            \ : index(['', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
             \ ? ":bdelete!<Enter>"
             \ : ":update
             \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
@@ -2269,7 +2269,7 @@ let g:user_emmet_install_global = 0
 
 " " file (string): void
 " function! s:show_context(file) abort
-"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish'], &filetype) >= 0
+"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
 "         if exists(':ContextActivate')
 "             silent execute 'ContextDisable'
 "         endif
@@ -2401,8 +2401,6 @@ xnoremap <silent> <Leader>M :<C-u>Marks<Enter>
 let g:asyncrun_skip = 1
 " Disable local errorformats (default: 1)
 let g:asyncrun_local = 0
-" Action to run on stop job (default: empty)
-let g:asyncrun_exit = 'silent\ call\ AsyncRunFinished()'
 " Icon used in statusline (custom setup)
 let g:asyncrun_icon = ''
 
@@ -2412,6 +2410,9 @@ function! AsyncRunCommand(command) abort
     let g:asyncrun_hide = 0
     let g:asyncrun_play = match(a:command, '-sound') >= 0
     let g:qfcommand = a:command
+
+    " Action to run on stop job (default: empty)
+    let g:asyncrun_exit = 'silent\ call\ AsyncRunFinished()'
 
     call asyncrun#run(v:true, #{
                 \ raw: 1,
@@ -2425,6 +2426,9 @@ endfunction
 
 " Required CamelCase to use asyncrun_exit option
 function! AsyncRunFinished() abort
+    " Unset custom action
+    let g:asyncrun_exit = ''
+
     if g:asyncrun_code > 0
         let g:asyncrun_icon = '[X]'
         copen
@@ -3221,7 +3225,7 @@ function! s:run(range, interactive, ...) abort
         execute join(['DB', <SID>db(), l:command], ' ')
 
         return
-    elseif (l:runner ==# 4 || index(['d2'], l:runner) >= 0) && !g:isneovim
+    elseif (l:runner ==# 4 || index(['d2'], l:runner) >= 0)
         if !<SID>isrunning('/opt/firefox/firefox-bin')
             echohl WarningMsg
             echo 'Not running browser.'
@@ -3231,7 +3235,7 @@ function! s:run(range, interactive, ...) abort
         endif
 
         if !<SID>isrunning('d2')
-            execute ':terminal ++hidden ++kill=int d2 --watch ' . expand('%:p') . ' /tmp/d2/' . expand('%:t')
+            execute ':AsyncRun d2 --watch ' . expand('%:p') . ' /tmp/d2/' . expand('%:t')
         endif
 
         return
@@ -4053,11 +4057,8 @@ EOF
 
     " D2: Diagrams from CLI
     autocmd BufWritePost *.d2 :R
-    autocmd BufDelete * if !g:isneovim && fnamemodify(expand('<afile>'), ':e') ==# 'd2' && <SID>isrunning('d2')
-                \ |     let bterminals = term_list()
-                \ |     for bterminal in bterminals
-                \ |         call feedkeys(":bdelete! " . bterminal . "\r", 'n')
-                \ |     endfor
+    autocmd BufDelete * if fnamemodify(expand('<afile>'), ':e') ==# 'd2' && <SID>isrunning('d2')
+                \ |     execute ':AsyncStop!'
                 \ | endif
 
     " " @see https://github.com/prabirshrestha/asyncomplete-buffer.vim
@@ -4822,7 +4823,7 @@ EOF
 
     function! s:sessionremoveitem(item) abort
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
-                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive', 'dirvish'], getbufvar(a:item, '&filetype')) >= 0
+                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive', 'dirvish', 'checkhealth'], getbufvar(a:item, '&filetype')) >= 0
                     \ || buflisted(a:item) == 0
                     \ || (match(a:item, '.') >= 0 && split(a:item, '\.')[-1] ==# 'dbout')
                     \ || isdirectory(a:item)
