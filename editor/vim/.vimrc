@@ -816,17 +816,17 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
 
-    if g:isneovim && luaeval('#vim.lsp.buf_get_clients() > 0')
-        setlocal statusline+=%{'[L]'}                           " LSP enabled
-    endif
+    " if g:isneovim && luaeval('#vim.lsp.buf_get_clients() > 0')
+    "     setlocal statusline+=%{'[L]'}                           " LSP enabled
+    " endif
 
-    if g:isneovim && exists('g:plug_autocompleted_loaded')
-        setlocal statusline+=%{'[C]'}                           " Autocomplete enabled
-    endif
+    " if g:isneovim && exists('g:plug_autocompleted_loaded')
+    "     setlocal statusline+=%{'[C]'}                           " Autocomplete enabled
+    " endif
 
-    if g:isneovim && exists('g:plug_treesitter_loaded')
-        setlocal statusline+=%{'[T]'}                           " Treesitter enabled
-    endif
+    " if g:isneovim && exists('g:plug_treesitter_loaded')
+    "     setlocal statusline+=%{'[T]'}                           " Treesitter enabled
+    " endif
 
     " if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
     "     setlocal statusline+=\                                  " Extra space
@@ -835,7 +835,10 @@ function! s:statusline(lastmode) abort
 
     setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
     setlocal statusline+=%{&filetype!=#''?&filetype:&buftype}   " Is it require description?
-    setlocal statusline+=%{GetVersion('/usr/local/bin/phpx')}   " PHP version
+
+    if &filetype ==# 'php'
+        setlocal statusline+=%{GetVersion('/usr/local/bin/phpx')}   " PHP version
+    endif
 
     setlocal statusline+=\%<                                    " Truncate long statusline here
     setlocal statusline+=\                                      " Extra space
@@ -3875,6 +3878,10 @@ lua <<EOF
         capabilities = capabilities
     }
 
+    require'lspconfig'.bashls.setup {
+        capabilities = capabilities
+    }
+
     require('lspconfig').lua_ls.setup {
         capabilities = capabilities
     }
@@ -4814,7 +4821,7 @@ EOF
             echomsg l:message
         endif
 
-        if g:isneovim && expand('%') !=# '' && index(['c', 'vim', 'php', 'rust', 'go', 'lua', 'ruby'], &filetype) >= 0
+        if g:isneovim && expand('%') !=# '' && index(['c', 'vim', 'sh', 'php', 'rust', 'go', 'lua', 'ruby'], &filetype) >= 0
             silent LspStart
         endif
 

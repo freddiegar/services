@@ -315,6 +315,14 @@ sudo ln -s /usr/bin/clangd-17 /usr/bin/clangd
 npm install -g vim-language-server
 ```
 
+#### Sh
+
+[See](https://github.com/iamcco/vim-language-server)
+
+```bash
+npm install -g bash-language-server
+```
+
 #### Lua
 
 [See](https://luals.github.io/wiki/build/)
