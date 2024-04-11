@@ -1,3 +1,13 @@
+vv() {
+    if [ "$EDITOR" = "nvim" ]; then
+        vim "$@"
+
+        return $?
+    fi
+
+    nvim "$@"
+}
+
 cat() {
     if [ "`command -v bat`" != "" ]; then
         command bat --paging=never --style=changes "$@"
@@ -265,7 +275,6 @@ alias va="$EDITOR ~/.bash_aliases"
 alias vh="$EDITOR ~/.zsh_history"
 alias v3="$EDITOR ~/.config/i3/config"
 alias vl="$EDITOR -c \"set background=light\""
-alias vv="test \"$EDITOR\" = \"nvim\" && vim || nvim"
 
 alias rz="source ~/.zshrc"
 alias ra="source ~/.bash_aliases"

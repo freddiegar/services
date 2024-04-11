@@ -30,16 +30,24 @@ done
 endsnippet
 
 # @see https://www.redhat.com/sysadmin/linux-shell-redirection-pipelining
+# @see https://www.cyberciti.biz/faq/how-to-redirect-standard-error-in-bash/
 snippet rr "Reference Redirection"
 # Short
 #	1 -> standard output
 #	2 -> error output
 #	& -> all (standard and error) output
 #
+# Pipes
+#	echo "standard output" >&1
+#	echo "error output" >&2
+#	echo "all (standard and error) output" 1>&2
+#	echo "no errors" 2>&-
+#
 # Redirection with >
-#     command > file:		Sends standard output to <file>
-#     command 2> file:		Sends error output to <file>
-#     command > file 2>&1:	Sends all (standard and error) output to a <file>
+#     command > file:				Sends standard output to <file>
+#     command 2> file:				Sends error output to <file>
+#     command 1> file 2> errors:	Sends standard to <file> and error to <error>
+#     command > file 2>&1:			Sends all (standard and error) output to a <file>
 #
 # Append with >>
 #     command >> file:		Appends standard output to a <file>

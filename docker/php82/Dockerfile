@@ -127,6 +127,7 @@ RUN set -eux \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then mkdir -p /usr/share/man/man1; fi \
     && if [ "$PDFTK_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y default-jdk pdftk; fi \
     && if [ "$GNUPG_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y gnupg1; fi \
+    && if [ "$OPJDK_ENABLE" = "on" ] ; then apt-get install --no-install-recommends -y openjdk-17-jre-headless; fi \
     # Clear
     && rm -rf /tmp/pear \
     && rm -rf /var/lib/apt/lists/* \
