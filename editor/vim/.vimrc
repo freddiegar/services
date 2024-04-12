@@ -3238,7 +3238,7 @@ function! s:run(range, interactive, ...) abort
         endif
 
         if !<SID>isrunning('d2')
-            execute ':AsyncRun d2 --watch ' . expand('%:p') . ' /tmp/d2/' . expand('%:t')
+            execute ':AsyncRun d2 --sketch --theme=1 --layout=elk --watch ' . expand('%:p') . ' /tmp/d2/' . expand('%:t')
         endif
 
         return
@@ -3471,6 +3471,7 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile *.pipelines setfiletype dockerfile
     autocmd BufReadPost,BufNewFile /tmp/ctags/*tags* setfiletype tags noundofile
     autocmd BufReadPost,BufNewFile *.Xresources setfiletype xdefaults
+    autocmd BufReadPost,BufNewFile *.d2 setfiletype d2
     autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
     autocmd FileType sql setlocal commentstring=--\ %s
@@ -4063,6 +4064,7 @@ EOF
     autocmd FileType vpm xnoremap <silent> <buffer> >b :!toilet -w 200 -f term -F border<Enter>
 
     " D2: Diagrams from CLI
+    " @see https://d2lang.com/tour/cheat-sheet -> https://terrastruct-site-assets.s3.us-west-1.amazonaws.com/documents/d2_cheat_sheet.pdf
     autocmd BufWritePost *.d2 :R
     autocmd BufDelete * if fnamemodify(expand('<afile>'), ':e') ==# 'd2' && <SID>isrunning('d2')
                 \ |     execute ':AsyncStop!'
