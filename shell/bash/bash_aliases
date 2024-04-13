@@ -243,6 +243,7 @@ alias v=$EDITOR
 alias w="which"
 alias x="exit"
 alias y="bash ~/working/syntaxer.sh"
+alias z="bash ~/working/sprinter.sh"
 
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
