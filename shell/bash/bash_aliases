@@ -245,6 +245,10 @@ alias x="exit"
 alias y="bash ~/working/syntaxer.sh"
 alias z="bash ~/working/sprinter.sh"
 
+# SPA
+alias ww="[ \"\`pgrep --full 'npm run dev --host'\`\" = \"\" ] && sh -c 'cd /var/www/html/evertec/webcheckout-spa && npm run dev -- --host > /dev/null 2>&1 &' && echo '\e[32mStarted\e[0m SPA'"
+alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA'"
+
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
 alias ht="history | awk '{print \$4}' | sort | uniq -c | sort -nr | head -10"

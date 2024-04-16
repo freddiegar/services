@@ -5,7 +5,9 @@
 " endif
 
 " PHILOSOPHY
+" @see https://xkcd.com/378/
 " @see https://xkcd.com/927/
+" @see https://xkcd.com/1823/
 " @see https://www.moolenaar.net/habits.html
 " @see http://www.viemu.com/a-why-vi-vim.html
 " @see https://blog.sanctum.geek.nz/vim-koans/
@@ -26,8 +28,10 @@
 
 " CVE
 " @see https://www.cvedetails.com/vendor/8218/VIM.html
+" @see https://www.cvedetails.com/vendor/22101/Neovim.html
 
 " CONFIG
+" @see https://xkcd.com/2021/
 " @see https://stackoverflow.com/questions/1218390/what-is-your-most-productive-shortcut-with-vim/1220118#1220118
 " @see https://blog.joren.ga/tools/vim-learning-steps
 " @see https://learnvimscriptthehardway.stevelosh.com/
