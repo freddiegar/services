@@ -360,6 +360,7 @@ alias diclean="docker images | grep ' <none> ' | awk '{print \$3}' | xargs -r -I
 alias dcclean="docker ps -a | grep ' Exited (1) ' | awk '{print \$1}' | xargs -r -I {} docker rm  -f {} && echo 'Containers cleaned'"
 
 alias gs="git summary -q 2> /dev/null"
+alias gsa="git summary 2> /dev/null"
 alias gf="onefetch --number-of-authors 5 --number-of-file-churns 5 --no-bots --no-merges --no-color-palette"
 alias gv="gs | grep -v -E '/ro-|/_' | grep -E ' M?v'"
 alias gV="gs | grep -v -E '/ro-|/_' | grep -E '\^$'"
