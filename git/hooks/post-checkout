@@ -18,19 +18,19 @@ if [ "$1" = "$2" ]; then
     exit $STATUS
 fi
 
-if [ -f "composer.json" ] && [ "$(git show $1:composer.json | sha256sum)" != "$(git show $2:composer.json | sha256sum)" ]; then
+if [ -f "composer.lock" ] && [ "$(git show $1:composer.lock | sha256sum)" != "$(git show $2:composer.lock | sha256sum)" ]; then
+    echo "\e[32mSyncying\e[0m dependencies composer"
+
+    phpx `which composer` install  --no-interaction --no-progress --ignore-platform-req=ext-gd 2>&-
+
+    STATUS=$?
+elif [ -f "composer.json" ] && [ "$(git show $1:composer.json | sha256sum)" != "$(git show $2:composer.json | sha256sum)" ]; then
     echo "\e[34mInstalling\e[0m dependencies composer"
 
     # @thanks https://stackoverflow.com/a/2342841/15601185
     # 2>&1          : Send stderr to stdout
     # 1> /dev/null  : Send stdout to black hole
     # phpx `which composer` install  --no-interaction --no-progress --ignore-platform-req=ext-gd 2>&1 1> /dev/null
-    phpx `which composer` install  --no-interaction --no-progress --ignore-platform-req=ext-gd 2>&-
-
-    STATUS=$?
-elif [ -f "composer.lock" ] && [ "$(git show $1:composer.lock | sha256sum)" != "$(git show $2:composer.lock | sha256sum)" ]; then
-    echo "\e[32mSyncying\e[0m dependencies composer"
-
     phpx `which composer` install  --no-interaction --no-progress --ignore-platform-req=ext-gd 2>&-
 
     STATUS=$?
@@ -41,16 +41,16 @@ if [ $STATUS != 0 ]; then
     exit $STATUS
 fi
 
-if [ -f "package.json" ] && [ "$(git show $1:package.json | sha256sum)" != "$(git show $2:package.json | sha256sum)" ]; then
-    echo "\e[34mInstalling\e[0m dependencies npm"
-
-    npm install 2>&1 1> /dev/null
-
-    STATUS=$?
-elif [ -f "package-lock.json" ] && [ "$(git show $1:package-lock.json | sha256sum)" != "$(git show $2:package-lock.json | sha256sum)" ]; then
+if [ -f "package-lock.json" ] && [ "$(git show $1:package-lock.json | sha256sum)" != "$(git show $2:package-lock.json | sha256sum)" ]; then
     echo "\e[32mSyncying\e[0m dependencies npm"
 
     npm ci 2>&1 1> /dev/null
+
+    STATUS=$?
+elif [ -f "package.json" ] && [ "$(git show $1:package.json | sha256sum)" != "$(git show $2:package.json | sha256sum)" ]; then
+    echo "\e[34mInstalling\e[0m dependencies npm"
+
+    npm install 2>&1 1> /dev/null
 
     STATUS=$?
 fi

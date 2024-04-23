@@ -698,6 +698,19 @@ rm -Rf composer-setup.php
 wget https://getcomposer.org/composer-1.phar
 chmod a+x composer-1.phar
 sudo mv composer-1.phar /usr/local/bin/composer_v1
+## rm -Rf /usr/local/bin/composer_v1
+```
+
+### Dependencies Checker
+
+[See](https://github.com/shipmonk-rnd/composer-dependency-analyser)
+
+```bash
+composer global require --dev shipmonk/composer-dependency-analyser
+sudo ln -s `pwd`/.config/composer/vendor/bin/composer-dependency-analyser /usr/local/bin/dependency
+## dependency
+## dependency --composer-json /path/to/composer.json
+## rm -Rf /usr/local/bin/dependency
 ```
 
 ## Code Sniffer Fixer for PHP (and Vim)
