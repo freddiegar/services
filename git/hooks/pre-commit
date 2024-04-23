@@ -2,14 +2,18 @@
 
 # Run checker user before continue
 # @thanks https://victoria.dev/blog/an-automatic-interactive-pre-commit-checklist-in-the-style-of-infomercials/
-echo -n "Do you want commit on [\e[90m${PWD##*/}\e[0m] as \e[1;32m`git config --get user.name`\e[0m? (y/N): "
+echo -n "Do you want commit on [\e[90m${PWD##*/}\e[0m] as \e[1;32m`git config --get user.name`\e[0m? (s/y/N): "
 
 exec < /dev/tty
 
 read RESPONSE
 
-if [ "$RESPONSE" != "y" ]; then
-    echo "\e[31mCommit canceled!\e[0m"
+if [ "$RESPONSE" = "s" ]; then
+    echo "\e[34mVerify skipped\e[0m"
+
+    exit 0
+elif [ "$RESPONSE" != "y" ]; then
+    echo "\e[31mCommit aborted!\e[0m"
 
     exit 1
 fi
