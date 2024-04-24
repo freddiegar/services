@@ -1749,7 +1749,7 @@ function s:go_docs(word) abort
         let l:docsurl = 'https://github.com/'
 
         if filereadable('composer.lock')
-            let l:docsurl = system('composer show ' . l:word . ' 2>/dev/null | ' . g:filterprg . ' "^source.*\[git\]" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
+            let l:docsurl = system('composer show ' . l:word . ' 2> /dev/null | ' . g:filterprg . ' "^source.*\[git\]" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
             let l:word = ''
         endif
     elseif expand('%:t') ==# 'package.json'
@@ -3478,6 +3478,9 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile *.d2 setfiletype d2
     autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
+    autocmd BufEnter,BufReadPost */dist/*.{js,css} if g:isneovim | TSBufDisable highlight | endif
+    autocmd BufEnter,BufReadPost public/*/*.{js,css} if g:isneovim | TSBufDisable highlight | endif
+
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType sql silent let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
     autocmd FileType sql inoremap <silent> <expr> <buffer> <C-n>
@@ -4453,7 +4456,7 @@ EOF
             return ''
         endif
 
-        let l:fixerversion = system(l:fixerpath . " --version 2>/dev/null | cut -d ' ' -f 4 | cut -d '.' -f 1 | tr -d '\n'")
+        let l:fixerversion = system(l:fixerpath . " --version 2> /dev/null | cut -d ' ' -f 4 | cut -d '.' -f 1 | tr -d '\n'")
 
         " Setup default
         let l:configversion = l:fixerversion
@@ -4500,7 +4503,7 @@ EOF
 
     autocmd FileType json nnoremap <silent> <buffer> <F1> <Cmd>call <SID>jsonfixer() <Bar> call <SID>statusline('f')<Enter>
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
-    autocmd FileType json nnoremap <silent> <buffer> <Leader>gi :echo 'Version:  ' . <SID>composer('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
+    autocmd FileType json nnoremap <silent> <buffer> <Leader>gi :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
 
     function! s:jsonfixer() abort
         if bufname('%') !=# ''
@@ -4511,12 +4514,19 @@ EOF
     endfunction
 
     " command (string), [dependency (string)]
-    function! s:composer(command, ...) abort
-        let l:version = system('composer ' . a:command . ' "' . a:1 . '" 2>/dev/null | ' . g:filterprg . ' "^versions" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
+    function! s:get_info(command, ...) abort
+        let l:version = 'Invalid'
+        let l:bname = expand('%:t')
 
-        if l:version[0] != 'v' &&  match(split(l:version, '-'), '[master|main|hotfix|release|develop|feature|bugfix]') >= 0
-            let l:commit = system('composer ' . a:command . ' "' . a:1 . '" 2>/dev/null | ' . g:filterprg . ' "^source.*\.git" | sed "s#\s\+# #g" | cut -d " " -f 5 | tr -d "\n"')
-            let l:version = printf('%s (%s)', l:version, l:commit[0 : 10])
+        if l:bname ==# 'composer.json'
+            let l:version = system('composer ' . a:command . ' "' . a:1 . '" 2> /dev/null | ' . g:filterprg . ' "^versions" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
+
+            if l:version[0] != 'v' &&  match(split(l:version, '-'), '[master|main|hotfix|release|develop|feature|bugfix]') >= 0
+                let l:commit = system('composer ' . a:command . ' "' . a:1 . '" 2> /dev/null | ' . g:filterprg . ' "^source.*\.git" | sed "s#\s\+# #g" | cut -d " " -f 5 | tr -d "\n"')
+                let l:version = printf('%s (%s)', l:version, l:commit[0 : 10])
+            endif
+        elseif l:bname ==# 'package.json'
+            let l:version = system('npm list --depth=0 2> /dev/null | ' . g:filterprg . ' "\s' . a:1 . '@" | rev | cut -d "@" -f 1 | rev | tr -d "\n"')
         endif
 
         return len(l:version) > 0 ? l:version : 'None'
