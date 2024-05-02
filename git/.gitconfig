@@ -7,6 +7,7 @@
 	excludesFile = ~/.gitignore
 	untrackedcache = true
 	fsmonitor = true
+	; hooksPath = /var/www/html/freddiegar/services/git/hooks
 [commit]
 	gpgsign = true
 [mergetool]
