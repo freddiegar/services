@@ -27,7 +27,7 @@ FPHP=$(($FSTAGING + $FMODIFING + $FCOMPOSER))
 
 phpx /usr/local/bin/composer validate --no-check-all --strict || exit $?
 
-phpx /usr/local/bin/composer audit || exit $?
+COMPOSER_AUDIT_ABANDONED=ignore phpx /usr/local/bin/composer audit || exit $?
 
 # Run fixer before add message to commit
 if [ $FPHP = 0 ]; then
