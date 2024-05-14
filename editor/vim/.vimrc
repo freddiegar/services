@@ -15,6 +15,67 @@
 " @see https://rwx.gg/tools/editors/vi/how/magic/
 " @see https://whyisitsogood.wiki/Vim
 
+" HUMOR?
+" @see https://www.monkeyuser.com/2016/bugfixing-for-developers/
+" @see https://www.monkeyuser.com/2016/developer-productivity/
+" @see https://www.monkeyuser.com/2016/requirements-vs-implementation/
+" @see https://www.monkeyuser.com/2016/testing-hammering-nails/
+" @see https://www.monkeyuser.com/2017/code-review-stages/
+" @see https://www.monkeyuser.com/2017/different-perspectives/
+" @see https://www.monkeyuser.com/2017/hotfix/
+" @see https://www.monkeyuser.com/2017/interview-vs-reality/
+" @see https://www.monkeyuser.com/2017/keep-up-to-date/
+" @see https://www.monkeyuser.com/2017/refactor-man/
+" @see https://www.monkeyuser.com/2017/steps-to-reproduce/
+" @see https://www.monkeyuser.com/2017/testing-in-a-nutshell/
+" @see https://www.monkeyuser.com/2017/trivial-bug/
+" @see https://www.monkeyuser.com/2017/vim-vs-emacs/
+" @see https://www.monkeyuser.com/2017/web-app-visualized/
+" @see https://www.monkeyuser.com/2018/architecture/
+" @see https://www.monkeyuser.com/2018/compromise/
+" @see https://www.monkeyuser.com/2018/debugging/
+" @see https://www.monkeyuser.com/2018/everytime/
+" @see https://www.monkeyuser.com/2018/final-patch/
+" @see https://www.monkeyuser.com/2018/focus/
+" @see https://www.monkeyuser.com/2018/last-push/
+" @see https://www.monkeyuser.com/2018/priorities/
+" @see https://www.monkeyuser.com/2018/pull-request/
+" @see https://www.monkeyuser.com/2018/root-cause/
+" @see https://www.monkeyuser.com/2019/a-qa-walks-into-the-office/
+" @see https://www.monkeyuser.com/2019/bug-fixing-ways/
+" @see https://www.monkeyuser.com/2019/bug-free/
+" @see https://www.monkeyuser.com/2019/edge-cases/
+" @see https://www.monkeyuser.com/2019/everyday-excuses/
+" @see https://www.monkeyuser.com/2019/pivoting/
+" @see https://www.monkeyuser.com/2019/possible-code-contents/
+" @see https://www.monkeyuser.com/2020/duplicates/
+" @see https://www.monkeyuser.com/2020/early-contributor/
+" @see https://www.monkeyuser.com/2020/feature-complete/
+" @see https://www.monkeyuser.com/2020/new-hire/
+" @see https://www.monkeyuser.com/2020/project-setup/
+" @see https://www.monkeyuser.com/2020/regex-explained/
+" @see https://www.monkeyuser.com/2020/teamwork/
+" @see https://www.monkeyuser.com/2020/user-story/
+" @see https://www.monkeyuser.com/2021/career-path/
+" @see https://www.monkeyuser.com/2021/days/
+" @see https://www.monkeyuser.com/2021/measure-twice-cut-once/
+" @see https://www.monkeyuser.com/2021/mixed-feelings/
+" @see https://www.monkeyuser.com/2021/new-library/
+" @see https://www.monkeyuser.com/2021/observer/
+" @see https://www.monkeyuser.com/2021/outcome-variables/
+" @see https://www.monkeyuser.com/2021/promotion/
+" @see https://www.monkeyuser.com/2021/reusable-components/
+" @see https://www.monkeyuser.com/2021/solution/
+" @see https://www.monkeyuser.com/2021/update/
+" @see https://www.monkeyuser.com/2022/brainstorming/
+" @see https://www.monkeyuser.com/2022/buglog/
+" @see https://www.monkeyuser.com/2022/done-done/
+" @see https://www.monkeyuser.com/2022/unit-tests/
+" @see https://www.monkeyuser.com/2023/balancing-stick/
+" @see https://www.monkeyuser.com/2023/corporate-policy/
+" @see https://www.monkeyuser.com/2023/remote-debugging/
+" @see https://www.monkeyuser.com/2024/sacrifice/
+
 " QUICKREF
 " @see https://quickref.me/vim
 " @see https://vim.rtorr.com/
@@ -25,6 +86,7 @@
 " @see https://github.com/iggredible/Learn-Vim
 " @see https://www.reddit.com/r/vim/comments/17j7hfa/best_place_to_learn_advance_vim/
 " @see https://github.com/vbd/Fieldnotes/blob/main/vim.md
+" @see https://gist.github.com/kennypete/1fae2e48f5b0577f9b7b10712cec3212
 
 " CVE
 " @see https://www.cvedetails.com/vendor/8218/VIM.html
@@ -4175,10 +4237,12 @@ EOF
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rff <Cmd>call <SID>rff()<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>R   <Cmd>call phpactor#ContextMenu()<Enter>
 
-    autocmd FileType php nmap <silent> <buffer> gd <Cmd>call <SID>phpgd()<Enter>
-    " autocmd FileType php nmap <silent> <buffer> gd <Cmd>call phpactor#GotoDefinition()<Enter>
-    " autocmd FileType php nmap <silent> <buffer> gr <Cmd>call phpactor#FindReferences()<Enter>
-    " autocmd FileType php nmap <silent> <buffer> gy <Cmd>call phpactor#GotoImplementations()<Enter>
+    if !g:isneovim
+        autocmd FileType php nmap <silent> <buffer> gd <Cmd>call <SID>phpgd()<Enter>
+        " autocmd FileType php nmap <silent> <buffer> gd <Cmd>call phpactor#GotoDefinition()<Enter>
+        " autocmd FileType php nmap <silent> <buffer> gr <Cmd>call phpactor#FindReferences()<Enter>
+        " autocmd FileType php nmap <silent> <buffer> gy <Cmd>call phpactor#GotoImplementations()<Enter>
+    endif
 
     function! s:phpgd() abort
         let l:message = ''

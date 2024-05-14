@@ -43,6 +43,14 @@ else
 fi
 
 if [ $FPHP = 0 ]; then
+    echo -n ""
+elif [ -f phpstan.neon.dist ] && [ -f vendor/bin/phpstan ]; then
+    phpx vendor/bin/phpstan analyse || exit $?
+else
+    echo "\e[31mLarastan not found.\e[0m"
+fi
+
+if [ $FPHP = 0 ]; then
     exit 0
 fi
 
@@ -73,8 +81,10 @@ if [ "$COMMAND" != "" ]; then
         # ]
         COMMAND=""
     elif [ "`echo "$COMMAND" | grepx "^phpunit "`" != "" ]; then
-        COMMAND="vendor/bin/$COMMAND"
+        COMMAND="phpx vendor/bin/$COMMAND"
     elif [ "`echo "$COMMAND" | grepx "^@php "`" != "" ]; then
+        COMMAND="phpx $COMMAND"
+    else
         COMMAND="phpx $COMMAND"
     fi
 fi

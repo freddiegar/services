@@ -654,29 +654,30 @@ if [ -f ~/.bash_aliases ]; then
 fi' >> ~/.zshenv
 ```
 
-# PHP 8.1
+# PHP 8.2
 
 ```bash
 echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only oldest Ubuntu or with oldest version's PHP (Tune ubuntu version is required :|)
 # @see https://devtutorial.io/how-to-install-php-8-3-on-ubuntu-23-10-p3206.html
-vim /etc/apt/sources.list.d/ondrej-ubuntu-php-mantic.sources
-sudo apt-get install -y php8.1-cli
-sudo apt-get install -y php8.1-dev
-sudo apt-get install -y php8.1-mbstring
-sudo apt-get install -y php8.1-mysql
-sudo apt-get install -y php8.1-curl
-sudo apt-get install -y php8.1-zip
-sudo apt-get install -y php8.1-soap
-sudo apt-get install -y php8.1-gd
-sudo apt-get install -y php8.1-sqlite3
-sudo apt-get install -y php8.1-intl
-sudo apt-get install -y php8.1-memcached
-sudo apt-get install -y php8.1-redis
-sudo apt-get install -y php8.1-bcmath
-sudo apt-get install -y php8.1-gmp
-sudo apt-get install -y php8.1-xml
-sudo apt-get install -y php8.1-zip
-## sudo apt-get remove php8.1\* && sudo apt-get autoremove
+# @see https://ppa.launchpadcontent.net/ondrej/php/ubuntu/dists/
+# @see /etc/apt/sources.list.d/ondrej-ubuntu-php-mantic.sources
+sudo apt-get install -y php8.2-cli
+sudo apt-get install -y php8.2-dev
+sudo apt-get install -y php8.2-mbstring
+sudo apt-get install -y php8.2-mysql
+sudo apt-get install -y php8.2-curl
+sudo apt-get install -y php8.2-zip
+sudo apt-get install -y php8.2-soap
+sudo apt-get install -y php8.2-gd
+sudo apt-get install -y php8.2-sqlite3
+sudo apt-get install -y php8.2-intl
+sudo apt-get install -y php8.2-memcached
+sudo apt-get install -y php8.2-redis
+sudo apt-get install -y php8.2-bcmath
+sudo apt-get install -y php8.2-gmp
+sudo apt-get install -y php8.2-xml
+sudo apt-get install -y php8.2-zip
+## sudo apt-get remove php8.2\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
 ```
 
@@ -1665,7 +1666,7 @@ git --version | awk '{print $3}'
 git lfs version
 # git-lfs/3.4.0 (GitHub; linux amd64; go 1.21.0)
 docker --version | awk '{print $3}' | sed 's/,//g'
-# 25.0.4
+# 26.1.1
 docker-compose --version | awk '{print $4}'
 # v2.24.7
 feh --version | grep version | awk '{print $3}'
@@ -1689,11 +1690,11 @@ bat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 13.0.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.1.27
+# 8.2.18
 # nvm --version
 # # 0.39.3
 npm --version
-# 10.5.0
+# 10.6.0
 node --version
 # v20.10.0
 mysql --version | awk '{print $3}'
@@ -1709,7 +1710,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.22.1
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(87069765)
+# 6.1.0(07cbb8c0)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -1717,4 +1718,4 @@ ftp about:version | head -1 | awk '{print $3}'
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 dpkg --list | wc --lines
-# 2448
+# 2505
