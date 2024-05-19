@@ -3776,6 +3776,10 @@ lua <<EOF
                vim.keymap.set('n', '<Leader>R', vim.lsp.buf.code_action, options)
             end
 
+            if client.supports_method('textDocument/inlayHint') then
+               vim.keymap.set('n', 'yoh', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, options)
+            end
+
             vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
         end
     })
@@ -3875,7 +3879,7 @@ lua <<EOF
             --     end
             -- end,
 
-            ['<C-Space>'] = cmp.mapping.complete(),
+            -- ['<C-Space>'] = cmp.mapping.complete(),
         }),
 
         matching = {
