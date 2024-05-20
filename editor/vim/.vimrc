@@ -2622,7 +2622,6 @@ function! s:popup_show(title, message) abort
             let l:popupid = nvim_open_win(l:popupbufid, v:false, #{
                         \ zindex: 250,
                         \ relative: 'win',
-                        \ win: winnr(),
                         \ width: 1,
                         \ height: 4,
                         \ row: -1,
@@ -2714,7 +2713,6 @@ function! s:popup_resize() abort
         " call nvim_win_set_height(w:winpopup.id, l:winheight)
         call nvim_win_set_config(w:winpopup.id, #{
                     \ relative: 'win',
-                    \ win: winnr(),
                     \ row: l:winheight,
                     \ col: l:winwidth,
                     \ })
@@ -5191,7 +5189,7 @@ EOF
         autocmd DirChanged global if expand('<afile>') !=# g:cwd | call <SID>initialize(expand('<afile>')) | call <SID>viminfo() | call <SID>sessionload() | filetype detect | source $MYVIMRC | endif
     endif
 
-    autocmd BufEnter * call <SID>poststart() " | call <SID>show_context(expand('<afile>'))
+    autocmd BufEnter * call <SID>poststart() | call <SID>popup_hide() " | call <SID>show_context(expand('<afile>'))
     " BufEnter:     After changes between buffers (why nvim why!)
     " BufFilePost:  After changes name's current file (why nvim why!)
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], '')) | call <SID>statusline('f')
