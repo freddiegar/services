@@ -279,7 +279,7 @@ ACCEPT_EULA=Y apt-get -y install msodbcsql17
 apt-get install -y unixodbc-dev
 # apt-get -y install gcc g++ make autoconf libc-dev pkg-config
 # Installation
-pecl install sqlsrv
+sudo pecl install sqlsrv
 # ecl install pdo_sqlsrv
 # Enabled
 echo "extension=$(find /usr/local/lib/php/extensions/ -name sqlsrv.so)" > /usr/local/etc/php/conf.d/sqlsrv.ini
@@ -294,7 +294,7 @@ service apache2 reload
 
 ```bash
 # Install extension from PECL
-pecl install -f redis \
+sudo pecl install -f redis \
 && echo "extension=$(find /usr/local/lib/php/extensions/ -name redis.so)" > /usr/local/etc/php/conf.d/redis.ini
 # cat /usr/local/etc/php/conf.d/redis.ini
 # Restart apache to load changes
@@ -348,7 +348,8 @@ or [Remote](https://xdebug.org/docs/remote)
 
 ```bash
 # Install extension from PECL
-pecl install -f xdebug
+sudo pecl install -f xdebug
+sudo pecl uninstall xdebug
 
 # Xdebug 2
 echo "xdebug.idekey=PHPSTORM
@@ -398,18 +399,21 @@ set XDEBUG_CONFIG="idekey=PHPSTORM"
 # After run
 # php -f file.php
 ```
+> https://xdebug.org/docs/compat
+> https://pecl.php.net/package/xdebug
 
-> PHP 5.6: pecl install -f xdebug-2.5.5
+> PHP 5.6:  sudo pecl install -f xdebug-2.5.5
 
-> PHP 7.0: pecl install -f xdebug-2.6.1
+> PHP 7.0:  sudo pecl install -f xdebug-2.6.1
 
-> PHP 7.1: pecl install -f xdebug-2.9.8
+> PHP 7.1:  sudo pecl install -f xdebug-2.9.8
 
-> PHP 7.2: pecl install -f xdebug-3.1.6
-> PHP 7.3: pecl install -f xdebug-3.1.6
-> PHP 7.4: pecl install -f xdebug-3.1.6
+> PHP 7.2:  sudo pecl install -f xdebug-3.1.6
+> PHP 7.3:  sudo pecl install -f xdebug-3.1.6
+> PHP 7.4:  sudo pecl install -f xdebug-3.1.6
 
-> PHP 8.0+: pecl install -f xdebug
+> PHP 8.0:  sudo pecl install -f xdebug-3.2.2
+> PHP 8.1+: sudo pecl install -f xdebug
 
 ### Local
 
