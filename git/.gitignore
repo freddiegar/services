@@ -6,5 +6,6 @@ node_modules
 testx.sh
 *.log
 *.diff
+*.json5
 storage/oauth-public.key.*
 storage/oauth-private.key.*

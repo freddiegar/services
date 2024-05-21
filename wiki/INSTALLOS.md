@@ -1163,10 +1163,13 @@ require_once '/home/freddie/.config/composer/vendor/autoload.php';echo (Faker\Fa
 
 # Infection AST
 
+[See](https://github.com/infection/infection)
+
 ```bash
-sudo curl -L https://github.com/infection/infection/releases/download/0.27.0/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.28.1/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command:
+## infection -j$(nproc)
 ## infection -j$(nproc) [--filter=file.php]
 ## sudo rm /usr/local/bin/infection
 ```
