@@ -481,6 +481,9 @@ sudo phpdismod ast
 
 4. E: Xdebug requires Zend Engine API version 420210902.
    E: The Zend Engine API version 320190902 which is installed, is outdated.
+- Check API `zend_extension` is equals in PHP version, not? Fixed!
+    php -i | grep '^Zend Extension =>'
+    cat /etc/php/8.2/mods-available/xdebug.ini | grep zend_extension
 - Install from package
     sudo apt install php7.4-xdebug
 - Set path extension to relative path:
