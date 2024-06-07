@@ -20,6 +20,7 @@ return RectorConfig::configure()
     ->withPreparedSets(deadCode: true, codeQuality: true, codingStyle: true)
 
     ->withSkip([
+        \Rector\CodeQuality\Rector\Array_\CallableThisArrayToAnonymousFunctionRector::class, // Routes in Laravel are weirds to read
         \Rector\CodeQuality\Rector\Catch_\ThrowWithPreviousExceptionRector::class,
         \Rector\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector::class,
         // \Rector\CodeQuality\Rector\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector::class,
@@ -42,7 +43,9 @@ return RectorConfig::configure()
         \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedConstructorParamRector::class,
         \Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector::class,
         \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
+        // \Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector::class,
         \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
         \Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class,
-        \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class,
+        \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
+        \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read
     ]);
