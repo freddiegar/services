@@ -367,7 +367,7 @@ endif
 
 " Sanity?
 set nrformats=                                                  " (default: bin,octal,hex)
-set nrformats+=octal                                            " Incremente/Decrement binary numbers
+set nrformats+=octal                                            " Increment/Decrement binary numbers
 set nrformats+=unsigned                                         " @see https://utcc.utoronto.ca/~cks/space/blog/unix/VimHandlingDashedNumbers
 
 if executable('rg')
@@ -795,6 +795,7 @@ function! s:mustbeignore() abort
 endfunction
 
 set noruler                                                     " Position is showed in command-line (default: depends)
+set noshowmode                                                  " Current mode in screen
 set noshowcmd                                                   " Current pending command in command-line and visual
                                                                 " selection (default: depends) (slower)
 
@@ -1006,8 +1007,8 @@ nnoremap '' ``
 nnoremap `` ''
 " Center screen (zz) after search mark and open folds (zv)
 nnoremap <silent> <expr> ' printf('`%czzzv', getchar())
-" Use ñ with same behaviour
-nnoremap <silent> <expr> ñ printf('`%czzzv', getchar())
+" " Use ñ with same behaviour
+" nnoremap <silent> <expr> ñ printf('`%czzzv', getchar())
 
 " Not use [*|#]``zzzv, it throws error on 1 ocurrence
 " Center screen (zz) after each search and open folds (zv)
@@ -4026,6 +4027,8 @@ EOF
         endfunction
     else
         " " @see https://github.com/yegappan/lsp/blob/main/doc/lsp.txt#
+        " let g:lsp_use_native_client = 1
+
         "             " \ aleSupport: v:true,
         " autocmd User LspSetup call LspOptionsSet(#{
         "             \ autoComplete: v:true,
@@ -4228,6 +4231,9 @@ EOF
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rdd <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rdu <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rrd <Cmd>call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rde <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l\"_2xds)") <Bar> execute "normal! @z" <Bar> delmarks z<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdn <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]a ?? null\el\"_2xds)") <Bar> execute "normal! @z" <Bar> delmarks z<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdg <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l4dli ?? \eds)") <Bar> execute "normal! @z" <Bar> delmarks z<Enter>
 
     autocmd FileType php nnoremap <silent> <Plug>SimplifyNamespaceRepeatable <Cmd>call <SID>rsn('word')<Enter>
     autocmd FileType php nmap <silent> <buffer> <Leader>rsn <Plug>SimplifyNamespaceRepeatable
