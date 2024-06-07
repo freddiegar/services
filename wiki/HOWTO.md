@@ -452,3 +452,25 @@ ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 # @see https://www.gnu.org/software/bash/manual/bash.html#Event-Designators
 # !*
 ```
+
+JSON to CSV
+
+[See](https://richrose.dev/posts/linux/jq/jq-json2csv/)
+
+```bash
+jq -r '.stock[] | [.id, .item, .description] | @csv' test.json
+```
+
+CSV to JSON
+
+[See](https://stackoverflow.com/a/65100738)
+
+```bash
+command cat test.csv | python3 -c 'import csv, json, sys; print(json.dumps([dict(r) for r in csv.DictReader(sys.stdin)]))' | > test.json
+```
+
+[See](https://richrose.dev/posts/linux/jq/jq-csv2json/)
+
+```bash
+jq -R '{questions: [inputs | split(",") | {item: .[0], task: .[1]}]}' < test1.csv
+```

@@ -1,3 +1,15 @@
+# cj test.csv
+# cj test.csv > test.json
+cj() {
+    if ["$1" = "" ]; then
+        echo "\e[31mCSV file is required!\e[0m"
+
+        exit 0
+    fi
+
+    mlr --icsv --ojson tail -n 2 "$1"
+}
+
 vv() {
     if [ "$EDITOR" = "nvim" ]; then
         vim "$@"

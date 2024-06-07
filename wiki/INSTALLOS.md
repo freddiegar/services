@@ -285,6 +285,12 @@ sudo apt-get install -y libxml2-utils
 # sudo apt remove libxml2-utils && sudo apt-get autoremove
 ```
 
+## Vim CSV to JSON
+
+```bash
+sudo apt-get install -y miller
+```
+
 ## Vim C Development
 
 ### LSP
@@ -1713,7 +1719,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.22.1
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(fcffa4b3)
+# 6.1.0(653ca920)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
