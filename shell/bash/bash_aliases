@@ -291,7 +291,7 @@ alias kl="ctt Light"
 
 alias vf="vifm"
 alias vd="$EDITOR -d"
-alias vn="$EDITOR -u NONE"
+alias vn="$EDITOR -u NONE -c 'set nowrap lazyredraw noswapfile noruler noshowmode noshowcmd wildmenu pumheight=10 autoread autowrite shortmess=aWFAIcsTt undolevels=0'"
 alias vc="$EDITOR ~/.vimrc"
 alias vz="$EDITOR ~/.zshrc"
 alias vs="$EDITOR slide*.vpm"
@@ -403,6 +403,8 @@ alias glsf="git ls-files --full-name"
 alias glss="git diff --name-only --cached | xargs -r -l echo"
 # List assumed unchanged files
 alias glsa="git ls-files -v | rg '^h ' | awk '{print \$2}'"
+# List changes (new/modified/deleted) files
+alias glsc="git status --porcelain | awk '{print \$2}'"
 
 alias gd="git diff -w"
 alias gda="git diff"
@@ -524,6 +526,7 @@ alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
 alias wh="convert -resize 1920x1080"
 alias yy="xclip -selection clipboard"
 alias pp="xclip -selection clipboard -o"
+alias nw="nmcli device wifi show-password"
 
 alias ft="ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner --"
 alias ff="command ls -L1 | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
