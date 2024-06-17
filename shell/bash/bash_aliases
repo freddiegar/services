@@ -259,7 +259,7 @@ alias z="bash ~/working/sprinter.sh"
 
 # SPA
 alias ww="[ \"\`pgrep --full 'npm run dev --host'\`\" = \"\" ] && sh -c 'cd /var/www/html/evertec/webcheckout-spa && npm run dev -- --host > /dev/null 2>&1 &' && echo '\e[32mStarted\e[0m SPA'"
-alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA'"
+alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA' &&  PIDTOKILL=\`sudo lsof -i :3000 | grep 3000 | awk '{print \$2}'\` && if [ \"\$PIDTOKILL\" != \"\" ]; then kill -9 \$PIDTOKILL; echo \"\e[31mKilled \$PIDTOKILL\e[0m\"; fi"
 
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
