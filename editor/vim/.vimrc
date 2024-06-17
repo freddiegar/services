@@ -1061,8 +1061,12 @@ xnoremap <silent> <expr> K ":move '<-" . (v:count1 + 1) . "\<Enter>gv=gv"
 " Using screen rows (g option), wrap works as you expect!
 nnoremap <silent> <expr> j (v:count > 1 ? "m'" . v:count : '') . 'gj'
 nnoremap <silent> <expr> k (v:count > 1 ? "m'" . v:count : '') . 'gk'
+nnoremap <silent> <expr> gj (v:count > 1 ? "m'" . v:count : '') . 'j'
+nnoremap <silent> <expr> gk (v:count > 1 ? "m'" . v:count : '') . 'k'
 xnoremap <silent> j gj
 xnoremap <silent> k gk
+xnoremap <silent> gj j
+xnoremap <silent> gk k
 
 " Sud@ rescue
 if g:isneovim
@@ -2873,6 +2877,13 @@ function! s:go_url(url, ...) abort
     endif
 
     let l:uri = a:url
+
+    if match(l:uri, 'http') < 0
+        " @inspired https://www.reddit.com/r/vim/comments/1d7971t/open_the_url_nearest_to_the_cursor_in_a_web/
+        let l:temp = getline(".")->split(' ')->map({_, v -> matchstr(v, '\chttp\(s\)\?:\/\/[a-z.@:?=&/\-0-9]\+')})->filter('!empty(v:val)')->sort()->uniq()
+        let l:uri = len(l:temp) > 0 ? l:temp[0] : ''
+    endif
+
     let l:repeatable = a:0 > 0 ? a:1 : 'GoUrlRepeatable'
 
     if match(l:uri, '[') >= 0

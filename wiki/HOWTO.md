@@ -403,8 +403,11 @@ bluetoothctl devices
 > agent on
 > devices
 > pair 41:42:2F:7A:4C:D4
+> # cancel-pairing 41:42:2F:7A:4C:D4
 > trust 41:42:2F:7A:4C:D4
+> # untrust 41:42:2F:7A:4C:D4
 > connect 41:42:2F:7A:4C:D4
+> # disconnect 41:42:2F:7A:4C:D4
 
 Remove snap
 
