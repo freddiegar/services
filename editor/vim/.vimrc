@@ -87,6 +87,7 @@
 " @see https://www.reddit.com/r/vim/comments/17j7hfa/best_place_to_learn_advance_vim/
 " @see https://github.com/vbd/Fieldnotes/blob/main/vim.md
 " @see https://gist.github.com/kennypete/1fae2e48f5b0577f9b7b10712cec3212
+" @see https://www.ele.uri.edu/faculty/vetter/Other-stuff/vi/vimtips.html
 
 " CVE
 " @see https://www.cvedetails.com/vendor/8218/VIM.html
@@ -3143,7 +3144,9 @@ function! s:git_alias() abort
 endfunction
 
 nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
+" Show using glsa shorcut for: git ls-files -v | rg '^h ' | awk '{print \$2}'
 nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo 'Assume h: ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
+nnoremap <silent> <Leader>gU :Git update-index --no-assume-unchanged % <Bar> echo 'Unassume: ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
 " Use directory project over directory of current file
 nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' describe --abbrev=0 ' . expand('<cWORD>'))" <Bar> echo 'Tagged in: ' . @t <Bar> call <SID>statusline('f')<Enter>
 
@@ -5425,6 +5428,14 @@ if filereadable(expand('~/.vimrc.local'))
 endif
 
 execute 'augroup END'
+
+" function! s:quote(...) abort
+"    let l:quote = system("curl -s https://zenquotes.io/api/random | jq -r '.[0] | .q + \" \" + .a'")
+
+"    echo l:quote
+" endfunction
+
+" call timer_start(1000, function('s:quote'))
 
 filetype on                                                     " Enable filetype detection, trigger FileType event (set filetype in buffer)
 filetype plugin on                                              " Enable filetype detection plugin

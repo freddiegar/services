@@ -196,7 +196,8 @@ sudo dpkg-reconfigure tzdata
 
 Copy from local to server by SSH
 ```bash
-scp filename.ext user@server:/var/www/html/sites
+scp -P 22 -i ~/.ssh/key filename.ext user@server:/var/www/html/sites
+scp -P 22 -i ~/.ssh/id_rsa.evertec /home/freddie/services.wsdl fmendivelso@172.31.52.94:/home/fmendivelso/services_test.wsdl
 ```
 
 Copy from server to local by SSH
