@@ -218,6 +218,14 @@ snippet dt "Debug Trace"
 dump(__FILE__ . ':' . __LINE__);
 endsnippet
 
+snippet dG "Debug Memory"
+$_mgui = memory_get_usage();
+endsnippet
+
+snippet dg "Debug Memory"
+echo ((memory_get_usage() - ($_mgui ?? 0)) / 1000000) . ' MB in ' . __FILE__ . ':' . __LINE__ . PHP_EOL;
+endsnippet
+
 snippet php "Template Class" b
 <?php
 
