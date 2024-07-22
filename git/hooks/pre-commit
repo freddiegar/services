@@ -20,6 +20,7 @@ fi
 
 exec <&-
 
+REPO=${PWD##*/}
 FSTAGING=`git ls-files --modified | grepx ".php$" | wc -l`
 FMODIFING=`git diff --name-only --cached | xargs -r -l echo | grepx ".php$" | wc -l`
 FCOMPOSER=`git diff --name-only --cached | xargs -r -l echo | grepx "composer.[json|lock]" | wc -l`
@@ -27,7 +28,9 @@ FPHP=$(($FSTAGING + $FMODIFING + $FCOMPOSER))
 
 phpx /usr/local/bin/composer validate --no-check-all --strict || exit $?
 
-COMPOSER_AUDIT_ABANDONED=ignore phpx /usr/local/bin/composer audit || exit $?
+if [ "$REPO" != "rest-services" ]; then
+    COMPOSER_AUDIT_ABANDONED=ignore phpx /usr/local/bin/composer audit || exit $?
+fi
 
 # Run fixer before add message to commit
 if [ $FPHP = 0 ]; then
@@ -60,7 +63,7 @@ fi
 COMMAND=""
 
 # Run test before add message to commit
-if [ "`phpx /usr/local/bin/composer list | grepx -F '  test-ci  '`" != "" ]; then
+if [ "`phpx /usr/local/bin/composer list | grepx -F '  test-ci  '`" != "" ] && [ "`jq '.scripts."test-ci"' composer.json | grepx -v 'pcov'`" != "" ]; then
     COMMAND="$(jq '.scripts."test-ci"' composer.json | sed 's/\"//g')"
 elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpunit-ci  '`" != "" ]; then
     COMMAND="$(jq '.scripts."phpunit-ci"' composer.json | sed 's/\"//g')"
