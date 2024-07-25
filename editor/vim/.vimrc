@@ -4590,6 +4590,7 @@ EOF
     autocmd FileType json nnoremap <silent> <buffer> <F1> <Cmd>call <SID>jsonfixer() <Bar> call <SID>statusline('f')<Enter>
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gi :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
+    autocmd FileType json nnoremap <silent> <buffer> <Leader>gI :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'), v:true)<Enter>
 
     function! s:jsonfixer() abort
         if bufname('%') !=# ''
@@ -4599,7 +4600,7 @@ EOF
         silent execute '%!python3 -m json.tool'
     endfunction
 
-    " command (string), [dependency (string)]
+    " command (string), [dependency (string), detail (bool)]
     function! s:get_info(command, ...) abort
         let l:version = 'Invalid'
         let l:bname = expand('%:t')
@@ -4607,7 +4608,7 @@ EOF
         if l:bname ==# 'composer.json'
             let l:version = system('composer ' . a:command . ' "' . a:1 . '" 2> /dev/null | ' . g:filterprg . ' "^versions" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
 
-            if l:version[0] != 'v' &&  match(split(l:version, '-'), '[master|main|hotfix|release|develop|feature|bugfix]') >= 0
+            if (l:version[0] != 'v' &&  match(split(l:version, '-'), '[master|main|hotfix|release|develop|feature|bugfix]') >= 0) || (a:0 > 1 && a:2)
                 let l:commit = system('composer ' . a:command . ' "' . a:1 . '" 2> /dev/null | ' . g:filterprg . ' "^source.*\.git" | sed "s#\s\+# #g" | cut -d " " -f 5 | tr -d "\n"')
                 let l:version = printf('%s (%s)', l:version, l:commit[0 : 10])
             endif
