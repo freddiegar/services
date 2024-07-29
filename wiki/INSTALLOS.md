@@ -369,7 +369,7 @@ fi' >> ~/.profile
 [See 3](https://github.com/golang/wiki/blob/master/Ubuntu.md#using-ppa)
 
 ```bash
-curl -L https://go.dev/dl/go1.22.1.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
+curl -L https://go.dev/dl/go1.22.5.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go-linux-amd64.tar.gz && rm go-linux-amd64.tar.gz
 go version
 
@@ -798,7 +798,7 @@ lxqt-leave
 ```bash
 cd ~
 # @see https://github.com/docker/compose/releases
-sudo curl -L https://github.com/docker/compose/releases/download/v2.24.7/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.29.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -1641,7 +1641,7 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 23.10
 uname -r
-# 6.5.0-35-generic
+# 6.5.0-44-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.38
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -1666,6 +1666,8 @@ echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep 
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
 # Stable:   v0.7.2-LuaJIT 2.1.0-beta3
 # Unstable: v0.11.0-dev-LuaJIT 2.1.0-beta3
+neovide --version | awk '{print $2}'
+# 0.13.3
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.12
 curl --version | grep -e "^curl " | awk '{print $2}'
@@ -1675,9 +1677,9 @@ git --version | awk '{print $3}'
 git lfs version
 # git-lfs/3.4.0 (GitHub; linux amd64; go 1.21.1)
 docker --version | awk '{print $3}' | sed 's/,//g'
-# 26.1.3
+# 27.1.1
 docker-compose --version | awk '{print $4}'
-# v2.24.7
+# v2.29.1
 feh --version | grep version | awk '{print $3}'
 # 3.10
 maim --version | awk '{print $1}'
@@ -1699,15 +1701,15 @@ bat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 13.0.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.2.19
+# 8.2.21
 # nvm --version
 # # 0.39.3
 npm --version
-# 10.6.0
+# 10.8.1
 node --version
 # v20.10.0
 mysql --version | awk '{print $3}'
-# 8.0.36-0ubuntu0.23.10.1
+# 8.0.37-0ubuntu0.23.10.2
 stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
@@ -1715,11 +1717,11 @@ python3 --version | awk '{print $2}'
 ruby --version | awk '{print $2}'
 # 3.1.2p20
 rustc --version | awk '{print $2}'
-# 1.76.0
+# 1.80.0
 go version | awk '{print $3}' | sed 's/go//g'
-# 1.22.1
+# 1.22.5
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(653ca920)
+# 6.1.0(eb42eec1)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -1727,4 +1729,4 @@ ftp about:version | head -1 | awk '{print $3}'
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 dpkg --list | wc --lines
-# 2511
+# 2530
