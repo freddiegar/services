@@ -4693,7 +4693,7 @@ EOF
         let l:prompt = a:prompt . '> '
         let l:directory = a:directory ==# g:cwd ? '' : a:directory
         let l:filter_type = a:0 > 0 && a:1 ==# 1 ? '--no-fixed-strings' : '--fixed-strings'
-        let l:filter_ignore = a:0 > 1 && a:2 ==# 1 ? ' --no-ignore' : ' --ignore'
+        let l:filter_ignore = a:0 > 1 && a:2 ==# 1 ? ' --no-ignore --hidden' : ' --ignore'
 
         let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
 
