@@ -198,6 +198,11 @@ snippet dl "Debug Log"
 logger()->debug(__FILE__ . ':' . __LINE__$1);
 endsnippet
 
+snippet df "Debug File"
+file_put_contents('${1:/var/www/html/logs/temporal.log}', __FILE__ . ':' . __LINE__ . "\n", FILE_APPEND);
+endsnippet
+
+
 snippet dd "Debug Die"
 dd($$1, __FILE__ . ':' . __LINE__);
 endsnippet
