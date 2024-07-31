@@ -1,6 +1,7 @@
 FROM mysql:5.7
 
-COPY ./db/mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf
+# cat /etc/my.cnf
+COPY ./db57/mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf
 
 RUN set -eux \
     && chmod o-wx /var/run/mysqld

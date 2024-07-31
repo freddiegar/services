@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  db:
+  db57:
     # https://hub.docker.com/_/mysql
-    container_name: db
+    container_name: db57
     build:
       context: .
-      dockerfile: ./db/Dockerfile
+      dockerfile: ./db57/Dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
     volumes:
@@ -14,9 +14,9 @@ services:
       - $DB_PATH_LOG/db57:/var/log/mysql
     networks:
       development:
-        ipv4_address: $DB_IP_ADDRESS
+        ipv4_address: $DB57_IP_ADDRESS
     ports:
-    - $DB_PORT:3306
+    - $DB57_PORT:3306
     deploy:
       resources:
         limits:

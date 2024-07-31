@@ -86,6 +86,8 @@ touch /var/log/mysql/mysql.log
 touch /var/log/mysql/slow.log
 sudo chmod 666 /var/log/mysql/*.log
 ```
+> Check Migration from 5.7. to 8.0
+> mysqlcheck -uroot -p --all-databases --check-upgrade
 
 ## Supervisor
 
@@ -179,9 +181,10 @@ innodb_file_per_table                  = 1
 innodb_stats_on_metadata               = 0
 innodb_buffer_pool_instances           = 1 # or 8 if innodb_buffer_pool_size > 1GB
 
+host_cache_size                        = 0
 skip_name_resolve                      = 1
 ```
-> Example using 1G RAM in servier
+> Example using 1G RAM in server
 
 ### Charset
 

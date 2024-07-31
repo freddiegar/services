@@ -49,6 +49,7 @@ innodb_buffer_pool_instances            = 8                                 # 1 
 innodb_buffer_pool_chunk_size           = 128M                              # Default: 128M, but, better explicit
 innodb_log_buffer_size                  = 48M                               # Default: 16M, more is less I/O
 
+host_cache_size                         = 0
 skip_name_resolve                       = 1
 
 character-set-server                    = utf8

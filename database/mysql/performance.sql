@@ -260,4 +260,25 @@ ALL             | Red     | Full Table Scan                                     
                                                                                 |   No usable indexes were found for the table, which forces the optimizer to search every row.
                                                                                 |   This could also mean that the search range is so broad that the index would be useless.
 UNKNOWN         | Black   | unknown                                             | Note: This is the default, in case a match cannot be determined
+
+Proceso Interno al Añadir una Nueva Columna
+    Validación de la Solicitud:
+        MySQL primero valida la instrucción ALTER TABLE para asegurarse de que es sintácticamente correcta y que todas las especificaciones son válidas.
+    Bloqueo de la Tabla:
+        MySQL puede bloquear la tabla para evitar modificaciones mientras se realiza el cambio. El tipo de bloqueo depende de la operación y la configuración del servidor. En versiones recientes de MySQL (a partir de 5.6 y mejoradas en 8.0), se utilizan bloqueos menos restrictivos gracias a la operación de "in-place".
+    Creación de una Nueva Tabla Temporal:
+        MySQL crea una nueva tabla temporal que es una copia de la tabla original, pero con la estructura modificada (es decir, con la nueva columna añadida).
+        Esta nueva tabla temporal tiene el mismo esquema que la tabla original, pero con la nueva columna incluida.
+    Copiado de Datos:
+        MySQL copia los datos de la tabla original a la nueva tabla temporal. Este proceso implica leer cada fila de la tabla original y escribirla en la tabla temporal.
+        Durante este proceso, se rellena la nueva columna con el valor por defecto si se ha especificado uno, o con NULL si no se ha especificado un valor por defecto.
+    Actualización de Índices:
+        Si la nueva columna es parte de algún índice, MySQL actualizará los índices para incluir la nueva columna.
+        Esto puede implicar la reconstrucción de algunos índices, lo que puede ser una operación costosa en términos de tiempo y recursos.
+    Renombrado de Tablas:
+        Una vez que todos los datos se han copiado a la nueva tabla temporal, MySQL renombra la tabla original y la nueva tabla temporal para que la nueva tabla temporal se convierta en la tabla activa.
+        Este paso es generalmente rápido porque implica operaciones de renombrado de metadatos.
+    Eliminación de la Tabla Original:
+        Finalmente, MySQL elimina la tabla original, liberando el espacio en disco que ocupaba.
+        En algunos casos, MySQL puede mantener la tabla original temporalmente para permitir una reversión rápida si algo sale mal durante el proceso.
 */

@@ -22,7 +22,7 @@ explicit_defaults_for_timestamp         = 1
 # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_max_allowed_packet
 max_allowed_packet                      = 67108864                          # In bytes (5.7: 4M 8.0: 64M)
 
-sql-mode                                = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+sql-mode                                = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
 log_error                               = /var/log/mysql/error.log
 general_log                             = 0
 general_log_file                        = /var/log/mysql/mysql.log
@@ -68,18 +68,20 @@ innodb_buffer_pool_instances            = 8                                 # 1 
 innodb_buffer_pool_chunk_size           = 128M                              # Default: 128M, but, better explicit
 innodb_log_buffer_size                  = 48M                               # Default: 16M, more is less I/O
 
+host_cache_size                         = 0
 skip_name_resolve                       = 1
 
-character-set-server                    = utf8
-collation-server                        = utf8_general_ci
+character_set_server                    = utf8mb4
+collation_server                        = utf8mb4_0900_ai_ci
 # https://dev.mysql.com/doc/mysql/en/innodb-troubleshooting-datadict.html
 # innodb_force_recovery                   = 1                                 # Used after innodb corruption
 
 table_open_cache                        = 2500                              # > 2000
 table_definition_cache                  = 5000                              # > 4412
 
-query_cache_type                        = 1                                 # Default: off
-query_cache_size                        = 10M                               # Default: 1M
+# Removed in 8.0
+# query_cache_type                        = 1                                 # Default: off
+# query_cache_size                        = 10M                               # Default: 1M
 
 # https://dev.mysql.com/doc/mysql/en/replication-options-replica.html
 server-id                               = 19
