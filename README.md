@@ -33,8 +33,6 @@ cp -p docker-compose.override.yml.example docker-compose.override.yml
 ```
 
 ```yaml
-version: "3.8"
-
 services:
   # This service is shutdown
   db:

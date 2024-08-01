@@ -83,6 +83,9 @@ RUN set -eux \
     && docker-php-ext-install -j$(nproc) pcntl \
     # Extra information about images: grav
     && docker-php-ext-install -j$(nproc) exif \
+    # Extra dependencies: magento
+    && docker-php-ext-install -j$(nproc) xsl \
+    && docker-php-ext-install -j$(nproc) sockets \
     # Cache
     && printf "no\n" | pecl install -o -f apcu \
     && docker-php-ext-enable apcu \
