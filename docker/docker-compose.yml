@@ -113,6 +113,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.83
@@ -143,6 +144,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.82
@@ -173,6 +175,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.81
@@ -203,6 +206,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.80
@@ -233,6 +237,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.74
@@ -262,6 +267,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.73
@@ -291,6 +297,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.72
@@ -320,6 +327,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.71
@@ -349,6 +357,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.70
@@ -378,6 +387,7 @@ services:
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
+      - $DB_PATH_LOG/db80:/var/log/mysql
     networks:
       development:
         ipv4_address: 172.20.0.56

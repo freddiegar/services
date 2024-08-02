@@ -199,9 +199,12 @@ logger()->debug(__FILE__ . ':' . __LINE__$1);
 endsnippet
 
 snippet df "Debug File"
-file_put_contents('${1:/var/www/html/logs/temporal.log}', __FILE__ . ':' . __LINE__ . "\n", FILE_APPEND);
+file_put_contents('${1:/var/www/html/logs/temporal.log}', date('c') . ' ' . __FILE__ . ':' . __LINE__ .$2 "\n", FILE_APPEND);$0
 endsnippet
 
+snippet dq "Debug Query"
+file_put_contents('/var/log/mysql/mysql.log', date('c') . ' ' . __FILE__ . ':' . __LINE__ . "$1\n", FILE_APPEND);$0
+endsnippet
 
 snippet dd "Debug Die"
 dd($$1, __FILE__ . ':' . __LINE__);

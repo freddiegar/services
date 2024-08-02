@@ -98,5 +98,10 @@ elif [ "$COMMAND" = "" ]; then
     COMMAND="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
 fi
 
+if [ "`echo "$COMMAND" | grepx -F "memory_limit"`" != "" ]; then
+    # Break your limits!
+    COMMAND=$(echo "$COMMAND" | sed 's/-d memory_limit=[0-9]*[M|G] //')
+fi
+
 # XDEBUG_MODE=off vendor/bin/pest
 sh -c "$COMMAND"
