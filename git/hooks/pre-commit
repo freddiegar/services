@@ -100,8 +100,12 @@ fi
 
 if [ "`echo "$COMMAND" | grepx -F "memory_limit"`" != "" ]; then
     # Break your limits!
-    COMMAND=$(echo "$COMMAND" | sed 's/-d memory_limit=[0-9]*[M|G] //')
+    COMMAND=$(echo "$COMMAND" | sed 's/-d memory_limit=[0-9]*[M|G][[:space:]]\?//')
 fi
+
+# Debugging command
+# echo $COMMAND
+# exit 1
 
 # XDEBUG_MODE=off vendor/bin/pest
 sh -c "$COMMAND"

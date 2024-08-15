@@ -346,21 +346,21 @@ alias prx='export XDEBUG_SESSION=1 && export XDEBUG_CONFIG="idekey=PHPSTORM" && 
 alias psw="sudo update-alternatives --config php"
 
 alias vt="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
-alias vT="phpx vendor/bin/phpunit --testdox -vvv"
+alias vT="phpx vendor/bin/phpunit --testdox"
 alias vts="phpx vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite"
-alias vtS="phpx vendor/bin/phpunit --testdox -vvv --testsuite"
+alias vtS="phpx vendor/bin/phpunit --testdox --testsuite"
 alias vtf="phpx vendor/bin/phpunit --stop-on-failure --no-coverage --filter"
 
 alias vp="phpx vendor/bin/paratest --stop-on-failure --no-coverage"
-alias vP="phpx vendor/bin/paratest --testdox -vvv"
+alias vP="phpx vendor/bin/paratest --testdox"
 alias vps="phpx vendor/bin/paratest --stop-on-failure --no-coverage --testsuite"
-alias vpS="phpx vendor/bin/paratest --testdox -vvv --testsuite"
+alias vpS="phpx vendor/bin/paratest --testdox --testsuite"
 alias vpf="phpx vendor/bin/paratest --stop-on-failure --no-coverage --filter"
 
 alias st="phpx bin/phpunit --stop-on-failure --no-coverage"
-alias sT="phpx bin/phpunit --testdox -vvv"
+alias sT="phpx bin/phpunit --testdox"
 alias sts="phpx bin/phpunit --stop-on-failure --no-coverage --testsuite"
-alias stS="phpx bin/phpunit --testdox -vvv --testsuite"
+alias stS="phpx bin/phpunit --testdox --testsuite"
 alias stf="phpx bin/phpunit --stop-on-failure --no-coverage --filter"
 
 alias vapor="phpx vendor/bin/vapor"
