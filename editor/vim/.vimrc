@@ -4981,18 +4981,18 @@ EOF
 
     " Preserve current quickfix in session
     " @thanks https://vi.stackexchange.com/a/38609
-    function! s:sessiongetqf() abort
-        let l:qflist = getqflist()
-        let l:qfinfo = getqflist({'title' : 1})
+    " function! s:sessiongetqf() abort
+    "     let l:qflist = getqflist()
+    "     let l:qfinfo = getqflist({'title' : 1})
 
-        for l:qfentry in l:qflist | call setbufvar(l:qfentry['bufnr'], '&buflisted', 1) | endfor
+    "     for l:qfentry in l:qflist | call setbufvar(l:qfentry['bufnr'], '&buflisted', 1) | endfor
 
-        return [string(l:qflist), string(l:qfinfo)]
-    endfunction
+    "     return [string(l:qflist), string(l:qfinfo)]
+    " endfunction
 
-    function! s:sessionsetqf(qflist, qfinfo) abort
-        call writefile(['call setqflist(' . a:qflist . ')', 'call setqflist([], "a", ' . a:qfinfo . ')'], g:session_file, 'a')
-    endfunction
+    " function! s:sessionsetqf(qflist, qfinfo) abort
+    "     call writefile(['call setqflist(' . a:qflist . ')', 'call setqflist([], "a", ' . a:qfinfo . ')'], g:session_file, 'a')
+    " endfunction
 
     " nnoremap <Leader>w <Cmd>call <SID>sessionsave() <Bar> echo 'Session saved.'<Enter>
 
@@ -5002,13 +5002,13 @@ EOF
         endif
 
         if g:hasgit && !(expand('%:h:p') ==# '/tmp' && &filetype ==# 'zsh')
-            let [l:qflist, l:qfinfo] = <SID>sessiongetqf()
+            " let [l:qflist, l:qfinfo] = <SID>sessiongetqf()
 
             call <SID>sessionsavepre()
 
             silent execute 'mksession! ' . g:session_file
 
-            call <SID>sessionsetqf(l:qflist, l:qfinfo)
+            " call <SID>sessionsetqf(l:qflist, l:qfinfo)
 
             if has('gui_running')
                 echomsg 'Saved ' . split(g:session_file, '/')[-1]
