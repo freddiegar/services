@@ -1979,7 +1979,7 @@ cnoremap <C-x><C-u> <C-u>='!curl --upload-file '<Enter>=expand('%:p')<Enter> h
 
 " gZip (and show dotfiles)
 cnoremap <C-x><C-o> <C-u>!gzip -d *.gz
-cnoremap <C-x><C-z> <C-u>='!gzip -k -c '<Enter>=expand('%:p')<Enter>=' > ~/Downloads/'<Enter>=substitute(split(expand('%:p'), '/')[-1], '\.', '', 'g') . '.gz'<Enter>
+cnoremap <C-x><C-z> <C-u>='!gzip -k -c '<Enter>=expand('%:p')<Enter>=' > ~/Downloads/'<Enter>=substitute(split(expand('%:p'), '/')[-1], '^\.', '', 'g') . '.gz'<Enter>
 
 " incr (int)
 function! s:cycling_buffers(incr) abort
@@ -2111,7 +2111,7 @@ Plug 'ludovicchabant/vim-gutentags'                             " Auto generate 
 "             \ 'xml',
 "             \ 'vue'
 "             \ ]}                                                " Rename html tags easily
-Plug 'mattn/emmet-vim', {'on': 'EmmetInstall'}                  " Performance using emmet syntax
+" Plug 'mattn/emmet-vim', {'on': 'EmmetInstall'}                  " Performance using emmet syntax
 
 " Plug 'justinmk/vim-sneak'                                       " f, F with super powers: s{2-chars}, S{2-chars}
 " Plug 'wellle/context.vim'                                       " Show context code (slower)
@@ -3628,7 +3628,7 @@ augroup AutoCommands
 
     " autocmd FileType markdown,log,csv let b:coc_suggest_disable = 1
 
-    autocmd FileType html,css,javascript,vue EmmetInstall
+    " autocmd FileType html,css,javascript,vue EmmetInstall
 
     " @see https://github.com/tpope/vim-vinegar/issues/13#issuecomment-47133890
     autocmd FileType netrw setlocal bufhidden=delete
@@ -4653,6 +4653,18 @@ EOF
     autocmd BufReadPost \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
     " Cleanup profiles log
     autocmd BufReadPost profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
+    " Cleanup test debug log
+    " :> dtest.log && phpx vendor/bin/phpunit --testdox --log-events-verbose-text dtest.log
+    autocmd BufReadPost dtest.log if !exists('b:cleanup')
+                \ | let b:cleanup = 1
+                \ | silent! keeppatterns
+                \ | execute "%s#^\\[\\d\\{2}:\\d\\{2}:\\d\\{2}.\\d\\{9} / ##g"
+                \ | execute "%s#\\] \\[\\d\\{6,9} bytes\\]##g"
+                \ | execute "g#^\\s*$#d_"
+                \ | execute "g#^ #g!#^\\s*- #d_"
+                \ | execute "g#^ #normal! kJ"
+                \ | %sort!
+                \ | endif
     " Debug mappings
     " redir! > editor/vim/vimkeys.txt | silent verbose map | redir END
     autocmd BufReadPost vimkeys.txt if !exists('b:cleanup')

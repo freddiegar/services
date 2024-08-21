@@ -104,7 +104,7 @@ if [ "`echo "$COMMAND" | grepx -F "memory_limit"`" != "" ]; then
 fi
 
 # Debugging command
-# echo $COMMAND
+echo $COMMAND
 # exit 1
 
 # XDEBUG_MODE=off vendor/bin/pest

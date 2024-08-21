@@ -477,3 +477,14 @@ command cat test.csv | python3 -c 'import csv, json, sys; print(json.dumps([dict
 ```bash
 jq -R '{questions: [inputs | split(",") | {item: .[0], task: .[1]}]}' < test1.csv
 ```
+
+Instal AWS VPN Client
+
+[See](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-linux-release-notes.html)
+
+```bash
+curl -L https://d20adtppz83p9s.cloudfront.net/GTK/latest/debian-repo/pool/ubuntu-20.04/awsvpnclient_amd64.deb -o awsvpnclient.deb
+sudo dpkg -i awsvpnclient.deb
+rm -f awsvpnclient.deb
+## sudo dpkg --remove awsvpnclient
+```

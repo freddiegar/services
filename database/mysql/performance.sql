@@ -2,6 +2,11 @@
 -- https://orangematter.solarwinds.com/2019/02/05/the-left-prefix-index-rule/
 -- https://www.forknerds.com/reduce-the-size-of-mysql/
 
+-- @see https://www.atlassian.com/data/databases/understanding-strorage-sizes-for-mysql-text-data-types
+-- TEXT:        65,535 characters           64 KB
+-- MEDIUMTEXT:  16,777,215                  16 MB
+-- LONGTEXT:    4,294,967,295 characters    4 GB
+
 -- Size in MB of schemas
 
 SELECT table_schema "DB Name", ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) "DB Size in MB"
