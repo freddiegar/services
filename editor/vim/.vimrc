@@ -1849,6 +1849,19 @@ function s:go_docs(word) abort
         " execute 'GBrowse ' . l:word
         let l:repourl = system("git config --get remote.origin.url | sed 's/^git@\\(.*\\).git/\\1/g' | sed 's/.git$//g' | sed 's/\\(\\.[a-z]\\{2,3\\}\\)\\(:\\)/\\1\\//g' | tr -d '\\n'")
         let l:docsurl = l:repourl =~# '^http' ? l:repourl .. '/commits/' : 'https://' .. l:repourl .. '/commits/'
+    elseif index(['crontab'], &filetype) >= 0
+        let l:docsurl = 'https://crontab.guru/#'
+        let l:saved_unnamed_register = @@
+
+        silent execute "normal! 0\"zy5W"
+
+        let l:word = substitute(trim(@z), '\s', '_', 'g')
+
+        if match(l:word, '\#') ==# 0
+            return
+        endif
+
+        let @@ = l:saved_unnamed_register
     elseif index(['vim'], &filetype) >= 0
         silent call <SID>show_documentation()
 
@@ -2902,6 +2915,7 @@ function! s:go_url(url, ...) abort
         " No escape yet
         let l:uri = substitute(l:uri, '?', '\\?', 'ge')
         let l:uri = substitute(l:uri, '&', '\\&', 'ge')
+        let l:uri = substitute(l:uri, '*', '\\*', 'ge')
         let l:uri = substitute(l:uri, ')', '', 'ge')
         let l:uri = substitute(l:uri, ' ', '\\ ', 'ge')
     endif
@@ -4576,6 +4590,7 @@ EOF
     endfunction
 
     autocmd FileType vim-plug nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
+    autocmd FileType crontab nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs('crontab')<Enter>
 
     autocmd FileType d2 nnoremap <silent> <buffer> <F1> <Cmd>call <SID>d2fixer() <Bar> call <SID>statusline('f')<Enter>
 
