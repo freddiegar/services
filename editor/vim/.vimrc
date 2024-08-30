@@ -2500,7 +2500,7 @@ function! AsyncRunCommand(command) abort
     let g:qfcommand = a:command
 
     " Action to run on stop job (default: empty)
-    let g:asyncrun_exit = 'silent\ call\ AsyncRunFinished()'
+    let g:asyncrun_exit = 'silent call AsyncRunFinished()'
 
     call asyncrun#run(v:true, #{
                 \ raw: 1,
