@@ -1701,7 +1701,7 @@ bat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 13.0.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.2.21
+# 8.2.23
 # nvm --version
 # # 0.39.3
 npm --version
@@ -1729,4 +1729,4 @@ ftp about:version | head -1 | awk '{print $3}'
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 dpkg --list | wc --lines
-# 2530
+# 2531

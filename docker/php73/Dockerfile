@@ -62,6 +62,7 @@ RUN set -eux \
     # PHP
     # Web services
     && docker-php-ext-install -j$(nproc) soap \
+    && docker-php-ext-install -j$(nproc) xsl \
     # Database connection
     && docker-php-ext-install -j$(nproc) mysqli \
     && docker-php-ext-install -j$(nproc) pdo_mysql \
@@ -77,6 +78,7 @@ RUN set -eux \
     # Best math operations
     && docker-php-ext-install -j$(nproc) bcmath \
     && docker-php-ext-install -j$(nproc) gmp \
+    && docker-php-ext-install -j$(nproc) pcntl \
     # Extra information about images: grav
     && docker-php-ext-install -j$(nproc) exif \
     # Cache

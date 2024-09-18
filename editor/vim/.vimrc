@@ -5348,7 +5348,7 @@ function! s:get_hlinfo() abort
 endfunction
 
 nmap <silent> <C-w>m <Cmd>call <SID>vpm()<Enter>
-nmap <silent> <C-w>M :set relativenumber! number! showmode! hidden! ruler!<Enter>
+nmap <silent> <C-w>M :set relativenumber! number! hidden! ruler!<Enter>
 
 let g:vpm = 0
 

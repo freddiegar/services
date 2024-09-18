@@ -240,7 +240,7 @@ alias e=$EDITOR
 alias f="fzf"
 alias g="grepx"
 alias h="history"
-alias i="ping 8.8.8.8"
+alias i="ping 8.8.8.8 -c 100"
 alias l="less"
 alias m="man"
 alias n="neovide"
@@ -380,7 +380,7 @@ alias dcclean="docker ps -a | grep ' Exited (1) ' | awk '{print \$1}' | xargs -r
 
 alias gs="git summary -q 2> /dev/null"
 alias gsa="git summary 2> /dev/null"
-alias gf="onefetch --number-of-authors 5 --number-of-file-churns 5 --no-bots --no-merges --no-color-palette"
+alias gf="onefetch --number-of-authors 10 --number-of-file-churns 5 --no-bots --no-merges --no-color-palette"
 alias gv="gs | grep -v -E '/ro-|/_' | grep -E ' M?v'"
 alias gV="gs | grep -v -E '/ro-|/_' | grep -E '\^$'"
 alias gM="gs | grep -v -E '/ro-|/_' | grep -E 'M'"
