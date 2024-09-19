@@ -375,7 +375,7 @@ alias dstatus="docker ps --format \"{{.Names}}\" | sort"
 alias dprune="docker system prune -a"
 alias dstats="docker stats"
 alias dclean="dcclean && diclean"
-alias diclean="docker images | grep ' <none> ' | awk '{print \$3}' | xargs -r -I {} docker rmi {} && echo 'Images cleaned'"
+alias diclean="docker images | grep ' <none> ' | awk '{print \$3}' | xargs -r -I {} docker rmi -f {} && echo 'Images cleaned'"
 alias dcclean="docker ps -a | grep ' Exited (1) ' | awk '{print \$1}' | xargs -r -I {} docker rm  -f {} && echo 'Containers cleaned'"
 
 alias gs="git summary -q 2> /dev/null"
