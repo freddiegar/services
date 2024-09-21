@@ -1364,6 +1364,9 @@ nmap <silent> <Leader>gC <Plug>GetColorRepeatable
 nnoremap <silent> <Plug>GetClickUpRepeatable <Cmd>call <SID>go_url('https://app.clickup.com/t/31051369/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetClickUpRepeatable')<Enter>
 nmap <silent> <Leader>gK <Plug>GetClickUpRepeatable
 
+nnoremap <silent> <Plug>GetVulnerabilityRepeatable <Cmd>call <SID>go_url('https://nvd.nist.gov/vuln/detail/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetCVERepeatable')<Enter>
+nmap <silent> <Leader>gV <Plug>GetVulnerabilityRepeatable
+
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
             \ <Bar> echo 'Copied:   ' . @+<Enter>
 
