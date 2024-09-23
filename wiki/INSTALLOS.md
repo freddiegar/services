@@ -23,6 +23,9 @@ echo "\n" | sudo update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en
 # vi /etc/locale.gen
 # Regenerate options
 # sudo locale-gen
+
+grep -F "Acquire::Languages" /etc/apt/apt.conf.d/00aptitude
+
 echo 'Acquire::Languages "none";' | sudo tee -a /etc/apt/apt.conf.d/00aptitude
 ```
 
@@ -210,12 +213,13 @@ sudo update-alternatives --config x-session-manager
 [See](https://www.reddit.com/r/i3wm/comments/72oiwl/how_do_i_set_environment_variables_so_that_they/)
 
 ```bash
+cat ~/.xinitrc
 echo 'dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
 xrdb -I$HOME ~/.Xresources
 exec i3' >> ~/.xinitrc
 ```
 
-## Konsole Profile
+## Konsole Profile prefer urxvt
 
 ```bash
 sudo apt-get install -y konsole
@@ -238,7 +242,7 @@ sudo apt-get install -y vim
 # Set as default editor
 sudo update-alternatives --config editor
 
-rm ~/.viminfo
+rm -f ~/.viminfo
 ln -s `pwd`/editor/vim/.vimrc ~/.vimrc
 
 ## CoC Settings
@@ -339,6 +343,7 @@ mkdir /var/www/html/LuaLS
 cd /var/www/html/LuaLS
 git clone --depth=1 https://github.com/LuaLS/lua-language-server
 cd lua-language-server
+git pull origin master
 ./make.sh
 
 # Enable globally
@@ -355,6 +360,8 @@ rustup component add rust-analyzer
 > rustup self uninstall
 
 ```bash
+grep -F "Enable rust" ~/.profile
+
 echo '
 # Enable rust
 if [ -d ~/.cargo/bin ]; then
@@ -369,7 +376,7 @@ fi' >> ~/.profile
 [See 3](https://github.com/golang/wiki/blob/master/Ubuntu.md#using-ppa)
 
 ```bash
-curl -L https://go.dev/dl/go1.22.5.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
+curl -L https://go.dev/dl/go1.23.1.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go-linux-amd64.tar.gz && rm go-linux-amd64.tar.gz
 go version
 
@@ -378,6 +385,8 @@ sudo apt-get install -y gopls
 > sudo apt-get remove gopls
 
 ```bash
+grep -F "Enable go" ~/.profile
+
 echo '
 # Enable go
 if [ -d /usr/local/go/bin ]; then
@@ -486,7 +495,7 @@ sudo chmod +x /usr/local/bin/git-summary
 ## sudo apt-get remove gawk && sudo rm /usr/local/bin/git-summary && sudo apt-get autoremove
 ```
 
-## GIT Large File Storage - LFS
+## GIT Large File Storage - LFS (in GIT repository)
 
 [See](https://git-lfs.com/)
 
@@ -572,15 +581,20 @@ lxqt-leave
 ## Profile Environment
 
 ```bash
+grep "EDITOR=\|VISUAL=\|BROWSER=\|WWW_HOME=" ~/.profile
+
 echo '
 export EDITOR=vim
 export VISUAL=vim
-export BROWSER=/usr/bin/firefox' >> ~/.profile
+export BROWSER=/usr/bin/firefox
+export WWW_HOME="https://www.duckduckgo.com"' >> ~/.profile
 ```
 
 ## Setup in Zsh
 
 ```bash
+grep -F "Load special vars" ~/.zshrc
+
 echo '
 # Load special vars
 if [ -f ~/.profile ]; then
@@ -733,6 +747,8 @@ sudo chmod +x /usr/local/bin/php-cs-fixer
 
 ## Mess Detector for PHP (and Vim)
 
+[See](https://github.com/phpmd/phpmd/releases)
+
 ```bash
 cd ~
 sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.15.0/phpmd.phar -o /usr/local/bin/phpmd
@@ -795,10 +811,11 @@ lxqt-leave
 
 ## Docker Compose
 
+[See](https://github.com/docker/compose/releases)
+
 ```bash
 cd ~
-# @see https://github.com/docker/compose/releases
-sudo curl -L https://github.com/docker/compose/releases/download/v2.29.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -836,6 +853,8 @@ cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
 [See](https://yashagarwal.in/posts/2017/12/setting-up-ssh-agent-in-i3/)
 
 ```bash
+grep -F "~/.ssh/agent.env" ~/.zshrc
+
 echo '
 if [ -f ~/.ssh/agent.env ]; then
     . ~/.ssh/agent.env > /dev/null
@@ -903,6 +922,8 @@ gpg --armor --export C292DDB5 | xclip -selection clipboard
 ## GPG in Terminal (Use between shells instances)
 
 ```bash
+grep -F "GPG_TTY" ~/.zshrc
+
 echo '
 export GPG_TTY=$(tty)' >> ~/.zshrc
 ```
@@ -910,7 +931,7 @@ export GPG_TTY=$(tty)' >> ~/.zshrc
 ## GPG TTL (in seconds)
 
 ```bash
-cat ~/.gnupg/gpg-agent.conf
+grep "default-cache-ttl\|max-cache-ttl\|default-cache-ttl-ssh\|max-cache-ttl-ssh" ~/.gnupg/gpg-agent.conf
 
 echo 'default-cache-ttl 86400
 max-cache-ttl 864000
@@ -931,10 +952,7 @@ sudo ln -s /opt/Postman/Postman /usr/bin/postman
 # Opera
 
 ```bash
-cd ~
-curl -L "https://download.opera.com/download/get/?partner=www&opsys=Linux" -o opera.deb
-sudo dpkg -i opera.deb
-rm -f opera.deb
+sudo apt-get install opera-stable
 
 ## sudo apt-get remove opera && sudo apt-get autoremove
 ```
@@ -1000,7 +1018,7 @@ sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/f
 cd ~
 sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
 # @see https://github.com/nvm-sh/nvm/releases
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 
 # Only oldest Ubuntu
 echo '
@@ -1014,8 +1032,8 @@ nvm ls-remote
 # Ubuntu 18
 # @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
 # ldd --version
-nvm install v20.10.0
-# nvm alias default v20.10.0
+nvm install v20.17.0
+# nvm alias default v20.17.0
 # nvm current
 ## Enabled to all users in [L|X]Ubuntu
 # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
@@ -1046,6 +1064,15 @@ sudo apt-get install -y fonts-firacode
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
+```
+
+# Rotate system logs
+
+```bash
+sudo journalctl --rotate
+sudo journalctl --vacuum-time=30days
+sudo journalctl --vacuum-size=50M
+# journalctl --disk-usage
 ```
 
 # Clean installation
@@ -1082,14 +1109,14 @@ sudo apt-get install -y fzf
 [See](https://github.com/BurntSushi/ripgrep)
 
 ```bash
+# [L|X]Ubuntu 18.10+ | Rg v11.0.2+
+sudo apt-get install -y ripgrep
+## sudo apt-get remove ripgrep && sudo apt-get autoremove
+
 # [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
 echo "\n" | sudo add-apt-repository ppa:x4121/ripgrep
 sudo apt-get install -y ripgrep
 ## sudo apt-get remove ripgrep && echo "\n" | sudo add-apt-repository --remove ppa:x4121/ripgrep
-
-# [L|X]Ubuntu 18.10+ | Rg v11.0.2+
-sudo apt-get install -y ripgrep
-## sudo apt-get remove ripgrep && sudo apt-get autoremove
 ```
 
 # Bat no Cat (Preview FZF and Terminal)
@@ -1097,14 +1124,15 @@ sudo apt-get install -y ripgrep
 [See](https://github.com/sharkdp/bat)
 
 ```bash
+# [L|X]Ubuntu 18.10+ | Rg v0.22.1
+sudo apt-get install -y bat
+
 # [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
 cd ~
 # @see https://github.com/sharkdp/bat/releases
 sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.24.0/bat_0.24.0_amd64.deb -o bat.deb
 sudo dpkg -i bat.deb && rm -f bat.deb
-
-# [L|X]Ubuntu 18.10+ | Rg v0.22.1
-sudo apt-get install -y bat
+sudo ln -s `which batcat` /usr/bin/bat
 
 ## Command:
 ## bat file.php
@@ -1115,6 +1143,8 @@ sudo apt-get install -y bat
 [See](https://gitlab.com/dwt1/dotfiles)
 
 ```bash
+grep "MANPAGER=\|MANROFFOPT=\|BAT_THEME=" ~/.profile
+
 echo '
 # @thanks https://github.com/sharkdp/bat/issues/2753
 export MANPAGER="sh -c '"'"'col -bx \| bat -l man -p'"'"'"
@@ -1163,16 +1193,17 @@ sudo ln -s ~/.config/composer/vendor/bin/phan /usr/local/bin/phan
 
 ```bash
 composer global require fakerphp/faker --dev
-require_once '/home/freddie/.config/composer/vendor/autoload.php';echo (Faker\Factory::create())->email();
+# require_once '/home/freddie/.config/composer/vendor/autoload.php';
+# echo (Faker\Factory::create())->email();
 ## composer global remove fakerphp/faker --dev
 ```
 
 # Infection AST
 
-[See](https://github.com/infection/infection)
+[See](https://github.com/infection/infection/releases)
 
 ```bash
-sudo curl -L https://github.com/infection/infection/releases/download/0.28.1/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.29.6/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command:
 ## infection -j$(nproc)
@@ -1202,8 +1233,10 @@ sudo chmod +x /usr/local/bin/phpcpd
 
 # PHPMetrics
 
+[See](https://github.com/phpmetrics/PhpMetrics/releases)
+
 ```bash
-sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v2.8.1/phpmetrics.phar -o /usr/local/bin/phpmetrics
+sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v3.0.0rc6/phpmetrics.phar -o /usr/local/bin/phpmetrics
 sudo chmod +x /usr/local/bin/phpmetrics
 ## Command:
 ## phpmetrics --excluded-dirs vendor --report-html=./tests/coverage/phpmetrics .
@@ -1213,20 +1246,6 @@ sudo chmod +x /usr/local/bin/phpmetrics
 # Xdebug (PHP Debugger)
 
 ```bash
-sudo pecl install -f xdebug-2.9.8
-
-# Xdebug 2
-echo 'xdebug.idekey=PHPSTORM
-xdebug.remote_mode=req
-xdebug.remote_host=localhost
-xdebug.remote_port=9003
-xdebug.remote_enable=1
-xdebug.remote_autostart=1
-; To enable profiler use XDEBUG_PROFILE=PHPSTORM in (GET|POST|COOKIE)
-xdebug.profiler_enable=0
-xdebug.profiler_enable_trigger=1
-zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
-
 sudo pecl install -f xdebug
 
 # Xdebug 3
@@ -1240,6 +1259,21 @@ xdebug.client_port=9003
 ;xdebug.log=/var/www/html/xdebug/xdebug.log
 xdebug.file_link_format=xdebug://%f@%l
 zend_extension=/usr/lib/php/20210902/xdebug.so' | sudo tee /etc/php/8.1/mods-available/xdebug.ini
+
+# Xdebug 2
+
+sudo pecl install -f xdebug-2.9.8
+
+echo 'xdebug.idekey=PHPSTORM
+xdebug.remote_mode=req
+xdebug.remote_host=localhost
+xdebug.remote_port=9003
+xdebug.remote_enable=1
+xdebug.remote_autostart=1
+; To enable profiler use XDEBUG_PROFILE=PHPSTORM in (GET|POST|COOKIE)
+xdebug.profiler_enable=0
+xdebug.profiler_enable_trigger=1
+zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 
 # PHP 7.4: zend_extension=/usr/lib/php/20190902/xdebug.so' | sudo tee /etc/php/7.4/mods-available/xdebug.ini
 sudo phpenmod xdebug
@@ -1314,7 +1348,7 @@ sudo apt-get install -y filezilla
 ```bash
 # VS Code
 cd ~
-curl -L "https://az764295.vo.msecnd.net/stable/d037ac076cee195194f93ce6fe2bdfe2969cc82d/code_1.84.0-1698839401_amd64.deb" -o vscode.deb
+curl -L "https://vscode.download.prss.microsoft.com/dbazure/download/stable/38c31bc77e0dd6ae88a4e9cc93428cc27a56ba40/code_1.93.1-1726079302_amd64.deb" -o vscode.deb
 sudo dpkg -i vscode.deb
 rm -f vscode.deb
 ## sudo apt-get remove code && sudo apt-get autoremove
@@ -1435,7 +1469,7 @@ https://extensions.gnome.org/extension/2/move-clock/
 https://ubuntuhandbook.org/index.php/2020/03/hide-activities-button-ubuntu-18-04/
 ```
 
-## RSA SecurID
+## RSA SecureID
 
 [See](https://sourceforge.net/p/stoken/wiki/Home/)
 
@@ -1467,7 +1501,7 @@ sudo apt-get install -y google-chrome-stable
 
 ## Microsoft Edge (for Teams :()
 
-```
+```bash
 curl -L https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft-edge.gpg > /dev/null
 sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
 
@@ -1628,6 +1662,12 @@ sudo snap remove teams-for-linux
 sudo apt-get remove -y --purge libreoffice\* && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
 
+## Remove Rhythmbox
+
+```bash
+sudo apt-get remove -y --purge rhythmbox\* && sudo apt-get clean -y && sudo apt-get autoremove -y
+```
+
 # Clean installation
 
 ```bash
@@ -1639,18 +1679,18 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 ## Commands
 
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
-# Ubuntu 23.10
+# Ubuntu 24.04.1 LTS
 uname -r
-# 6.5.0-44-generic
+# 6.8.0-45-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
-# 2.38
+# 2.39
 gcc --version | grep -e "^gcc" | awk '{print $4}'
 # 13.2.0
 openssl version | awk '{print $2}'
 # 3.0.10
 # 1.1.1w
 i3 --version | awk '{print $3}'
-# 4.22
+# 4.23
 i3status --version | grep -e "i3status" | awk '{print $2}'
 # 2.14-non-git
 # konsole --version | awk '{print $2}'
@@ -1658,45 +1698,45 @@ i3status --version | grep -e "i3status" | awk '{print $2}'
 urxvt -help 2>&1 | head -n 1 | awk '{print $3}'
 # v9.31
 bash --version | grep -e "bash" | awk '{print $4}'
-# 5.2.15(1)-release
+# 5.2.21(1)-release
 zsh --version | awk '{print $2}'
 # 5.9
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
-# 9.0.Included patches: 1-1672, 1729, 1747, 2107, 1840, 1846-1848, 1857-1858, 1873, 1969, 1992, 2010, 2068, 2106, 2108-2112, 2121
+# 9.1.Included patches: 1-16, 647, 678
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
 # Stable:   v0.7.2-LuaJIT 2.1.0-beta3
-# Unstable: v0.11.0-dev-LuaJIT 2.1.0-beta3
+# Unstable: v0.11.0-dev-LuaJIT 2.1.1703358377
 neovide --version | awk '{print $2}'
 # 0.13.3
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.12
 curl --version | grep -e "^curl " | awk '{print $2}'
-# 8.2.1
+# 8.5.0
 git --version | awk '{print $3}'
-# 2.40.1
+# 2.43.0
 git lfs version
-# git-lfs/3.4.0 (GitHub; linux amd64; go 1.21.1)
+# git-lfs/3.4.1 (GitHub; linux amd64; go 1.22.2)
 docker --version | awk '{print $3}' | sed 's/,//g'
-# 27.1.1
+# 27.3.1
 docker-compose --version | awk '{print $4}'
-# v2.29.1
+# v2.29.7
 feh --version | grep version | awk '{print $3}'
-# 3.10
+# 3.10.1
 maim --version | awk '{print $1}'
 # v5.7.4
 unzip -v | grep "^UnZip.*\.$" | awk '{print $2}'
 # 6.00
 jq --version | sed 's/jq-//g'
-# 1.6
+# 1.7
 tree --version | awk '{print $2}'
 # v2.1.1
 nmap --version | grep "^Nmap" | awk '{print $3}'
 # 7.94SVN
 htop --version | grep "^htop" | awk '{print $2}'
-# 3.2.2
+# 3.3.0
 man xcompmgr | grep "^X Version" | awk '{print $5}'
 # 1.1.8
-bat --version | awk '{print $2}'
+batcat --version | awk '{print $2}'
 # 0.24.0
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 13.0.0
@@ -1705,23 +1745,23 @@ php --version | grep -e "^PHP" | awk '{print $2}'
 # nvm --version
 # # 0.39.3
 npm --version
-# 10.8.1
+# 10.8.3
 node --version
 # v20.10.0
 mysql --version | awk '{print $3}'
 # 8.0.37-0ubuntu0.23.10.2
-stoken --version | head -1 | awk '{print $2}'
+# stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
-# 3.11.6
+# 3.12.3
 ruby --version | awk '{print $2}'
-# 3.1.2p20
+# 3.2.3
 rustc --version | awk '{print $2}'
-# 1.80.0
+# 1.81.0
 go version | awk '{print $3}' | sed 's/go//g'
-# 1.22.5
+# 1.23.1
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(eb42eec1)
+# 6.1.0(7e96624c)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -1729,4 +1769,10 @@ ftp about:version | head -1 | awk '{print $3}'
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 dpkg --list | wc --lines
-# 2531
+# 2509
+for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
+# 91
+apt list --installed | wc --lines
+# 2327
+apt-mark showmanual | wc --lines
+# 421
