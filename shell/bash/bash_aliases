@@ -234,6 +234,7 @@ gwc() {
 
 alias \?="apropos"
 alias a="alias"
+alias b="bash ~/working/mysqlramdisk.sh"
 # alias [c]omposer
 alias d="diff"
 alias e=$EDITOR

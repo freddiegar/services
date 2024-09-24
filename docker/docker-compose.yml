@@ -42,6 +42,27 @@ services:
           cpus: $DB_CORE
           memory: $DB_MEMORY
 
+  dbrd:
+    container_name: dbrd
+    build:
+      context: .
+      dockerfile: ./dbrd/Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+    volumes:
+      - $DBRD_PATH_DATA:/var/lib/mysql
+      - $DB_PATH_LOG/dbrd:/var/log/mysql
+    networks:
+      development:
+        ipv4_address: $DBRD_IP_ADDRESS
+    ports:
+    - $DBRD_PORT:3306
+    deploy:
+      resources:
+        limits:
+          cpus: $DB_CORE
+          memory: $DB_MEMORY
+
   dbrx:
     container_name: dbrx
     build:

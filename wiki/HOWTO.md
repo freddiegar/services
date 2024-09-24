@@ -478,7 +478,7 @@ command cat test.csv | python3 -c 'import csv, json, sys; print(json.dumps([dict
 jq -R '{questions: [inputs | split(",") | {item: .[0], task: .[1]}]}' < test1.csv
 ```
 
-Instal AWS VPN Client
+Install AWS VPN Client
 
 [See](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-linux-release-notes.html)
 
@@ -487,4 +487,18 @@ curl -L https://d20adtppz83p9s.cloudfront.net/GTK/latest/debian-repo/pool/ubuntu
 sudo dpkg -i awsvpnclient.deb
 rm -f awsvpnclient.deb
 ## sudo dpkg --remove awsvpnclient
+```
+
+Speed up testing in MySQL
+
+[See](https://www.kiloroot.com/create-a-ram-disk-in-linux-tell-mysql-to-put-stuff-there/)
+
+```bash
+echo "#!/bin/sh
+
+mkdir /run/shm/mysqltemp
+chmod 777 /run/shm/mysqltemp
+exit 0" | sudo tee -a /etc/rc.local
+
+sudo chmod 744 /etc/rc.local
 ```

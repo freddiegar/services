@@ -68,6 +68,11 @@ innodb_buffer_pool_instances            = 8                                 # 1 
 innodb_buffer_pool_chunk_size           = 128M                              # Default: 128M, but, better explicit
 innodb_log_buffer_size                  = 48M                               # Default: 16M, more is less I/O
 
+# @see https://reintech.io/blog/optimizing-mysql-for-ssd-storage
+innodb_io_capacity                      = 2000                              # Default: 20
+innodb_io_capacity_max                  = 4000                              # Default: 2000
+innodb_thread_concurrency               = 16                                # Default: 0
+
 host_cache_size                         = 0
 skip_name_resolve                       = 1
 

@@ -89,10 +89,9 @@ table_definition_cache                  = 5000                              # > 
 # query_cache_size                        = 10M                               # Default: 1M
 
 # https://dev.mysql.com/doc/mysql/en/replication-options-replica.html
-server-id                               = 19
-log_bin                                 = /var/log/mysql/replication.log
-binlog_do_db                            = microsites_co
-relay-log                               = /var/log/mysql/relay.log
+server-id                               = 18
+# log_bin                                 = /var/log/mysql/replication.log
+# binlog_do_db                            = microsites_co
 
 # https://stackoverflow.com/questions/56389698/why-super-privileges-are-disabled-when-binary-logging-option-is-on#56390000
 log_bin_trust_function_creators         = 1
