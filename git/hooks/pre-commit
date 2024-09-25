@@ -107,6 +107,12 @@ if [ "`echo "$COMMAND" | grepx -F "memory_limit"`" != "" ]; then
     COMMAND=$(echo "$COMMAND" | sed 's/-d memory_limit=[0-9]*[M|G][[:space:]]\?//')
 fi
 
+if [ "`echo "$COMMAND" | grepx -F -- "--no-coverage"`" = "" ]; then
+    # In PHPUnit 10+ avoid WARNING (finish with status code: 1)
+    #   No code coverage driver is available
+    COMMAND="$COMMAND --no-coverage"
+fi
+
 # Debugging command
 echo $COMMAND
 # exit 1
