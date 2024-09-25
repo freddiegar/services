@@ -87,6 +87,10 @@ if [ "$COMMAND" != "" ]; then
         COMMAND="phpx vendor/bin/$COMMAND"
     elif [ "`echo "$COMMAND" | grepx "^@php "`" != "" ]; then
         COMMAND="phpx $COMMAND"
+    elif [ "`echo "$COMMAND" | grepx "^XDEBUG_"`" != "" ]; then
+        # XDEBUG_MODE=coverage vendor/bin/phpunit
+        # XDEBUG_MODE=coverage phpx vendor/bin/phpunit
+        COMMAND=`echo "$COMMAND" | sed -E 's/(\w*)\s+(.*)/\1 phpx \2/g'`
     else
         COMMAND="phpx $COMMAND"
     fi
