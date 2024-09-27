@@ -2901,6 +2901,10 @@ function! s:go_url(url, ...) abort
         let l:uri = len(l:temp) > 0 ? l:temp[0] : ''
     endif
 
+    if match(a:url, '\c^[a-z\-0-9]\+\.[a-z.?=&/\-0-9]\+') >= 0 && (match(l:uri, 'http') < 0 || l:uri ==# '')
+        let l:uri = 'https://' . a:url
+    endif
+
     let l:repeatable = a:0 > 0 ? a:1 : 'GoUrlRepeatable'
 
     if match(l:uri, '[') >= 0

@@ -167,7 +167,8 @@ grep 'Remove-Unused-Kernel-Packages\|Remove-Unused-Dependencies\|Automatic-Reboo
 # Disabled IPP Service: 631 (Internet Printer Protocol)
 
 ```bash
-sudo service cups stop && sudo systemctl disable cups && sudo apt-get remove cups
+sudo service cups stop && sudo systemctl disable cups
+sudo apt-get remove -y --purge cups\* && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
 
 # Disabled Plymouth Service
