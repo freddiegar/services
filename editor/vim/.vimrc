@@ -5064,18 +5064,19 @@ EOF
     endfunction
 
     " include (string)
-    "     [t]railing spaces in end of line
     "  no-[b]reak spaces
     "     [c]omments
     "     [d]uplicate blank lines
-    " empt[y] lines
     "     [e]nd of file lines
-    "     [q]uery log
-    "     [p]rofile log
-    "     [r]egistes
-    "     [m]arks
     "     [f]orce
+    "    t[i]mes
+    "     [m]arks
+    "     [p]rofile log
+    "     [q]uery log
+    "     [r]egistes
+    "     [t]railing spaces in end of line
     "     [v]erbose
+    " empt[y] lines
     function! s:cleanup(include) abort
         if &diff
             echohl WarningMsg
@@ -5159,6 +5160,28 @@ EOF
             silent call add(l:cleanup, 'marks')
         endif
 
+        if index(l:options, 'i') >= 0
+            silent execute "keeppatterns keepjumps g!/^[=-]/d_"
+            silent execute "keeppatterns keepjumps g/^== /normal ddp"
+            silent! execute "keeppatterns keepjumps %s/^- \\(\\w\\+\\).*/\\1/g"
+            silent! execute "keeppatterns keepjumps %s/[ =]//g"
+            silent! execute "keeppatterns keepjumps %s/:/./g"
+            silent execute "keeppatterns keepjumps g/[A-Z]/normal J"
+            silent! execute "keeppatterns keepjumps %s/ 0/ /g"
+            call setreg('q', "$\"zyiwDA=(z*100)/60\r\e")
+            silent execute "keeppatterns keepjumps g/^\\w\\+/normal @q"
+            call setreg('q', "j_WyiWk$BPa-\e\"zyiWDi =z\r\e")
+            silent execute "keeppatterns keepjumps g/^\\w\\+/normal @q"
+            silent execute "keeppatterns keepjumps g/\\(Almuerzo\\|FDD\\)/d_"
+            silent execute "normal! :CS\r"
+            %sort
+            silent! execute "keeppatterns keepjumps %s/ 0./ ./g"
+            silent! execute "keeppatterns keepjumps %s/^G /G\\\&C /g"
+            silent! execute "keeppatterns keepjumps %s/^SGM /G\\\&C /g"
+
+            silent call add(l:cleanup, 'times')
+        endif
+
         " silent call cursor(l:ccursor) <- Change cursor position!
         silent call setpos('.', l:ccursor)
 
@@ -5178,6 +5201,7 @@ EOF
     command! -nargs=0 CP call <SID>cleanup('vfp')
     command! -nargs=0 CR call <SID>cleanup('vfr')
     command! -nargs=0 CM call <SID>cleanup('vfm')
+    command! -nargs=0 CT call <SID>cleanup('vfi')
 
     " title (string)
     function! s:settitle(title) abort
