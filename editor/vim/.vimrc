@@ -884,9 +884,9 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
 
-    " if g:isneovim && luaeval('#vim.lsp.buf_get_clients() > 0')
-    "     setlocal statusline+=%{'[L]'}                           " LSP enabled
-    " endif
+    if g:isneovim && luaeval('#vim.lsp.get_clients() > 0')
+        setlocal statusline+=%{'[L]'}                           " LSP enabled
+    endif
 
     " if g:isneovim && exists('g:plug_autocompleted_loaded')
     "     setlocal statusline+=%{'[C]'}                           " Autocomplete enabled
@@ -2066,7 +2066,6 @@ augroup END
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
@@ -2118,7 +2117,6 @@ Plug 'phpactor/phpactor', {
 " Plug 'RRethy/vim-illuminate', {'for': ['vim', 'php', 'c']}      " Highligth current cursor word
 
 " Plug 'vim-scripts/autotags', {'for': 'c'}
-Plug 'ludovicchabant/vim-gutentags'                             " Auto generate tags (not allowed 'for' option)
 " Plug 'Shougo/echodoc.vim', {'for': ['php', 'c', 'vim']}         " Show function signature in command line (weird)
 " Plug 'Shougo/context_filetype.vim', {'for': 'markdown'}         " Show/use context in markdown files
 
@@ -2178,10 +2176,13 @@ if g:isneovim
     Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
     " endif
 else
-    Plug 'markonm/traces.vim'                                   " See range, substitution and global preview
-    Plug 'machakann/vim-highlightedyank'                        " See yank preview
+    Plug 'tpope/vim-commentary'                               " gcc, {motion}gc, 9.1 has built-in (:packadd comment) but...
 
-"     Plug 'yegappan/lsp'                                         " LSP -> Not integrate mappings from UltiSnips
+    Plug 'markonm/traces.vim'                                 " See range, substitution and global preview
+    Plug 'machakann/vim-highlightedyank'                      " See yank preview
+    Plug 'ludovicchabant/vim-gutentags'                       " Auto generate tags (not allowed 'for' option)
+
+    " Plug 'yegappan/lsp'                                       " LSP -> Not integrate mappings from UltiSnips
 endif
 
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
@@ -2201,7 +2202,7 @@ call plug#end()
 
 " PHPActor
 " @see https://github.com/phpactor/phpactor
-let g:phpactorPhpBin = '/usr/bin/php8.2'
+let g:phpactorPhpBin = '/usr/bin/php8.3'
 
 " LSP Vue
 " npm -g install vls eslint eslint-plugin-vue -D
@@ -2936,7 +2937,7 @@ function! s:go_url(url, ...) abort
 
         silent! call repeat#set("\<Plug>" . l:repeatable)
 
-        echo 'Opened:   ' . l:uri
+        echo 'Opened:   ' . l:uri[0 : winwidth(0) - 15]
     endif
 endfunction
 
@@ -3703,7 +3704,7 @@ augroup AutoCommands
 
         " @thanks https://gist.github.com/kawarimidoll/d566e367591acae6e41295722803534d
         function! s:ntreesitter() abort
-            if exists('g:plug_treesitter_loaded')
+            if exists('g:plug_treesitter_loaded') || !has_key(g:plugs, 'nvim-treesitter')
                 return
             endif
 
