@@ -10,6 +10,29 @@ cj() {
     mlr --icsv --ojson tail -n 2 "$1"
 }
 
+timeshell() {
+    shell=${1-$SHELL}
+
+    for i in $(seq 1 10);
+    do
+        /usr/bin/time $shell -i -c exit;
+    done
+}
+
+nn() {
+    message="$@"
+
+    if [ "$message" = "" ]; then
+        message="Ran"
+    fi
+
+    # Escape comma and semicolon...
+    message=`echo "$message" | sed -r 's/,/¸/g'`
+    message=`echo "$message" | sed -r 's/;/¦/g'`
+
+    i3-msg --quiet "exec i3-nagbar --type warning --font 'pango:fira code retina' --message '$message'"
+}
+
 vv() {
     if [ "$EDITOR" = "nvim" ]; then
         vim "$@"
@@ -240,7 +263,7 @@ alias d="diff"
 alias e=$EDITOR
 alias f="fzf"
 alias g="grepx"
-alias h="history"
+alias h="bash ~/working/mysqlschema.sh"
 alias i="ping 8.8.8.8 -c 100"
 alias l="less"
 alias m="man"
@@ -301,11 +324,9 @@ alias vh="$EDITOR ~/.zsh_history"
 alias v3="$EDITOR ~/.config/i3/config"
 alias vl="$EDITOR -c \"set background=light\""
 
-alias rz="source ~/.zshrc"
+alias rz="exec zsh"
 alias ra="source ~/.bash_aliases"
 alias r3="i3-msg 'restart'"
-
-alias nn="i3-msg --quiet \"exec i3-nagbar --type warning --font \\\"pango:fira code retina\\\" --message \\\"Ran\\\", fullscreen disable\""
 
 alias sas="sudo apt-cache search"
 alias sad="sudo apt-cache show"
@@ -409,11 +430,15 @@ alias glsa="git ls-files -v | rg '^h ' | awk '{print \$2}'"
 # List changes (new/modified/deleted) files
 alias glsc="git status --porcelain | awk '{print \$2}'"
 
-alias gd="git diff -w"
+alias gd="git diff --ignore-space-change --ignore-all-space"
 alias gda="git diff"
-alias gdd="git diff -w --word-diff"
+# Example option: --word-diff"
+# - version "0.8.39"
+# + version "0.8.57"
+# version [-"0.8.39"-]{+"0.8.57"+}
+alias gdd="git diff --ignore-space-change --ignore-all-space --word-diff"
 alias gdda="git diff --word-diff"
-alias gdc="git diff -w --cached"
+alias gdc="git diff --ignore-space-change --ignore-all-space --cached"
 alias gdca="git diff --cached"
 alias ga="git add"
 alias gcm="git commit -S"
@@ -424,7 +449,8 @@ alias gcmsga="git commit --amend -S -m"
 alias gcmsgan="git commit --no-verify --amend -S -m"
 alias gcmsgo="git commit --no-edit -C ORIG_HEAD"
 alias gl="git pull"
-alias glo="git pull origin"
+alias gll="git pull origin"
+alias glo="git pull --rebase origin"
 alias gm="git merge"
 alias gmu="git merge upstream/master"
 alias gma="git merge --abort"
@@ -437,7 +463,9 @@ alias glw="git reset --keep HEAD@{1}"
 alias gpw="git reset --soft HEAD^"
 alias gpa="git push --all"
 alias gb="git branch"
-alias gbc="git branch --merged | grep -i -v -w -E 'master|main|develop' | xargs -r git branch -d"
+alias gbc="git branch --merged | grep -i -v -E '(^\*|master|main|develop)' | xargs -r git branch -d"
+alias gbr="git branch -r --merged | grep -i -v -E '(^\*|master|main|develop|release)' | cut -d/ -f2- | xargs -r -n 1 echo"
+alias gbcr="git branch -r --merged | grep -v -E '(^\*|master|main|develop|release)' | cut -d/ -f2- | xargs -r -n 1 git push --delete origin"
 alias gbn="git checkout master && git branch -M master && git push -u origin master"
 alias gbb="git rev-parse --abbrev-ref HEAD | tr -d '\n' | yy"
 alias ggc="git gc --prune=now"

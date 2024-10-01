@@ -220,19 +220,19 @@ xrdb -I$HOME ~/.Xresources
 exec i3' >> ~/.xinitrc
 ```
 
-## Konsole Profile prefer urxvt
-
-```bash
-sudo apt-get install -y konsole
-## sudo apt-get remove konsole && sudo apt-get autoremove
-
-rm -f ~/.local/share/konsole/*.profile
-rm -f ~/.local/share/konsole/*.colorscheme
-
-ln -s `pwd`/emulator/konsole/konsole.profile ~/.local/share/konsole/konsole.profile
-ln -s `pwd`/emulator/konsole/Dark.colorscheme ~/.local/share/konsole/Dark.colorscheme
-ln -s `pwd`/emulator/konsole/Light.colorscheme ~/.local/share/konsole/Light.colorscheme
-```
+# ## Konsole Profile prefer urxvt
+#
+# ```bash
+# sudo apt-get install -y konsole
+# ## sudo apt-get remove konsole && sudo apt-get autoremove
+#
+# rm -f ~/.local/share/konsole/*.profile
+# rm -f ~/.local/share/konsole/*.colorscheme
+#
+# ln -s `pwd`/emulator/konsole/konsole.profile ~/.local/share/konsole/konsole.profile
+# ln -s `pwd`/emulator/konsole/Dark.colorscheme ~/.local/share/konsole/Dark.colorscheme
+# ln -s `pwd`/emulator/konsole/Light.colorscheme ~/.local/share/konsole/Light.colorscheme
+# ```
 
 ## Vim Configuration
 
@@ -365,9 +365,7 @@ grep -F "Enable rust" ~/.profile
 
 echo '
 # Enable rust
-if [ -d ~/.cargo/bin ]; then
-    . "$HOME/.cargo/env"
-fi' >> ~/.profile
+[ -d ~/.cargo/bin ] && \. "$HOME/.cargo/env"' >> ~/.profile
 ```
 
 #### Go
@@ -390,9 +388,7 @@ grep -F "Enable go" ~/.profile
 
 echo '
 # Enable go
-if [ -d /usr/local/go/bin ]; then
-    export PATH=$PATH:/usr/local/go/bin
-fi' >> ~/.profile
+[ -d /usr/local/go/bin ] && export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
 ```
 
 #### Ruby
@@ -598,9 +594,7 @@ grep -F "Load special vars" ~/.zshrc
 
 echo '
 # Load special vars
-if [ -f ~/.profile ]; then
-    . ~/.profile
-fi' >> ~/.zshrc
+[ -f ~/.profile ] && \. ~/.profile' >> ~/.zshrc
 ```
 
 ## Enable Vi Mode in Zsh
@@ -661,18 +655,14 @@ ln -s `pwd`/shell/bash/bash_aliases ~/.bash_aliases
 
 ## Enable alias in Zsh
 echo '
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi' >> ~/.zshrc
+[ -f ~/.bash_aliases ] && \. ~/.bash_aliases' >> ~/.zshrc
 ```
 
 ## Enable alias in Vim
 
 ```bash
 echo '
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi' >> ~/.zshenv
+[ -f ~/.bash_aliases ] && \. ~/.bash_aliases' >> ~/.zshenv
 ```
 
 # PHP 8.2
