@@ -1951,6 +1951,7 @@ cnoremap <C-j> <Down>
 cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
+" @overwrite :h c_CTRL-F
 cnoremap <C-f> <C-Right>
 " cnoremap %% =fnameescape(expand('%'))<Enter>
 " Replace because annoyoning wait after typing % in [s]ubstitution command
@@ -2096,11 +2097,11 @@ Plug 'tommcdo/vim-fubitive'                                     " - BitBucket br
 Plug 'tpope/vim-dadbod', {'for': 'sql'}                         " DB console in Vim
 Plug 'kristijanhusak/vim-dadbod-completion', {'for': 'sql'}     " DB autocompletion (needs vim-dadbod)
 
-Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: methods, vars, etc
-Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
+" Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: methods, vars, etc
+" Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 
 Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
-Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
+" Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
 Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
 " Plug 'romainl/vim-qf'                                           " Run Cfilter using wrapper: Keep|Filter, Reject|Filter!, Restore
 Plug 'mbbill/undotree', {'on': [
@@ -2394,16 +2395,16 @@ let g:highlightedyank_highlight_duration = 200
 " " @see https://github.com/justinmk/vim-dirvish
 " let g:dirvish_relative_paths = 1
 
-" TagBar
-" @see https://github.com/preservim/tagbar
-let g:tagbar_sort = 0
-let g:tagbar_width = max([80, winwidth(0) / 3])
-let g:tagbar_silent = 0
-let g:tagbar_compact = 2
-let g:tagbar_autofocus = 1
-let g:tagbar_no_status_line = 1
-
-nmap <silent> <F8> :TagbarToggle<Enter>
+" " TagBar
+" " @see https://github.com/preservim/tagbar
+" let g:tagbar_sort = 0
+" let g:tagbar_width = max([80, winwidth(0) / 3])
+" let g:tagbar_silent = 0
+" let g:tagbar_compact = 2
+" let g:tagbar_autofocus = 1
+" let g:tagbar_no_status_line = 1
+"
+" nmap <silent> <F8> :TagbarToggle<Enter>
 
 " Undo Tree
 " @see https://github.com/mbbill/undotree
@@ -2565,36 +2566,36 @@ nnoremap <silent> <Leader>tl :cclose <Bar> TestLast<Enter>
 nnoremap <silent> <Leader>tg :cclose <Bar> TestVisit<Enter>
 nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
 
-" Vim Debug
-" @see https://github.com/vim-vdebug/vdebug
-let g:vdebug_keymap = #{
-            \ run: '<Home>',
-            \ run_to_cursor: '<S-Home>',
-            \ step_over: '<Right>',
-            \ step_into: '<Down>',
-            \ step_out: '<Up>',
-            \ detach: '<Left>',
-            \ close: '<End>',
-            \ set_breakpoint: '<Leader>q',
-            \ get_context: '<Leader>Q',
-            \ eval_under_cursor: '<Leader>v',
-            \ eval_visual: '<Leader>V',
-            \}
-
-if !exists('g:vdebug_options')
-    let g:vdebug_options = {}
-endif
-
-let g:vdebug_options = #{
-            \ port: 9003,
-            \ timeout: 10,
-            \ on_close: 'detach',
-            \ break_on_open: 0,
-            \ watch_window_style: 'compact',
-            \ simplified_status: 1,
-            \ continuous_mode: 1,
-            \ ide_key: 'PHPSTORM',
-            \}
+" " Vim Debug
+" " @see https://github.com/vim-vdebug/vdebug
+" let g:vdebug_keymap = #{
+"             \ run: '<Home>',
+"             \ run_to_cursor: '<S-Home>',
+"             \ step_over: '<Right>',
+"             \ step_into: '<Down>',
+"             \ step_out: '<Up>',
+"             \ detach: '<Left>',
+"             \ close: '<End>',
+"             \ set_breakpoint: '<Leader>q',
+"             \ get_context: '<Leader>Q',
+"             \ eval_under_cursor: '<Leader>v',
+"             \ eval_visual: '<Leader>V',
+"             \}
+"
+" if !exists('g:vdebug_options')
+"     let g:vdebug_options = {}
+" endif
+"
+" let g:vdebug_options = #{
+"             \ port: 9003,
+"             \ timeout: 10,
+"             \ on_close: 'detach',
+"             \ break_on_open: 0,
+"             \ watch_window_style: 'compact',
+"             \ simplified_status: 1,
+"             \ continuous_mode: 1,
+"             \ ide_key: 'PHPSTORM',
+"             \}
 
 " ALE
 " @see https://github.com/dense-analysis/ale
