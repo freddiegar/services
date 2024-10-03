@@ -884,9 +884,9 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
 
-    if g:isneovim && luaeval('#vim.lsp.get_clients() > 0')
-        setlocal statusline+=%{'[L]'}                           " LSP enabled
-    endif
+    " if g:isneovim && luaeval('#vim.lsp.get_clients() > 0')
+    "     setlocal statusline+=%{'[L]'}                           " LSP enabled
+    " endif
 
     " if g:isneovim && exists('g:plug_autocompleted_loaded')
     "     setlocal statusline+=%{'[C]'}                           " Autocomplete enabled
@@ -996,9 +996,26 @@ nnoremap <Leader><BS> :g/\<C-r><C-w>\>/
 nnoremap <Leader>rll *``[{V%::s/<C-r>///gIc<Left><Left><Left><Left>
 nnoremap <Leader>rgg *``:%s/<C-r>///gIc<Left><Left><Left><Left>
 
-" NOTE: <Esc> is used to remove the range that Vim may insert (something like the CTRL-U does)
-nnoremap <silent> <expr> H (v:count > 0 ? "<Esc>" : '') . v:count1 . 'F$'
-nnoremap <silent> <expr> L (v:count > 0 ? "<Esc>" : '') . v:count1 . 'f$'
+nnoremap <silent> H <Cmd>call <SID>searchenvvar('F')<Enter>
+nnoremap <silent> L <Cmd>call <SID>searchenvvar('f')<Enter>
+
+" direction (string): void
+function! s:searchenvvar(direction) abort
+    let l:ccurpos = getcurpos()
+    let l:saved_search_register = @/
+
+    " NOTE: <Esc> is used to remove the range that Vim may insert (something like the CTRL-U does)
+    silent execute "normal! " . (v:count > 0 ? "\e" : '') . v:count1 . a:direction . '$'
+
+    let @/ = l:saved_search_register
+    "
+    " if l:ccurpos !=# getcurpos()
+    "     return
+    " endif
+    "
+    " " Fallback. Use normal! <Bang>, it skip custom mappings
+    " silent execute 'normal! ' . (a:direction ==# 'f' ? 'L' : 'H')
+endfunction
 
 " Marks using exact position in Normal|Select|Operator Mode
 " Only activate in Normal Mode, with :noremap fails Snippets (and LSP)
@@ -1076,6 +1093,7 @@ else
     command! W execute 'silent! write !sudo tee % > /dev/null' <Bar> edit!
 endif
 
+" type (string): void
 function! s:get_reverse(type) abort
     let l:options = {
                 \ '1': '0',
@@ -4407,7 +4425,7 @@ EOF
         set nohlsearch
 
         try
-            silent execute ":keeppatterns normal! mz?^\\s*\\(p.* \\)function\\s\rV/{\r%\"zyy'z:delmarks z\r"
+            silent execute ":keeppatterns keepjumps normal! mz?^\\s*\\(p.* \\)function\\s\rV/{\r%\"zyy'z:delmarks z\r"
         catch
             let l:haserror = v:true
 
@@ -4688,6 +4706,18 @@ EOF
                 \ | execute "g#^ #g!#^\\s*- #d_"
                 \ | execute "g#^ #normal! kJ"
                 \ | %sort!
+                \ | endif
+    " Cleanup test phpunit log
+    " :> ptest.log && phpx vendor/bin/phpunit --testdox | tee -a ptest.log
+    autocmd BufReadPost ptest.log if !exists('b:cleanup')
+                \ | let b:cleanup = 1
+                \ | silent! execute "keeppatterns keepjumps g#^ ✔#d_"
+                \ | silent! execute "keeppatterns keepjumps g#^Time: #y z"
+                \ | silent! execute "keeppatterns keepjumps g#^[A-Za-z0-9\.]#d_"
+                \ | silent! execute "keeppatterns keepjumps g#/vendor/#d_"
+                \ | silent! execute "normal! :CE\r"
+                \ | silent! execute "keeppatterns keepjumps g#^ ✘#normal O"
+                \ | normal! "zpgg
                 \ | endif
     " Debug mappings
     " redir! > editor/vim/vimkeys.txt | silent verbose map | redir END

@@ -26,8 +26,9 @@ nn() {
         message="Ran"
     fi
 
-    # Escape comma and semicolon...
-    message=`echo "$message" | sed -r 's/,/¸/g'`
+    # @see https://i3wm.org/docs/userguide.html#exec_quoting
+    # Escape comma (,) and semicolon (;)
+    message=`echo "$message" | sed -r 's/,/┌/g'`
     message=`echo "$message" | sed -r 's/;/¦/g'`
 
     i3-msg --quiet "exec i3-nagbar --type warning --font 'pango:fira code retina' --message '$message'"
@@ -276,7 +277,7 @@ alias s="bash ~/working/mysqlog.sh"
 alias t="sh testx.sh"
 alias u="cd /var/www/html/universal-ctags/ctags && git clean -f -d && git pull origin master && ./autogen.sh && ./configure && make && sudo make install && cd -1"
 alias v=$EDITOR
-alias w="which"
+alias w="watch -n0.5 -t --color"
 alias x="exit"
 alias y="bash ~/working/syntaxer.sh"
 alias z="bash ~/working/sprinter.sh"
