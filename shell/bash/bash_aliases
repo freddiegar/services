@@ -258,13 +258,13 @@ gwc() {
 
 alias \?="apropos"
 alias a="alias"
-alias b="bash ~/working/mysqlramdisk.sh"
+alias b="sh ~/working/mysqlramdisk.sh"
 # alias [c]omposer
 alias d="diff"
 alias e=$EDITOR
 alias f="fzf"
 alias g="grepx"
-alias h="bash ~/working/mysqlschema.sh"
+alias h="sh ~/working/mysqlschema.sh"
 alias i="ping 8.8.8.8 -c 100"
 alias l="less"
 alias m="man"
@@ -272,15 +272,15 @@ alias n="neovide"
 alias o="xargs -t -r -I {}"
 alias p="ps -fea -U \$USER -u \$USER --forest"
 alias q="bash ~/working/evertec/queues.sh"
-alias r="bash ~/working/mysqlget.sh"
+alias r="sh ~/working/mysqlget.sh"
 alias s="bash ~/working/mysqlog.sh"
 alias t="sh testx.sh"
 alias u="cd /var/www/html/universal-ctags/ctags && git clean -f -d && git pull origin master && ./autogen.sh && ./configure && make && sudo make install && cd -1"
 alias v=$EDITOR
 alias w="watch -n0.5 -t --color"
 alias x="exit"
-alias y="bash ~/working/syntaxer.sh"
-alias z="bash ~/working/sprinter.sh"
+alias y="sh ~/working/syntaxer.sh"
+alias z="sh ~/working/sprinter.sh"
 
 # SPA
 alias ww="[ \"\`pgrep --full 'npm run dev --host'\`\" = \"\" ] && sh -c 'cd /var/www/html/evertec/webcheckout-spa && npm run dev -- --host > /dev/null 2>&1 &' && echo '\e[32mStarted\e[0m SPA'"
