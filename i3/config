@@ -40,7 +40,7 @@ set $indicator-color        #00FF00
 
 # Set gaps (after 4.22.0)
 # @see https://www.reddit.com/r/i3wm/comments/1017y35/i3_v422_released_including_gaps/
-gaps inner 5
+gaps inner 2
 gaps outer 1
 smart_gaps on
 

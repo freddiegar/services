@@ -3281,7 +3281,12 @@ function! s:db() abort
         let l:data = <SID>env('DB_DATABASE')
         let l:user = <SID>env('DB_USERNAME')
         let l:pass = <SID>env('DB_PASSWORD')
-        let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
+
+        try
+            let l:url = join([l:conn, '://', l:user, ':', db#url#encode(l:pass), '@', l:host, '/', l:data], '')
+        catch
+            let l:message = 'Catch: ' . <SID>exception()
+        endtry
     endif
 
     if l:url ==# '://:@/'

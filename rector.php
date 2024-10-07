@@ -20,7 +20,7 @@ return RectorConfig::configure()
     ->withPreparedSets(deadCode: true, codeQuality: true, codingStyle: true)
 
     ->withSkip([
-        \Rector\CodeQuality\Rector\Array_\CallableThisArrayToAnonymousFunctionRector::class, // Routes in Laravel are weirds to read
+        // \Rector\CodeQuality\Rector\Array_\CallableThisArrayToAnonymousFunctionRector::class, // Routes in Laravel are weirds to read
         \Rector\CodeQuality\Rector\Catch_\ThrowWithPreviousExceptionRector::class,
         \Rector\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector::class,
         // \Rector\CodeQuality\Rector\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector::class,
@@ -29,6 +29,7 @@ return RectorConfig::configure()
         \Rector\CodeQuality\Rector\If_\ExplicitBoolCompareRector::class,
         \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
         \Rector\CodeQuality\Rector\Isset_\IssetOnPropertyObjectToPropertyExistsRector::class, // @see https://github.com/rectorphp/rector/issues/6642
+        \Rector\CodeQuality\Rector\FuncCall\SimplifyRegexPatternRector::class, // Simple is a conspiration
         \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector::class,
         \Rector\CodingStyle\Rector\String_\UseClassKeywordForClassNameResolutionRector::class,
         // \Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector::class,
@@ -39,6 +40,7 @@ return RectorConfig::configure()
         \Rector\CodingStyle\Rector\Encapsed\WrapEncapsedVariableInCurlyBracesRector::class,
         \Rector\CodingStyle\Rector\PostInc\PostIncDecToPreIncDecRector::class,
         // \Rector\CodingStyle\Rector\Switch_\BinarySwitchToIfElseRector::class,
+        \Rector\CodingStyle\Rector\ClassMethod\MakeInheritedMethodVisibilitySameAsParentRector::class,
         \Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector::class,
         \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedConstructorParamRector::class,
         \Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector::class,
@@ -46,6 +48,8 @@ return RectorConfig::configure()
         // \Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector::class,
         \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
         \Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class,
+        \Rector\Php80\Rector\FunctionLike\MixedTypeRector::class, // Break contracts __construct's Mailable by example
         \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
         \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read
+        \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
     ]);
