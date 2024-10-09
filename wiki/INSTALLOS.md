@@ -14,6 +14,30 @@ sudo passwd freddie
 su - freddie
 ```
 
+# Swap unlock
+
+[See](https://www.youtube.com/watch?v=mp7xNTLFE38)
+
+```bash
+free -h
+sudo swapoff -a
+cat /etc/fstab | grep swap
+sudo fallocate -l 8G /swap.img
+sudo mkswap /swap.img
+sudo swapon -a
+```
+
+# Better SSD I/O
+
+```bash
+sudo cp /etc/fstab /etc/fstab.bak
+sudo vim /etc/fstab
+# Adding: discard,noatime,nodiratime
+# / ext4 defaults,commit=60 0 1
+# / ext4 defaults,discard,noatime,nodiratime,commit=60 0 1
+reboot
+```
+
 # English Language for All
 
 ```bash
@@ -74,7 +98,7 @@ sudo apt-get update
 sudo apt-get -y upgrade
 ```
 
-# Performance, not use swap while RAM < 90% used
+# Performance, not use swap while RAM < 95% used
 
 [Tips 1](https://www.linuxbabe.com/ubuntu/4-tips-speed-up-ubuntu-16-04)
 
@@ -84,9 +108,19 @@ sudo apt-get -y upgrade
 grep -F "vm.swappiness=" /etc/sysctl.d/99-sysctl.conf
 
 echo '# Overwrite default: 60
-vm.swappiness=10' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
+vm.swappiness=5' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 
 grep -F "vm.swappiness=" /etc/sysctl.d/99-sysctl.conf
+
+# @see https://www.kernel.org/doc/html/latest/networking/ip-sysctl.html
+
+# 0 - disable
+# 1 - global enable
+# 2 - enable for loopback traffic only (default)
+sudo sysctl -w net.ipv4.tcp_tw_reuse=1
+
+# Default: 60 (in seconds)
+sudo sysctl -w net.ipv4.tcp_fin_timeout=15
 
 sudo sysctl -p
 ```
@@ -126,8 +160,16 @@ sudo update-grub
 grep "GRUB_CMDLINE_LINUX_DEFAULT=\|GRUB_CMDLINE_LINUX=\|GRUB_TERMINAL=" /etc/default/grub
 
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT/#GRUB_CMDLINE_LINUX_DEFAULT/g' /etc/default/grub
-# Non necesary in 23.10
-# sudo sed -i 's/GRUB_CMDLINE_LINUX="*"/GRUB_CMDLINE_LINUX="text"/g' /etc/default/grub
+
+# @see https://www.baeldung.com/linux/solid-state-drive-optimization#optimize-io-scheduler (slower: 3.15 vs 2.45m)
+# @see https://yarondar.wordpress.com/2018/07/29/have-you-tried-blk-mq/
+# cat /sys/block/loop*/queue/scheduler
+# cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_governors
+# echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+sudo sed -i 's/GRUB_CMDLINE_LINUX=".*"/GRUB_CMDLINE_LINUX="text scsi_mod.use_blk_mq=1 dm_mod.use_blk_mq=y"/g' /etc/default/grub
+# sudo sed -i 's/GRUB_CMDLINE_LINUX=".*"/GRUB_CMDLINE_LINUX="text"/g' /etc/default/grub
+
 sudo sed -i 's/#GRUB_TERMINAL=console/GRUB_TERMINAL=console/g' /etc/default/grub
 
 grep "GRUB_CMDLINE_LINUX_DEFAULT=\|GRUB_CMDLINE_LINUX=\|GRUB_TERMINAL=" /etc/default/grub
@@ -1007,30 +1049,36 @@ sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/f
 
 ```bash
 cd ~
-sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
-# @see https://github.com/nvm-sh/nvm/releases
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+# Slower!
+# @see https://blog.mattclemente.com/2020/06/26/oh-my-zsh-slow-to-load/
+# sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
+# # @see https://github.com/nvm-sh/nvm/releases
+# curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+#
+# # Only oldest Ubuntu
+# echo '
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
+#
+# # Close Terminal to load changes
+# # Show version available
+# nvm ls-remote
+# # Ubuntu 18
+# # @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
+# # ldd --version
+# nvm install v20.17.0
+# # nvm alias default v20.17.0
+# # nvm current
+# ## Enabled to all users in [L|X]Ubuntu
+# # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
+#
+# ## Install package: npm install express
+# ## nvm deactivate && nvm uninstall v18.16.0
 
-# Only oldest Ubuntu
 echo '
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
-
-# Close Terminal to load changes
-# Show version available
-nvm ls-remote
-# Ubuntu 18
-# @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
-# ldd --version
-nvm install v20.17.0
-# nvm alias default v20.17.0
-# nvm current
-## Enabled to all users in [L|X]Ubuntu
-# n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
-
-## Install package: npm install express
-## nvm deactivate && nvm uninstall v18.16.0
+# Enable node|npm
+[ -d "$HOME/.nvm/versions/node/`command cat $HOME/.nvm/alias/default`/bin/" ] && export PATH=$PATH:$HOME/.nvm/versions/node/`command cat $HOME/.nvm/alias/default | tr -d "\\n"`/bin' >> ~/.profile
 
 ## Install npm
 npm install -g npm@latest
@@ -1208,7 +1256,7 @@ sudo chmod +x /usr/local/bin/infection
 sudo curl -L https://phar.phpunit.de/phploc.phar -o /usr/local/bin/phploc
 sudo chmod +x /usr/local/bin/phploc
 ## Command:
-## phploc -v --exclude=vendor --ansi .
+## phploc --exclude=vendor .
 ## sudo rm /usr/local/bin/phploc
 ```
 
@@ -1218,7 +1266,7 @@ sudo chmod +x /usr/local/bin/phploc
 sudo curl -L https://phar.phpunit.de/phpcpd.phar -o /usr/local/bin/phpcpd
 sudo chmod +x /usr/local/bin/phpcpd
 ## Command:
-## phpcpd -vvv --exclude=vendor --ansi --progress .
+## phpcpd --exclude=vendor .
 ## sudo rm /usr/local/bin/phpcpd
 ```
 
@@ -1693,7 +1741,8 @@ bash --version | grep -e "bash" | awk '{print $4}'
 zsh --version | awk '{print $2}'
 # 5.9
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
-# 9.1.Included patches: 1-16, 647, 678
+# https://github.com/vim/vim/releases/tag/v9.1.#
+# 9.1.Included patches: 1-16, 647, 678, 697
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
 # Stable:   v0.7.2-LuaJIT 2.1.0-beta3
 # Unstable: v0.11.0-dev-LuaJIT 2.1.1703358377
@@ -1730,17 +1779,17 @@ man xcompmgr | grep "^X Version" | awk '{print $5}'
 batcat --version | awk '{print $2}'
 # 0.24.0
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
-# 13.0.0
+# 14.1.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.2.23
+# 8.2.24
 # nvm --version
 # # 0.39.3
 npm --version
 # 10.8.3
 node --version
-# v20.10.0
+# v20.17.0
 mysql --version | awk '{print $3}'
-# 8.0.37-0ubuntu0.23.10.2
+# 8.0.39-0ubuntu0.24.04.2
 # stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
@@ -1752,7 +1801,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.23.1
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(7e96624c)
+# 6.1.0(ecf0c4ad)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -1760,10 +1809,10 @@ ftp about:version | head -1 | awk '{print $3}'
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 dpkg --list | wc --lines
-# 2509
+# 2517
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 91
+# 93
 apt list --installed | wc --lines
-# 2327
+# 2339
 apt-mark showmanual | wc --lines
-# 421
+# 419

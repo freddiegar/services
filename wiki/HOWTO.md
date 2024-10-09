@@ -496,7 +496,7 @@ Speed up testing in MySQL
 ```bash
 echo "#!/bin/sh
 
-mkdir /run/shm/mysqltemp
+mkdir -p /run/shm/mysqltemp
 chmod 777 /run/shm/mysqltemp
 exit 0" | sudo tee -a /etc/rc.local
 

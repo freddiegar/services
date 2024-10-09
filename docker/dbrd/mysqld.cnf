@@ -4,6 +4,7 @@
 # For explanations see
 # https://dev.mysql.com/doc/mysql/en/dynindex-sysvar.html
 # https://dev.mysql.com/doc/mysql/en/server-system-variables.html
+# @see https://dev.mysql.com/doc/refman/8.0/en/mysqlslap.html
 
 [client]
 protocol                                = tcp                               # Explicit: https://dev.mysql.com/doc/mysql/en/transport-protocols.html
@@ -26,13 +27,13 @@ sql-mode                                = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLE
 log_error                               = /var/log/mysql/error.log
 general_log                             = 0
 general_log_file                        = /var/log/mysql/mysql.log
-slow_query_log                          = 1
-long_query_time                         = 1                                 # In seconds
-log_queries_not_using_indexes           = 1
-log_throttle_queries_not_using_indexes  = 1                                 # Same query not using index in same minute
+slow_query_log                          = 0
+long_query_time                         = 10                                # In seconds
+log_queries_not_using_indexes           = 0
+log_throttle_queries_not_using_indexes  = 0                                 # Same query not using index in same minute
 slow_query_log_file                     = /var/log/mysql/slow.log
-log_error_verbosity                     = 2                                 # 1: Errors
-                                                                            # 2: Errors + Warning
+log_error_verbosity                     = 1                                 # 1: Errors
+                                                                            # 2: Errors + Warning (default)
                                                                             # 3: Errors + Warnings + Info
 
 key_buffer_size                         = 409M                              # 20% of total RAM
@@ -58,15 +59,23 @@ key_buffer_size                         = 409M                              # 20
 # innodb_redo_log_capacity              | 104M  |
 # innodb_flush_method                   | fsync |
 
-innodb_buffer_pool_size                 = 1024M                             # 50% - 70% of total RAM and >= innodb_buffer_pool_instances * innodb_buffer_pool_chunk_size
-# innodb_log_file_size                    = 256M                              # 25% of innodb_buffer_pool_size
-innodb_redo_log_capacity                  = 256M                            # 25% of innodb_buffer_pool_size (only 8.0.30+)
+# @see https://www.percona.com/blog/mysql-101-parameters-to-tune-for-mysql-performance/
+innodb_buffer_pool_size                 = 1433M                             # 50% - 70% of total RAM and >= innodb_buffer_pool_instances * innodb_buffer_pool_chunk_size
+innodb_log_file_size                    = 614M                              # 25% of innodb_buffer_pool_size
+# innodb_redo_log_capacity                = 614M                              # 25% of innodb_buffer_pool_size (only 8.0.30+)
 innodb_flush_method                     = O_DIRECT                          # Avoid double buffering
 innodb_file_per_table                   = 1
 innodb_stats_on_metadata                = 0
 innodb_buffer_pool_instances            = 8                                 # 1 or 8 if innodb_buffer_pool_size >= 1GB
 innodb_buffer_pool_chunk_size           = 128M                              # Default: 128M, but, better explicit
 innodb_log_buffer_size                  = 48M                               # Default: 16M, more is less I/O
+
+# @see https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_flush_log_at_trx_commit
+# 0: logs are written and flushed to disk once per second. Transactions for which logs have not been flushed can be lost in a crash.
+# 1: is required for full ACID compliance. Logs are written and flushed to disk at each transaction commit.
+# 2: logs are written after each transaction commit and flushed to disk once per second. Transactions for which logs have not been flushed can be lost in a crash.
+innodb_flush_log_at_trx_commit          = 2                                 # Default: 1
+innodb_autoinc_lock_mode                = 2                                 # Default: 2
 
 # @see https://reintech.io/blog/optimizing-mysql-for-ssd-storage
 innodb_io_capacity                      = 2000                              # Default: 20
@@ -89,7 +98,7 @@ table_definition_cache                  = 5000                              # > 
 # query_cache_size                        = 10M                               # Default: 1M
 
 # https://dev.mysql.com/doc/mysql/en/replication-options-replica.html
-server-id                               = 18
+# server-id                               = 18                                  # Turn-off is dummy testing server
 # log_bin                                 = /var/log/mysql/replication.log
 # binlog_do_db                            = microsites_co
 

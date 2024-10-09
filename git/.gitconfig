@@ -5,8 +5,10 @@
 [core]
 	editor = vim
 	excludesFile = ~/.gitignore
+	; @see https://www.git-tower.com/blog/git-performance/
 	untrackedcache = true
 	fsmonitor = true
+	commitgraph = true
 	; hooksPath = /var/www/html/freddiegar/services/git/hooks
 [commit]
 	gpgsign = true
