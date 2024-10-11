@@ -2186,7 +2186,8 @@ if g:isneovim
 
     " if has('gui_running')
     Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
-    Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
+    " Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
+    Plug 'iguanacucumber/magazine.nvim', {'as': 'nvim-cmp'}   " Integrate autocomplete
     " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
     Plug 'hrsh7th/cmp-buffer'                                 " Integrate for buffer
     " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
