@@ -2914,15 +2914,16 @@ function! s:go_url(url, ...) abort
         return 1
     endif
 
+    " URL or [relative] path
     let l:uri = a:url
 
     if match(l:uri, 'http') < 0
+        " Search URI
         " @inspired https://www.reddit.com/r/vim/comments/1d7971t/open_the_url_nearest_to_the_cursor_in_a_web/
         let l:temp = getline(".")->split(' ')->map({_, v -> matchstr(v, '\chttp\(s\)\?:\/\/[a-z.@:?=&/\-0-9]\+')})->filter('!empty(v:val)')->sort()->uniq()
-        let l:uri = len(l:temp) > 0 ? l:temp[0] : ''
-    endif
-
-    if match(a:url, '\c^[a-z\-0-9]\+\.[a-z.?=&/\-0-9]\+') >= 0 && (match(l:uri, 'http') < 0 || l:uri ==# '')
+        let l:uri = len(l:temp) > 0 ? l:temp[0] : l:uri
+    elseif match(a:url, '\c^[a-z\-0-9]\+\.[a-z.?=&/\-0-9]\+') >= 0
+        " Maybe a URI
         let l:uri = 'https://' . a:url
     endif
 
@@ -2949,6 +2950,14 @@ function! s:go_url(url, ...) abort
     endif
 
     let l:uri = trim(l:uri, ',')
+    let l:uri = trim(l:uri, ';')
+
+    if match(l:uri, 'http') < 0 && filereadable(g:cwd . '/' . l:uri)
+        " Maybe a relative path
+        let l:uri = substitute(g:cwd . '/' . l:uri, '//', '/', 'ge')
+    else
+        let l:uri = ''
+    endif
 
     if l:uri !=# ''
         silent execute "!/usr/bin/firefox '" . shellescape(l:uri, 1) . "'"
@@ -2958,6 +2967,8 @@ function! s:go_url(url, ...) abort
         silent! call repeat#set("\<Plug>" . l:repeatable)
 
         echo 'Opened:   ' . l:uri[0 : winwidth(0) - 15]
+    else
+        echo 'Nothing to do.'
     endif
 endfunction
 
