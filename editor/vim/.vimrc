@@ -1372,6 +1372,7 @@ nnoremap <silent> yob :<C-u>set <C-r>=(&background ==# 'light')
             \ : 'background=light' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
 nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
 nnoremap <silent> yom :<C-u>setlocal modifiable!<Enter>
+nnoremap <silent> yod :<C-u>setlocal scrollbind!<Enter>
 nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
