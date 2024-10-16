@@ -2905,6 +2905,22 @@ function! s:isrunning(dependency) abort
     return len(l:running) > 0
 endfunction
 
+" Use cases:
+"   vim
+"   vim.org
+"   www.vim.org
+"   http://www.vim.org
+"   https://www.vim.org
+"   'https://www.vim.org'
+"   "https://www.vim.org"
+"   [Vim](https://www.vim.org)
+"   https://www.vim.org/scripts/script_search_results.php?keywords=tips&script_type=&order_by=rating
+"   https:\\/\\/www.vim.org
+"   https://www.vim.org.
+"   https://www.vim.org,
+"   https://www.vim.org;
+"   editor/vim/.vimrc
+"   /etc/hosts
 " url (string), [string repeatable]: void
 function! s:go_url(url, ...) abort
     if !<SID>isrunning('/opt/firefox/firefox-bin')
@@ -2918,18 +2934,21 @@ function! s:go_url(url, ...) abort
     " URL or [relative] path
     let l:uri = a:url
 
+    if match(a:url, '\c^[a-z\-0-9]\+\.[a-z.?=&/\-0-9]\+') >= 0
+        " Maybe a URI
+        let l:uri = 'https://' . a:url
+    endif
+
     if match(l:uri, 'http') < 0
         " Search URI
         " @inspired https://www.reddit.com/r/vim/comments/1d7971t/open_the_url_nearest_to_the_cursor_in_a_web/
         let l:temp = getline(".")->split(' ')->map({_, v -> matchstr(v, '\chttp\(s\)\?:\/\/[a-z.@:?=&/\-0-9]\+')})->filter('!empty(v:val)')->sort()->uniq()
         let l:uri = len(l:temp) > 0 ? l:temp[0] : l:uri
-    elseif match(a:url, '\c^[a-z\-0-9]\+\.[a-z.?=&/\-0-9]\+') >= 0
-        " Maybe a URI
-        let l:uri = 'https://' . a:url
     endif
 
     let l:repeatable = a:0 > 0 ? a:1 : 'GoUrlRepeatable'
 
+    " Maybe Markdown Link
     if match(l:uri, '[') >= 0
         let l:uri = substitute(l:uri, '\v\[(.*)\]', '', '')
     endif
@@ -2950,13 +2969,18 @@ function! s:go_url(url, ...) abort
         let l:uri = substitute(l:uri, ' ', '\\ ', 'ge')
     endif
 
+    let l:uri = trim(l:uri, '.')
     let l:uri = trim(l:uri, ',')
     let l:uri = trim(l:uri, ';')
 
     if match(l:uri, 'http') < 0 && filereadable(g:cwd . '/' . l:uri)
         " Maybe a relative path
         let l:uri = substitute(g:cwd . '/' . l:uri, '//', '/', 'ge')
-    else
+    elseif match(l:uri, 'http') < 0 && match(l:uri, '/') ==# 0 && filereadable(l:uri)
+        " Maybe a absolute path
+        let l:uri = substitute(l:uri, '//', '/', 'ge')
+    elseif match(l:uri, 'http') < 0
+        " Not URL, not path, then: nothing
         let l:uri = ''
     endif
 
