@@ -5348,7 +5348,7 @@ EOF
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], '')) | call <SID>statusline('f')
 
     " Hide sensible information (maybe share all screen or pair programming)
-    autocmd FocusLost *.asc,hosts.yml let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t')
+    autocmd FocusLost *.asc,hosts.yml if &modifiable ==# 1 | let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t') | endif
     autocmd FocusLost * silent! wall
 
     autocmd InsertEnter * call <SID>popup_hide()
