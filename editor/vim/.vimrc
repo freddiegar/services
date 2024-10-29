@@ -574,6 +574,9 @@ if has('gui_running')
             autocmd GUIFailed * qall
         endif
 
+        " Using i3 the whole screen height will be used by the window
+        set guiheadroom=0
+
         " @see :h 'conceallevel'
         " Always is weird
         " autocmd FileType markdown setlocal conceallevel=2 " concealcursor=nv
@@ -5422,7 +5425,8 @@ EOF
                 \ endif
 
     autocmd VimLeavePre * call <SID>sessionsave()
-    autocmd VimLeave * call <SID>settitle('$USER@$HOST')
+    " Not flushed X clipboard when Vim exits
+    autocmd VimLeave * call <SID>settitle('$USER@$HOST') | call system("echo -n $'" - escape(getreg(),"'") . " ' | xsel --input --clipboard")
     " Auto-source syntax in *.vpm
     autocmd BufReadPost,BufNewFile *.vpm
         \ if filereadable(expand('syntax.vim')) |
