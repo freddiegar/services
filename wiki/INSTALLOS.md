@@ -859,6 +859,22 @@ sudo chmod +x /usr/local/bin/docker-compose
 docker network create --driver=bridge --subnet=172.20.0.0/16 --gateway=172.20.0.1 development
 ```
 
+## Docker Logs
+
+[See](https://linuxiac.com/reducing-docker-logs-file-size/)
+
+```bash
+echo '{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "5m",
+    "max-file": "3"
+  }
+}' | sudo tee /etc/docker/daemon.json
+
+sudo systemctl restart docker
+```
+
 # MySQL Client (Server is using Docker)
 
 ```bash

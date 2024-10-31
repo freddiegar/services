@@ -1444,10 +1444,10 @@ Deploy laravelphp docker image
 docker pull laravelphp/vapor:php74
 
 # Run container
-docker run --name vapor74 -it --rm -d -w /var/www/html laravelphp/vapor:php74
+docker run --name vapor74 -it --rm -d -v /var/www/html:/var/www/html -w /var/www/html laravelphp/vapor:php74
 
 # Use container
-docker exec vapor74 sh
+docker exec -it vapor74 sh
 
 # Install PHP extension
 apk add --update --no-cache gmp gmp-dev \
