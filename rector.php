@@ -52,4 +52,5 @@ return RectorConfig::configure()
         \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
         \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read
         \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
+        \Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class, // For now ignores
     ]);
