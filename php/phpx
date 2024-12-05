@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -o nounset
 
+# Usage phpx
+#   phpx --version -> Show current version
+
 if [ -f composer.json ]; then
     PHPBIN=`cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}'`
 

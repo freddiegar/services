@@ -246,8 +246,10 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
     " cwd (string)
     function! s:initialize(cwd) abort
         let g:cwd = a:cwd
+        let g:working = split(g:cwd, '/')[-2 :]
         let g:dsource = isdirectory(g:cwd . '/app') ? g:cwd . '/app' : g:cwd . '/src'
         let g:dtests = isdirectory(g:cwd . '/tests') ? g:cwd . '/tests' : g:cwd
+
         let g:cache = {}
         " For [e]nvironment files
         let g:cache['e'] = {}
@@ -255,10 +257,11 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:cache['x'] = {}
         " For [t]ypes files
         let g:cache['t'] = {}
+
+        let g:istty = $TERM ==# 'linux' && !has('gui_running')
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
-        let g:working = split(g:cwd, '/')[-2 :]
-        let g:istty = $TERM ==# 'linux' && !has('gui_running')
+        let g:hasiaa = filereadable(expand(a:cwd . '/../.hasiaa'))
         let g:qfcommand = get(g:, 'qfcommand', '')
 
         " File is large from 2MB
@@ -435,7 +438,7 @@ if executable('rg')
     " @see https://vi.stackexchange.com/questions/13662/is-there-a-way-to-update-the-quickfix-entries-after-running-cdo-cfdo
     command! -nargs=0 -bar C call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
 
-    nnoremap <Space>gG :Grep =expand('<cword>')<Enter>
+    nnoremap <Leader>gG :Grep =expand('<cword>')<Enter>
 
     " No learn new command, use :grep and :lgrep with superpowers
     cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() =~# '^grep') ? 'Grep' : 'grep'
@@ -1917,12 +1920,13 @@ inoremap <silent> <C-a> <C-o>^
 inoremap <silent> <expr> <C-e>
             \ pumvisible() ? "\<lt>C-e>" :
             \ "\<C-o>$"
-inoremap <silent> <C-k> <C-g>u<Up>
-inoremap <silent> <C-j> <C-g>u<Down>
-inoremap <silent> <C-h> <C-g>u<Left>
-inoremap <silent> <C-l> <C-g>u<Right>
 inoremap <silent> <C-b> <C-o>B
 inoremap <silent> <C-f> <C-o>W
+" IAA Conflict and unused anywhere
+" inoremap <silent> <C-k> <C-g>u<Up>
+" inoremap <silent> <C-j> <C-g>u<Down>
+" inoremap <silent> <C-h> <C-g>u<Left>
+" inoremap <silent> <C-l> <C-g>u<Right>
 
 " Same behaviour in Insert Mode
 inoremap <silent> <C-z> <Esc><C-z>
@@ -2191,7 +2195,7 @@ if g:isneovim
     " if has('gui_running')
     Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
     " Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
-    Plug 'iguanacucumber/magazine.nvim', {'as': 'nvim-cmp'}   " Integrate autocomplete
+    Plug 'iguanacucumber/magazine.nvim', {'as': 'nvim-cmp'}   " Integrate autocomplete (beta mode)
     " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
     Plug 'hrsh7th/cmp-buffer'                                 " Integrate for buffer
     " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
@@ -2207,6 +2211,14 @@ else
     Plug 'ludovicchabant/vim-gutentags'                       " Auto generate tags (not allowed 'for' option)
 
     " Plug 'yegappan/lsp'                                       " LSP -> Not integrate mappings from UltiSnips
+endif
+
+if g:hasiaa && g:hasgit && !<SID>mustbeignore()
+    if g:isneovim
+        Plug 'zbirenbaum/copilot.lua'                           " Zen mode +++++: Copilot auth
+    else
+        Plug 'github/copilot.vim'                               " Zen mode +++++: Copilot setup
+    endif
 endif
 
 Plug 'freddiegar/miningbox.vim'                                 " Finally colorscheme
@@ -2432,6 +2444,22 @@ let g:highlightedyank_highlight_duration = 200
 " Undo Tree
 " @see https://github.com/mbbill/undotree
 nmap <silent> <C-w>u :UndotreeToggle<Enter>
+
+" IAA
+" @see https://github.com/github/copilot.vim
+let g:copilot_filetypes = {
+            \ '*': v:false,
+            \ 'php': v:true,
+            \ }
+
+if g:hasiaa
+    let g:copilot_no_tab_map = v:true
+    inoremap <silent> <expr> <C-]> copilot#Accept('')
+    inoremap <silent> <C-k> <Plug>(copilot-next)
+    inoremap <silent> <C-j> <Plug>(copilot-previous)
+    inoremap <silent> <C-h> <Plug>(copilot-accept-word)
+    inoremap <silent> <C-l> <Plug>(copilot-accept-line)
+endif
 
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
@@ -2804,7 +2832,7 @@ let g:suda#prompt = printf('[sudo] password for %s: ', $USER)
 
 " " Use <Ctrl-Space> to trigger completion.
 " if g:isneovim
-"     inoremap <silent> <expr> <c-space> coc#refresh()
+"     inoremap <silent> <expr> <C-Space> coc#refresh()
 " else
 "     inoremap <silent> <expr> <C-@> coc#refresh()
 " endif
@@ -4125,6 +4153,42 @@ lua <<EOF
     vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
 EOF
         endfunction
+
+        " IAA
+        " @see https://github.com/zbirenbaum/copilot.lua
+        autocmd BufReadPost * ++once silent call <SID>niaassistence()
+
+        function! s:niaassistence() abort
+            if !g:hasiaa || exists('g:plug_iaassistence_loaded')
+                return
+            endif
+
+            let g:plug_iaassistence_loaded = 1
+
+" Don't indent!
+lua <<EOF
+    require('copilot').setup {
+        suggestion = {
+            auto_trigger = true, -- Starts suggestions in Insert Mode
+            keymap = {
+                accept = '<C-]>',
+                next = '<C-k>',
+                prev = '<C-j>',
+                accept_word = '<C-h>',
+                accept_line = '<C-l>',
+                dismiss = '<C-e>',
+            },
+        },
+        panel = {
+            enabled = false,
+        },
+        filetypes = {
+            ['*'] = false,
+            php = true,
+        },
+    }
+EOF
+    endfunction
     else
         " " @see https://github.com/yegappan/lsp/blob/main/doc/lsp.txt#
         " let g:lsp_use_native_client = 1
@@ -5005,9 +5069,9 @@ EOF
         if !argc() && g:hasgit && empty(v:this_session) && filereadable(g:session_file) && !&modified
             silent! execute 'source ' . g:session_file
 
-            let l:message = 'Loaded ' . l:session . '##ENV####INF##.'
+            let l:message = 'Loaded ' . l:session . '##ENV####INF####IAA##.'
         elseif !argc() && g:hasgit
-            let l:message = 'Created ' . l:session . '##ENV####INF##.'
+            let l:message = 'Created ' . l:session . '##ENV####INF####IAA##.'
         endif
 
         if l:envfile !=# ''
@@ -5021,6 +5085,10 @@ EOF
             let l:message = l:message ==# '' ? 'Loaded ' . g:infofile . ' setup.' : substitute(l:message, '##INF##', ' and ' . g:infofile, '')
         endif
 
+        if g:hasiaa
+            let l:message = l:message ==# '' ? 'Enabled IA Assistant.' : substitute(l:message, '##IAA##', ' (using IA)', '')
+        endif
+
         set undofile                                            " Enable undo world (default: off)
         let &undodir = g:undodir
 
@@ -5031,6 +5099,7 @@ EOF
         if l:message !=# ''
             let l:message = substitute(l:message, '##ENV##', '', '')
             let l:message = substitute(l:message, '##INF##', '', '')
+            let l:message = substitute(l:message, '##IAA##', '', '')
 
             echomsg l:message
         endif

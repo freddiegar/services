@@ -1736,7 +1736,7 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 24.04.1 LTS
 uname -r
-# 6.8.0-45-generic
+# 6.8.0-49-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.39
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -1797,7 +1797,7 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.2.24
+# 8.2.26
 # nvm --version
 # # 0.39.3
 npm --version
@@ -1805,7 +1805,7 @@ npm --version
 node --version
 # v20.17.0
 mysql --version | awk '{print $3}'
-# 8.0.39-0ubuntu0.24.04.2
+# 8.0.40-0ubuntu0.24.04.1
 # stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
@@ -1817,7 +1817,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.23.1
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(ecf0c4ad)
+# 6.1.0(9a7cfa31)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -1825,10 +1825,10 @@ ftp about:version | head -1 | awk '{print $3}'
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 dpkg --list | wc --lines
-# 2517
+# 2526
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
 # 93
 apt list --installed | wc --lines
-# 2339
+# 2340
 apt-mark showmanual | wc --lines
-# 419
+# 421

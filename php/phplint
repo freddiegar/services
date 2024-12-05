@@ -3,6 +3,12 @@ set -o nounset
 
 # Recursively call `php -l` over the specified directories/files
 # @thanks https://gist.github.com/akrabat/138951fc3f0ef85e3d5f8ff4672fbf39
+# Usage phplint
+#   phplint .               -> Use phpx version
+#   phplint . 8.1           -> Use PHP 8.1 version as linter
+#   phplint file.php        -> Use phpx version as linter in file
+#   phplint app 8.2         -> Use PHP 8.2 version as linter in app folder
+#   phplint app tests 8.3   -> Use PHP 8.3 version as linter in folders (or files spaced separated)
 
 if [ $# -lt 1 ] ; then
     printf 'Usage: %s <directory-or-file> [<more-directory-or-file>] [<php-version>]...\n' "$(basename "$0")"
