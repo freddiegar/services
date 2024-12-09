@@ -750,6 +750,8 @@ cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/
 # Config file to use in process
 export OPENSSL_CONF=/var/www/html/freddiegar/services/docker/ssl/openssl.cnf
 
+cp -pr /var/www/ssl /var/www/ssl-backup
+
 cd /var/www/ssl
 
 echo 'unique_subject = no' > index.txt.attr
@@ -797,6 +799,7 @@ cp -p /var/www/ssl/intermediate/certs/ca-chain.cert.pem /var/www/html/freddiegar
 cp -p /var/www/ssl/intermediate/certs/development.local.cert.pem /var/www/html/freddiegar/services/docker/ssl/
 cp -p /var/www/ssl/intermediate/private/development.local.key.pem /var/www/html/freddiegar/services/docker/ssl/
 
+rm -Rf /var/www/ssl-backup
 ```
 > Upload new CA in browser: /var/www/html/freddiegar/services/docker/ssl/ca.cert.pem
 
