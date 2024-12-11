@@ -35,7 +35,7 @@ while test $# -gt 0; do
     fi
 
     if [ ! -f $CURRENT ] && [ ! -d $CURRENT ] ; then
-        echo "\e[31m$CURRENT cannot be found.\e[0m"
+        echo -e "\e[31m$CURRENT cannot be found.\e[0m"
 
         ERROR=true
 
