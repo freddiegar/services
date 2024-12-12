@@ -664,7 +664,7 @@ let g:filterprg = split(&grepprg)[0] ==# 'rg'
             \ : split(&grepprg)[0] . ' -E'
 
 function! GetNameCurrentPath() abort
-    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish'], &filetype) < 0
+    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish', 'copilot-chat'], &filetype) < 0
                 \ ? split(g:cwd, '/')[-1] . (expand('%:t') !=# '' ? ' ' : '')
                 \ : ''
 endfunction
@@ -693,7 +693,7 @@ function! GetNameCurrentFile() abort
 endfunction
 
 function! GetNameBranch() abort
-    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
+    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
         return ' '
     endif
 
@@ -704,7 +704,7 @@ endfunction
 
 " executable (string)
 function! GetVersion(executable) abort
-    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
+    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
         return ''
     endif
 
@@ -730,7 +730,7 @@ endfunction
 function! GetTypeCurrentFile() abort
     let l:path = expand('%:p')
 
-    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
+    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
         return ''
     endif
 
@@ -761,7 +761,7 @@ endfunction
 
 function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
-                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
+                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
         return g:test_strategy ==# 'background' ? '[A]' : ''
     endif
@@ -856,7 +856,7 @@ function! s:statusline(lastmode) abort
 
     let g:statusline_unique = l:uniqueid
 
-    if index(['popup', 'help', 'man',], &buftype) >= 0
+    if index(['popup', 'help', 'man', 'copilot-chat'], &buftype) >= 0
         setlocal statusline+=\                                  " Extra space
         setlocal statusline+=%f                                 " Relative filename
 
@@ -1314,7 +1314,7 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 nnoremap <silent> <expr> <Leader>z
             \ &filetype ==# 'netrw'
             \ ? ":let g:netrwopen = 0 <Bar> bwipeout<Enter>"
-            \ : index(['', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
+            \ : index(['', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
             \ ? ":bdelete!<Enter>"
             \ : ":update
             \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
@@ -2216,6 +2216,9 @@ endif
 if g:hasiaa && g:hasgit && !<SID>mustbeignore()
     if g:isneovim
         Plug 'zbirenbaum/copilot.lua'                           " Zen mode +++++: Copilot auth
+
+        Plug 'nvim-lua/plenary.nvim'                            " cURL wrapper required
+        Plug 'CopilotC-Nvim/CopilotChat.nvim'                   " Explain, Review, Fix, Optimize, Docs, Tests using Copilot
     else
         Plug 'github/copilot.vim'                               " Zen mode +++++: Copilot setup
     endif
@@ -2397,7 +2400,7 @@ let g:user_emmet_install_global = 0
 
 " " file (string): void
 " function! s:show_context(file) abort
-"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
+"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
 "         if exists(':ContextActivate')
 "             silent execute 'ContextDisable'
 "         endif
@@ -2450,9 +2453,10 @@ nmap <silent> <C-w>u :UndotreeToggle<Enter>
 let g:copilot_filetypes = {
             \ '*': v:false,
             \ 'php': v:true,
+            \ 'vue': v:true,
             \ }
 
-if g:hasiaa
+if g:hasiaa && !<SID>mustbeignore()
     let g:copilot_no_tab_map = v:true
     inoremap <silent> <expr> <C-]> copilot#Accept('')
     inoremap <silent> <C-k> <Plug>(copilot-next)
@@ -4159,7 +4163,7 @@ EOF
         autocmd BufReadPost * ++once silent call <SID>niaassistence()
 
         function! s:niaassistence() abort
-            if !g:hasiaa || exists('g:plug_iaassistence_loaded')
+            if !g:hasiaa || exists('g:plug_iaassistence_loaded') || <SID>mustbeignore()
                 return
             endif
 
@@ -4167,6 +4171,7 @@ EOF
 
 " Don't indent!
 lua <<EOF
+    -- 3 "S" Principles: Simple -> Specific -> Short
     require('copilot').setup {
         suggestion = {
             auto_trigger = true, -- Starts suggestions in Insert Mode
@@ -4185,9 +4190,70 @@ lua <<EOF
         filetypes = {
             ['*'] = false,
             php = true,
+            vue = true,
         },
     }
 EOF
+
+" Don't indent!
+lua << EOF
+    require('CopilotChat').setup {
+        prompts = {
+            Noob = {
+                prompt = '> /COPILOT_EXPLAIN\n\nPlease, write an explanation for the selected code for a non-IT audience as paragraphs of text. Avoid complex words and terms.',
+            },
+            -- Defaults
+            -- Explain:  '> /COPILOT_EXPLAIN\n\nWrite an explanation for the selected code as paragraphs of text.'
+            -- Review:   '> /COPILOT_REVIEW\n\nReview the selected code.'
+            -- Fix:      '> /COPILOT_GENERATE\n\nThere is a problem in this code. Rewrite the code to show it with the bug fixed.'
+            -- Optimize: '> /COPILOT_GENERATE\n\nOptimize the selected code to improve performance and readability.'
+            -- Docs:     '> /COPILOT_GENERATE\n\nPlease add documentation comments to the selected code.'
+            -- Tests:    '> /COPILOT_GENERATE\n\nPlease generate tests for my code.'
+            -- Commit:   '> #git:staged\n\nWrite commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.'
+        }
+    }
+EOF
+    endfunction
+
+    nnoremap <silent> <Leader>l <Cmd>call <SID>iaa_features()<Enter>
+    xnoremap <silent> <Leader>l :<C-u>call <SID>iaa_features()<Enter>
+
+    " @thanks https://jsuarez.dev/blog/copilot_chat_neovim/
+    " @see https://github.com/CopilotC-Nvim/CopilotChat.nvim
+    function! s:iaa_features() abort
+        let l:mode = confirm('Go to:', "e&xplain\nrevie&w\n&fix\n&optimize\n&docs\n&tests\n&ask\n&chat\n&noob\nco&mmit\n&reset", 1, 'Q')
+
+        if l:mode ==# 0
+            return ''
+        elseif l:mode ==# 1
+            execute ':CopilotChatExplain'
+        elseif l:mode ==# 2
+            execute ':CopilotChatReview'
+        elseif l:mode ==# 3
+            execute ':CopilotChatFix'
+        elseif l:mode ==# 4
+            execute ':CopilotChatOptimize'
+        elseif l:mode ==# 5
+            execute ':CopilotChatDocs'
+        elseif l:mode ==# 6
+            execute ':CopilotChatTests'
+        elseif l:mode ==# 7
+            let l:input = input('Ask: ')
+
+            if l:input !=# ''
+                execute ':CopilotChat ' . l:input
+            endif
+        elseif l:mode ==# 8
+            execute ':CopilotChatOpen'
+        elseif l:mode ==# 9
+            execute ':CopilotChatNoob'
+        elseif l:mode ==# 10
+            execute ':CopilotChatCommit'
+        elseif l:mode ==# 11
+            execute ':CopilotChatReset'
+        endif
+
+        return ''
     endfunction
     else
         " " @see https://github.com/yegappan/lsp/blob/main/doc/lsp.txt#
@@ -5113,7 +5179,7 @@ EOF
 
     function! s:sessionremoveitem(item) abort
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
-                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive', 'dirvish', 'checkhealth'], getbufvar(a:item, '&filetype')) >= 0
+                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive', 'dirvish', 'checkhealth', 'copilot-chat'], getbufvar(a:item, '&filetype')) >= 0
                     \ || buflisted(a:item) == 0
                     \ || (match(a:item, '.') >= 0 && split(a:item, '\.')[-1] ==# 'dbout')
                     \ || isdirectory(a:item)

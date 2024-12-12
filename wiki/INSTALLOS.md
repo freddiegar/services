@@ -957,7 +957,7 @@ cd git/repository
 git config user.signingkey [ID]
 ```
 
-## Export Public GPG Key (for GitHub example)
+## Export Public GPG Key (for GitHub or BitBucket)
 
 [See](https://github.com/settings/keys)
 
