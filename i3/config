@@ -338,7 +338,7 @@ bar {
     # Menu only in primary screen
     tray_output primary
 
-    # No show status bar
+    # No show status bar, to show use: dock
     mode hide
     # hidden_state hide (default)
 
