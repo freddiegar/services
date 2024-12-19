@@ -502,3 +502,14 @@ exit 0" | sudo tee -a /etc/rc.local
 
 sudo chmod 744 /etc/rc.local
 ```
+
+Show heap size limit in node
+
+```bash
+node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))'
+
+# Change value to 4G, 8G, 16G
+export NODE_OPTIONS="--max-old-space-size=4096"
+export NODE_OPTIONS="--max-old-space-size=8192"
+export NODE_OPTIONS="--max-old-space-size=16384"
+```

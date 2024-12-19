@@ -2454,6 +2454,7 @@ let g:copilot_filetypes = {
             \ '*': v:false,
             \ 'php': v:true,
             \ 'vue': v:true,
+            \ 'javascript': v:true,
             \ }
 
 if g:hasiaa && !<SID>mustbeignore()
@@ -4191,6 +4192,7 @@ lua <<EOF
             ['*'] = false,
             php = true,
             vue = true,
+            javascript = true,
         },
     }
 EOF
@@ -4221,7 +4223,7 @@ EOF
     " @thanks https://jsuarez.dev/blog/copilot_chat_neovim/
     " @see https://github.com/CopilotC-Nvim/CopilotChat.nvim
     function! s:iaa_features() abort
-        let l:mode = confirm('Go to:', "e&xplain\nrevie&w\n&fix\n&optimize\n&docs\n&tests\n&ask\n&chat\n&noob\nco&mmit\n&reset", 1, 'Q')
+        let l:mode = confirm('Go to:', "e&xplain\nrevie&w\n&fix\noptimi&ze\n&docs\n&tests\n&noob\nco&mmit\n&ask", 1, 'Q')
 
         if l:mode ==# 0
             return ''
@@ -4238,19 +4240,17 @@ EOF
         elseif l:mode ==# 6
             execute ':CopilotChatTests'
         elseif l:mode ==# 7
+            execute ':CopilotChatNoob'
+        elseif l:mode ==# 8
+            execute ':CopilotChatCommit'
+        elseif l:mode ==# 9
             let l:input = input('Ask: ')
 
-            if l:input !=# ''
+            if trim(l:input) !=# ''
                 execute ':CopilotChat ' . l:input
             endif
-        elseif l:mode ==# 8
+
             execute ':CopilotChatOpen'
-        elseif l:mode ==# 9
-            execute ':CopilotChatNoob'
-        elseif l:mode ==# 10
-            execute ':CopilotChatCommit'
-        elseif l:mode ==# 11
-            execute ':CopilotChatReset'
         endif
 
         return ''

@@ -14,7 +14,7 @@ services:
       development:
         ipv4_address: $DB57_IP_ADDRESS
     ports:
-    - $DB57_PORT:3306
+      - $DB57_PORT:3306
     deploy:
       resources:
         limits:
@@ -35,7 +35,7 @@ services:
       development:
         ipv4_address: $DB80_IP_ADDRESS
     ports:
-    - $DB80_PORT:3306
+      - $DB80_PORT:3306
     deploy:
       resources:
         limits:
@@ -56,7 +56,7 @@ services:
       development:
         ipv4_address: $DBRD_IP_ADDRESS
     ports:
-    - $DBRD_PORT:3306
+      - $DBRD_PORT:3306
     deploy:
       resources:
         limits:
@@ -77,7 +77,7 @@ services:
       development:
         ipv4_address: $DBRX_IP_ADDRESS
     ports:
-    - $DBRX_PORT:3306
+      - $DBRX_PORT:3306
     deploy:
       resources:
         limits:
@@ -94,7 +94,7 @@ services:
       development:
         ipv4_address: 172.20.0.11
     ports:
-    - 1433:1433
+      - 1433:1433
     deploy:
       resources:
         limits:
@@ -139,8 +139,8 @@ services:
       development:
         ipv4_address: 172.20.0.83
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -170,8 +170,8 @@ services:
       development:
         ipv4_address: 172.20.0.82
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -201,8 +201,8 @@ services:
       development:
         ipv4_address: 172.20.0.81
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -232,8 +232,8 @@ services:
       development:
         ipv4_address: 172.20.0.80
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -263,8 +263,8 @@ services:
       development:
         ipv4_address: 172.20.0.74
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -293,8 +293,8 @@ services:
       development:
         ipv4_address: 172.20.0.73
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -323,8 +323,8 @@ services:
       development:
         ipv4_address: 172.20.0.72
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -353,8 +353,8 @@ services:
       development:
         ipv4_address: 172.20.0.71
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -383,8 +383,8 @@ services:
       development:
         ipv4_address: 172.20.0.70
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -413,8 +413,8 @@ services:
       development:
         ipv4_address: 172.20.0.56
     expose:
-    - 80
-    - 443
+      - 80
+      - 443
     extra_hosts:
       - "host.docker.internal:${HOST_DOCKER}"
     deploy:
@@ -436,7 +436,7 @@ services:
       development:
         ipv4_address: 172.20.0.50
     ports:
-    - $QUEUE_PORT:9001
+      - $QUEUE_PORT:9001
     deploy:
       resources:
         limits:
@@ -452,9 +452,9 @@ services:
       development:
         ipv4_address: $PROXY_IP_ADDRESS
     ports:
-    - '80:80'
-    - '443:443'
-    - '32700:32700'
+      - '80:80'
+      - '443:443'
+      - '32700:32700'
     deploy:
       resources:
         limits:
@@ -485,7 +485,7 @@ services:
       development:
         ipv4_address: 172.20.0.98
     ports:
-    - '2375:2375'
+      - '2375:2375'
     extra_hosts:
       - development.local:$PROXY_IP_ADDRESS
 
@@ -499,7 +499,7 @@ services:
       development:
         ipv4_address: 172.20.0.97
     ports:
-    - '8022:22'
+      - '8022:22'
     extra_hosts:
       - development.local:$PROXY_IP_ADDRESS
     deploy:
@@ -521,7 +521,7 @@ services:
       development:
         ipv4_address: 172.20.0.96
     ports:
-    - '8023:22'
+      - '8023:22'
     extra_hosts:
       - development.local:$PROXY_IP_ADDRESS
     deploy:
