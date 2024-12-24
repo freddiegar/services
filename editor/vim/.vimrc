@@ -2194,8 +2194,8 @@ if g:isneovim
 
     " if has('gui_running')
     Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
-    " Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
-    Plug 'iguanacucumber/magazine.nvim', {'as': 'nvim-cmp'}   " Integrate autocomplete (beta mode)
+    Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
+    " Plug 'iguanacucumber/magazine.nvim', {'as': 'nvim-cmp'}   " Integrate autocomplete (beta mode)
     " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
     Plug 'hrsh7th/cmp-buffer'                                 " Integrate for buffer
     " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
@@ -5282,6 +5282,7 @@ EOF
     "     [e]nd of file lines
     "     [f]orce
     "    t[i]mes
+    "     [k]eys
     "     [m]arks
     "     [p]rofile log
     "     [q]uery log
@@ -5336,6 +5337,12 @@ EOF
             silent! keeppatterns g/^\s*$/d_
 
             silent call add(l:cleanup, 'empty lines')
+        endif
+
+        if index(l:options, 'k') >= 0
+            silent! keeppatterns %s/: ".*"\(,\)\?//e
+
+            silent call add(l:cleanup, 'json values')
         endif
 
         if index(l:options, 'e') >= 0
@@ -5404,15 +5411,16 @@ EOF
         return 0
     endfunction
 
-    command! -nargs=0 CE call <SID>cleanup('vftey')
-    command! -nargs=0 CS call <SID>cleanup('vfte')
     command! -nargs=0 CB call <SID>cleanup('vfb')
     command! -nargs=0 CC call <SID>cleanup('vfced')
+    command! -nargs=0 CE call <SID>cleanup('vftey')
+    command! -nargs=0 CK call <SID>cleanup('vfk')
     command! -nargs=0 CL call <SID>cleanup('vfted')
-    command! -nargs=0 CQ call <SID>cleanup('vfq')
-    command! -nargs=0 CP call <SID>cleanup('vfp')
-    command! -nargs=0 CR call <SID>cleanup('vfr')
     command! -nargs=0 CM call <SID>cleanup('vfm')
+    command! -nargs=0 CP call <SID>cleanup('vfp')
+    command! -nargs=0 CQ call <SID>cleanup('vfq')
+    command! -nargs=0 CR call <SID>cleanup('vfr')
+    command! -nargs=0 CS call <SID>cleanup('vfte')
     command! -nargs=0 CT call <SID>cleanup('vfi')
 
     " title (string)

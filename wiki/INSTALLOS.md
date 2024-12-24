@@ -848,7 +848,7 @@ lxqt-leave
 
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.32.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -1736,11 +1736,11 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 24.04.1 LTS
 uname -r
-# 6.8.0-49-generic
+# 6.8.0-51-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.39
 gcc --version | grep -e "^gcc" | awk '{print $4}'
-# 13.2.0
+# 13.3.0
 openssl version | awk '{print $2}'
 # 3.0.10
 # 1.1.1w
@@ -1773,9 +1773,9 @@ git --version | awk '{print $3}'
 git lfs version
 # git-lfs/3.4.1 (GitHub; linux amd64; go 1.22.2)
 docker --version | awk '{print $3}' | sed 's/,//g'
-# 27.3.1
+# 27.4.1
 docker-compose --version | awk '{print $4}'
-# v2.29.7
+# v2.32.1
 feh --version | grep version | awk '{print $3}'
 # 3.10.1
 maim --version | awk '{print $1}'
@@ -1797,13 +1797,13 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.2.26
+# 8.3.15
 # nvm --version
 # # 0.39.3
 npm --version
-# 10.8.3
+# 10.9.2
 node --version
-# v20.17.0
+# v21.7.3
 mysql --version | awk '{print $3}'
 # 8.0.40-0ubuntu0.24.04.1
 # stoken --version | head -1 | awk '{print $2}'
@@ -1817,18 +1817,26 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.23.1
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(9a7cfa31)
+# 6.1.0(a484466e)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
 # 20230507
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
+pipewire --version | head -2 | awk '{print $4}'
+# 1.0.5
+NetworkManager --version
+# 1.46.0
+bluemoon --version
+# 5.72
+firefox --version | awk '{print $3}'
+# 134.0b4
 dpkg --list | wc --lines
-# 2526
+# 2535
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 93
+# 94
 apt list --installed | wc --lines
-# 2340
+# 2346
 apt-mark showmanual | wc --lines
-# 421
+# 422
