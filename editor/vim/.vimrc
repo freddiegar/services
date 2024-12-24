@@ -1834,7 +1834,13 @@ function s:go_docs(word) abort
     let l:word = a:word
     let l:docsurl = 'https://devdocs.io/#q='
 
-    if &filetype ==# 'php'
+    if &filetype ==# 'php' && expand('%:t') ==# '.php-cs-fixer.php'
+        let l:docsurl = 'https://cs.symfony.com/doc/rules/'
+
+        call setreg('+', l:word)
+
+        let l:word = ''
+    elseif &filetype ==# 'php'
         let l:docsurl = 'https://www.php.net/'
     elseif &filetype ==# 'vim-plug'
         let l:docsurl = substitute(g:plugs[l:word].uri, 'git::@', '', 'g')
