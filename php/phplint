@@ -42,7 +42,7 @@ while test $# -gt 0; do
         continue
     fi
 
-    for FILE in $(find $CURRENT -type f -name "*.php") ; do
+    for FILE in $(find $CURRENT -type f -name "*.php" | grep -v -E '.git|node_modules|vendor') ; do
         OUTPUT=$($PHPX -l "$FILE" 2> /dev/null)
         STATUS="$?"
 
