@@ -303,12 +303,15 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
 
     " Maybe $LANG isn't set, then
     set encoding=utf-8                                          " Viminfo file encoding, but, I don't another (default: utf-8)
-    set termencoding=utf-8                                      " Terminal encoding used in keyboard keys (default: tty=utf-8 konsole=empty)
     set fileencoding=utf-8                                      " Output encoding of the file that is written
                                                                 " (default: empty, but fzf.vim=utf-8)
 
     set omnifunc=syntaxcomplete#Complete                        " Default complete function global (aka: i_CTRL-X_CTRL-O) (default: empty)
     set completefunc=syntaxcomplete#Complete                    " Default complete function in buffers (aka: i_CTRL-X_CTRL-U) (default: empty)
+
+    if !g:isneovim
+        set termencoding=utf-8                                  " Terminal encoding used in keyboard keys (default: tty=utf-8 konsole=empty)
+    endif
 endif
 
 " ALL in one BIG autocmd

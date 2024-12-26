@@ -257,6 +257,7 @@ sudo update-alternatives --config x-session-manager
 
 ```bash
 cat ~/.xinitrc
+
 echo 'dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
 xrdb -I$HOME ~/.Xresources
 exec i3' >> ~/.xinitrc
@@ -389,6 +390,9 @@ cd lua-language-server
 git pull origin master
 ./make.sh
 
+# Update
+cd /var/www/html/LuaLS/lua-language-server && git pull origin master && ./make.sh
+
 # Enable globally
 sudo ln -s /var/www/html/LuaLS/lua-language-server/bin/lua-language-server /usr/local/bin/lua-language-server
 ```
@@ -417,7 +421,7 @@ echo '
 [See 3](https://github.com/golang/wiki/blob/master/Ubuntu.md#using-ppa)
 
 ```bash
-curl -L https://go.dev/dl/go1.23.1.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
+curl -L https://go.dev/dl/go1.23.4.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go-linux-amd64.tar.gz && rm go-linux-amd64.tar.gz
 go version
 
@@ -491,7 +495,7 @@ sudo chmod +x /usr/local/bin/phpctags
 ## Vim Snippets
 
 ```bash
-ln -s `pwd`/editor/vim/UltiSnips ~/.vim/UltiSnips
+ln -s `pwd`/editor/vim/UltiSnips ~/.vim/
 ```
 
 ## Vim in PHPStorm
@@ -707,30 +711,30 @@ echo '
 [ -f ~/.bash_aliases ] && \. ~/.bash_aliases' >> ~/.zshenv
 ```
 
-# PHP 8.2
+# PHP 8.3
 
 ```bash
 echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only oldest Ubuntu or with oldest version's PHP (Tune ubuntu version is required :|)
 # @see https://devtutorial.io/how-to-install-php-8-3-on-ubuntu-23-10-p3206.html
 # @see https://ppa.launchpadcontent.net/ondrej/php/ubuntu/dists/
-# @see /etc/apt/sources.list.d/ondrej-ubuntu-php-mantic.sources
-sudo apt-get install -y php8.2-cli
-sudo apt-get install -y php8.2-dev
-sudo apt-get install -y php8.2-mbstring
-sudo apt-get install -y php8.2-mysql
-sudo apt-get install -y php8.2-curl
-sudo apt-get install -y php8.2-zip
-sudo apt-get install -y php8.2-soap
-sudo apt-get install -y php8.2-gd
-sudo apt-get install -y php8.2-sqlite3
-sudo apt-get install -y php8.2-intl
-sudo apt-get install -y php8.2-memcached
-sudo apt-get install -y php8.2-redis
-sudo apt-get install -y php8.2-bcmath
-sudo apt-get install -y php8.2-gmp
-sudo apt-get install -y php8.2-xml
-sudo apt-get install -y php8.2-zip
-## sudo apt-get remove php8.2\* && sudo apt-get autoremove
+# @see /etc/apt/sources.list.d/ondrej-ubuntu-php-oracular.sources
+sudo apt-get install -y php8.3-cli
+sudo apt-get install -y php8.3-dev
+sudo apt-get install -y php8.3-mbstring
+sudo apt-get install -y php8.3-mysql
+sudo apt-get install -y php8.3-curl
+sudo apt-get install -y php8.3-zip
+sudo apt-get install -y php8.3-soap
+sudo apt-get install -y php8.3-gd
+sudo apt-get install -y php8.3-sqlite3
+sudo apt-get install -y php8.3-intl
+sudo apt-get install -y php8.3-memcached
+sudo apt-get install -y php8.3-redis
+sudo apt-get install -y php8.3-bcmath
+sudo apt-get install -y php8.3-gmp
+sudo apt-get install -y php8.3-xml
+sudo apt-get install -y php8.3-zip
+## sudo apt-get remove php8.3\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
 ```
 
@@ -864,6 +868,8 @@ docker network create --driver=bridge --subnet=172.20.0.0/16 --gateway=172.20.0.
 [See](https://linuxiac.com/reducing-docker-logs-file-size/)
 
 ```bash
+grep "log-driver\|log-opts" /etc/docker/daemon.json
+
 echo '{
   "log-driver": "json-file",
   "log-opts": {
@@ -871,6 +877,8 @@ echo '{
     "max-file": "3"
   }
 }' | sudo tee /etc/docker/daemon.json
+
+grep "log-driver\|log-opts" /etc/docker/daemon.json
 
 sudo systemctl restart docker
 ```
@@ -1403,7 +1411,7 @@ sudo apt-get install -y filezilla
 ```bash
 # VS Code
 cd ~
-curl -L "https://vscode.download.prss.microsoft.com/dbazure/download/stable/38c31bc77e0dd6ae88a4e9cc93428cc27a56ba40/code_1.93.1-1726079302_amd64.deb" -o vscode.deb
+curl -L "https://vscode.download.prss.microsoft.com/dbazure/download/stable/fabdb6a30b49f79a7aba0f2ad9df9b399473380f/code_1.96.2-1734607745_amd64.deb" -o vscode.deb
 sudo dpkg -i vscode.deb
 rm -f vscode.deb
 ## sudo apt-get remove code && sudo apt-get autoremove
@@ -1699,6 +1707,8 @@ chmod 700 /root/module-signing/sign-vbox-modules
 
 ## Remove Snap Unused
 
+In olders Ubuntu versions < 24.10
+
 ```bash
 sudo snap list
 
@@ -1734,13 +1744,13 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 ## Commands
 
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
-# Ubuntu 24.04.1 LTS
+# Ubuntu 24.10
 uname -r
-# 6.8.0-51-generic
+# 6.11.0-13-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
-# 2.39
+# 2.2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
-# 13.3.0
+# 14.2.0
 openssl version | awk '{print $2}'
 # 3.0.10
 # 1.1.1w
@@ -1753,31 +1763,31 @@ i3status --version | grep -e "i3status" | awk '{print $2}'
 urxvt -help 2>&1 | head -n 1 | awk '{print $3}'
 # v9.31
 bash --version | grep -e "bash" | awk '{print $4}'
-# 5.2.21(1)-release
+# 5.2.32(1)-release
 zsh --version | awk '{print $2}'
 # 5.9
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
 # https://github.com/vim/vim/releases/tag/v9.1.#
-# 9.1.Included patches: 1-16, 647, 678, 697
+# 9.1.Included patches: 1-16, 647-648, 678, 697, 689, 17-496, 707
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
 # Stable:   v0.7.2-LuaJIT 2.1.0-beta3
-# Unstable: v0.11.0-dev-LuaJIT 2.1.1703358377
+# Unstable: v0.11.0-dev-LuaJIT 2.1.1719379426
 neovide --version | awk '{print $2}'
 # 0.13.3
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.12
 curl --version | grep -e "^curl " | awk '{print $2}'
-# 8.5.0
+# 8.9.1
 git --version | awk '{print $3}'
-# 2.43.0
+# 2.45.2
 git lfs version
-# git-lfs/3.4.1 (GitHub; linux amd64; go 1.22.2)
+# git-lfs/3.5.0 (GitHub; linux amd64; go 1.22.2)
 docker --version | awk '{print $3}' | sed 's/,//g'
 # 27.4.1
 docker-compose --version | awk '{print $4}'
 # v2.32.1
 feh --version | grep version | awk '{print $3}'
-# 3.10.1
+# 3.10.2
 maim --version | awk '{print $1}'
 # v5.7.4
 unzip -v | grep "^UnZip.*\.$" | awk '{print $2}'
@@ -1805,17 +1815,17 @@ npm --version
 node --version
 # v21.7.3
 mysql --version | awk '{print $3}'
-# 8.0.40-0ubuntu0.24.04.1
+# 8.0.40-0ubuntu0.24.10.1
 # stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
-# 3.12.3
+# 3.12.7
 ruby --version | awk '{print $2}'
-# 3.2.3
+# 3.3.4
 rustc --version | awk '{print $2}'
 # 1.81.0
 go version | awk '{print $3}' | sed 's/go//g'
-# 1.23.1
+# 1.23.4
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
 # 6.1.0(a484466e)
 gpg1 --version | head -1 | awk '{print $3}'
@@ -1825,18 +1835,18 @@ ftp about:version | head -1 | awk '{print $3}'
 ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 pipewire --version | head -2 | awk '{print $4}'
-# 1.0.5
+# 1.2.4
 NetworkManager --version
-# 1.46.0
+# 1.48.8
 bluemoon --version
-# 5.72
+# 5.77
 firefox --version | awk '{print $3}'
-# 134.0b4
+# 134.0b10
 dpkg --list | wc --lines
-# 2535
+# 2531
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 94
+# 93
 apt list --installed | wc --lines
-# 2346
+# 2337
 apt-mark showmanual | wc --lines
-# 422
+# 420
