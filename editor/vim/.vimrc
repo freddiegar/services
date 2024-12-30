@@ -224,9 +224,9 @@
 " n. Faster, it's really (Of course, my setup) :D
 " STARTUP TIME (plugins.time)
 "           Version                         BARE(ms)    PLUG-NC(ms) PLUG-C(ms)  DATE
-"   Vim9:   9.0.1-749 (vimscript)           2.251       81.961      166.764     2023-08-19
-"   Neovim: 0.6.1 (LuaJIT 2.1.0-beta3)      4.699       54.002      100.346     2023-08-19
-"   Diff:                                   108.7%      -34.1%      -39.8%
+"   Vim9:   9.1.1                           3.0424      109.099     208.842     2024-12-27
+"   Neovim: v0.11.0-dev-LuaJIT              5.4247      58.0907     259.955     2024-12-27
+"   Diff:                                   78.3%       -46.7%      24.4%
 " @see https://neovim.io/doc/user/vim_diff.html
 " @see https://www.murilopereira.com/the-values-of-emacs-the-neovim-revolution-and-the-vscode-gorilla/
 
@@ -2139,10 +2139,7 @@ Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Lea
 " Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
 Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
 " Plug 'romainl/vim-qf'                                           " Run Cfilter using wrapper: Keep|Filter, Reject|Filter!, Restore
-Plug 'mbbill/undotree', {'on': [
-            \ 'UndotreeToggle',
-            \ 'UndotreeHide'
-            \ ]}                                                " Run undo world: g-, g+
+Plug 'mbbill/undotree'                                          " Run undo world: g-, g+ . Not use 'on' option.
 Plug 'phpactor/phpactor', {
             \ 'for': 'php',
             \ 'do': 'composer install --no-dev --optimize-autoloader'
@@ -2455,6 +2452,11 @@ let g:highlightedyank_highlight_duration = 200
 
 " Undo Tree
 " @see https://github.com/mbbill/undotree
+" Required to 'rundo' command
+let g:undotree_UndoDir = g:undodir
+let g:undotree_HelpLine = 0
+let g:undotree_ShortIndicators = 1
+
 nmap <silent> <C-w>u :UndotreeToggle<Enter>
 
 " IAA
@@ -3485,7 +3487,7 @@ function! s:get_selection(range, interactive, args) abort
 
     if len(a:args) > 0
         let l:selection = join(a:args, ' ')
-    elseif a:range == 2
+    elseif a:range == 2 " Visual mode
         " @see https://vi.stackexchange.com/a/11028
         let [l:lnum1, l:col1] = getpos("'<")[1 : 2]
         let [l:lnum2, l:col2] = getpos("'>")[1 : 2]

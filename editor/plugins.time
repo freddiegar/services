@@ -1,35 +1,72 @@
-2023-08-19 19:23:02
-Plug 'SirVer/ultisnips'
-Plug 'airblade/vim-gitgutter'
-Plug 'dense-analysis/ale'
-Plug 'dstein64/vim-startuptime'
-Plug 'freddiegar/miningbox.vim'
-Plug 'jamessan/vim-gnupg'
-Plug 'junegunn/fzf'
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/gv.vim'
-Plug 'kristijanhusak/vim-dadbod-completion'
-Plug 'kshenoy/vim-signature'
-Plug 'lambdalisue/suda.vim'
-Plug 'ludovicchabant/vim-gutentags'
-Plug 'machakann/vim-highlightedyank'
-Plug 'machakann/vim-swap'
-Plug 'markonm/traces.vim'
-Plug 'mbbill/undotree'
-Plug 'phpactor/phpactor'
-Plug 'preservim/tagbar'
-Plug 'rickhowe/diffchar.vim'
-Plug 'skywind3000/asyncrun.vim'
-Plug 'sniphpets/sniphpets'
-Plug 'tommcdo/vim-fubitive'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-dadbod'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-rhubarb'
-Plug 'tpope/vim-surround'
-Plug 'vim-php/tagbar-phpctags.vim'
-Plug 'vim-test/vim-test'
-Plug 'vim-vdebug/vdebug'
-Plug 'wakatime/vim-wakatime'
-Plug 'wellle/targets.vim'
+2024-12-27 15:36:12
+
+vim
+---------------------------------------
+ale
+asyncrun.vim
+diffchar.vim
+fzf
+fzf.vim
+gv.vim
+miningbox.vim
+phpactor
+sniphpets
+tagbar
+tagbar-phpctags.vim
+targets.vim
+    traces.vim
+ultisnips
+undotree
+    vim-commentary
+vim-dadbod
+vim-dadbod-completion
+vim-fubitive
+vim-fugitive
+vim-gitgutter
+vim-gnupg
+    vim-gutentags
+    vim-highlightedyank
+vim-repeat
+vim-rhubarb
+vim-signature
+vim-surround
+vim-swap
+vim-test
+vim-wakatime
+
+nvim
+---------------------------------------
+ale
+asyncrun.vim
+    cmp-buffer
+    cmp-nvim-lsp
+    cmp-nvim-ultisnips
+diffchar.vim
+fzf
+fzf.vim
+gv.vim
+miningbox.vim
+    nvim-cmp
+    nvim-lspconfig
+    nvim-treesitter
+phpactor
+sniphpets
+    suda.vim
+tagbar
+tagbar-phpctags.vim
+targets.vim
+ultisnips
+undotree
+vim-dadbod
+vim-dadbod-completion
+vim-fubitive
+vim-fugitive
+vim-gitgutter
+vim-gnupg
+vim-repeat
+vim-rhubarb
+vim-signature
+vim-surround
+vim-swap
+vim-test
+vim-wakatime

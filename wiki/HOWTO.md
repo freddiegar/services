@@ -513,3 +513,15 @@ export NODE_OPTIONS="--max-old-space-size=4096"
 export NODE_OPTIONS="--max-old-space-size=8192"
 export NODE_OPTIONS="--max-old-space-size=16384"
 ```
+
+Docker Layer Caching
+1. Changes to the files you're copying
+2. Changes to the Dockerfile instruction
+3. Changes to any previous layer
+
+Docker Layer Squashing
+1. Each layer in Dokcer is immutable and contains only changes from previous layer
+2. Separate RUN cvommand create new layers, preserving files from earlier layers (rm command in after RUN doesn't works)
+3. Deleting files in later layers doesn't remove them from earlier layers
+4. Deleted files are marked as 'not accessible' but still consume sapce in the image
+5. Docker can't remove data from previous layers due to their immutability
