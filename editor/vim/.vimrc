@@ -684,6 +684,8 @@ function! GetNameCurrentFile() abort
     "   /etc/hosts                                              -> /e/hosts
     if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'checkhealth'], &filetype) > 0 || expand('%') ==# ''
         return ''
+    elseif get(b:, 'isversus', v:false)
+        return expand('%:t')
     elseif match(expand('%:p:h'), g:cwd) >= 0 && len(expand('%:~')) <= 60
         return expand('%:~')
     elseif match(expand('%:p:h'), g:cwd) >= 0
@@ -859,9 +861,29 @@ function! s:statusline(lastmode) abort
 
     let g:statusline_unique = l:uniqueid
 
+    if get(b:, 'isversus', v:false)
+        setlocal statusline+=%2*                                " User2 color
+        setlocal statusline+=\                                  " Extra space
+        setlocal statusline+=%{GetNameCurrentFile()}            " Relative filename
+
+        setlocal statusline+=%=                                 " New group (align right)
+        setlocal statusline+=\%m                                " Modified flag
+        setlocal statusline+=\%r                                " Read-only flag
+        setlocal statusline+=%{GetNameBranch()}                 " Branch name repository
+        setlocal statusline+=%{&filetype!=#''?&filetype:&buftype}   " Is it require description?
+
+        setlocal statusline+=\%<                                " Truncate long statusline here
+        setlocal statusline+=\                                  " Extra space
+        setlocal statusline+=%{&fileencoding.''}                " Is it require description?
+        setlocal statusline+=\                                  " Extra space
+        setlocal statusline+=%*                                 " Restart color
+
+        return
+    endif
+
     if index(['popup', 'help', 'man', 'copilot-chat'], &buftype) >= 0
         setlocal statusline+=\                                  " Extra space
-        setlocal statusline+=%f                                 " Relative filename
+        setlocal statusline+=%{GetNameCurrentFile()}            " Relative filename
 
         return
     endif
@@ -1214,6 +1236,47 @@ function! s:file_diff(file) abort
     silent execute 'normal! i' . l:result
     setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
     normal! gg
+endfunction
+
+" Versus
+command! -nargs=0 V call <SID>file_versus(expand('%'))
+
+" file (string): void
+function! s:file_versus(file) abort
+    if !g:hasgit || a:file ==# ''
+        echo 'Nothing to do (no git).'
+
+        return 1
+    endif
+
+    if get(b:, 'isversus', v:false)
+        echo 'Nothing to do (ready!).'
+
+        return 2
+    endif
+
+    let l:alternate = '/' . join(split(g:cwd, '/')[0 : -2], '/') . '/ro-' . g:working[1] . '/' . a:file
+
+    if !filereadable(l:alternate)
+        echo 'Nothing to do (' . l:alternate . ').'
+
+        return 3
+    endif
+
+    if bufwinnr(bufnr(fnameescape(l:alternate))) > -1
+        " Reuse open buffer if exists in current window
+        silent execute 'drop ' . fnameescape(l:alternate)
+
+        return
+    endif
+
+    silent execute 'vsplit +' . line('.') . ' ' . fnameescape(l:alternate)
+    setlocal noswapfile
+    setlocal noloadplugins
+    setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
+
+    silent let b:isversus = v:true
+    silent execute 'wincmd p'
 endfunction
 
 " Don't write in update <- Sugar
@@ -5463,6 +5526,7 @@ EOF
             highlight! link SignatureMarkerText LineNr
 
             highlight! link User1 ErrorMsg
+            highlight! link User2 WarningMsg
             highlight! link ExtraWhitespace Error
             highlight! link WeirdWhitespace Warning
 
