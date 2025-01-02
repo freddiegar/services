@@ -248,6 +248,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:cwd = a:cwd
         let g:working = split(g:cwd, '/')[-2 :]
         let g:dsource = isdirectory(g:cwd . '/app') ? g:cwd . '/app' : g:cwd . '/src'
+        let g:djavascipt = isdirectory(g:cwd . '/resources') ? g:cwd . '/resources' : g:cwd . '/src'
         let g:dtests = isdirectory(g:cwd . '/tests') ? g:cwd . '/tests' : g:cwd
 
         let g:cache = {}
@@ -332,9 +333,11 @@ set noswapfile                                                  " No swap for ne
 " .     Relative to the directory of current file (non-recursively)
 " ,,    Empty value = current work directory
 " **    Any where, ex: /var/** (slower)
+" @see https://gist.github.com/romainl/7e2b425a1706cd85f04a0bd8b3898805
 set path=.,,                                                    " Directories search when: gf, :find, :sfind, :tabfind, -complete=file_in_path
                                                                 " Skip /usr/include, it's slow (default: .,/usr/include,,)
 set tagcase=smart                                               " Smart always is best (default: followic=Follow the 'ignorecase' option)
+set suffixesadd=.vue                                            " Enable detect paths without extensions
 
 set sessionoptions=                                             " (default: blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal)
 set sessionoptions+=buffers                                     " Save buffers
@@ -2574,6 +2577,10 @@ xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file', g:cwd)<Enter>
 nnoremap <silent> <Leader>W <Cmd>call <SID>find_filter('find', g:dsource)<Enter>
 xnoremap <silent> <Leader>W :<C-u>call <SID>find_filter(visualmode() . 'find', g:dsource)<Enter>
 
+" String [J]avascript|typescript|vue files in current work directory
+nnoremap <silent> <Leader>J <Cmd>call <SID>find_filter('find', g:djavascipt)<Enter>
+xnoremap <silent> <Leader>J :<C-u>call <SID>find_filter(visualmode() . 'find', g:djavascipt)<Enter>
+
 " String [T]est files in current work directory
 nnoremap <silent> <Leader>T <Cmd>call <SID>find_filter('find', g:dtests)<Enter>
 xnoremap <silent> <Leader>T :<C-u>call <SID>find_filter(visualmode() . 'find', g:dtests)<Enter>
@@ -3730,7 +3737,7 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile *.json.*,*.lock setfiletype json
     autocmd BufReadPost,BufNewFile *.twig setlocal filetype=html | setlocal commentstring=\{#\ %s\ #\}
     autocmd BufReadPost,BufNewFile *.blade.php setlocal filetype=html | setlocal commentstring=\{\{--\ %s\ --\}\}
-    autocmd BufReadPost,BufNewFile *.vue setlocal commentstring=<!--\ %s\ -->
+    autocmd BufReadPost,BufNewFile *.vue setlocal commentstring=<!--\ %s\ --> | execute 'setlocal path+=' . split(g:djavascipt, '/')[-1] . '/**'
     autocmd BufReadPost,BufNewFile */i3/config setfiletype i3config | setlocal commentstring=#\ %s
     autocmd BufReadPost,BufNewFile /etc/hosts setlocal commentstring=#\ %s
     autocmd BufReadPost,BufNewFile */{log,logs}/* setfiletype log | setlocal noundofile
