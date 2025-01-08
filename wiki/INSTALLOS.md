@@ -1562,6 +1562,14 @@ sudo apt-get install -y google-chrome-stable
 ## sudo apt-get remove google-chrome-stable && sudo apt-get autoremove
 ```
 
+## Brave (Anime ;P)
+
+```bash
+sudo apt-get update
+sudo apt-get install -y brave-browser
+## sudo apt-get remove brave-browser && sudo apt-get autoremove
+```
+
 ## Microsoft Edge (for Teams :()
 
 ```bash

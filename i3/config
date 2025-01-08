@@ -180,6 +180,7 @@ assign [class="(?i)zoom" title="Zoom Cloud Meetings"]                       $wor
 assign [class="Mysql-workbench-bin"]                                        $workspace4
 assign [class="(?i)firefox" title="(?=(?i)private).*"]                      $workspace5
 assign [class="(?i)google-chrome"]                                          $workspace5
+assign [class="(?i)brave-browser"]                                          $workspace5
 assign [class="(?i)postman"]                                                $workspace6
 assign [class="(?i)FileZilla"]                                              $workspace6
 assign [class="AWS VPN Client"]                                             $workspace7
@@ -378,6 +379,7 @@ default_floating_border pixel 3
 
 # @see https://www.youtube.com/watch?v=8-S0cWnLBKg&list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf&index=2
 bindsym $mod+Shift+a exec --no-startup-id /opt/awsvpnclient/AWS\ VPN\ Client
+bindsym $mod+Shift+b exec --no-startup-id brave-browser
 bindsym $mod+Shift+d exec --no-startup-id freecad
 bindsym $mod+Shift+e exec --no-startup-id nautilus --no-desktop
 bindsym $mod+Shift+f exec --no-startup-id firefox
