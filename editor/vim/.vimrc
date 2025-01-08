@@ -3501,8 +3501,23 @@ function! s:run(range, interactive, ...) abort
         if filereadable('artisan')
             " dump() doesn't allow multiple sentences split by semicolon (;) :(
             let l:execute = 'echo "%s" | phpx artisan tinker --no-interaction'
+        elseif a:range ==# 0 && !a:interactive
+            execute '!phpx --file %'
+
+            return
         endif
     elseif (l:runner ==# 3 || index(['sql'], l:runner) >= 0) && <SID>db() !=# ''
+        " Avoid a lot results in SELECT without LIMIT (freezing)
+        if trim(l:command) =~? '^\<select\>' && l:command !~? 'limit \d\+'
+            let l:limit = 10
+            let l:command = substitute(l:command, ';\s*$', ' LIMIT ' . l:limit . ';', 'g')
+            let l:command = substitute(l:command, '\\G', ' LIMIT ' . l:limit . '\\G', 'g')
+
+            if l:command !~? 'limit \d\+'
+                let l:command = l:command . ' LIMIT ' . l:limit
+            endif
+        endif
+
         " Don't add silent
         execute join(['DB', <SID>db(), l:command], ' ')
 
@@ -3568,7 +3583,27 @@ function! s:get_selection(range, interactive, args) abort
             let l:lines[-1] = l:lines[-1][:l:col2 - (&selection ==# 'inclusive' ? 1 : 2)]
             let l:lines[0] = l:lines[0][l:col1 - 1:]
 
-            let l:selection = join(l:lines, ' ')
+            " Drop comments in selection
+            let l:cleanlines = []
+            let l:comment = trim(split(&commentstring)[0])
+
+            for l:line in l:lines
+                let l:line = trim(l:line)
+
+                " Starting
+                if l:line =~# '^' . l:comment
+                    continue
+                endif
+
+                " In middle
+                if l:line =~# l:comment
+                    let l:line = substitute(l:line, l:comment . '.*$', '', 'g')
+                endif
+
+                silent call add(l:cleanlines, l:line)
+            endfor
+
+            let l:selection = join(l:cleanlines, ' ')
         endif
     elseif !a:interactive
         let l:selection = trim(getline('.'))
@@ -3764,6 +3799,7 @@ augroup AutoCommands
                 \ "\<C-x>\<C-o>"
     autocmd FileType sql nnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:false) <Bar> call <SID>statusline('f')<Enter>
     autocmd FileType sql vnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:true) <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType sql inoremap <silent> ` ``<Left>
 
     function! s:sqlfixer(onselection) abort
         if bufname('%') !=# ''
@@ -4921,10 +4957,14 @@ EOF
     " Diff [t]ime operation
     autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=((b*100)/a)-100\r\e")
 
+    " [n]o comments sql
+    autocmd BufEnter,BufNewFile *.sql call setreg('n', "vip:s/--.*$/@@==@@/ge\rvip:g/^\\s*@@==@@\\|^$/d_\rvip:s/@@==@@/ /ge\r") | set nohlsearch
+    " [o]ne line sql
+    autocmd BufEnter,BufNewFile *.sql call setreg('o', "@nvip:join\r")
     " [t]inker sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\r{jIDB::select(\"\e}kA\")\e{jd}\"_dd'z:delmarks z\r")
+    autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::select(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'z:delmarks z\r") | set nohlsearch
     " [s]tatement sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\r{jIDB::statement(\"\e}kA\")\e{jd}\"_dd'z:delmarks z\r")
+    autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::statement(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'z:delmarks z\r") | set nohlsearch
     " [e]xplain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
     " [j]son explain sql
@@ -4932,7 +4972,7 @@ EOF
     " [a]nalize sql > MySQL 8.0
     autocmd BufEnter,BufNewFile *.sql call setreg('a', "IEXPLAIN ANALYZE \eEa SQL_NO_CACHE\e")
     " [u]ndo explain sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('u', "vip:s/\\cEXPLAIN \\|ANALYZE \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e")
+    autocmd BufEnter,BufNewFile *.sql call setreg('u', "vip:s/\\cEXPLAIN \\|ANALYZE \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e") | set nohlsearch
     " [d]esribe sql
     autocmd BufEnter,BufNewFile *.sql call setreg('d', "_/\\c from \rEw\"zyiwODESCRIBE `\e\"zpA`;\e0")
     " [i]ndexes show
