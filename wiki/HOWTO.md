@@ -140,6 +140,7 @@ In Server (aka: kftp) check in file `/etc/ssh/sshd_config` next values:
 
 # Not allow password
 PasswordAuthentication no
+ChallengeResponseAuthentication no
 # Allow private key
 PubkeyAuthentication yes
 # Where are private keys?

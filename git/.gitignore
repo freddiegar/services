@@ -9,3 +9,5 @@ testx.sh
 *.json5
 storage/oauth-public.key.*
 storage/oauth-private.key.*
+# Ignores backup files ending with: [name].20250107173723 (:B command in Vim)
+*.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]

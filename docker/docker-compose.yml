@@ -290,6 +290,7 @@ services:
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
+      - ./kftp/ssh/id_rsa.kftpusr:/var/www/ssh/id_rsa.kftpusr:ro
     networks:
       development:
         ipv4_address: 172.20.0.74
@@ -521,7 +522,9 @@ services:
       - development.local:$PROXY_IP_ADDRESS
 
   ftp:
-    image: atmoz/sftp:alpine
+    # Hang out! 2025-01-07
+    # image: atmoz/sftp:alpine
+    image: atmoz/sftp:debian
     container_name: ftp
     volumes:
       - $FTP_DOCROOT:/home/$FTP_USER
@@ -540,7 +543,9 @@ services:
           memory: $FTP_MEMORY
 
   kftp:
-    image: atmoz/sftp:alpine
+    # Hang out! 2025-01-07
+    # image: atmoz/sftp:alpine
+    image: atmoz/sftp:debian
     container_name: kftp
     volumes:
       - $KFTP_DOCROOT:/home/$KFTP_USER

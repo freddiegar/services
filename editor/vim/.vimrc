@@ -802,7 +802,7 @@ endfunction
 function! s:mustbeignore() abort
     return argc() > 0 && (
                 \ index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
-                \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*\|hosts\|crontab\|errors\.err\|tags')
+                \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*\|hosts\|crontab\|errors\.err\|tags\|storage\|/tmp')
                 \ || get(v:argv, 1, '') ==# '-'
                 \ || (len(g:working) > 0 && g:working[0] =~? 'plugged')
                 \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-'
@@ -1934,6 +1934,15 @@ function s:go_docs(word) abort
         let l:word = split(trim(@z), ':')[0]
 
         let @@ = l:saved_unnamed_register
+    elseif &filetype ==# 'yaml' && match(getline('.'), 'image:') >= 0
+        let l:docsurl = 'https://hub.docker.com/r/'
+        let l:saved_unnamed_register = @@
+
+        silent execute "normal! 02WviW\"zy"
+
+        let l:word = split(trim(@z), ':')[0]
+
+        let @@ = l:saved_unnamed_register
     elseif index(['vim'], &filetype) >= 0 && match(getline('.'), 'Plug') >= 0
         let l:docsurl = 'https://github.com/'
         let l:saved_unnamed_register = @@
@@ -2168,6 +2177,7 @@ augroup END
 
 call plug#begin('~/.vim/plugged')
 
+Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc, 9.1 has built-in (:packadd comment) same for nvim but... this respect empty lines
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
@@ -2276,8 +2286,6 @@ if g:isneovim
     Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
     " endif
 else
-    Plug 'tpope/vim-commentary'                               " gcc, {motion}gc, 9.1 has built-in (:packadd comment) but...
-
     Plug 'markonm/traces.vim'                                 " See range, substitution and global preview
     Plug 'machakann/vim-highlightedyank'                      " See yank preview
     Plug 'ludovicchabant/vim-gutentags'                       " Auto generate tags (not allowed 'for' option)
