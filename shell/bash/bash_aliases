@@ -1,7 +1,28 @@
+# @see https://bohner.me/posts/fixingsshlogintimes/
+# trace 8056
+# trace $(pgrep -f ssh)
+trace() {
+    if [ "$1" = "" ]; then
+        echo "\e[31mPID is required!\e[0m"
+
+        exit 1
+    fi
+
+    if [ ! -d /tmp/straces/ ]; then
+        mkdir /tmp/straces
+        chmod 774 /tmp/straces -Rf
+    fi
+
+    # strace use stderr for outputs by default
+    sudo strace -rTfp $1 2>&1 | tee /tmp/straces/$1.log
+
+    echo Trace: /tmp/straces/$1.log
+}
+
 # cj test.csv
 # cj test.csv > test.json
 cj() {
-    if ["$1" = "" ]; then
+    if [ "$1" = "" ]; then
         echo "\e[31mCSV file is required!\e[0m"
 
         exit 0

@@ -435,7 +435,7 @@ displayDetailsOnSkippedTests="true"
 displayDetailsOnTestsThatTriggerDeprecations="true"
 displayDetailsOnTestsThatTriggerErrors="true"
 displayDetailsOnTestsThatTriggerNotices="true"
-displayDetailsOnTestsThatTriggerWarnings="true">
+displayDetailsOnTestsThatTriggerWarnings="true"
 
 ```
 

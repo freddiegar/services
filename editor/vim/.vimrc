@@ -3903,7 +3903,7 @@ augroup AutoCommands
     autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq
 
     " Not append last space before close if, its append a <Space>
-    autocmd BufEnter,BufReadPost,BufNewFile * if (&modifiable ==# 0 || &readonly) && empty(maparg('q', 'n')) | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>| endif
+    autocmd BufEnter,BufReadPost,BufNewFile * if (!&modifiable || &readonly) && empty(maparg('q', 'n')) | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>| endif
 
     " Some files are prohibited
     autocmd BufReadPost vendor/* setlocal nomodifiable
@@ -3911,6 +3911,7 @@ augroup AutoCommands
     autocmd BufReadPost node_modules/* setlocal nomodifiable
     autocmd BufReadPost composer.lock setlocal nomodifiable
     autocmd BufReadPost package-lock.json setlocal nomodifiable
+    autocmd BufReadPost * if &readonly | setlocal nomodifiable | endif
 
     " Some files are untouchable
     autocmd BufReadPost fugitive://* setlocal nomodifiable readonly
