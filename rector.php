@@ -11,11 +11,10 @@
 require_once realpath('/home/freddie/.config/composer/vendor/autoload.php');
 
 use Rector\Config\RectorConfig;
-use Rector\Set\ValueObject\SetList;
 
 // @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md
 
-return RectorConfig::configure()
+$config = RectorConfig::configure()
     ->withPhpSets()
     ->withPreparedSets(deadCode: true, codeQuality: true, codingStyle: true)
 
@@ -54,3 +53,73 @@ return RectorConfig::configure()
         \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
         \Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class, // For now ignores
     ]);
+
+$path = getcwd() . \DIRECTORY_SEPARATOR . 'composer.json';
+
+if (!file_exists($path)) {
+    return $config;
+}
+
+$data = json_decode(file_get_contents($path), true);
+
+$vendor = $data['require'] ?? [];
+$vendor += $data['require-dev'] ?? [];
+
+if (isset($vendor['phpunit/phpunit'])) {
+    $version = (string)preg_replace('/[^0-9.]/', '', $vendor['phpunit/phpunit']);
+    $version = (float)$version;
+    // echo 'PHPUnit version detected: ' .  $vendor['phpunit/phpunit'] . ' -> ' . $version . PHP_EOL;
+
+    switch (true) {
+        case $version < 10:
+            $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_90;
+
+            break;
+        case $version < 11:
+            $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_100;
+
+            break;
+        case $version < 12:
+        default:
+            $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_110;
+
+            break;
+    }
+
+    $config->withSets([
+        $phpunitSetList,
+    ]);
+}
+
+if (isset($vendor['laravel/framework'])) {
+    $version = (string)preg_replace('/[^0-9.]/', '', $vendor['laravel/framework']);
+    $version = (float)$version;
+    // echo 'Laravel version detected: ' .  $vendor['laravel/framework'] . ' -> ' . $version . PHP_EOL;
+
+    switch (true) {
+        case $version < 9:
+            $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_80;
+
+            break;
+        case $version < 10:
+            $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_90;
+
+            break;
+        case $version < 11:
+            $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_100;
+
+            break;
+        case $version < 12:
+        default:
+            $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_110;
+
+            break;
+    }
+
+    $config->withSets([
+        // @see https://github.com/driftingly/rector-laravel/
+        $laravelSetList,
+    ]);
+}
+
+return $config;

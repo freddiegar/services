@@ -3807,7 +3807,8 @@ augroup AutoCommands
                 \ "\<C-x>\<C-o>"
     autocmd FileType sql nnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:false) <Bar> call <SID>statusline('f')<Enter>
     autocmd FileType sql vnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:true) <Bar> call <SID>statusline('f')<Enter>
-    autocmd FileType sql inoremap <silent> ` ``<Left>
+    " Fails using @d
+    " autocmd FileType sql inoremap <silent> ` ``<Left>
 
     function! s:sqlfixer(onselection) abort
         if bufname('%') !=# ''
