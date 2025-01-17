@@ -232,7 +232,7 @@
 
 " THROBLESHOOTING
 " 1. Update system
-" 2. Delete viminfo file!
+" 2. Delete viminfo file!: rm .git/{.shada,.viminfo}
 " 3. Delete session file!
 " 4. Delete fugitive folder: rm -Rf fugitive:
 
@@ -556,13 +556,6 @@ endif
 if has('gui_running')
     set guicursor+=a:blinkon0                                   " Never blink the cursor (default: on)
 
-    set guioptions=                                             " Reset option (default: aegimrLrT)
-    set guioptions+=M                                           " Not sourced system [M]enu
-    set guioptions+=g                                           " Show inactive items as inactive, [g]ray color (default: hide)
-    set guioptions+=c                                           " Confirmations in [c]onsole (as Terminal)
-    set guioptions+=k                                           " Windows [k]eep size after change GUI
-    set guioptions+=!                                           " Use terminal with external commands, no simulate
-
     augroup GUIOptions
         if exists('g:neovide') " (why nvim why!)
             " @see https://neovide.dev/
@@ -574,6 +567,17 @@ if has('gui_running')
                         \ | let g:neovide_theme = 'auto'
                         \ | if &background ==# 'dark' | let g:neovide_transparency = 0.95 | endif
         else
+            " @see :h 'guioptions'
+            set guioptions=                                     " Reset option (default: aegimrLrT)
+            set guioptions+=M                                   " Not sourced system [M]enu
+            set guioptions+=g                                   " Show inactive items as inactive, [g]ray color (default: hide)
+            set guioptions+=c                                   " Confirmations in [c]onsole (as Terminal)
+            set guioptions+=k                                   " Windows [k]eep size after change GUI
+            set guioptions+=!                                   " Use terminal with external commands, no simulate
+
+            " Using i3 the whole screen height will be used by the window
+            set guiheadroom=0
+
             autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Fira Code Retina 17', '')
                         \ | set guiligatures=!\"#$%&()*+-./:<=>?@[]^_{\|~
             " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 17', '')
@@ -582,9 +586,6 @@ if has('gui_running')
             " @see https://vimhelp.org/autocmd.txt.html#GUIFailed
             autocmd GUIFailed * qall
         endif
-
-        " Using i3 the whole screen height will be used by the window
-        set guiheadroom=0
 
         " @see :h 'conceallevel'
         " Always is weird
@@ -1858,6 +1859,14 @@ endfunction
 function! s:go_line() abort
     try
         let l:word = expand('<cWORD>')
+
+        " PHPUnit testing | Background Format
+        if index(['^', '||'], l:word) >= 0
+            silent execute "normal! WviW\"zy"
+
+            let l:word = trim(@z)
+        endif
+
         let l:separator = match(l:word, ':') > 0 && match(l:word, ':') + 1 < len(l:word) ? ':' : ''
 
         if l:separator ==# ''
@@ -3796,6 +3805,7 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile *.d2 setfiletype d2
     autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
+    autocmd FileType diff if g:isneovim | TSBufDisable highlight | endif
     autocmd BufEnter,BufReadPost */dist/*.{js,css} if g:isneovim | TSBufDisable highlight | endif
     autocmd BufEnter,BufReadPost public/*/*.{js,css} if g:isneovim | TSBufDisable highlight | endif
 
@@ -5693,9 +5703,9 @@ EOF
                 \   call feedkeys("\<C-x>\<C-f>", 'n') |
                 \ endif
 
-    " Create non-existent directories when saving files
+    " Create non-existent directories when saving (some) files
     autocmd BufWritePre *
-                \ if !isdirectory(expand('<afile>:p:h')) |
+                \ if index(['fugitive', 'fugitiveblame'], &filetype) < 0 && !isdirectory(expand('<afile>:p:h')) |
                 \   call mkdir(expand('<afile>:p:h'), 'p') |
                 \ endif
 
