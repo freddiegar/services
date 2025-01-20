@@ -1237,6 +1237,7 @@ function! s:file_diff(file) abort
     setlocal noswapfile
     setlocal noloadplugins
     setfiletype diff
+    setlocal paste
     silent execute 'normal! i' . l:result
     setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
     normal! gg
@@ -2563,6 +2564,7 @@ endif
 " Fzf
 " @see https://github.com/junegunn/fzf.vim
 " @see https://jdhao.github.io/2018/11/05/fzf_install_use/#installation
+" @styles https://junegunn.github.io/fzf/releases/0.58.0/
 " Jump to the existing buffer if is possible
 let g:fzf_buffers_jump = 1
 " Hidden preview if visible columns are lesser 70
@@ -3383,7 +3385,8 @@ nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' descr
 "   \r  -> Go to file
 
 " Go [h]ighligth [h]unk
-nnoremap <silent> <Leader>hh /\v^[<\|>\|=]{7}.*<Enter>
+nnoremap <silent> <Leader>hh :execute "keepjumps normal /\\v^[<>=\|]{4,7}.*\rzz"<Enter>
+nnoremap <silent> <Leader>HH :execute "keepjumps normal ?\\v^[<>=\|]{4,7}.*\rzz"<Enter>
 
 " if &diff <-- fails with diff mode opens from vim-fugitive
     " Diff [b]uffer
@@ -3396,9 +3399,38 @@ nnoremap <silent> <Leader>hh /\v^[<\|>\|=]{7}.*<Enter>
                 \ &diff ? ":execute 'windo diffoff'<Enter>" :
                 \ ":execute 'windo diffthis'<Enter>"
 
+    " *-----------*-----------*------------*
+    " |   ( gf)   |           |   ( gj)    |
+    " |   local   |   merge   |   remote   |
+    " |   ( gc)   |           |   ( gn)    |
+    " *-----------*-----------*------------*
+    " |        vim-fugitive window         |
+    " *------------*------------*----------*
+
     nnoremap <silent> <Leader>gf :diffget //2<Enter>
     nnoremap <silent> <Leader>gj :diffget //3<Enter>
     nnoremap <silent> <Leader>gg :Gwrite <Bar> edit %<Enter>
+
+    " Get [c]urrent or [n]ew changes in conflicts
+    " With cursor in <<<<<<< then:
+    nnoremap <silent> <Plug>ConflictCurrentRepeatable <Cmd>call <SID>conflict(v:true)<Enter>
+    nnoremap <silent> <Plug>ConflictNewRepeatable <Cmd>call <SID>conflict(v:false)<Enter>
+    nmap <silent> <Leader>gc <Plug>ConflictCurrentRepeatable
+    nmap <silent> <Leader>gn <Plug>ConflictNewRepeatable
+
+    function! s:conflict(current) abort
+        if a:current
+            silent execute "keeppatterns keepjumps normal \"_dd/\\v^[=\|]{4,7}.*\rV/\\v^[>]{4,7}.*\r\"_d\r\r"
+            silent! call repeat#set("\<Plug>ConflictCurrentRepeatable")
+
+            echo 'Local (current) change selected.'
+        else
+            silent execute "keeppatterns keepjumps normal V/\\v^[=\|]{4,7}.*\r\"_d/\\v^[>]{4,7}.*\r\"_dd\r\r"
+            silent! call repeat#set("\<Plug>ConflictNewRepeatable")
+
+            echo 'Remote (new) change selected.'
+        endif
+    endfunction
 " endif
 
 " I don't want to learn (or write) new aliases
@@ -3806,6 +3838,9 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
     autocmd FileType diff if g:isneovim | TSBufDisable highlight | endif
+    autocmd FileType markdown setlocal syntax=OFF
+
+    autocmd BufEnter,BufReadPost *.md if g:isneovim | TSBufDisable highlight | endif
     autocmd BufEnter,BufReadPost */dist/*.{js,css} if g:isneovim | TSBufDisable highlight | endif
     autocmd BufEnter,BufReadPost public/*/*.{js,css} if g:isneovim | TSBufDisable highlight | endif
 
@@ -3906,6 +3941,7 @@ augroup AutoCommands
     " Like many others (vim-plug, GV, undotree) q is [q]uit. So sorry Tim!
     autocmd FileType qf map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType help map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
+    autocmd FileType diff map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType netrw map <silent> <nowait> <buffer> q <Cmd>call <SID>toggle_netrw('', v:true)<Enter>
     autocmd FileType tagbar map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType checkhealth map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
@@ -3954,18 +3990,15 @@ require 'nvim-treesitter.configs'.setup({
     highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
-        -- @thanks https://github.com/MariaSolOs/dotfiles/blob/b0578418a0a275ff449ad366fa99f9b1ff72b93b/.config/nvim/lua/plugins/treesitter.lua#L64
         disable = function(_, buf)
-            -- if not vim.bo[buf].modifiable then
-            --     return false
-            -- end
-
             local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+
             return ok and stats and stats.size > (1024 * 1024 * 2)
         end,
     },
     indent = {
         enable = true, -- must be on ... or indent fails!
+        disable = {'diff'},
     },
     incremental_selection = {
         enable = false,

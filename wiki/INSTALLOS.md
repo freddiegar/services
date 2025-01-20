@@ -1163,7 +1163,9 @@ sudo mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d
 ```bash
 # After :PluInstall in Vim (Last version auto update by Vim)
 sudo ln -s ~/.vim/plugged/fzf/bin/fzf /usr/bin/fzf
+
 # or Debian 9+/Ubuntu 19.10+
+# 2025-01-20: Debian APT keeps v0.46.0 (2024-01-23), older!
 sudo apt-get install -y fzf
 ```
 
