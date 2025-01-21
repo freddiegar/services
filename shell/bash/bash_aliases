@@ -19,6 +19,48 @@ trace() {
     echo Trace: /tmp/straces/$1.log
 }
 
+saU() {
+    echo "\e[34mUpdating packages...\e[0m"
+    sudo sed -i 's/Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*
+
+    checkcode $?
+
+    echo "\e[34mUpdating packages...\e[0m"
+    sau
+
+    checkcode $?
+
+    echo "\e[34mUpdating packages...\e[0m"
+    sudo sed -i 's/Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*
+
+    checkcode $?
+
+    echo "\e[34mUpdating packages...\e[0m"
+    curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.xz && sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
+
+    checkcode $?
+
+    echo "\e[34mPulling docker images...\e[0m"
+    sh ~/working/dockerpull.sh
+
+    checkcode $?
+
+    echo "\e[34mBuiding containers...\e[0m"
+    sh ~/working/dockerbuild.sh
+
+    checkcode $?
+}
+
+checkcode() {
+    if [ "$1" -ne 0 ]; then
+        echo "\e[31mCommand return code: $1.\e[0m"
+
+        return $1
+    fi
+
+    return $1
+}
+
 # cj test.csv
 # cj test.csv > test.json
 cj() {
@@ -378,6 +420,7 @@ alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-
 alias ccm="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                                                && gco var"
 
 alias ppa="phpx artisan"
+alias ppw="sudo -u www-data phpx artisan"
 alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && ppa optimize:clear     && gco storage bootstrap"
 
 alias ppv='ppa app-version:create --sha="$(git rev-parse HEAD)" --time="$(date -u +%Y%m%d%H%M%S)" --branch="$(git rev-parse --abbrev-ref HEAD)"'
@@ -407,7 +450,20 @@ alias sts="phpx bin/phpunit --stop-on-failure --no-coverage --testsuite"
 alias stS="phpx bin/phpunit --testdox --testsuite"
 alias stf="phpx bin/phpunit --stop-on-failure --no-coverage --filter"
 
-alias vapor="phpx vendor/bin/vapor"
+vapor() {
+    if [ -f vendor/bin/vapor ]; then
+        phpx vendor/bin/vapor "$@"
+
+        return $?
+    fi
+
+    echo "\e[90mEmpty Vapor local, using global as fallback.\e[0m"
+
+    sleep 1
+
+    ~/.config/composer/vendor/bin/vapor "$@"
+}
+
 alias ducks="du -cks * | sort -rn | head"
 alias fo="/opt/firefox/firefox --new-tab"
 
