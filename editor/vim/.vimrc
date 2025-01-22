@@ -3413,22 +3413,30 @@ nnoremap <silent> <Leader>HH :execute "keepjumps normal ?\\v^[<>=\|]{4,7}.*\rzz"
 
     " Get [c]urrent or [n]ew changes in conflicts
     " With cursor in <<<<<<< then:
-    nnoremap <silent> <Plug>ConflictCurrentRepeatable <Cmd>call <SID>conflict(v:true)<Enter>
-    nnoremap <silent> <Plug>ConflictNewRepeatable <Cmd>call <SID>conflict(v:false)<Enter>
+    nnoremap <silent> <Plug>ConflictCurrentRepeatable <Cmd>call <SID>conflict('current')<Enter>
+    nnoremap <silent> <Plug>ConflictNewRepeatable <Cmd>call <SID>conflict('new')<Enter>
+    nnoremap <silent> <Plug>ConflictFullyRepeatable <Cmd>call <SID>conflict('fully')<Enter>
+
     nmap <silent> <Leader>gc <Plug>ConflictCurrentRepeatable
     nmap <silent> <Leader>gn <Plug>ConflictNewRepeatable
+    nmap <silent> <Leader>gy <Plug>ConflictFullyRepeatable
 
-    function! s:conflict(current) abort
-        if a:current
+    function! s:conflict(type) abort
+        if a:type ==# 'current'
             silent execute "keeppatterns keepjumps normal \"_dd/\\v^[=\|]{4,7}.*\rV/\\v^[>]{4,7}.*\r\"_d\r\r"
             silent! call repeat#set("\<Plug>ConflictCurrentRepeatable")
 
             echo 'Local (current) change selected.'
-        else
+        elseif a:type ==# 'new'
             silent execute "keeppatterns keepjumps normal V/\\v^[=\|]{4,7}.*\r\"_d/\\v^[>]{4,7}.*\r\"_dd\r\r"
             silent! call repeat#set("\<Plug>ConflictNewRepeatable")
 
             echo 'Remote (new) change selected.'
+        else " fully
+            silent execute "keeppatterns keepjumps normal \"_dd/\\v^[=\|]{4,7}.*\r\"_D/\\v^[>]{4,7}.*\r\"_dd\r\r"
+            silent! call repeat#set("\<Plug>ConflictFullyRepeatable")
+
+            echo 'Merge (fully) change selected.'
         endif
     endfunction
 " endif
