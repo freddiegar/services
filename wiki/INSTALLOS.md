@@ -632,6 +632,10 @@ export VISUAL=vim
 export BROWSER=/usr/bin/firefox
 export WWW_HOME="https://www.duckduckgo.com"' >> ~/.profile
 ```
+> export BROWSER=/usr/lib/x86_64-linux-gnu/opera/opera
+> export BROWSER=/opt/brave.com/brave/brave-browser
+> export BROWSER=/opt/google/chrome/google-chrome
+> export BROWSER=/opt/microsoft/msedge/microsoft-edge
 
 ## Setup in Zsh
 
@@ -1018,10 +1022,10 @@ sudo apt-get install opera-stable
 
 ```bash
 sudo apt-get remove firefox && sudo apt-get autoremove
-curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.bz2
-sudo tar -xvjf firefox.tar.bz2 -C /opt && rm -Rf firefox.tar.bz2
-sudo ln -s /opt/firefox/firefox-bin /usr/bin/firefox
-## rm -Rf /usr/bin/firefox
+curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.xz
+sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
+sudo ln -s /opt/firefox/firefox /usr/bin/firefox
+## sudo rm -Rf /usr/bin/firefox
 ```
 
 ## Firefox Developer Edition Shortcut

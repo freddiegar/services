@@ -18,6 +18,18 @@ set $meta Mod1
 set $browser firefox --new-tab
 set $browser-private firefox --new-tab --private-window
 
+# set $browser opera
+# set $browser opera --incognito
+
+# set $browser brave-browser
+# set $browser brave-browser --incognito
+
+# set $browser google-chrome
+# set $browser google-chrome --incognito
+
+# set $browser microsoft-edge
+# set $browser-private microsoft-edge --inprivate
+
 # Fonts
 set $font_family fira code retina
 set $font_size 12

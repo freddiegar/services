@@ -265,6 +265,9 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:hasiaa = filereadable(expand(a:cwd . '/../.hasiaa'))
         let g:qfcommand = get(g:, 'qfcommand', '')
 
+        " Can use: firefox, opera, brave-browser, google-chrome, microsoft-edge
+        let g:browser = 'firefox'
+
         " File is large from 2MB
         let g:maxsize = 1024 * 1024 * 2
 
@@ -3036,7 +3039,7 @@ nmap <silent> gx <Plug>GoUrlRepeatable
 
 " dependency (string): void
 function! s:isrunning(dependency) abort
-    let l:running = system('ps -fe | ' . g:filterprg . ' " ' . a:dependency . ' " | ' . g:filterprg  . ' --invert-match " rg | grep | grepx "')
+    let l:running = system('ps -fe | ' . g:filterprg . ' "' . a:dependency . '" | ' . g:filterprg  . ' --invert-match " rg | grep | grepx "')
 
     return len(l:running) > 0
 endfunction
@@ -3059,7 +3062,7 @@ endfunction
 "   /etc/hosts
 " url (string), [string repeatable]: void
 function! s:go_url(url, ...) abort
-    if !<SID>isrunning('/opt/firefox/firefox-bin')
+    if !<SID>isrunning('/bin/sh -c ' . g:browser)
         echohl WarningMsg
         echo 'Not running browser.'
         echohl None
@@ -3121,7 +3124,7 @@ function! s:go_url(url, ...) abort
     endif
 
     if l:uri !=# ''
-        silent execute "!/usr/bin/firefox '" . shellescape(l:uri, 1) . "'"
+        silent execute "!" . g:browser . " '" . shellescape(l:uri, 1) . "'"
 
         silent redraw!
 
@@ -3318,7 +3321,7 @@ nmap <silent> <C-w>e <Cmd>edit .env<Enter>
 nmap <silent> <C-w>E <Cmd>call <SID>gbrowse(v:false)<Enter>
 
 function! s:gbrowse(copy) abort
-    if !a:copy && !<SID>isrunning('/opt/firefox/firefox-bin')
+    if !a:copy && !<SID>isrunning('/bin/sh -c ' . g:browser)
         echohl WarningMsg
         echo 'Not running browser.'
         echohl None
@@ -3580,7 +3583,7 @@ function! s:run(range, interactive, ...) abort
 
         return
     elseif (l:runner ==# 4 || index(['d2'], l:runner) >= 0)
-        if !<SID>isrunning('/opt/firefox/firefox-bin')
+        if !<SID>isrunning('/bin/sh -c ' . g:browser)
             echohl WarningMsg
             echo 'Not running browser.'
             echohl None
@@ -3588,7 +3591,7 @@ function! s:run(range, interactive, ...) abort
             return 1
         endif
 
-        if !<SID>isrunning('d2')
+        if !<SID>isrunning(' d2 ')
             execute ':AsyncRun d2 --sketch --theme=1 --layout=elk --watch ' . expand('%:p') . ' /tmp/d2/' . expand('%:t')
         endif
 
@@ -4550,7 +4553,7 @@ EOF
     " D2: Diagrams from CLI
     " @see https://d2lang.com/tour/cheat-sheet -> https://terrastruct-site-assets.s3.us-west-1.amazonaws.com/documents/d2_cheat_sheet.pdf
     autocmd BufWritePost *.d2 :R
-    autocmd BufDelete * if fnamemodify(expand('<afile>'), ':e') ==# 'd2' && <SID>isrunning('d2')
+    autocmd BufDelete * if fnamemodify(expand('<afile>'), ':e') ==# 'd2' && <SID>isrunning(' d2 ')
                 \ |     execute ':AsyncStop!'
                 \ | endif
 
