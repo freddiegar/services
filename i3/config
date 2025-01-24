@@ -383,7 +383,7 @@ bindsym $mod+Shift+b exec --no-startup-id brave-browser
 bindsym $mod+Shift+d exec --no-startup-id freecad
 bindsym $mod+Shift+e exec --no-startup-id nautilus --no-desktop
 bindsym $mod+Shift+f exec --no-startup-id firefox
-bindsym $mod+Shift+g exec --no-startup-id gvim
+bindsym $mod+Shift+g exec --no-startup-id google-chrome
 bindsym $mod+Shift+m exec --no-startup-id mysql-workbench
 bindsym $mod+Shift+n exec --no-startup-id neovide
 bindsym $mod+Shift+o exec --no-startup-id opera

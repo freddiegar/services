@@ -51,6 +51,7 @@ $config = RectorConfig::configure()
         \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
         \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read
         \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
+        \Rector\Php81\Rector\MethodCall\MyCLabsMethodCallToEnumConstRector::class, // MPI fails
         \Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class, // For now ignores
     ]);
 
@@ -64,6 +65,8 @@ $data = json_decode(file_get_contents($path), true);
 
 $vendor = $data['require'] ?? [];
 $vendor += $data['require-dev'] ?? [];
+
+$extraSkips = [];
 
 if (isset($vendor['phpunit/phpunit'])) {
     $version = (string)preg_replace('/[^0-9.]/', '', $vendor['phpunit/phpunit']);
@@ -112,6 +115,9 @@ if (isset($vendor['laravel/framework'])) {
         case $version < 12:
         default:
             $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_110;
+            $extraSkips = array_merge([
+                \RectorLaravel\Rector\Class_\ModelCastsPropertyToCastsMethodRector::class, // Fails with json_encode Cast
+            ]);
 
             break;
     }
@@ -120,6 +126,26 @@ if (isset($vendor['laravel/framework'])) {
         // @see https://github.com/driftingly/rector-laravel/
         $laravelSetList,
     ]);
+}
+
+if (!empty($extraSkips)) {
+    $config->withSkip($extraSkips);
+}
+
+$fileSkips = [
+    '/app/ThreeDS/Authentication/AuthenticateProcess.php', // MPI
+    '/app/Filters/Joins/Joins.php', // MPI
+    '/app/Domain/Transaction/DTO/Vtex/TransactionData.php', // PL
+];
+
+foreach ($fileSkips as $file) {
+    $filepath = getcwd() . $file;
+
+    if (!file_exists($filepath)) {
+        continue;
+    }
+
+    $config->withSkipPath($filepath);
 }
 
 return $config;

@@ -3962,8 +3962,10 @@ augroup AutoCommands
 
     " Some files are prohibited
     autocmd BufReadPost vendor/* setlocal nomodifiable
+    autocmd BufReadPost */vendor/* setlocal nomodifiable
     autocmd BufReadPost */plugged/* setlocal nomodifiable
     autocmd BufReadPost node_modules/* setlocal nomodifiable
+    autocmd BufReadPost */node_modules/* setlocal nomodifiable
     autocmd BufReadPost composer.lock setlocal nomodifiable
     autocmd BufReadPost package-lock.json setlocal nomodifiable
     autocmd BufReadPost * if &readonly | setlocal nomodifiable | endif
@@ -5746,7 +5748,7 @@ EOF
 
     " Create non-existent directories when saving (some) files
     autocmd BufWritePre *
-                \ if index(['fugitive', 'fugitiveblame'], &filetype) < 0 && !isdirectory(expand('<afile>:p:h')) |
+                \ if index(['quickfix', 'terminal'], &buftype) < 0 && index(['fugitive', 'fugitiveblame'], &filetype) < 0 && !isdirectory(expand('<afile>:p:h')) |
                 \   call mkdir(expand('<afile>:p:h'), 'p') |
                 \ endif
 

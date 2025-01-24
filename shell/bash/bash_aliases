@@ -20,7 +20,7 @@ trace() {
 }
 
 saU() {
-    echo "\e[34mUpdating packages...\e[0m"
+    echo "\e[34mEnabling packages...\e[0m"
     sudo sed -i 's/Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*
 
     checkcode $?
@@ -30,12 +30,12 @@ saU() {
 
     checkcode $?
 
-    echo "\e[34mUpdating packages...\e[0m"
+    echo "\e[34mDisabling packages...\e[0m"
     sudo sed -i 's/Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*
 
     checkcode $?
 
-    echo "\e[34mUpdating packages...\e[0m"
+    echo "\e[34mUpdating firefox...\e[0m"
     curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.xz && sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
 
     checkcode $?
