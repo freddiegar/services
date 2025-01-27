@@ -3531,12 +3531,6 @@ command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
 function! s:run(range, interactive, ...) abort
     let l:command = <SID>get_selection(a:range, a:interactive, a:000)
 
-    if l:command ==# ''
-        echo 'Nothing to do.'
-
-        return 0
-    endif
-
     let l:execute = ''
     let l:ignorechars = []
     let l:runner = &filetype
@@ -3553,6 +3547,14 @@ function! s:run(range, interactive, ...) abort
     elseif l:runner ==# 1 || index(['markdown', 'sh'], l:runner) >= 0
         let l:execute = 'bash -c "%s"'
         let l:ignorechars = ["'", '\']
+
+        if a:range ==# 0 && a:interactive ==# 1
+            let l:binary = split(getline(1), '/')[-1]
+
+            execute '!' . l:binary . ' %'
+
+            return
+        endif
     elseif l:runner ==# 2 || index(['php'], l:runner) >= 0
         " requires end with semicolon (;)
         let l:execute = 'phpx --run "%s"'
@@ -3561,7 +3563,7 @@ function! s:run(range, interactive, ...) abort
         if filereadable('artisan')
             " dump() doesn't allow multiple sentences split by semicolon (;) :(
             let l:execute = 'echo "%s" | phpx artisan tinker --no-interaction'
-        elseif a:range ==# 0 && !a:interactive
+        elseif a:range ==# 0 && a:interactive ==# 1
             execute '!phpx --file %'
 
             return
@@ -3602,6 +3604,12 @@ function! s:run(range, interactive, ...) abort
         echohl None
 
         return 2
+    endif
+
+    if l:command ==# ''
+        echo 'Nothing to do.'
+
+        return 0
     endif
 
     let l:run = printf(l:execute, <SID>escape(l:command, l:ignorechars))
