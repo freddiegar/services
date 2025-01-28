@@ -603,14 +603,14 @@ echo $SHELL
 # Change shell if not is zsh
 chsh -s `which zsh`
 
-grep "CASE_SENSITIVE=\|HIST_STAMPS=\|plugins=" ~/.zshrc
+grep "CASE_SENSITIVE=\|HIST_STAMPS=\|^plugins=" ~/.zshrc
 
 cp -p ~/.zshrc ~/.zshrc.original
 sed -i 's/# CASE_SENSITIVE="true"/CASE_SENSITIVE="true"/g' ~/.zshrc
 sed -i 's/# HIST_STAMPS="mm\/dd\/yyyy"/HIST_STAMPS="yyyy-mm-dd"/g' ~/.zshrc
 sed -i 's/plugins=(git)/plugins=()/g' ~/.zshrc
 
-grep "CASE_SENSITIVE=\|HIST_STAMPS=\|plugins=" ~/.zshrc
+grep "CASE_SENSITIVE=\|HIST_STAMPS=\|DISABLE_AUTO_TITLE=\|^plugins=" ~/.zshrc
 
 # In i3
 i3-msg exit

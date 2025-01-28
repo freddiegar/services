@@ -526,3 +526,9 @@ Docker Layer Squashing
 3. Deleting files in later layers doesn't remove them from earlier layers
 4. Deleted files are marked as 'not accessible' but still consume sapce in the image
 5. Docker can't remove data from previous layers due to their immutability
+
+Android File Transfer (photos from phone)
+
+```bash
+sudo apt-get install -y android-file-transfer
+```
