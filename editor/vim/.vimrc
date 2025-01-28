@@ -266,8 +266,8 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:hasts = g:isneovim && (filereadable(expand(a:cwd . '.hasts')) || filereadable(expand(a:cwd . '/../.hasts')))
         let g:qfcommand = get(g:, 'qfcommand', '')
 
-        " Can use: firefox, opera, brave-browser, google-chrome, microsoft-edge
-        let g:browser = 'firefox'
+        " Can use: firefox, opera, brave-browser, google-chrome, microsoft-edge. See changebrowser function
+        let g:browser = get(g:, 'browser', 'firefox')
 
         " File is large from 2MB
         let g:maxsize = 1024 * 1024 * 2
@@ -1497,6 +1497,8 @@ cnoremap <S-F7> <C-r>=strftime('%Y-%m-%d-%H-%M-%S')<Enter>
 nnoremap <silent> <Plug>GetReverseRepeatable <Cmd>call <SID>get_reverse('word')<Enter>
 nmap <silent> <Leader>gr <Plug>GetReverseRepeatable
 
+nnoremap <silent> <Leader>gx :call <SID>changebrowser()<Enter>
+
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
             \ <Bar> echomsg 'Copied:   ' . @+<Enter>
 
@@ -1730,6 +1732,25 @@ function! s:generate_hash() abort
     let l:hash = system('echo -n "' . l:password . '" | openssl dgst -sha256 | cut -d " " -f 2 | tr -d "\n"')
 
     return strlen(l:hash) > 0 && l:password !=# 'Retry!' ? l:hash : 'Retry!'
+endfunction
+
+function! s:changebrowser() abort
+    let l:browser = confirm('Select browser:', "&firefox\n&opera\n&brave-browser\n&google-chrome\n&microsoft-edge", 'Q')
+
+    if l:browser ==# 0
+        " Canceled
+        return
+    endif
+
+    let l:browsers = {
+                \ 1: 'firefox',
+                \ 2: 'opera',
+                \ 3: 'brave-browser',
+                \ 4: 'google-chrome',
+                \ 5: 'microsoft-edge'
+                \ }
+
+    let g:browser = l:browsers[l:browser]
 endfunction
 
 " type (string)
@@ -3068,7 +3089,7 @@ endfunction
 function! s:go_url(url, ...) abort
     if !<SID>isrunning('/bin/sh -c ' . g:browser)
         echohl WarningMsg
-        echo 'Not running browser.'
+        echo 'Not running (' . g:browser . ') browser.'
         echohl None
 
         return 1
@@ -3327,7 +3348,7 @@ nmap <silent> <C-w>E <Cmd>call <SID>gbrowse(v:false)<Enter>
 function! s:gbrowse(copy) abort
     if !a:copy && !<SID>isrunning('/bin/sh -c ' . g:browser)
         echohl WarningMsg
-        echo 'Not running browser.'
+        echo 'Not running (' . g:browser . ') browser.'
         echohl None
 
         return 1
@@ -3591,7 +3612,7 @@ function! s:run(range, interactive, ...) abort
     elseif (l:runner ==# 4 || index(['d2'], l:runner) >= 0)
         if !<SID>isrunning('/bin/sh -c ' . g:browser)
             echohl WarningMsg
-            echo 'Not running browser.'
+            echo 'Not running (' . g:browser . ') browser.'
             echohl None
 
             return 1
