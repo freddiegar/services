@@ -262,7 +262,8 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
-        let g:hasiaa = filereadable(expand(a:cwd . '/../.hasiaa'))
+        let g:hasiaa = filereadable(expand(a:cwd . '.hasiaa')) || filereadable(expand(a:cwd . '/../.hasiaa'))
+        let g:hasts = g:isneovim && (filereadable(expand(a:cwd . '.hasts')) || filereadable(expand(a:cwd . '/../.hasts')))
         let g:qfcommand = get(g:, 'qfcommand', '')
 
         " Can use: firefox, opera, brave-browser, google-chrome, microsoft-edge
@@ -2285,7 +2286,6 @@ endif
 
 if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
-    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Highligth ++
 
     " if has('gui_running')
     Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
@@ -2304,6 +2304,10 @@ else
     Plug 'ludovicchabant/vim-gutentags'                       " Auto generate tags (not allowed 'for' option)
 
     " Plug 'yegappan/lsp'                                       " LSP -> Not integrate mappings from UltiSnips
+endif
+
+if g:hasts && !<SID>mustbeignore()
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Highligth ++
 endif
 
 if g:hasiaa && g:hasgit && !<SID>mustbeignore()
@@ -2334,7 +2338,7 @@ call plug#end()
 
 " PHPActor
 " @see https://github.com/phpactor/phpactor
-let g:phpactorPhpBin = '/usr/bin/php8.3'
+let g:phpactorPhpBin = '/usr/bin/php8.4'
 
 " LSP Vue
 " npm -g install vls eslint eslint-plugin-vue -D
@@ -3856,13 +3860,7 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile *.d2 setfiletype d2
     autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
-    autocmd FileType diff if g:isneovim | TSBufDisable highlight | endif
     autocmd FileType markdown setlocal syntax=OFF
-
-    autocmd BufEnter,BufReadPost *.md if g:isneovim | TSBufDisable highlight | endif
-    autocmd BufEnter,BufReadPost */dist/*.{js,css} if g:isneovim | TSBufDisable highlight | endif
-    autocmd BufEnter,BufReadPost public/*/*.{js,css} if g:isneovim | TSBufDisable highlight | endif
-
     autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType sql silent let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
     autocmd FileType sql inoremap <silent> <expr> <buffer> <C-n>
@@ -3995,7 +3993,7 @@ augroup AutoCommands
 
         " @thanks https://gist.github.com/kawarimidoll/d566e367591acae6e41295722803534d
         function! s:ntreesitter() abort
-            if exists('g:plug_treesitter_loaded') || !has_key(g:plugs, 'nvim-treesitter')
+            if !g:hasts || exists('g:plug_treesitter_loaded') || !has_key(g:plugs, 'nvim-treesitter')
                 return
             endif
 
@@ -4031,6 +4029,11 @@ require 'nvim-treesitter.configs'.setup({
 EOF
 
             TSEnable highlight
+
+            autocmd FileType diff TSBufDisable highlight
+            autocmd BufEnter,BufReadPost *.md TSBufDisable highlight
+            autocmd BufEnter,BufReadPost */dist/*.{js,css} TSBufDisable highlight
+            autocmd BufEnter,BufReadPost public/*/*.{js,css} TSBufDisable highlight
         endfunction
 
         " Treesitter disables undofile... then turn on again after loaded
