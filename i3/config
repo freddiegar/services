@@ -4,8 +4,8 @@
 # Introduction: https://www.youtube.com/watch?v=QnYN2CTb1hM& (by Author)
 
 # Shortcuts base available:
-#   Shifted:      B, U, Y
-#   Unshifted:    c, g, i, n, o, p, t, u, x, y, z
+#   Shifted (+Shift+):      Y
+#   Unshifted ($mode+):     c, g, i, n, o, t, u, y, z
 
 # Detect keys pressed
 # xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'
@@ -186,11 +186,13 @@ default_orientation auto
 assign [instance="(?i)gvim"]                                                $workspace1
 assign [instance="(?i)neovide"]                                             $workspace1
 assign [class="(?i)firefox" title="^((?!(?i)private).)*$"]                  $workspace2
+assign [class="(?i)zen" title="^((?!(?i)private).)*$"]                      $workspace2
 assign [class="Microsoft Teams - Preview"]                                  $workspace3
 assign [class="(?i)microsoft-edge"]                                         $workspace3
 assign [class="(?i)zoom" title="Zoom Cloud Meetings"]                       $workspace3
 assign [class="Mysql-workbench-bin"]                                        $workspace4
 assign [class="(?i)firefox" title="(?=(?i)private).*"]                      $workspace5
+assign [class="(?i)zen" title="(?=(?i)private).*"]                          $workspace5
 assign [class="(?i)google-chrome"]                                          $workspace5
 assign [class="(?i)brave-browser"]                                          $workspace5
 assign [class="(?i)postman"]                                                $workspace6
@@ -238,10 +240,13 @@ for_window [instance="^virt-manager$" title="KVM$"]                         floa
 # for_window [urgent="latest" class="(?i)firefox"]                            focus
 # PiP in Firefox
 for_window [instance="Toolkit" class="(?i)firefox"]                         floating enable, resize set 640 360, move position 1250 695, sticky enable
+for_window [instance="Toolkit" class="(?i)zen"]                             floating enable, resize set 640 360, move position 1250 695, sticky enable
 # Downloads
 for_window [instance="Places" class="(?i)firefox"]                          floating enable
+for_window [instance="Places" class="(?i)zen"]                              floating enable
 # Certificates information
 for_window [instance="Browser" class="(?i)firefox"]                         floating enable
+for_window [instance="Browser" class="(?i)zen"]                             floating enable
 
 # PiP in Opera
 # for_window [class="Opera" title="Picture in Picture"]                       floating enable, sticky enable
@@ -402,7 +407,8 @@ bindsym $mod+Shift+o exec --no-startup-id opera
 bindsym $mod+Shift+p exec --no-startup-id postman
 bindsym $mod+Shift+t exec --no-startup-id microsoft-edge
 bindsym $mod+Shift+v exec --no-startup-id virt-manager
-bindsym $mod+Shift+z exec --no-startup-id filezilla
+bindsym $mod+Shift+u exec --no-startup-id filezilla
+bindsym $mod+Shift+z exec --no-startup-id zen
 
 # @see https://www.reddit.com/r/i3wm/comments/2y9aj9/what_are_your_favourite_configuration_tips/
 # Move workspace between layouts (monitors)

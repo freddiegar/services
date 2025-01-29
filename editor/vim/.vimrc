@@ -266,7 +266,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:hasts = g:isneovim && (filereadable(expand(a:cwd . '.hasts')) || filereadable(expand(a:cwd . '/../.hasts')))
         let g:qfcommand = get(g:, 'qfcommand', '')
 
-        " Can use: firefox, opera, brave-browser, google-chrome, microsoft-edge. See changebrowser function
+        " See changebrowser function
         let g:browser = get(g:, 'browser', 'firefox')
 
         " File is large from 2MB
@@ -1735,7 +1735,7 @@ function! s:generate_hash() abort
 endfunction
 
 function! s:changebrowser() abort
-    let l:browser = confirm('Select browser:', "&firefox\n&opera\n&brave-browser\n&google-chrome\n&microsoft-edge", 'Q')
+    let l:browser = confirm('Select browser:', "&firefox\n&opera\n&brave-browser\n&google-chrome\n&microsoft-edge\n&zen", 'Q')
 
     if l:browser ==# 0
         " Canceled
@@ -1747,7 +1747,8 @@ function! s:changebrowser() abort
                 \ 2: 'opera',
                 \ 3: 'brave-browser',
                 \ 4: 'google-chrome',
-                \ 5: 'microsoft-edge'
+                \ 5: 'microsoft-edge',
+                \ 6: 'zen'
                 \ }
 
     let g:browser = l:browsers[l:browser]

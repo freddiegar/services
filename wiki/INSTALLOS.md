@@ -1018,6 +1018,15 @@ sudo apt-get install opera-stable
 ## sudo apt-get remove opera && sudo apt-get autoremove
 ```
 
+# Zen (Firefox for this days 2025-01-28 is slower and CPU eater)
+
+```bash
+curl -L "https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.bz2" -o zen.tar.bz2
+sudo tar xvjf zen.tar.bz2 -C /opt && rm -Rf zen.tar.bz2
+sudo ln -s /opt/zen/zen /usr/bin/zen
+## sudo rm -Rf /usr/bin/zen && sudo rm -Rf /opt/zen
+```
+
 # Firefox (Dont use snap for this, security risk)
 
 ```bash
@@ -1025,7 +1034,7 @@ sudo apt-get remove firefox && sudo apt-get autoremove
 curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.xz
 sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
 sudo ln -s /opt/firefox/firefox /usr/bin/firefox
-## sudo rm -Rf /usr/bin/firefox
+## sudo rm -Rf /usr/bin/firefox && sudo rm -Rf /opt/firefox
 ```
 
 ## Firefox Developer Edition Shortcut
