@@ -262,7 +262,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
-        let g:hasiaa = filereadable(expand(a:cwd . '.hasiaa')) || filereadable(expand(a:cwd . '/../.hasiaa'))
+        let g:hasaia = filereadable(expand(a:cwd . '.hasaia')) || filereadable(expand(a:cwd . '/../.hasaia'))
         let g:hasts = g:isneovim && (filereadable(expand(a:cwd . '.hasts')) || filereadable(expand(a:cwd . '/../.hasts')))
         let g:qfcommand = get(g:, 'qfcommand', '')
 
@@ -2331,7 +2331,7 @@ if g:hasts && !<SID>mustbeignore()
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Highligth ++
 endif
 
-if g:hasiaa && g:hasgit && !<SID>mustbeignore()
+if g:hasaia && g:hasgit && !<SID>mustbeignore()
     if g:isneovim
         Plug 'zbirenbaum/copilot.lua'                           " Zen mode +++++: Copilot auth
 
@@ -2580,7 +2580,7 @@ let g:copilot_filetypes = {
             \ 'javascript': v:true,
             \ }
 
-if g:hasiaa && !<SID>mustbeignore()
+if g:hasaia && !<SID>mustbeignore()
     let g:copilot_no_tab_map = v:true
     inoremap <silent> <expr> <C-]> copilot#Accept('')
     inoremap <silent> <C-k> <Plug>(copilot-next)
@@ -3812,6 +3812,9 @@ endfunction
 
 " Open notes in Normal|Select|Operator Mode
 nmap <silent> <C-w>, <Cmd>call <SID>notes(v:true)<Enter>
+
+nmap <silent> <C-w>t <Cmd>edit ~/working/notes/todo.md<Enter>
+nmap <silent> <C-w>, <Cmd>call <SID>notes(v:true)<Enter>
 nmap <silent> <C-w>; <Cmd>call <SID>notes(v:false)<Enter>
 
 function! s:notes(append) abort
@@ -4379,11 +4382,11 @@ EOF
         autocmd BufReadPost * ++once silent call <SID>niaassistence()
 
         function! s:niaassistence() abort
-            if !g:hasiaa || exists('g:plug_iaassistence_loaded') || <SID>mustbeignore()
+            if !g:hasaia || exists('g:plug_aiassistant_loaded') || <SID>mustbeignore()
                 return
             endif
 
-            let g:plug_iaassistence_loaded = 1
+            let g:plug_aiassistant_loaded = 1
 
 " Don't indent!
 lua <<EOF
@@ -5370,8 +5373,8 @@ EOF
             let l:message = l:message ==# '' ? 'Loaded ' . g:infofile . ' setup.' : substitute(l:message, '##INF##', ' and ' . g:infofile, '')
         endif
 
-        if g:hasiaa
-            let l:message = l:message ==# '' ? 'Enabled IA Assistant.' : substitute(l:message, '##IAA##', ' (using IA)', '')
+        if g:hasaia
+            let l:message = l:message ==# '' ? 'Enabled AI Assistant.' : substitute(l:message, '##IAA##', ' (using IA)', '')
         endif
 
         set undofile                                            " Enable undo world (default: off)
@@ -5402,8 +5405,8 @@ EOF
                     \ || buflisted(a:item) == 0
                     \ || (match(a:item, '.') >= 0 && split(a:item, '\.')[-1] ==# 'dbout')
                     \ || isdirectory(a:item)
-                    \ || (a:item =~? '\/notes\/' && getbufvar(a:item, '&filetype') ==# 'markdown')
-                    \ || (a:item !~? 'editor/' && a:item =~? '.vimrc*' && getbufvar(a:item, '&filetype') ==# 'vim')
+                    \ || (g:working[1] !=# 'working' && a:item =~? '\/notes\/' && getbufvar(a:item, '&filetype') ==# 'markdown')
+                    \ || (g:working[1] !=# 'services' && a:item !~? 'editor/' && a:item =~? '.vimrc*' && getbufvar(a:item, '&filetype') ==# 'vim')
     endfunction
 
     function! s:sessionsavepre() abort
@@ -5620,6 +5623,22 @@ EOF
             silent call add(l:cleanup, 'times')
         endif
 
+        if index(l:options, 'g') >= 0
+            silent execute 'normal mz'
+            call setreg('z', '')
+            silent! execute "keeppatterns keepjumps g/^Checking: /yank Z"
+            silent execute "normal 'z\"zp"
+            silent execute 'delmarks z'
+            call setreg('z', '0f>ll"_d0')
+            silent execute "normal :CL\r/Checking: \rvip"
+            silent execute ":normal @z"
+            silent execute "normal vip:!sort\r"
+            silent execute "normal vip:!uniq\r"
+            silent execute "normal \eO2024\ej>}"
+
+            silent call add(l:cleanup, 'projects')
+        endif
+
         " silent call cursor(l:ccursor) <- Change cursor position!
         silent call setpos('.', l:ccursor)
 
@@ -5633,6 +5652,7 @@ EOF
     command! -nargs=0 CB call <SID>cleanup('vfb')
     command! -nargs=0 CC call <SID>cleanup('vfced')
     command! -nargs=0 CE call <SID>cleanup('vftey')
+    command! -nargs=0 CG call <SID>cleanup('vfg')
     command! -nargs=0 CK call <SID>cleanup('vfk')
     command! -nargs=0 CL call <SID>cleanup('vfted')
     command! -nargs=0 CM call <SID>cleanup('vfm')

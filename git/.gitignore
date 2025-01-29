@@ -1,12 +1,24 @@
+# JetBrains Things
 .idea
+# VSCode Things
 .vscode
+# Support Artificial Inteligence Assistant
+.hasaia
+# Enable Treesitter
+.hasts
+# aka: composer hole
 vendor
+# aka: npm hole
 node_modules
+# aka: PHP LSP custom config
 .phpactor.json
+# Testing all-in-one
 testx.sh
+# Logs to ignore
 *.log
 *.diff
 *.json5
+# Ignores backup
 storage/oauth-public.key.*
 storage/oauth-private.key.*
 # Ignores backup files ending with: [name].20250107173723 (:B command in Vim)
