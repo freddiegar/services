@@ -488,19 +488,72 @@ bindsym --release Ctrl+Print    exec maim -sd 5 | xclip -selection clipboard -t 
 bindsym --release $mod+Print    exec maim -st 9999999 -p 10 | xclip -selection clipboard -t image/png
 
 # Display selector
-set $external_output HDMI-1 --auto
+# Show current configuration: xrandr
+set $external_auto HDMI-1 --auto
 set $internal_auto eDP-1 --auto
+set $internal_high eDP-1 --mode 1920x1080
+
+# (T490s)
 # set $internal_mode eDP-1 --mode 1440x810_60.00
+# (T14 Gen3)
 set $internal_mode eDP-1 --mode 1440x900_60.00
-set $mode_display Display e(x)ternal, (i)nternal, (c)lone, (r)ight|(l)eft presentation, (h)igh internal
+
+set $mode_display Display e(x)ternal, (i|I)nternal, (r|R)ight, (l|L)eft , (c|C)lone
 
 mode "$mode_display" {
-    bindsym x exec --no-startup-id xrandr --output $external_output --primary    --output eDP-1 --auto      --off,                      mode "default"
-    bindsym i exec --no-startup-id xrandr --output $external_output --off        --output $internal_mode    --primary,                  mode "default"
-    bindsym c exec --no-startup-id xrandr --output $internal_auto   --primary    --output $external_output  --same-as $internal_auto,   mode "default"
-    bindsym r exec --no-startup-id xrandr --output $internal_mode   --primary    --output $external_output  --right-of $internal_auto,  mode "default"
-    bindsym l exec --no-startup-id xrandr --output $internal_mode   --primary    --output $external_output  --left-of $internal_auto,   mode "default"
-    bindsym h exec --no-startup-id xrandr --output $external_output --off        --output $internal_auto    --primary,                  mode "default"
+    #    primary
+    # +-----------+
+    # |           |    off
+    # |  HDMI-1   | +-------+
+    # |           | | eDP-1 |
+    # +-----------+ +-------+
+    bindsym x       exec --no-startup-id xrandr --output $external_auto --primary    --output $internal_auto  --off,                      mode "default"
+
+    #     off
+    # +-----------+
+    # |           |  primary
+    # |  HDMI-1   | +-------+
+    # |           | | eDP-1 |
+    # +-----------+ +-------+
+    bindsym i       exec --no-startup-id xrandr --output $external_auto --off        --output $internal_mode  --primary,                  mode "default"
+    # Same but: FHD in primary
+    bindsym Shift+i exec --no-startup-id xrandr --output $external_auto --off        --output $internal_auto  --primary,                  mode "default"
+
+    #             nonprimary
+    #           +-----------+
+    #  primary  |           |
+    # +-------+ |  HDMI-1   |
+    # | eDP-1 | |           |
+    # +-------+ +-----------+
+    bindsym r       exec --no-startup-id xrandr --output $internal_mode --primary    --output $external_auto  --right-of $internal_auto,  mode "default"
+    # Same but: FHD in both
+    bindsym Shift+r exec --no-startup-id xrandr --output $internal_auto --primary    --output $external_auto  --right-of $internal_auto,  mode "default"
+
+    #   nonprimary
+    # +-----------+
+    # |           |  primary
+    # |  HDMI-1   | +-------+
+    # |           | | eDP-1 |
+    # +-----------+ +-------+
+    bindsym l       exec --no-startup-id xrandr --output $internal_mode --primary    --output $external_auto  --left-of  $internal_auto,  mode "default"
+    # Same but: FHD in both
+    bindsym Shift+l exec --no-startup-id xrandr --output $internal_auto --primary    --output $external_auto  --left-of  $internal_auto,  mode "default"
+
+    #    primary
+    # +-----------+
+    # |           | nonprimary
+    # |  HDMI-1   | +-------+
+    # |           | | eDP-1 |
+    # +-----------+ +-------+
+    bindsym c       exec --no-startup-id xrandr --output $external_auto --primary    --output $internal_auto  --same-as  $external_auto,  mode "default"
+
+    #  nonprimary
+    # +-----------+
+    # |           |  primary
+    # |  HDMI-1   | +-------+
+    # |           | | eDP-1 |
+    # +-----------+ +-------+
+    bindsym Shift+c exec --no-startup-id xrandr --output $internal_auto --primary    --output $external_auto  --same-as  $internal_auto,  mode "default"
 
     # back to normal
     bindsym Return          mode "default"
@@ -517,9 +570,16 @@ bindsym $mod+Shift+x mode "$mode_display"
 
 # Add new resolution (T14 Gen3)
 # cvt 1440 900
-exec --no-startup-id xrandr --newmode  "1440x900_60.00" 106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync; xrandr --addmode eDP-1 1440x900_60.00; xrandr --output eDP-1 --mode 1440x900_60.00 --primary
+#
+# +-----------+
+# |           |  primary
+# |  HDMI-1   | +-------+
+# |           | | eDP-1 |
+# +-----------+ +-------+
+exec --no-startup-id xrandr --newmode  "1440x900_60.00" 106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync; xrandr --addmode eDP-1 1440x900_60.00; xrandr --output eDP-1 --mode 1440x900_60.00 --primary --output $external_auto --left-of $internal_auto
 
-exec --no-startup-id xrandr --output $internal_mode --primary --output $external_output --same-as $internal_mode
+# 2025-01-30 Commented in favor of command up: all-in-one
+# exec --no-startup-id xrandr --output $internal_mode --primary --output $external_auto --same-as $internal_mode
 
 # @see https://faq.i3wm.org/question/239/how-do-i-suspendlockscreen-and-logout.1.html
 # @see https://wiki.archlinux.org/title/I3#Shutdown.2C_reboot.2C_lock_screen
