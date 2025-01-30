@@ -503,56 +503,56 @@ set $mode_display Display e(x)ternal, (i|I)nternal, (r|R)ight, (l|L)eft , (c|C)l
 mode "$mode_display" {
     #    primary
     # +-----------+
-    # |           |    off
-    # |  HDMI-1   | +-------+
-    # |           | | eDP-1 |
-    # +-----------+ +-------+
+    # |           |      off
+    # |  HDMI-1   |   +-------+
+    # |           | < | eDP-1 |
+    # +-----------+   +-------+
     bindsym x       exec --no-startup-id xrandr --output $external_auto --primary    --output $internal_auto  --off,                      mode "default"
 
     #     off
     # +-----------+
-    # |           |  primary
-    # |  HDMI-1   | +-------+
-    # |           | | eDP-1 |
-    # +-----------+ +-------+
+    # |           |    primary
+    # |  HDMI-1   |   +-------+
+    # |           | > | eDP-1 |
+    # +-----------+   +-------+
     bindsym i       exec --no-startup-id xrandr --output $external_auto --off        --output $internal_mode  --primary,                  mode "default"
     # Same but: FHD in primary
     bindsym Shift+i exec --no-startup-id xrandr --output $external_auto --off        --output $internal_auto  --primary,                  mode "default"
 
-    #             nonprimary
-    #           +-----------+
-    #  primary  |           |
-    # +-------+ |  HDMI-1   |
-    # | eDP-1 | |           |
-    # +-------+ +-----------+
+    #               nonprimary
+    #             +-----------+
+    #  primary    |           |
+    # +-------+   |  HDMI-1   |
+    # | eDP-1 | : |           |
+    # +-------+   +-----------+
     bindsym r       exec --no-startup-id xrandr --output $internal_mode --primary    --output $external_auto  --right-of $internal_auto,  mode "default"
     # Same but: FHD in both
     bindsym Shift+r exec --no-startup-id xrandr --output $internal_auto --primary    --output $external_auto  --right-of $internal_auto,  mode "default"
 
     #   nonprimary
     # +-----------+
-    # |           |  primary
-    # |  HDMI-1   | +-------+
-    # |           | | eDP-1 |
-    # +-----------+ +-------+
+    # |           |    primary
+    # |  HDMI-1   |   +-------+
+    # |           | : | eDP-1 |
+    # +-----------+   +-------+
     bindsym l       exec --no-startup-id xrandr --output $internal_mode --primary    --output $external_auto  --left-of  $internal_auto,  mode "default"
     # Same but: FHD in both
     bindsym Shift+l exec --no-startup-id xrandr --output $internal_auto --primary    --output $external_auto  --left-of  $internal_auto,  mode "default"
 
     #    primary
     # +-----------+
-    # |           | nonprimary
-    # |  HDMI-1   | +-------+
-    # |           | | eDP-1 |
-    # +-----------+ +-------+
+    # |           |   nonprimary
+    # |  HDMI-1   |   +-------+
+    # |           | = | eDP-1 |
+    # +-----------+   +-------+
     bindsym c       exec --no-startup-id xrandr --output $external_auto --primary    --output $internal_auto  --same-as  $external_auto,  mode "default"
 
     #  nonprimary
     # +-----------+
-    # |           |  primary
-    # |  HDMI-1   | +-------+
-    # |           | | eDP-1 |
-    # +-----------+ +-------+
+    # |           |    primary
+    # |  HDMI-1   |   +-------+
+    # |           | = | eDP-1 |
+    # +-----------+   +-------+
     bindsym Shift+c exec --no-startup-id xrandr --output $internal_auto --primary    --output $external_auto  --same-as  $internal_auto,  mode "default"
 
     # back to normal
@@ -570,13 +570,13 @@ bindsym $mod+Shift+x mode "$mode_display"
 
 # Add new resolution (T14 Gen3)
 # cvt 1440 900
-#
+#   nonprimary
 # +-----------+
 # |           |  primary
 # |  HDMI-1   | +-------+
 # |           | | eDP-1 |
 # +-----------+ +-------+
-exec --no-startup-id xrandr --newmode  "1440x900_60.00" 106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync; xrandr --addmode eDP-1 1440x900_60.00; xrandr --output eDP-1 --mode 1440x900_60.00 --primary --output $external_auto --left-of $internal_auto
+exec --no-startup-id xrandr --newmode  "1440x900_60.00" 106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync; xrandr --addmode eDP-1 1440x900_60.00; xrandr --output $internal_auto --primary --output $external_auto --left-of $internal_auto
 
 # 2025-01-30 Commented in favor of command up: all-in-one
 # exec --no-startup-id xrandr --output $internal_mode --primary --output $external_auto --same-as $internal_mode
