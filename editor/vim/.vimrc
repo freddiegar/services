@@ -3577,7 +3577,7 @@ function! s:run(range, interactive, ...) abort
         if a:range ==# 0 && a:interactive ==# 1
             let l:binary = split(getline(1), '/')[-1]
 
-            execute '!' . l:binary . ' %'
+            execute '!' . l:binary . ' % ' . join(a:000)
 
             return
         endif
@@ -3590,7 +3590,7 @@ function! s:run(range, interactive, ...) abort
             " dump() doesn't allow multiple sentences split by semicolon (;) :(
             let l:execute = 'echo "%s" | phpx artisan tinker --no-interaction'
         elseif a:range ==# 0 && a:interactive ==# 1
-            execute '!phpx --file %'
+            execute '!phpx --file % ' . join(a:000)
 
             return
         endif
