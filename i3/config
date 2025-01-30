@@ -60,6 +60,9 @@ smart_gaps on
 # is used in the bar {} block below.
 font pango:$font_family $font_size
 
+# default to yes
+show_marks no
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -412,10 +415,13 @@ bindsym $mod+Shift+z exec --no-startup-id zen
 
 # @see https://www.reddit.com/r/i3wm/comments/2y9aj9/what_are_your_favourite_configuration_tips/
 # Move workspace between layouts (monitors)
-bindsym $mod+Left focus output left
-bindsym $mod+Shift+Left move workspace to output left
-bindsym $mod+Right focus output right
-bindsym $mod+Shift+Right move workspace to output right
+bindsym $mod+bracketleft focus output left
+bindsym $mod+bracketright focus output right
+bindsym $mod+Shift+bracketleft move workspace to output left
+bindsym $mod+Shift+bracketright move workspace to output right
+
+bindsym $mod+$meta+p mark --add mcurrent, workspace $workspace1, move workspace to output primary, workspace $workspace2, move workspace to output primary, workspace $workspace3, move workspace to output primary, workspace $workspace4, move workspace to output primary, workspace $workspace5, move workspace to output primary, workspace $workspace6, move workspace to output primary, workspace $workspace7, move workspace to output primary, workspace $workspace8, move workspace to output primary, workspace $workspace9, move workspace to output primary, workspace $workspace10, move workspace to output primary, [con_mark="mcurrent"] focus, unmark mcurrent
+bindsym $mod+$meta+x mark --add mcurrent, workspace $workspace1, move workspace to output next,    workspace $workspace2, move workspace to output next,    workspace $workspace3, move workspace to output next,    workspace $workspace4, move workspace to output next,    workspace $workspace5, move workspace to output next,    workspace $workspace6, move workspace to output next,    workspace $workspace7, move workspace to output next,    workspace $workspace8, move workspace to output next,    workspace $workspace9, move workspace to output next,    workspace $workspace10, move workspace to output next,    [con_mark="mcurrent"] focus, unmark mcurrent
 
 # sticky window
 bindsym $mod+Shift+s sticky toggle
