@@ -235,6 +235,7 @@ mkdir -p ~/.config/i3
 ln -s `pwd`/i3/config ~/.config/i3/config
 ln -s `pwd`/i3/status.conf ~/.config/i3/status.conf
 ln -s `pwd`/i3/battery ~/.config/i3/battery-popup
+ln -s `pwd`/i3/workspace ~/.config/i3/workspace
 ```
 > On VM:
 > cp -p /var/www/html/freddiegar/services/i3/config ~/.config/i3/config

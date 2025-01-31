@@ -350,6 +350,10 @@ alias x="exit"
 alias y="sh ~/working/syntaxer.sh"
 alias z="sh ~/working/sprinter.sh"
 
+alias O="xargs -r -I {}"
+# @thanks https://stackoverflow.com/a/4509648
+alias W="find /var/www/html/{evertec,flexphp,freddiegar} -mindepth 1 -maxdepth 1 -type d | fzf | O -- sh ~/.config/i3/workspace {} 2>&1 > /dev/null"
+
 # SPA
 alias ww="[ \"\`pgrep --full 'npm run dev --host'\`\" = \"\" ] && sh -c 'cd /var/www/html/evertec/webcheckout-spa && npm run dev -- --host > /dev/null 2>&1 &' && echo '\e[32mStarted\e[0m SPA'"
 alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA' &&  PIDTOKILL=\`sudo lsof -i :3000 | grep 3000 | awk '{print \$2}'\` && if [ \"\$PIDTOKILL\" != \"\" ]; then kill -9 \$PIDTOKILL; echo \"\e[31mKilled \$PIDTOKILL\e[0m\"; fi"

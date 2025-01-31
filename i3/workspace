@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# Open workspace setup for code and debug
+# Usage workspace
+#   workspace /var/www/html/freddiegar/services -> Use full location
+
+if [ $# -eq 0 ]; then
+    echo "\e[31mWorkspace requires a repository location!\e[0m"
+
+    exit 1
+fi
+
+PROJECT=$1
+
+# editor
+i3-msg "workspace 1, exec --no-startup-id urxvt -chdir $PROJECT -e nvim"
+sleep 0.5
+
+if [ `xrandr --listmonitors | grep Monitors | awk '{print $2}' | echo 0` -gt 1 ]; then
+    i3-msg "workspace 1, move workspace to output HDMI-1"
+    sleep 0.5
+fi
+
+if [ ! -d $PROJECT/app ] && [ ! -d $PROJECT/src ]; then
+    exit 0
+fi
+
+# command
+i3-msg "workspace 1, exec --no-startup-id urxvt -fn 'xft:FiraCode-Retina:size=12:antialias=true' -fb 'xft:FiraCode-Bold:size=12:antialias=true' -chdir $PROJECT"
+sleep 0.5
+
+# +---------+
+# |  down   |
+# +---------+
+# | split h |
+# +---------+
+i3-msg "workspace 1, move down, split h"
+
+# logs
+if [ -d $PROJECT/storage/logs ]; then
+    DIRLOGS=$PROJECT/storage/logs/
+elif [ -d $PROJECT/var/log ]; then
+    DIRLOGS=$PROJECT/var/log/
+else
+    i3-msg "workspace 1, resize set height 100, focus up"
+
+    exit 0
+fi
+
+i3-msg "workspace 1, exec --no-startup-id urxvt -fn 'xft:FiraCode-Retina:size=8:antialias=true' -fb 'xft:FiraCode-Bold:size=8:antialias=true' -e tail -f $DIRLOGS/*.log"
+sleep 0.5
+
+# +---------+
+# |  down   |
+# +---------+
+# |    |    |
+# +---------+
+#                                w   h
+i3-msg "workspace 1, resize set 700 100, focus up"
