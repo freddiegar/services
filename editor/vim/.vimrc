@@ -690,7 +690,7 @@ function! GetNameCurrentFile() abort
     "   /var/www/html/repo/services/docker/conf/.gitignore > 60 -> d/c/.gitignore
     "   /home/user/.vimrc                                       -> ~/.vimrc
     "   /etc/hosts                                              -> /e/hosts
-    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'checkhealth'], &filetype) > 0 || expand('%') ==# ''
+    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'checkhealth'], &filetype) >= 0 || expand('%') ==# ''
         return ''
     elseif get(b:, 'isversus', v:false)
         return expand('%:t')
@@ -3306,8 +3306,8 @@ let g:gutentags_cache_dir = expand('/tmp/ctags/')
 let g:gutentags_generate_on_new = 0
 " Weird behaviour; sometimes command are unknow
 " let g:gutentags_exclude_filetypes = index(['php', 'c'], &filetype) < 0 ? [&filetype] : []
-" let g:gutentags_generate_on_write = g:hasgit && index(['php', 'c'], &filetype)
-let g:gutentags_generate_on_missing = g:hasgit && index(['php', 'c'], &filetype)
+" let g:gutentags_generate_on_write = g:hasgit && index(['php', 'c'], &filetype) >= 0
+let g:gutentags_generate_on_missing = g:hasgit && index(['php', 'c'], &filetype) >= 0
 " Enable :GutentagsToggleEnabled
 let g:gutentags_define_advanced_commands = 1
 " let g:gutentags_generate_on_empty_buffer = 0 (default)
@@ -4518,7 +4518,7 @@ EOF
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
         " Tab Ter[M]inal
-        command! -nargs=? M tabnew <Bar> terminal <f-args>
+        command! -nargs=? M tabnew <Bar> terminal <args>
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
         autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup='IncSearch', timeout=200}
@@ -4551,7 +4551,7 @@ EOF
             silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() =~# '^%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
-        command! -nargs=? M tab terminal <f-args>
+        command! -nargs=? M tab terminal <args>
 
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
                     \ | setlocal bufhidden=wipe
@@ -5794,6 +5794,7 @@ EOF
 
     autocmd ColorScheme * call <SID>postcolorscheme()
     autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c,*Xresources :call <SID>cleanup('te')
+    autocmd BufWritePre * if expand('%:e') ==# '' && index(['sh'], &filetype) >= 0 | call <SID>cleanup('te') | endif
 
     " One <C-x><C-f> to auto-complete files
     " @thanks https://vi.stackexchange.com/questions/25440/keep-c-x-c-f-filename-completion-menu-alive-between-directories

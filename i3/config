@@ -476,7 +476,7 @@ bindsym --release XF86AudioMute        exec --no-startup-id pactl set-sink-mute 
 # bindsym XF85MonBrightnessDown exec --no-startup-id xbacklight -dec 20
 
 # Shorcut controls
-bindsym --release XF86Mail      exec  $browser outlook.live.com,    workspace $workspace2
+bindsym --release XF86Mail      exec  $browser login.live.com,      workspace $workspace2
 bindsym --release XF86Search    exec  $browser duckduckgo.com,      workspace $workspace2
 bindsym --release XF86Tools     exec  $browser music.youtube.com,   workspace $workspace2
 
@@ -665,7 +665,7 @@ mode "$mode_browser" {
 
     bindsym m exec  $browser dev.monkeytype.com,    mode "default"
     bindsym n exec  $browser translate.google.com,  mode "default"
-    bindsym o exec  $browser outlook.live.com,      mode "default"
+    bindsym o exec  $browser login.live.com,        mode "default"
     bindsym r exec  $browser reddit.com,            mode "default"
     bindsym s exec  $browser duckduckgo.com,        mode "default"
     bindsym t exec  $browser twitch.tv,             mode "default"

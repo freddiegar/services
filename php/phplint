@@ -11,13 +11,13 @@ set -o nounset
 #   phplint app tests 8.3   -> Use PHP 8.3 version as linter in folders (or files spaced separated)
 
 if [ $# -lt 1 ] ; then
-    printf 'Usage: %s <directory-or-file> [<more-directory-or-file>] [<php-version>]...\n' "$(basename "$0")"
+    printf 'Usage: %s <directory-or-file> [<more-directory-or-file>] [<php-version>]...\n' "$(basename $0)"
 
     exit 1
 fi
 
 PHPX=phpx
-PHPV=['5.6','7.0','7.1','7.2','7.3','7.4','8.0','8.1','8.2','8.3']
+PHPV=['5.6','7.0','7.1','7.2','7.3','7.4','8.0','8.1','8.2','8.3','8.4']
 
 if [ $# -gt 1 ] && [[ ${PHPV[*]} =~ ${@: -1} ]] ; then
     PHPX=php${@: -1}
