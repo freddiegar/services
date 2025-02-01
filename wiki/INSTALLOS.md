@@ -723,23 +723,23 @@ echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only oldest Ubuntu or with 
 # @see https://devtutorial.io/how-to-install-php-8-3-on-ubuntu-23-10-p3206.html
 # @see https://ppa.launchpadcontent.net/ondrej/php/ubuntu/dists/
 # @see /etc/apt/sources.list.d/ondrej-ubuntu-php-oracular.sources
-sudo apt-get install -y php8.3-cli
-sudo apt-get install -y php8.3-dev
-sudo apt-get install -y php8.3-mbstring
-sudo apt-get install -y php8.3-mysql
-sudo apt-get install -y php8.3-curl
-sudo apt-get install -y php8.3-zip
-sudo apt-get install -y php8.3-soap
-sudo apt-get install -y php8.3-gd
-sudo apt-get install -y php8.3-sqlite3
-sudo apt-get install -y php8.3-intl
-sudo apt-get install -y php8.3-memcached
-sudo apt-get install -y php8.3-redis
-sudo apt-get install -y php8.3-bcmath
-sudo apt-get install -y php8.3-gmp
-sudo apt-get install -y php8.3-xml
-sudo apt-get install -y php8.3-zip
-## sudo apt-get remove php8.3\* && sudo apt-get autoremove
+sudo apt-get install -y php8.4-cli
+sudo apt-get install -y php8.4-dev
+sudo apt-get install -y php8.4-mbstring
+sudo apt-get install -y php8.4-mysql
+sudo apt-get install -y php8.4-curl
+sudo apt-get install -y php8.4-zip
+sudo apt-get install -y php8.4-soap
+sudo apt-get install -y php8.4-gd
+sudo apt-get install -y php8.4-sqlite3
+sudo apt-get install -y php8.4-intl
+sudo apt-get install -y php8.4-memcached
+sudo apt-get install -y php8.4-redis
+sudo apt-get install -y php8.4-bcmath
+sudo apt-get install -y php8.4-gmp
+sudo apt-get install -y php8.4-xml
+sudo apt-get install -y php8.4-zip
+## sudo apt-get remove php8.4\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
 ```
 

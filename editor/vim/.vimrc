@@ -1353,7 +1353,7 @@ endfunction
 nmap <silent> <expr> <F10>
             \ expand('%:t') ==# '.vimrc' ? ":PlugUpdate<Enter>" :
             \ &filetype ==# 'vim-plug' ? ":silent execute \"normal! :bdelete!\\r\"<Enter>" :
-            \ filereadable('.vimrc') ? ":silent execute 'edit .vimrc'<Enter>" :
+            \ filereadable(g:cwd . '/editor/vim/.vimrc') ? ":silent execute 'edit editor/vim/.vimrc'<Enter>" :
             \ ":silent execute 'edit ~/.vimrc'<Enter>"
 
 " Turn-off highlighting
@@ -2369,10 +2369,10 @@ let g:phpactorPhpBin = '/usr/bin/php8.4'
 " " @see https://github.com/voldikss/vim-browser-search
 " let g:browser_search_default_engine = 'duckduckgo'
 
-" nmap <silent> <Leader>S <Plug>SearchNormal
-" xmap <silent> <Leader>S <Plug>SearchVisual
+" nmap <silent> <Leader>K <Plug>SearchNormal
+" xmap <silent> <Leader>K <Plug>SearchVisual
 
-" command! -nargs=* -range S call search#start(<q-args>, visualmode(), <range>)
+" command! -nargs=* -range K call search#start(<q-args>, visualmode(), <range>)
 
 " @thanks https://github.com/skanehira/translate.vim
 " channel (channel), message (string)
@@ -4518,6 +4518,7 @@ EOF
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
         " Tab Ter[M]inal
+        command! -nargs=? S 5split <Bar> setlocal winfixheight <Bar> terminal <args>
         command! -nargs=? M tabnew <Bar> terminal <args>
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
@@ -4542,8 +4543,8 @@ EOF
         autocmd TermEnter * setlocal nonumber
                     \ | setlocal norelativenumber
 
-        autocmd TermLeave * setlocal number
-                    \ | setlocal relativenumber
+        " autocmd TermLeave * setlocal number
+        "             \ | setlocal relativenumber
 
         " Open Terminal Mode splitted (Same to Vim behaviour)
         " Not use l: prefix (why nvim why!)
@@ -4551,6 +4552,7 @@ EOF
             silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() =~# '^%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
+        command! -nargs=? S terminal ++rows=5 <args>
         command! -nargs=? M tab terminal <args>
 
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
@@ -4558,6 +4560,10 @@ EOF
                     \ | setlocal signcolumn=no
                     \ | setlocal colorcolumn=0
                     \ | setlocal nolist
+                    \ | setlocal nonumber
+                    \ | setlocal norelativenumber
+                    \ | setlocal fillchars+=eob:\
+                    \ | setlocal winfixheight
                     \ | if expand('%')[-3 :] !=? '!sh'
                         \ | tnoremap <silent> <buffer> <Esc> <C-\><C-n><Enter>
                     \ | endif
