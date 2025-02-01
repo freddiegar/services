@@ -29,7 +29,7 @@ FPHP=$(($FSTAGING + $FMODIFING + $FCOMPOSER))
 phpx /usr/local/bin/composer validate --no-check-all --strict || exit $?
 
 if [ "$REPO" != "rest-services" ]; then
-    COMPOSER_AUDIT_ABANDONED=ignore phpx /usr/local/bin/composer audit || exit $?
+COMPOSER_AUDIT_ABANDONED=ignore phpx /usr/local/bin/composer audit || exit $?
 fi
 
 # Run fixer before add message to commit
@@ -45,15 +45,41 @@ else
     echo "\e[31mFixer not found.\e[0m"
 fi
 
-if [ "$REPO" != "microsites" ]; then
+if [ "$REPO" != "microsites" ] && [ "$REPO" != "threedsecure-merchant-plugin" ] && [ "$REPO" != "activity-client" ]; then
+PHPSTAN=""
+
 if [ $FPHP = 0 ]; then
     echo -n ""
+elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpstan  '`" != "" ] && [ "`jq '.scripts."phpstan"' composer.json`" != "" ]; then
+    PHPSTAN="$(jq '.scripts."phpstan"' composer.json | sed 's/\"//g')"
 elif [ -f phpstan.neon.dist ] && [ -f vendor/bin/phpstan ]; then
-    phpx vendor/bin/phpstan analyse || exit $?
+    PHPSTAN="phpx vendor/bin/phpstan analyse --config=phpstan.neon.dist --level=1"
 elif [ -f phpstan.neon ] && [ -f vendor/bin/phpstan ]; then
-    phpx vendor/bin/phpstan analyse -c phpstan.neon || exit $?
+    PHPSTAN="phpx vendor/bin/phpstan analyse --config=phpstan.neon --level=1"
 # else
 #     echo "\e[31mLarastan not found.\e[0m"
+fi
+
+if [ "$PHPSTAN" != "" ]; then
+    if [ "$PHPSTAN" = "null" ]; then
+        PHPSTAN=""
+    elif [ "`echo "$PHPSTAN" | grepx "^phpstan "`" != "" ]; then
+        PHPSTAN="phpx vendor/bin/$PHPSTAN"
+    # elif [ "`echo "$PHPSTAN" | grepx "^@php "`" != "" ]; then
+    #     PHPSTAN="phpx $PHPSTAN"
+    # elif [ "`echo "$PHPSTAN" | grepx "^XDEBUG_"`" != "" ]; then
+    #     # XDEBUG_MODE=coverage vendor/bin/phpunit
+    #     # XDEBUG_MODE=coverage phpx vendor/bin/phpunit
+    #     PHPSTAN=`echo "$PHPSTAN" | sed -E 's/(\w*)\s+(.*)/\1 phpx \2/g'`
+    else
+        PHPSTAN="phpx $PHPSTAN"
+    fi
+fi
+
+if [ "$PHPSTAN" != "" ]; then
+    echo $PHPSTAN
+
+    $PHPSTAN || exit $?
 fi
 fi
 
