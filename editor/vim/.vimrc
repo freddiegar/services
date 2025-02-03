@@ -3063,6 +3063,10 @@ endfunction
 nnoremap <silent> <Plug>GoUrlRepeatable <Cmd>call <SID>go_url(expand('<cWORD>'))<Enter>
 nmap <silent> gx <Plug>GoUrlRepeatable
 
+nnoremap <silent> <Plug>GetUrlRepeatable :let @+=<SID>get_url(expand('<cWORD>'))
+            \ <Bar> echo len(@+) > 0 ? 'Copied:   ' . @+[0 : winwidth(0) - 15] : ''<Enter>
+nmap <silent> gX <Plug>GetUrlRepeatable
+
 " dependency (string): void
 function! s:isrunning(dependency) abort
     let l:running = system('ps -fe | ' . g:filterprg . ' "' . a:dependency . '" | ' . g:filterprg  . ' --invert-match " rg | grep | grepx "')
@@ -3087,15 +3091,7 @@ endfunction
 "   editor/vim/.vimrc
 "   /etc/hosts
 " url (string), [string repeatable]: void
-function! s:go_url(url, ...) abort
-    if !<SID>isrunning('/bin/sh -c ' . g:browser)
-        echohl WarningMsg
-        echo 'Not running (' . g:browser . ') browser.'
-        echohl None
-
-        return 1
-    endif
-
+function! s:get_url(url, ...) abort
     " URL or [relative] path
     let l:uri = a:url
 
@@ -3110,8 +3106,6 @@ function! s:go_url(url, ...) abort
         let l:temp = getline(".")->split(' ')->map({_, v -> matchstr(v, '\chttp\(s\)\?:\/\/[a-z.@:?=&/\-0-9]\+')})->filter('!empty(v:val)')->sort()->uniq()
         let l:uri = len(l:temp) > 0 ? l:temp[0] : l:uri
     endif
-
-    let l:repeatable = a:0 > 0 ? a:1 : 'GoUrlRepeatable'
 
     " Maybe Markdown Link
     if match(l:uri, '[') >= 0
@@ -3149,7 +3143,33 @@ function! s:go_url(url, ...) abort
         let l:uri = ''
     endif
 
-    if l:uri !=# ''
+    if l:uri ==# ''
+        echo 'Nothing to do.'
+    endif
+
+    silent! call repeat#set("\<Plug>GetUrlRepeatable")
+
+    return l:uri
+endfunction
+
+function! s:go_url(url, ...) abort
+    if !<SID>isrunning('/bin/sh -c ' . g:browser)
+        echohl WarningMsg
+        echo 'Not running (' . g:browser . ') browser.'
+        echohl None
+
+        return 1
+    endif
+
+    let l:uri = <SID>get_url(a:url)
+    let l:repeatable = a:0 > 0 ? a:1 : 'GoUrlRepeatable'
+
+    if l:uri ==# ''
+        echo 'Nothing to do.'
+
+        return
+    endif
+
         silent execute "!" . g:browser . " '" . shellescape(l:uri, 1) . "'"
 
         silent redraw!
@@ -3157,9 +3177,6 @@ function! s:go_url(url, ...) abort
         silent! call repeat#set("\<Plug>" . l:repeatable)
 
         echo 'Opened:   ' . l:uri[0 : winwidth(0) - 15]
-    else
-        echo 'Nothing to do.'
-    endif
 endfunction
 
 nnoremap <silent> gf <Cmd>call <SID>go_file(expand('<cfile>'))<Enter>
