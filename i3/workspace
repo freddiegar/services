@@ -16,7 +16,7 @@ PROJECT=$1
 i3-msg "workspace 1, exec --no-startup-id urxvt -chdir $PROJECT -e nvim"
 sleep 0.5
 
-if [ `xrandr --listmonitors | grep Monitors | awk '{print $2}' | echo 0` -gt 1 ]; then
+if [ `xrandr --listmonitors | grep Monitors | awk '{print $2}' || echo 0` -gt 1 ]; then
     i3-msg "workspace 1, move workspace to output HDMI-1"
     sleep 0.5
 fi

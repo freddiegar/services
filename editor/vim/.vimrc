@@ -267,7 +267,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:qfcommand = get(g:, 'qfcommand', '')
 
         " See changebrowser function
-        let g:browser = get(g:, 'browser', 'firefox')
+        let g:browser = get(g:, 'browser', 'zen')
 
         " File is large from 2MB
         let g:maxsize = 1024 * 1024 * 2
@@ -3171,13 +3171,13 @@ function! s:go_url(url, ...) abort
         return
     endif
 
-        silent execute "!" . g:browser . " '" . shellescape(l:uri, 1) . "'"
+    silent execute "!" . g:browser . " '" . shellescape(l:uri, 1) . "'"
 
-        silent redraw!
+    silent redraw!
 
-        silent! call repeat#set("\<Plug>" . l:repeatable)
+    silent! call repeat#set("\<Plug>" . l:repeatable)
 
-        echo 'Opened:   ' . l:uri[0 : winwidth(0) - 15]
+    echo 'Opened:   ' . l:uri[0 : winwidth(0) - 15]
 endfunction
 
 nnoremap <silent> gf <Cmd>call <SID>go_file(expand('<cfile>'))<Enter>

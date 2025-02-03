@@ -1022,8 +1022,8 @@ sudo apt-get install opera-stable
 # Zen (Firefox for this days 2025-01-28 is slower and CPU eater)
 
 ```bash
-curl -L "https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.bz2" -o zen.tar.bz2
-sudo tar xvjf zen.tar.bz2 -C /opt && rm -Rf zen.tar.bz2
+curl -L "https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz" -o zen.tar.xz
+sudo tar xvf zen.tar.xz -C /opt && rm -Rf zen.tar.xz
 sudo ln -s /opt/zen/zen /usr/bin/zen
 ## sudo rm -Rf /usr/bin/zen && sudo rm -Rf /opt/zen
 ```

@@ -5,7 +5,7 @@ trace() {
     if [ "$1" = "" ]; then
         echo "\e[31mPID is required!\e[0m"
 
-        exit 1
+        return 1
     fi
 
     if [ ! -d /tmp/straces/ ]; then
@@ -41,7 +41,7 @@ saU() {
     checkcode $?
 
     echo "\e[34mUpdating zen...\e[0m"
-    curl -L "https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.bz2" -o zen.tar.bz2 && sudo tar xvjf zen.tar.bz2 -C /opt && rm -Rf zen.tar.bz2
+    curl -L "https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz" -o zen.tar.xz && sudo tar xvf zen.tar.xz -C /opt && rm -Rf zen.tar.xz
 
     checkcode $?
 
@@ -54,6 +54,9 @@ saU() {
     sh ~/working/dockerbuild.sh
 
     checkcode $?
+
+    echo "\e[34mDocker cleanup...\e[0m"
+    dclean
 }
 
 checkcode() {
@@ -72,7 +75,7 @@ cj() {
     if [ "$1" = "" ]; then
         echo "\e[31mCSV file is required!\e[0m"
 
-        exit 0
+        return 1
     fi
 
     mlr --icsv --ojson tail -n 2 "$1"
@@ -172,8 +175,7 @@ osi() {
     return $?
 }
 
-
-# PHP Syntax Check:
+# PHP Check Syntax:
 #   - pcs
 #   - pcs 7.4
 pcs() {
@@ -474,7 +476,7 @@ vapor() {
 }
 
 alias ducks="du -cks * | sort -rn | head"
-alias fo="/opt/firefox/firefox --new-tab"
+alias fo="/opt/zen/zen --new-tab"
 
 alias dexec="docker exec -it"
 alias dlogs="docker logs --tail 50 -f"
