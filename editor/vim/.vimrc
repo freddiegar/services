@@ -262,8 +262,8 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
-        let g:hasaia = filereadable(expand(a:cwd . '.hasaia')) || filereadable(expand(a:cwd . '/../.hasaia'))
-        let g:hasts = g:isneovim && (filereadable(expand(a:cwd . '.hasts')) || filereadable(expand(a:cwd . '/../.hasts')))
+        let g:hasaia = filereadable(g:cwd . '/.hasaia') || filereadable(g:cwd . '/../.hasaia')
+        let g:hasts = g:isneovim && (filereadable(g:cwd . '/.hasts') || filereadable(g:cwd . '/../.hasts'))
         let g:qfcommand = get(g:, 'qfcommand', '')
 
         " See changebrowser function
