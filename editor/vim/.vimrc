@@ -2236,7 +2236,6 @@ Plug 'sniphpets/sniphpets', {'for': 'php'}                      " PHP snippet wi
 
 Plug 'tpope/vim-fugitive'                                       " Git with superpowers (statusline, GV, GB and GBrowse commands, etc)
 Plug 'rickhowe/diffchar.vim'                                    " Better diff view
-Plug 'airblade/vim-gitgutter'                                   " Show signs changes if cwd is a git repository
 Plug 'junegunn/gv.vim', {'on': 'GV'}                            " - Commits filter extension (needs vim-fugitive) -> :GV[!], GV?
 Plug 'tpope/vim-rhubarb'                                        " - GitHub browser extension (needs vim-fugitive, no conditional) -> :GBrowse
 Plug 'tommcdo/vim-fubitive'                                     " - BitBucket browser extension (needs vim-fugitive, no conditional) -> :GBrowse
@@ -2307,6 +2306,7 @@ endif
 " Plug 'terrastruct/d2-vim', {'for': 'd2'}                        " Better highlight d2 syntax
 
 if g:isneovim
+    Plug 'lewis6991/gitsigns.nvim'                            " Show signs changes if cwd is a git repository (using Lua)
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
 
     " if has('gui_running')
@@ -2321,6 +2321,7 @@ if g:isneovim
     Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
     " endif
 else
+    Plug 'airblade/vim-gitgutter'                             " Show signs changes if cwd is a git repository (using VimL)
     Plug 'markonm/traces.vim'                                 " See range, substitution and global preview
     Plug 'machakann/vim-highlightedyank'                      " See yank preview
     Plug 'ludovicchabant/vim-gutentags'                       " Auto generate tags (not allowed 'for' option)
@@ -3422,10 +3423,12 @@ nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' descr
 "   U   -> [U]nstage everything
 "   X   -> Di[X]card change (checkout or reset)
 "   I   -> [I]include [P]atch from file
-"   (   -> Preview file
+"   (   -> Prev file
 "   )   -> Next file
+"   [[  -> Prev section [Unstaged|Staged|Unpushed]
+"   ]]  -> Next section [Unstaged|Staged|Unpushed]
 "   dd  -> [d]iff view (in horizontal)
-"   dq  -> [d]iff [q]uit
+"   dq  -> [d]iff [q]uit in :G buffer
 "   [c  -> Preview change (not conflict!)
 "   ]c  -> Next change (not conflict!)
 "   \r  -> Go to file
@@ -3494,27 +3497,92 @@ for [s:shortcut, s:command] in <SID>git_alias() + [['gh', 'Git blame'], ['gst', 
     execute "cnoreabbrev <expr> " . s:shortcut . " (getcmdtype() ==# ':' && getcmdline() =~# '^" . s:shortcut . "') ? '" . s:command . "' : '" . s:shortcut . "'"
 endfor
 
-" GitGutter
-" @see https://github.com/airblade/vim-gitgutter
-" let g:gitgutter_enabled = 1 (default)
-" let g:gitgutter_eager = 1 (¿?)
-" let g:gitgutter_realtime = 0 (¿?)
-let g:gitgutter_map_keys = 0
-let g:gitgutter_max_signs = 750
-let g:gitgutter_sign_priority = 100000
-" let g:gitgutter_sign_allow_clobber = 0
-let g:gitgutter_preview_win_floating = 1
-let g:gitgutter_close_preview_on_escape = 1
-let g:gitgutter_show_msg_on_hunk_jumping = 0
-let g:gitgutter_grep = g:filterprg
+if g:isneovim
+" Don't indent!
+" @see  https://github.com/lewis6991/gitsigns.nvim
+lua << EOF
+    require('gitsigns').setup({
+        signs = {
+            add          = { text = '+' },
+            change       = { text = '~' },
+            delete       = { text = '_' },
+            topdelete    = { text = '-' },
+            changedelete = { text = '~_' },
+            untracked    = { text = ':' },
+        },
+        signs_staged = {
+            add          = { text = ':' },
+            change       = { text = ':' },
+            delete       = { text = ':' },
+            topdelete    = { text = ':' },
+            changedelete = { text = ':' },
+            untracked    = { text = ':' },
+        },
+        -- current_line_blame_opts = {
+        --     delay = 2000,
+        -- },
+        on_attach = function(bufnr)
+            local gitsigns = require('gitsigns')
+            local options = { silent = true, buffer = bufnr }
 
-nmap <silent> <expr> <Leader>k &diff ? "[czzzv" : ":GitGutterPrevHunk<Enter>zzzv"
-nmap <silent> <expr> <Leader>j &diff ? "]czzzv" : ":GitGutterNextHunk<Enter>zzzv"
-nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
-nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
-nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
-nmap <silent> <Leader>hq <Cmd>GitGutterQuickFixCurrentFile <Bar> copen <Enter>
-nmap <silent> <Leader>hf <Cmd>GitGutterFold<Enter>
+            vim.keymap.set('n', '<Leader>k',  function()
+                if vim.wo.diff then return '[c' end
+                vim.schedule(function() gitsigns.nav_hunk('prev') end)
+                return '<Ignore>'
+            end, {expr=true})
+
+            vim.keymap.set('n', '<Leader>j',  function()
+                if vim.wo.diff then return ']c' end
+                vim.schedule(function() gitsigns.nav_hunk('next') end)
+                return '<Ignore>'
+            end, {expr=true})
+
+            vim.keymap.set('n', '<Leader>mm', gitsigns.stage_hunk, options)
+            vim.keymap.set('v', '<Leader>mm', function()
+                gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+            end)
+
+            vim.keymap.set('n', '<Leader>hu', gitsigns.reset_hunk, options)
+            vim.keymap.set('v', '<Leader>hu', function()
+                gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+            end)
+
+            vim.keymap.set('n', '<Leader>hp', gitsigns.preview_hunk, options)
+            -- vim.keymap.set('n', '<Leader>hi', gitsigns.preview_hunk_inline, options)
+            vim.keymap.set('n', '<Leader>hq', gitsigns.setqflist, options)
+            -- vim.keymap.set('n', '<Leader>hd', gitsigns.diffthis, options)
+            vim.keymap.set('n', '<Leader>hB', gitsigns.toggle_current_line_blame, options)
+
+            vim.keymap.set('n', '<leader>hb', function()
+                gitsigns.blame_line({ full = true })
+            end, options)
+        end
+    })
+EOF
+else
+    " GitGutter
+    " @see https://github.com/airblade/vim-gitgutter
+    " let g:gitgutter_enabled = 1 (default)
+    " let g:gitgutter_eager = 1 (¿?)
+    " let g:gitgutter_realtime = 0 (¿?)
+    let g:gitgutter_map_keys = 0
+    let g:gitgutter_max_signs = 750
+    let g:gitgutter_sign_priority = 100000
+    " let g:gitgutter_sign_allow_clobber = 0
+    let g:gitgutter_preview_win_floating = 1
+    let g:gitgutter_close_preview_on_escape = 1
+    let g:gitgutter_show_msg_on_hunk_jumping = 0
+    let g:gitgutter_grep = g:filterprg
+
+    nmap <silent> <expr> <Leader>k &diff ? "[czzzv" : ":GitGutterPrevHunk<Enter>zzzv"
+    nmap <silent> <expr> <Leader>j &diff ? "]czzzv" : ":GitGutterNextHunk<Enter>zzzv"
+    nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
+    nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
+    nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
+    nmap <silent> <Leader>hq <Cmd>GitGutterQuickFixCurrentFile <Bar> copen <Enter>
+    " nmap <silent> <Leader>hd <Cmd>GitGutterDiffOrig<Enter>
+    " nmap <silent> <Leader>hf <Cmd>GitGutterFold<Enter>
+endif
 
 " After stage hunk, reload fugitive if it's open
 " @thanks https://github.com/zldrobit/dotfiles/blob/566b47a939cb90cfc37b1629b3c49ecf4f869cb0/.vimrc#L357
@@ -5711,6 +5779,12 @@ EOF
             highlight! link GitGutterDelete LineNr
             highlight! link GitGutterChangeDelete LineNr
 
+            highlight! link GitSignsAdd LineNr
+            highlight! link GitSignsChange LineNr
+            highlight! link GitSignsDelete LineNr
+            highlight! link GitSignsChangeDelete LineNr
+            highlight! link GitSignsCurrentLineBlame LineNr
+
             highlight! link SignatureMarkText LineNr
             highlight! link SignatureMarkerText LineNr
 
@@ -5765,6 +5839,7 @@ EOF
     autocmd InsertLeave * call <SID>diagnostics()
     autocmd User ALELintPost call <SID>diagnostics()
     autocmd User GitGutterStage silent call timer_start(0, function('s:reloadfugitive'))
+    autocmd User GitSignsChanged silent call timer_start(0, function('s:reloadfugitive'))
 
     " @see https://gist.github.com/maxboisvert/a63e96a67d0a83d71e9f49af73e71d93
     " Not use, kill <BS> mapping replace
