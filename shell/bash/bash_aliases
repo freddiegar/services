@@ -358,11 +358,11 @@ alias W="find /var/www/html/{evertec,flexphp,freddiegar} -mindepth 1 -maxdepth 1
 
 # SPA
 alias ww="[ \"\`pgrep --full 'npm run dev --host'\`\" = \"\" ] && sh -c 'cd /var/www/html/evertec/webcheckout-spa && npm run dev -- --host > /dev/null 2>&1 &' && echo '\e[32mStarted\e[0m SPA'"
-alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA' &&  PIDTOKILL=\`sudo lsof -i :3000 | grep 3000 | awk '{print \$2}'\` && if [ \"\$PIDTOKILL\" != \"\" ]; then kill -9 \$PIDTOKILL; echo \"\e[31mKilled \$PIDTOKILL\e[0m\"; fi"
+alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA' &&  PIDTOKILL=\`sudo lsof -i :3000 | grepx 3000 | awk '{print \$2}'\` && if [ \"\$PIDTOKILL\" != \"\" ]; then kill -9 \$PIDTOKILL; echo \"\e[31mKilled \$PIDTOKILL\e[0m\"; fi"
 
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
-alias ht="history | awk '{print \$4}' | sort | uniq -c | sort -nr | head -10"
+alias ht="history | grepx -v '  (_|sudo|echo|php|ls) ' | awk '{print \$4}' | sort | uniq -c | sort -nr | head -10"
 # di dir1 dir2 > dirs.diff
 alias di="diff -rq --suppress-common-lines"
 # alias ll="command ls -lh"
@@ -376,7 +376,7 @@ alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f package.json ] && [ -f package-lock.json ] ; then npm ci; fi && cd .."
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f artisan ] && [ -f .env ] && [ -d vendor ]; then phpx artisan migrate --force; fi && cd .."
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f yii ] && [ -f .env ] && [ -d vendor ] ; then export APPLICATION_ENV=dev && phpx yii migrate/up; fi && cd .."
-alias lsd="command ls -lA | grep '^d'"
+alias lsd="command ls -lA | grepx '^d'"
 alias lsn="command ls -L1"
 alias __="ssh-add"
 # @thanks https://unix.stackexchange.com/a/90869
@@ -486,37 +486,39 @@ alias dstatus="docker ps --format \"{{.Names}}\" | sort"
 alias dprune="docker system prune -a"
 alias dstats="docker stats"
 alias dclean="dcclean && diclean"
-alias diclean="docker images | grep ' <none> ' | awk '{print \$3}' | xargs -r -I {} docker rmi -f {} && echo 'Images cleaned'"
-alias dcclean="docker ps -a | grep ' Exited (1) ' | awk '{print \$1}' | xargs -r -I {} docker rm  -f {} && echo 'Containers cleaned'"
+alias diclean="docker images | grepx ' <none> ' | awk '{print \$3}' | xargs -r -I {} docker rmi -f {} && echo 'Images cleaned'"
+alias dcclean="docker ps -a | grepx ' Exited (1) ' | awk '{print \$1}' | xargs -r -I {} docker rm  -f {} && echo 'Containers cleaned'"
 
 alias gs="git summary -q 2> /dev/null"
 alias gsa="git summary 2> /dev/null"
 alias gf="onefetch --number-of-authors 10 --number-of-file-churns 5 --no-bots --no-merges --no-color-palette"
-alias gv="gs | grep -v -E '/ro-|/_' | grep -E ' M?v'"
-alias gV="gs | grep -v -E '/ro-|/_' | grep -E '\^$'"
-alias gM="gs | grep -v -E '/ro-|/_' | grep -E 'M'"
-alias gN="gs | grep -v -E '/ro-|/_' | grep -E '\?'"
+alias gv="gs | grepx -v '/ro-|/_' | grepx ' M?v'"
+alias gV="gs | grepx -v '/ro-|/_' | grepx '\^$'"
+# [M]odified
+alias gM="gs | grepx -v '/ro-|/_' | grepx 'M'"
+# [N]ew
+alias gN="gs | grepx -v '/ro-|/_' | grepx '\?'"
 alias gi="git init"
 alias gt="git tag"
 alias gth="git rev-list -n 1"
 alias gst="git status"
 alias gsts="git status --short"
 alias gls="git ls-files"
-# List modified traked files
+# List [m]odified traked files
 alias glsm="git ls-files --modified"
-# List deleted traked files
+# List [d]eleted traked files
 alias glsd="git ls-files --deleted"
 # List ALL untraked files
 alias glso="git ls-files --others"
 # List ALL untraked files ignoring default exclusions: *.log
 alias glsu="git ls-files --others --exclude-standard"
-# List using root directory (usable inside NOT root directory)
+# List [f]ull path (usable in directory diferent to root directory)
 alias glsf="git ls-files --full-name"
-# List staged files
+# List [s]taged files
 alias glss="git diff --name-only --cached | xargs -r -l echo"
-# List assumed unchanged files
+# List [a]ssumed unchanged files
 alias glsa="git ls-files -v | rg '^h ' | awk '{print \$2}'"
-# List changes (new/modified/deleted) files
+# List [c]hanges (new/modified/deleted) files
 alias glsc="git status --porcelain | awk '{print \$2}'"
 
 alias gd="git diff --ignore-space-change --ignore-all-space"
@@ -555,13 +557,21 @@ alias glw="git reset --keep HEAD@{1}"
 alias gpw="git reset --soft HEAD^"
 alias gpa="git push --all"
 alias gb="git branch"
-alias gbc="git branch --merged | grep -i -v -E '(^\*|master|main|develop)' | xargs -r git branch -d"
-alias gbr="git branch -r --merged | grep -i -v -E '(^\*|master|main|develop|release)' | cut -d/ -f2- | xargs -r -n 1 echo"
-alias gbcr="git branch -r --merged | grep -v -E '(^\*|master|main|develop|release)' | cut -d/ -f2- | xargs -r -n 1 git push --delete origin"
+# Branch local [c]leanup
+alias gbc="git branch --merged | grepx -i -v '(^\*|master|main|develop)' | xargs -r git branch -d"
+# List branch [r]emote
+alias gbr="git branch -r --merged | grepx -i -v '(^\*|master|main|develop|release)' | cut -d/ -f2- | xargs -r -n 1 echo"
+# Branch [c]leanup [r]emote
+alias gbcr="git branch -r --merged | grepx -v '(^\*|master|main|develop|release)' | cut -d/ -f2- | xargs -r -n 1 git push --delete origin"
+# Branch [n]ew
 alias gbn="git checkout master && git branch -M master && git push -u origin master"
+# Branch copy name
 alias gbb="git rev-parse --abbrev-ref HEAD | tr -d '\n' | yy"
+# Run [g]arbage [c]ollector
 alias ggc="git gc --prune=now"
+# Database [f]ile[s] check
 alias gck="git fsck --full --progress"
+# Repository [f]i[x]
 alias gfx="ggc && gck"
 alias gfa="git fetch --all --prune"
 alias gfu="git fetch upstream"
@@ -622,16 +632,17 @@ alias gloo="git --no-pager log --pretty=format:'%aN <%ae>' --since=`date -d \"$(
 alias glol="git show --name-only"
 alias glof="git log --decorate=full --pretty=full --graph -b --stat"
 alias glos="git log --show-signature"
+
 alias gconf="git config --list"
 
-# osc duckduck.com:443
+# Connect: osc duckduck.com:443
 alias osc="openssl s_client -brief -connect"
-# osd duckduck.com:443.pem
+# osd duckduck.com.443.pem
 alias osd="openssl x509 -noout -text -in"
-# osx duckduck.com:443.pem
+# osx duckduck.com.443.pem
 alias osx="openssl x509 -noout -dates -in"
 # Check expirations in seconds 60*60*24*30 -> 2592000 (1 month)
-# osv duckduck.com:443.pem
+# osv duckduck.com.443.pem
 alias osv="openssl x509 -noout -checkend 2592000 -in"
 
 alias cdh="cd /var/www/html"
