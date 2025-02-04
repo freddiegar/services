@@ -1,3 +1,15 @@
+# dd 2024-11-02
+# dd 2024-11-02 2024-11-20
+dd() {
+    if [ "$1" = "" ]; then
+        echo "\e[31mDate from is required!\e[0m"
+
+        return 1
+    fi
+
+    phpx --run "echo (date_diff(date_create('$1 America/Bogota'), date_create('${2-`date -u +%Y%m%d%H%M%S`} America/Bogota')))->format('%a day %H:%I:%S') . \"\n\";"
+}
+
 # @see https://bohner.me/posts/fixingsshlogintimes/
 # trace 8056
 # trace $(pgrep -f ssh)
