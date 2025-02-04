@@ -3525,13 +3525,13 @@ lua << EOF
             local gitsigns = require('gitsigns')
             local options = { silent = true, buffer = bufnr }
 
-            vim.keymap.set('n', '<Leader>k',  function()
+            vim.keymap.set('n', '<Leader>k', function()
                 if vim.wo.diff then return '[c' end
                 vim.schedule(function() gitsigns.nav_hunk('prev') end)
                 return '<Ignore>'
             end, {expr=true})
 
-            vim.keymap.set('n', '<Leader>j',  function()
+            vim.keymap.set('n', '<Leader>j', function()
                 if vim.wo.diff then return ']c' end
                 vim.schedule(function() gitsigns.nav_hunk('next') end)
                 return '<Ignore>'
