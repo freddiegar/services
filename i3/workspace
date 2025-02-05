@@ -11,12 +11,14 @@ if [ $# -eq 0 ]; then
 fi
 
 PROJECT=$1
+USEHDMI=`xrandr --listmonitors | grep Monitors | awk '{print $2}' || echo 0`
+FONTSIZ=12
 
 # editor
-i3-msg "workspace 1, exec --no-startup-id urxvt -chdir $PROJECT -e nvim"
+i3-msg "workspace 1, exec --no-startup-id urxvt -name ___editor -chdir $PROJECT -e nvim"
 sleep 0.5
 
-if [ `xrandr --listmonitors | grep Monitors | awk '{print $2}' || echo 0` -gt 1 ]; then
+if [ $USEHDMI -gt 1 ]; then
     i3-msg "workspace 1, move workspace to output HDMI-1"
     sleep 0.5
 fi
@@ -25,8 +27,12 @@ if [ ! -d $PROJECT/app ] && [ ! -d $PROJECT/src ]; then
     exit 0
 fi
 
+if [ $USEHDMI -gt 1 ]; then
+    FONTSIZ=8
+fi
+
 # command
-i3-msg "workspace 1, exec --no-startup-id urxvt -fn 'xft:FiraCode-Retina:size=12:antialias=true' -fb 'xft:FiraCode-Bold:size=12:antialias=true' -chdir $PROJECT"
+i3-msg "workspace 1, exec --no-startup-id urxvt -name ___command -fn 'xft:FiraCode-Retina:size=$FONTSIZ:antialias=true' -fb 'xft:FiraCode-Bold:size=$FONTSIZ:antialias=true' -chdir $PROJECT"
 sleep 0.5
 
 # +---------+
@@ -47,8 +53,10 @@ else
     exit 0
 fi
 
-i3-msg "workspace 1, exec --no-startup-id urxvt -fn 'xft:FiraCode-Retina:size=8:antialias=true' -fb 'xft:FiraCode-Bold:size=8:antialias=true' -e tail -f $DIRLOGS/*.log"
-sleep 0.5
+i3-msg "workspace 1, resize set height 100, focus up"
+
+# i3-msg "workspace 1, exec --no-startup-id urxvt -name ___logs -fn 'xft:FiraCode-Retina:size=$FONTSIZ:antialias=true' -fb 'xft:FiraCode-Bold:size=$FONTSIZ:antialias=true' -e tail -f $DIRLOGS/*.log"
+# sleep 0.5
 
 # +---------+
 # |  down   |
@@ -56,4 +64,4 @@ sleep 0.5
 # |    |    |
 # +---------+
 #                                w   h
-i3-msg "workspace 1, resize set 700 100, focus up"
+# i3-msg "workspace 1, resize set 700 100, focus left, layout tabbed, focus up"

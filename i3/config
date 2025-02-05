@@ -609,7 +609,7 @@ bindsym $mod+Escape mode "$mode_system"
 # Controls
 
 # URxvt
-for_window [instance="^__.*$"]  fullscreen enable
+for_window [instance="^__[a-z]*$"] fullscreen enable
 
 set $mode_control Control (k)eys, (n)etwork, (s)ound, (r)esources, (d)ocker
 
