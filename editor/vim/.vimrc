@@ -1350,11 +1350,22 @@ function! s:toggle_netrw(dir, force) abort
 endfunction
 
 " Fast Vim configuration (and plugins)
-nmap <silent> <expr> <F10>
-            \ expand('%:t') ==# '.vimrc' ? ":PlugUpdate<Enter>" :
-            \ &filetype ==# 'vim-plug' ? ":silent execute \"normal! :bdelete!\\r\"<Enter>" :
-            \ filereadable(g:cwd . '/editor/vim/.vimrc') ? ":silent execute 'edit editor/vim/.vimrc'<Enter>" :
-            \ ":silent execute 'edit ~/.vimrc'<Enter>"
+nmap <silent> <F10> <Cmd>call <SID>openvimrc('edit')<Enter>
+
+" Open in Vertical Split using: Shift + F10
+nmap <silent> <F20> <Cmd>call <SID>openvimrc('vsplit')<Enter>
+
+function! s:openvimrc(action) abort
+    if expand('%:t') ==# '.vimrc'
+        PlugUpdate
+    elseif &filetype ==# 'vim-plug'
+        silent execute "normal! :bdelete!\r"
+    elseif filereadable(g:cwd . '/editor/vim/.vimrc')
+        silent execute a:action . ' editor/vim/.vimrc'
+    else
+        silent execute a:action . ' ~/.vimrc'
+    endif
+endfunction
 
 " Turn-off highlighting
 nnoremap <silent> <nowait> <expr> <Enter>
@@ -5783,6 +5794,10 @@ EOF
             highlight! link GitSignsChange LineNr
             highlight! link GitSignsDelete LineNr
             highlight! link GitSignsChangeDelete LineNr
+            highlight! link GitSignsStagedAdd LineNr
+            highlight! link GitSignsStagedChange LineNr
+            highlight! link GitSignsStagedDelete LineNr
+            highlight! link GitSignsStagedChangeDelete LineNr
             highlight! link GitSignsCurrentLineBlame LineNr
 
             highlight! link SignatureMarkText LineNr
