@@ -455,23 +455,23 @@ alias pdx="sudo phpdismod xdebug"
 alias prx='export XDEBUG_SESSION=1 && export XDEBUG_CONFIG="idekey=PHPSTORM" && phpx'
 alias psw="sudo update-alternatives --config php"
 
-alias vt="phpx vendor/bin/phpunit --stop-on-failure --no-coverage"
+alias vt="phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage"
 alias vT="phpx vendor/bin/phpunit --testdox"
-alias vts="phpx vendor/bin/phpunit --stop-on-failure --no-coverage --testsuite"
+alias vts="phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage --testsuite"
 alias vtS="phpx vendor/bin/phpunit --testdox --testsuite"
-alias vtf="phpx vendor/bin/phpunit --stop-on-failure --no-coverage --filter"
+alias vtf="phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage --filter"
 
-alias vp="phpx vendor/bin/paratest --stop-on-failure --no-coverage"
+alias vp="phpx vendor/bin/paratest --stop-on-failure --stop-on-error --no-coverage"
 alias vP="phpx vendor/bin/paratest --testdox"
-alias vps="phpx vendor/bin/paratest --stop-on-failure --no-coverage --testsuite"
+alias vps="phpx vendor/bin/paratest --stop-on-failure --stop-on-error --no-coverage --testsuite"
 alias vpS="phpx vendor/bin/paratest --testdox --testsuite"
-alias vpf="phpx vendor/bin/paratest --stop-on-failure --no-coverage --filter"
+alias vpf="phpx vendor/bin/paratest --stop-on-failure --stop-on-error --no-coverage --filter"
 
-alias st="phpx bin/phpunit --stop-on-failure --no-coverage"
+alias st="phpx bin/phpunit --stop-on-failure --stop-on-error --no-coverage"
 alias sT="phpx bin/phpunit --testdox"
-alias sts="phpx bin/phpunit --stop-on-failure --no-coverage --testsuite"
+alias sts="phpx bin/phpunit --stop-on-failure --stop-on-error --no-coverage --testsuite"
 alias stS="phpx bin/phpunit --testdox --testsuite"
-alias stf="phpx bin/phpunit --stop-on-failure --no-coverage --filter"
+alias stf="phpx bin/phpunit --stop-on-failure --stop-on-error --no-coverage --filter"
 
 vapor() {
     if [ -f vendor/bin/vapor ]; then
