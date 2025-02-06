@@ -1429,10 +1429,29 @@ nnoremap <silent> <C-h> :<C-u>silent! colder<Enter>
 nnoremap <silent> <C-l> :<C-u>silent! cnewer<Enter>
 nnoremap <silent> <C-9> :<C-u>silent! clast<Enter>
 
-nnoremap <silent> [q :<C-u>silent! cprevious<Enter>zzzv
-nnoremap <silent> ]q :<C-u>silent! cnext<Enter>zzzv
+nnoremap <silent> [q :<C-u>silent! call <SID>cnavigation('cprev')<Enter>zzzv
+nnoremap <silent> ]q :<C-u>silent! call <SID>cnavigation('cnext')<Enter>zzzv
 nnoremap <silent> [Q :<C-u>silent! cfirst<Enter>zzzv
 nnoremap <silent> ]Q :<C-u>silent! clast<Enter>zzzv
+
+function! s:cnavigation(action) abort
+    let l:isnext = a:action ==# 'cnext'
+    let [l:fwinnr, l:fbufnr] = <SID>datafugitive()
+
+    if l:fbufnr > 0
+        let l:cbufname = substitute(substitute(expand('%'), g:cwd, '', 'g'), '\/', '\\/', 'g')
+
+        silent execute l:fwinnr . 'windo e'
+        " silent execute 'normal! ' . (l:isnext ? '/' : '?') . '^[A-Z|a-z|?|!] ' . l:cbufname . "$\rzzzv"
+
+        " Not use normal! <Bang>, it uses remaps
+        silent execute 'normal ' . (l:isnext ? '/' : '?') . "^[A-Z|a-z|?|!] .*\rzzzv\r"
+
+        return '<Ignore>'
+    endif
+
+    silent execute a:action
+endfunction
 
 nnoremap <silent> <A-1> :<C-u>silent! lfirst<Enter>
 nnoremap <silent> <A-k> :<C-u>silent! lopen<Enter>
@@ -3157,6 +3176,8 @@ function! s:get_url(url, ...) abort
 
     if l:uri ==# ''
         echo 'Nothing to do.'
+
+        return ''
     endif
 
     silent! call repeat#set("\<Plug>GetUrlRepeatable")
@@ -3445,8 +3466,8 @@ nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' descr
 "   \r  -> Go to file
 
 " Go [h]ighligth [h]unk
-nnoremap <silent> <Leader>hh :execute "keepjumps normal /\\v^[<>=\|]{4,7}.*\rzz"<Enter>
-nnoremap <silent> <Leader>HH :execute "keepjumps normal ?\\v^[<>=\|]{4,7}.*\rzz"<Enter>
+nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal /\\v^[<>=\|]{4,7}.*\rzz"<Enter>
+" nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal ?\\v^[<>=\|]{4,7}.*\rzz"<Enter>
 
 " if &diff <-- fails with diff mode opens from vim-fugitive
     " Diff [b]uffer
@@ -3471,19 +3492,21 @@ nnoremap <silent> <Leader>HH :execute "keepjumps normal ?\\v^[<>=\|]{4,7}.*\rzz"
     nnoremap <silent> <Leader>gj :diffget //3<Enter>
     nnoremap <silent> <Leader>gg :Gwrite <Bar> edit %<Enter>
 
-    " Get [c]urrent or [n]ew changes in conflicts
+    " Get [c]urrent, [n]ew, full[y] changes or [q]uite in conflicts
     " With cursor in <<<<<<< then:
     nnoremap <silent> <Plug>ConflictCurrentRepeatable <Cmd>call <SID>conflict('current')<Enter>
     nnoremap <silent> <Plug>ConflictNewRepeatable <Cmd>call <SID>conflict('new')<Enter>
     nnoremap <silent> <Plug>ConflictFullyRepeatable <Cmd>call <SID>conflict('fully')<Enter>
+    nnoremap <silent> <Plug>ConflictQuiteRepeatable <Cmd>call <SID>conflict('quite')<Enter>
 
     nmap <silent> <Leader>gc <Plug>ConflictCurrentRepeatable
     nmap <silent> <Leader>gn <Plug>ConflictNewRepeatable
     nmap <silent> <Leader>gy <Plug>ConflictFullyRepeatable
+    nmap <silent> <Leader>gq <Plug>ConflictQuiteRepeatable
 
     function! s:conflict(type) abort
         if a:type ==# 'current'
-            silent execute "keeppatterns keepjumps normal \"_dd/\\v^[=\|]{4,7}.*\rV/\\v^[>]{4,7}.*\r\"_d\r\r"
+            silent execute "keeppatterns keepjumps normal \"_dd-/\\v^[=\|]{4,7}.*\rV/\\v^[>]{4,7}.*\r\"_d\r\r"
             silent! call repeat#set("\<Plug>ConflictCurrentRepeatable")
 
             echo 'Local (current) change selected.'
@@ -3492,6 +3515,11 @@ nnoremap <silent> <Leader>HH :execute "keepjumps normal ?\\v^[<>=\|]{4,7}.*\rzz"
             silent! call repeat#set("\<Plug>ConflictNewRepeatable")
 
             echo 'Remote (new) change selected.'
+        elseif a:type ==# 'quite'
+            silent execute "keeppatterns keepjumps normal 0V/\\v^[>]{4,7}.*\r\"_D\r\r"
+            silent! call repeat#set("\<Plug>ConflictQuiteRepeatable")
+
+            echo 'Ignore (quite) changes selected.'
         else " fully
             silent execute "keeppatterns keepjumps normal \"_dd/\\v^[=\|]{4,7}.*\r\"_D/\\v^[>]{4,7}.*\r\"_dd\r\r"
             silent! call repeat#set("\<Plug>ConflictFullyRepeatable")
@@ -3598,11 +3626,21 @@ endif
 " After stage hunk, reload fugitive if it's open
 " @thanks https://github.com/zldrobit/dotfiles/blob/566b47a939cb90cfc37b1629b3c49ecf4f869cb0/.vimrc#L357
 function! s:reloadfugitive(...) abort
+    let [l:fwinnr, l:fbufnr] = <SID>datafugitive()
+
+    if l:fbufnr > 0
+        silent execute l:fwinnr . 'windo e | wincmd p'
+    endif
+endfunction
+
+function! s:datafugitive(...) abort
     for l:window in getwininfo()
         if bufname(l:window.bufnr) =~# '^fugitive://'
-            silent execute l:window.winnr . 'windo e | wincmd p'
+            return [l:window.winnr, l:window.bufnr]
         endif
     endfor
+
+    return [0, 0]
 endfunction
 
 " DadBod
