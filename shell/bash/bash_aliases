@@ -455,7 +455,9 @@ alias pdx="sudo phpdismod xdebug"
 alias prx='export XDEBUG_SESSION=1 && export XDEBUG_CONFIG="idekey=PHPSTORM" && phpx'
 alias psw="sudo update-alternatives --config php"
 
-alias vt="phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage"
+# @see https://xdebug.org/docs/all_settings#mode
+alias vt="export XDEBUG_MODE=off       && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage && nn 'Ran tests successfully!'"
+alias vtc="export XDEBUG_MODE=coverage && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage && nn 'Ran tests successfully with coverage!'"
 alias vT="phpx vendor/bin/phpunit --testdox"
 alias vts="phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage --testsuite"
 alias vtS="phpx vendor/bin/phpunit --testdox --testsuite"

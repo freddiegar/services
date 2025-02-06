@@ -1325,6 +1325,9 @@ sudo chmod +x /usr/local/bin/phpmetrics
 # Xdebug (PHP Debugger)
 
 ```bash
+sudo apt-get install -y php-xdebug
+# sudo apt-get install -y php7.4-xdebug
+# or
 sudo pecl install -f xdebug
 
 # Xdebug 3
@@ -1389,6 +1392,7 @@ sudo chmod +x ~/bin/ff-xdebug.sh
 
 Maybe need run as `sudo` user! or:
 
+### Cannot install, php_dir for channel "pecl.php.net" is not writeable by the current user
 ### No releases available for package "pecl.php.net/package"
 ### Error getting channel info from pear.php.net: Connection to `ssl://pear.php.net:443' failed
 
