@@ -3392,11 +3392,17 @@ let g:gutentags_ctags_extra_args = [
 " Fugitive
 " @see https://github.com/tpope/vim-fugitive
 let g:fugitive_no_maps = 1
-" nmap <silent> <C-w>e <Cmd>call <SID>gbrowse(v:false)<Enter>
-nmap <silent> <C-w>e <Cmd>edit .env<Enter>
-nmap <silent> <C-w>E <Cmd>call <SID>gbrowse(v:false)<Enter>
 
-function! s:gbrowse(copy) abort
+nmap <silent> <C-w>e :if filereadable('.env') <Bar> edit .env <Bar> else <Bar> echo 'Nothing to do.' <Bar> endif <Enter>
+nmap <silent> <C-w>E :if filereadable('.env.testing') <Bar> edit .env.testing <Bar> else <Bar> echo 'Nothing to do.' <Bar> endif <Enter>
+
+nmap <silent> <C-w>y <Cmd>call <SID>gbrowse('url', v:true)<Enter>
+nmap <silent> <C-w>Y <Cmd>call <SID>gbrowse('url', v:false)<Enter>
+
+nmap <silent> <C-w>a <Cmd>call <SID>gbrowse('commit', v:true)<Enter>
+nmap <silent> <C-w>A <Cmd>call <SID>gbrowse('commit', v:false)<Enter>
+
+function! s:gbrowse(mode, copy) abort
     if !a:copy && !<SID>isrunning('/bin/sh -c ' . g:browser)
         echohl WarningMsg
         echo 'Not running (' . g:browser . ') browser.'
@@ -3405,13 +3411,38 @@ function! s:gbrowse(copy) abort
         return 1
     endif
 
+    let l:saved_start_register = @+
+
+    " Put hash commit in + register
     silent GB
+
+    " Get full URL to commit and putn in + register
+    silent execute 'GBrowse! ' . getreg('+')
+
+    let l:url = getreg('+')
+
+    let @+ = l:saved_start_register
+
+    if a:mode ==# 'url'
+        " Replace
+        "   Bitbucket:  commits
+        "   Github:     commit
+        let l:url = substitute(l:url, '/commits\?/.*', '', 'g')
+
+        " Empty file in Bitbucket
+        let l:url = substitute(l:url, '/src/.*', '', 'g')
+
+        " Empty file in Github
+        let l:url = substitute(l:url, '/blob/.*', '', 'g')
+    endif
 
     try
         if a:copy
-            execute 'GBrowse! ' . getreg('+')
+            let @+ = l:url
+
+            echo 'Copied:   ' . l:url
         else
-            execute 'GBrowse ' . getreg('+')
+            call <SID>go_url(l:url)
         endif
     catch
         echo 'Nothing to do.'
@@ -5308,7 +5339,7 @@ EOF
         silent call fzf#vim#grep(l:initial_command, 1, fzf#vim#with_preview(l:spec), a:fullscreen)
     endfunction
 
-    " GFiles fails(?) when current file path is out of git repo
+    " GFiles fails(?) when current file path is out of git repository
     " @see https://github.com/junegunn/fzf.vim/commit/50707b089b1c61fcdb300ec1ecbc4249ead4af11
     " path (string), args (string), fullscreen (1/0): void
     function! s:rgffzf(type, path, args, fullscreen) abort
