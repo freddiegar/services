@@ -3978,10 +3978,8 @@ endfunction
 
 " Open notes in Normal|Select|Operator Mode
 nmap <silent> <C-w>, <Cmd>call <SID>notes(v:true)<Enter>
-
-nmap <silent> <C-w>t <Cmd>edit ~/working/notes/todo.md<Enter>
-nmap <silent> <C-w>, <Cmd>call <SID>notes(v:true)<Enter>
 nmap <silent> <C-w>; <Cmd>call <SID>notes(v:false)<Enter>
+nmap <silent> <C-w>t <Cmd>edit ~/working/notes/todo.md<Enter>
 
 function! s:notes(append) abort
     let l:matches = []
@@ -3998,6 +3996,8 @@ function! s:notes(append) abort
         return 0
     endif
 
+    " let l:saved_start_register = @+
+
     silent execute 'keeppatterns keepjumps %g/^' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
 
     if !filereadable(l:filename) || len(l:matches) ==# 0
@@ -4006,7 +4006,11 @@ function! s:notes(append) abort
         silent execute "normal! Go\e"
     endif
 
-    silent execute "normal! Gzto== " . strftime('%H:%M') . " ==\r- \e"
+    let l:minutesrounded = str2nr(round(strftime('%M') / 15.0) * 15)
+
+    silent execute "normal! Gzto== " . strftime('%H:') . repeat('0', 2 - len(l:minutesrounded)) . l:minutesrounded . " ==\r- \e"
+
+    " let @+ = l:saved_start_register
 
     return 0
 endfunction
