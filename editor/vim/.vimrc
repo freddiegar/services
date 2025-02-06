@@ -1423,8 +1423,8 @@ nmap <silent> <Leader>sa <Plug>DeleteFinalRepeatable
 
 " @simple https://github.com/tpope/vim-unimpaired
 nnoremap <silent> <C-1> :<C-u>silent! cfirst<Enter>
-nnoremap <silent> <C-k> :<C-u>silent! copen<Enter>
-nnoremap <silent> <C-j> :<C-u>silent! cclose<Enter>
+nnoremap <silent> <C-k> :<C-u>silent! copen  <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx*<Enter>
+nnoremap <silent> <C-j> :<C-u>silent! cclose <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx*<Enter>
 nnoremap <silent> <C-h> :<C-u>silent! colder<Enter>
 nnoremap <silent> <C-l> :<C-u>silent! cnewer<Enter>
 nnoremap <silent> <C-9> :<C-u>silent! clast<Enter>
@@ -2754,6 +2754,9 @@ endfunction
 let g:test_strategy = get(g:, 'test_strategy', (g:isneovim ? 'neovim' : 'vimterminal'))
 let g:test#echo_command = 0
 let g:test#neovim#start_normal = 1
+" Use TermOpen | TerminalWinOpen events, this doesnt works as expected!
+" let g:test#vim#term_position = 'split +resize10 +winfixheight'
+" let g:test#neovim#term_position = g:test#vim#term_position
 let g:test#custom_strategies = {'background': function('AsyncRunCommand')}
 let g:test#strategy = {
     \ 'nearest': g:test_strategy,
@@ -2775,11 +2778,11 @@ function! s:test_strategy() abort
     doautocmd <nomodeline> User AsyncRunPre
 endfunction
 
-nnoremap <silent> <Leader>tt :cclose <Bar> execute ':TestNearest ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tf :cclose <Bar> execute ':TestFile    ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>ts :cclose <Bar> execute ':TestSuite   ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tl :cclose <Bar> TestLast<Enter>
-nnoremap <silent> <Leader>tg :cclose <Bar> TestVisit<Enter>
+nnoremap <silent> <Leader>tt :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tf :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestFile    ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>ts :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestSuite   ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tl :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestLast<Enter>
+nnoremap <silent> <Leader>tg :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestVisit<Enter>
 nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
 
 " " Vim Debug
@@ -4174,7 +4177,7 @@ augroup AutoCommands
     autocmd BufReadPost * if &readonly | setlocal nomodifiable | endif
 
     " Some files are untouchable
-    autocmd BufReadPost fugitive://* setlocal nomodifiable readonly
+    autocmd BufReadPost fugitive://* setlocal nomodifiable readonly scrolloff=0 winfixheight | resize 10 | cclose | silent! bd! term://* | silent! bd! phpx*
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
@@ -4700,17 +4703,33 @@ EOF
                     \ | setlocal signcolumn=no
                     \ | setlocal colorcolumn=0
                     \ | setlocal nolist
+                    \ | setlocal nonumber
+                    \ | setlocal norelativenumber
+                    \ | setlocal fillchars+=eob:\
                     \ | if getbufvar(bufnr('%'), 'term_title')[-4 :] ==# '/zsh'
                     \ |     startinsert
                     \ | endif
                     \ | if getbufvar(bufnr('%'), 'term_title')[-3 :] !=? 'fzf'
-                    \ |     tnoremap <silent> <buffer> <Esc> <C-\><C-n><Enter>
+                    \ |     tnoremap <silent> <buffer> <Esc>  <C-\><C-n>
+                    \ |     tnoremap <silent> <buffer> <C-w>h <C-\><C-N><C-w>h
+                    \ |     tnoremap <silent> <buffer> <C-w>j <C-\><C-N><C-w>j
+                    \ |     tnoremap <silent> <buffer> <C-w>k <C-\><C-N><C-w>k
+                    \ |     tnoremap <silent> <buffer> <C-w>l <C-\><C-N><C-w>l
                     \ |     nnoremap <silent> <buffer> <Enter> i<Enter>
+                    \ | endif
+                    \ | if match(getbufvar(bufnr('%'), 'term_title'), 'phpunit') >= 0
+                    \ |     resize 10
+                    \ |     setlocal winfixheight
+                    \ |     silent! bd! fugitive://* | cclose
+                    \ |     normal! G
                     \ | endif
                     \ | endif
 
-        autocmd TermEnter * setlocal nonumber
-                    \ | setlocal norelativenumber
+        " autocmd TermEnter * setlocal nonumber
+        "             \ | setlocal norelativenumber
+
+        " (why nvim why!)
+        autocmd BufEnter term://* startinsert
 
         " autocmd TermLeave * setlocal number
         "             \ | setlocal relativenumber
@@ -4721,7 +4740,7 @@ EOF
             silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() =~# '^%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
-        command! -nargs=? S terminal ++rows=5 <args>
+        command! -nargs=? S terminal ++rows=5 ++kill=term <args>
         command! -nargs=? M tab terminal <args>
 
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
@@ -4732,11 +4751,17 @@ EOF
                     \ | setlocal nonumber
                     \ | setlocal norelativenumber
                     \ | setlocal fillchars+=eob:\
-                    \ | setlocal winfixheight
                     \ | if expand('%')[-3 :] !=? '!sh'
-                        \ | tnoremap <silent> <buffer> <Esc> <C-\><C-n><Enter>
+                    \ |     tnoremap <silent> <buffer> <Esc> <C-\><C-n>
+                    \ | endif
+                    \ | if match(expand('%'), 'phpunit') >= 0
+                    \ |     resize 10
+                    \ |     setlocal winfixheight
+                    \ |     silent! bd! fugitive://* | cclose
                     \ | endif
                     \ | endif
+
+        autocmd BufWinEnter if &buftype ==# 'terminal' | startinsert | endif
     endif
 
     " Ominifunctions
