@@ -1423,8 +1423,8 @@ nmap <silent> <Leader>sa <Plug>DeleteFinalRepeatable
 
 " @simple https://github.com/tpope/vim-unimpaired
 nnoremap <silent> <C-1> :<C-u>silent! cfirst<Enter>
-nnoremap <silent> <C-k> :<C-u>silent! copen  <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx*<Enter>
-nnoremap <silent> <C-j> :<C-u>silent! cclose <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx*<Enter>
+nnoremap <silent> <C-k> :<C-u>silent! botright copen <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif<Enter>
+nnoremap <silent> <C-j> :<C-u>silent! cclose <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif<Enter>
 nnoremap <silent> <C-h> :<C-u>silent! colder<Enter>
 nnoremap <silent> <C-l> :<C-u>silent! cnewer<Enter>
 nnoremap <silent> <C-9> :<C-u>silent! clast<Enter>
@@ -2740,6 +2740,11 @@ function! AsyncRunFinished() abort
 
     if g:asyncrun_code > 0
         let g:asyncrun_icon = '[X]'
+
+        silent! bd! fugitive://*
+        silent! bd! term://*
+        silent! bd! phpx*
+        windo if &filetype ==# 'help' | bd! | endif
         copen
 
         return
@@ -2778,11 +2783,11 @@ function! s:test_strategy() abort
     doautocmd <nomodeline> User AsyncRunPre
 endfunction
 
-nnoremap <silent> <Leader>tt :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tf :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestFile    ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>ts :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestSuite   ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tl :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestLast<Enter>
-nnoremap <silent> <Leader>tg :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestVisit<Enter>
+nnoremap <silent> <Leader>tt :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestNearest ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tf :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestFile    ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>ts :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestSuite   ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tl :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> TestLast<Enter>
+nnoremap <silent> <Leader>tg :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> TestVisit<Enter>
 nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
 
 " " Vim Debug
@@ -3828,6 +3833,34 @@ endfunction
 
 command! -nargs=? -range -bang R call <SID>run(<range>, <bang>0, <f-args>)
 
+" @thanks https://vi.stackexchange.com/a/19875
+function s:runterm(range, interactive)
+    let l:bterminal = uniq(map(filter(getwininfo(), 'v:val.terminal'), 'v:val.bufnr'))
+    let l:bterminal = len(l:bterminal) > 0 ? l:bterminal[0] : -1
+
+    if l:bterminal ==# -1 || !bufexists(l:bterminal)
+        S
+        let l:bterminal = bufnr()
+        sleep 200m
+
+        wincmd p
+    endif
+
+    let l:command = <SID>get_selection(a:range, a:interactive, a:000)
+
+    if g:isneovim
+        " @thanks https://vi.stackexchange.com/a/21937
+        silent call win_gotoid(get(win_findbuf(l:bterminal), 0))
+        call nvim_feedkeys(l:command . "\<Enter>", 'i', v:true)
+        " With sudo commands is weird
+        " call nvim_feedkeys(l:command . "\<Enter>\<C-\>\<C-n>\<C-\>\<C-N>\<C-w>w", 'i', v:true)
+    else
+        call term_sendkeys(l:bterminal, l:command . "\<Enter>")
+    endif
+endfunction
+
+command! -nargs=? -range -bang RR call <SID>runterm(<range>, <bang>0, <f-args>)
+
 " range (0,1,2), interactive (0/1), [args (string)]: void
 function! s:get_selection(range, interactive, args) abort
     let l:selection = ''
@@ -4177,7 +4210,7 @@ augroup AutoCommands
     autocmd BufReadPost * if &readonly | setlocal nomodifiable | endif
 
     " Some files are untouchable
-    autocmd BufReadPost fugitive://* setlocal nomodifiable readonly scrolloff=0 winfixheight | resize 10 | cclose | silent! bd! term://* | silent! bd! phpx*
+    autocmd BufReadPost fugitive://* setlocal nomodifiable readonly scrolloff=0 winfixheight | resize 10 | cclose | silent! bd! term://* | silent! bd! phpx* | windo if &filetype ==# 'help' | bd! | endif
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
@@ -4690,7 +4723,7 @@ EOF
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
         " Tab Ter[M]inal
-        command! -nargs=? S 5split <Bar> setlocal winfixheight <Bar> terminal <args>
+        command! -nargs=? S cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> 5split <Bar> setlocal winfixheight <Bar> terminal <args>
         command! -nargs=? M tabnew <Bar> terminal <args>
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
@@ -4715,6 +4748,8 @@ EOF
                     \ |     tnoremap <silent> <buffer> <C-w>j <C-\><C-N><C-w>j
                     \ |     tnoremap <silent> <buffer> <C-w>k <C-\><C-N><C-w>k
                     \ |     tnoremap <silent> <buffer> <C-w>l <C-\><C-N><C-w>l
+                    \ |     tnoremap <silent> <buffer> <C-w>w <C-\><C-N><C-w>w
+                    \ |     tnoremap <silent> <buffer> <C-w>p <C-\><C-N><C-w>p
                     \ |     nnoremap <silent> <buffer> <Enter> i<Enter>
                     \ | endif
                     \ | if match(getbufvar(bufnr('%'), 'term_title'), 'phpunit') >= 0
@@ -4740,7 +4775,7 @@ EOF
             silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() =~# '^%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
-        command! -nargs=? S terminal ++rows=5 ++kill=term <args>
+        command! -nargs=? S cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> terminal ++rows=5 ++kill=term <args>
         command! -nargs=? M tab terminal <args>
 
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
@@ -4853,9 +4888,9 @@ EOF
         \ 'all': '--no-coverage --stop-on-failure',
     \}
 
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> execute ':TestFile    --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> execute ':TestSuite   --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestFile    --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestSuite   --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
 
     " PHP Linter
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
