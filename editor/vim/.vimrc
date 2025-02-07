@@ -5212,7 +5212,7 @@ EOF
             return ''
         endif
 
-        let l:fixerversion = system(l:fixerpath . " --version 2> /dev/null | cut -d ' ' -f 4 | cut -d '.' -f 1 | tr -d '\n'")
+        let l:fixerversion = system('phpx ' . l:fixerpath . " --version 2> /dev/null | cut -d ' ' -f 4 | cut -d '.' -f 1 | tr -d '\n'")
 
         " Setup default
         let l:configversion = l:fixerversion
@@ -5238,7 +5238,7 @@ EOF
 
         silent update!
 
-        let l:result = system(l:fixerpath . ' fix ' . expand('%') . ' --config="' . l:configfile . '"')
+        let l:result = system('phpx ' . l:fixerpath . ' fix ' . expand('%') . ' --config="' . l:configfile . '"')
 
         silent edit!
 
