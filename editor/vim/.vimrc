@@ -3293,7 +3293,7 @@ endfunction
 augroup LargeFile
     autocmd!
 
-    autocmd BufWinEnter * call <SID>check_large_file(expand('<afile>'))
+    autocmd BufReadPre * call <SID>check_large_file(expand('<afile>'))
 augroup END
 
 " file (string)
@@ -4208,17 +4208,19 @@ augroup AutoCommands
     autocmd BufEnter,BufReadPost,BufNewFile * if (!&modifiable || &readonly) && empty(maparg('q', 'n')) | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>| endif
 
     " Some files are prohibited
-    autocmd BufReadPost vendor/* setlocal nomodifiable
-    autocmd BufReadPost */vendor/* setlocal nomodifiable
-    autocmd BufReadPost */plugged/* setlocal nomodifiable
-    autocmd BufReadPost node_modules/* setlocal nomodifiable
-    autocmd BufReadPost */node_modules/* setlocal nomodifiable
-    autocmd BufReadPost composer.lock setlocal nomodifiable
-    autocmd BufReadPost package-lock.json setlocal nomodifiable
-    autocmd BufReadPost * if &readonly | setlocal nomodifiable | endif
+    autocmd BufReadPre vendor/* setlocal nomodifiable
+    autocmd BufReadPre */vendor/* setlocal nomodifiable
+    autocmd BufReadPre */plugged/* setlocal nomodifiable
+    autocmd BufReadPre node_modules/* setlocal nomodifiable
+    autocmd BufReadPre */node_modules/* setlocal nomodifiable
+    autocmd BufReadPre composer.lock setlocal nomodifiable
+    autocmd BufReadPre package-lock.json setlocal nomodifiable
+    autocmd BufReadPre public/*/*.{js,css} setlocal nomodifiable
+    autocmd BufReadPre */public/*/*.{js,css} setlocal nomodifiable
+    autocmd BufReadPre * if &readonly | setlocal nomodifiable | endif
 
     " Some files are untouchable
-    autocmd BufReadPost fugitive://* setlocal nomodifiable readonly scrolloff=0 winfixheight | resize 10 | cclose | silent! bd! term://* | silent! bd! phpx* | windo if &filetype ==# 'help' | bd! | endif
+    autocmd BufReadPre fugitive://* setlocal nomodifiable readonly scrolloff=0 winfixheight | resize 10 | cclose | silent! bd! term://* | silent! bd! phpx* | windo if &filetype ==# 'help' | bd! | endif
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
