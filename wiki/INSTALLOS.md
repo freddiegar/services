@@ -340,8 +340,6 @@ sudo apt-get install -y libxml2-utils
 sudo apt-get install -y miller
 ```
 
-## Vim C Development
-
 ### LSP
 
 #### C

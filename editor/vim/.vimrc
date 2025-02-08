@@ -1086,15 +1086,17 @@ xnoremap <silent> * "zy/\V<C-r>z<Enter>
 xnoremap <silent> # "zy?\V<C-r>z<Enter>
 
 " Undo break points (<C-g>u = Start new change)
-inoremap <silent> , <C-g>u,
-inoremap <silent> ; <C-g>u;
-inoremap <silent> . <C-g>u.
-inoremap <silent> : <C-g>u:
-inoremap <silent> = <C-g>u=
-inoremap <silent> ! <C-g>u!
-inoremap <silent> ? <C-g>u?
-inoremap <silent> ( <C-g>u(
-inoremap <silent> ) <C-g>u)
+" Not use l: prefix (why nvim why!)
+for specialchar in split(',;.:=!?()_-', '\zs')
+    silent execute "inoremap <silent> " . specialchar . " <C-g>u" . specialchar
+endfor
+
+" Undo break points in each Uppercase letter
+" Not use l: prefix (why nvim why!)
+for uppercase in split('ABCDEFGHIJKLMNOPQRSTUVWXYZ', '\zs')
+    silent execute "inoremap <silent> " . uppercase . " <C-g>u" . uppercase
+endfor
+
 " Delete word in Terminal Mode: <C-w>.
 inoremap <silent> <C-w> <C-g>u<C-w>
 inoremap <silent> <C-u> <C-g>u<C-u>
@@ -1880,15 +1882,15 @@ function! s:get_fake() abort
     elseif l:type ==# 5
         let l:method = "creditCardNumber('Visa')"
     elseif l:type ==# 6
-        let l:all = system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->name();\"")
-        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->numerify('10########');\"")
-        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->email();\"")
-        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->numerify('+57 31# #######');\"")
-        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->creditCardNumber('Visa');\"")
+        let l:all =                system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo 'Fullname: ' . (Faker\\Factory::create())->name();\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo 'Document: ' . (Faker\\Factory::create())->numerify('10########');\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo 'Email:    ' . (Faker\\Factory::create())->email();\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo 'Phone:    ' . (Faker\\Factory::create())->numerify('+57 31# #######');\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo 'Card:     ' . (Faker\\Factory::create())->creditCardNumber('Visa');\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo 'Address:  ' . (Faker\\Factory::create())->streetAddress();\"")
+        let l:all = l:all . "\n" . system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo 'City:     ' . (Faker\\Factory::create())->city();\"")
 
-        echo l:all
-
-        return
+        return l:all
     endif
 
     return system("php --run \"require_once '" . $HOME . "/.config/composer/vendor/autoload.php';echo (Faker\\Factory::create())->" . l:method . ";\"")
@@ -2405,19 +2407,18 @@ let g:phpactorPhpBin = '/usr/bin/php8.4'
 
 " command! -nargs=* -range K call search#start(<q-args>, visualmode(), <range>)
 
-" @thanks https://github.com/skanehira/translate.vim
 " channel (channel), message (string)
-function! s:rtranslate(channel, message) abort
+function! s:rrunjob(channel, message) abort
     silent call add(s:result, a:message)
 endfunction
 
 " channel (channel), message (string)
-function! s:vtranslate(channel, message) abort
+function! s:vrunjob(channel, message) abort
     " Don't add silent
-    call <SID>stranslate()
+    call <SID>srunjob()
 endfunction
 
-function! s:stranslate() abort
+function! s:srunjob() abort
     if g:isneovim
         " EOF is a single-item list (why nvim why!)
         call remove(s:result, -1)
@@ -2436,9 +2437,27 @@ function! s:stranslate() abort
     echo @+
 endfunction
 
+" command (string)
+function! s:runjob(command) abort
+    let s:result = []
+
+    if g:isneovim
+        call jobstart(a:command, {
+                    \ 'on_stdout': { id, data -> extend(s:result, data) },
+                    \ 'on_exit': { -> s:srunjob() },
+                    \ })
+    else
+        call job_start(l:command, {
+                    \ 'out_cb': function('s:rrunjob'),
+                    \ 'err_cb': function('s:rrunjob'),
+                    \ 'exit_cb': function('s:vrunjob'),
+                    \ })
+    endif
+endfunction
+
+" @thanks https://github.com/skanehira/translate.vim
 " range (0,1,2), inverse (0/1), [options (array: source, targe, text)]: void
 function! s:translate(range, inverse, ...) abort
-    let s:result = []
     let l:source = a:0 >= 2 ? a:1 : 'en'
     let l:target = a:0 >= 2 ? a:2 : (a:0 >= 1 ? a:1 : 'es')
     let l:fwords = a:0 >= 2 ? a:000[2 :] : (a:0 >= 1 ? a:000[1 :] : (a:0 ==# 1 ? a:000 : []))
@@ -2453,18 +2472,7 @@ function! s:translate(range, inverse, ...) abort
 
     echo 'Translating...'
 
-    if g:isneovim
-        call jobstart(l:command, {
-                    \ 'on_stdout': { id, data -> extend(s:result, data) },
-                    \ 'on_exit': { -> s:stranslate() },
-                    \ })
-    else
-        call job_start(l:command, {
-                    \ 'out_cb': function('s:rtranslate'),
-                    \ 'err_cb': function('s:rtranslate'),
-                    \ 'exit_cb': function('s:vtranslate'),
-                    \ })
-    endif
+    call <SID>runjob(l:command)
 endfunction
 
 command! -nargs=* -range -bang T call <SID>translate(<range>, <bang>0, <f-args>)
@@ -4194,7 +4202,7 @@ augroup AutoCommands
     autocmd FileType checkhealth map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
     autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
     autocmd FileType fugitiveblame map <silent> <nowait> <buffer> q gq
-    autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq
+    autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq | map <silent> <nowait> <buffer> <Enter> gq
 
     " Not append last space before close if, its append a <Space>
     autocmd BufEnter,BufReadPost,BufNewFile * if (!&modifiable || &readonly) && empty(maparg('q', 'n')) | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>| endif
