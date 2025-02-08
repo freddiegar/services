@@ -347,7 +347,7 @@ set sessionoptions=                                             " (default: blan
 set sessionoptions+=buffers                                     " Save buffers
 set sessionoptions+=curdir                                      " Save current directory
 
-" Better Search (<C-g> and <C-t> are friends: go next and previous coincidence from search mode)
+" Better Search (<C-g> and <C-t> are friends: go next and previous coincidence from Search Mode)
 set hlsearch                                                    " Highligth match results with /, ?, *, # (default: off)
 set incsearch                                                   " Search first match while typing. On TOP return BOTTOM, on BOTTOM return TOP (default: off)
 
@@ -4250,7 +4250,11 @@ require 'nvim-treesitter.configs'.setup({
     highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
-        disable = function(_, buf)
+        disable = function(lang, buf)
+            if lang == 'html' then
+                return true
+            end
+
             local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
 
             return ok and stats and stats.size > (1024 * 1024 * 2)
@@ -4370,23 +4374,80 @@ EOF
 " Don't indent!
 lua <<EOF
     local cmp = require'cmp'
+
     require('lspconfig.ui.windows').default_options.border = 'single'
+
+    -- @see https://youtu.be/gK31IVy0Gp0?t=250
+    -- @thanks https://github.com/hrsh7th/nvim-cmp/issues/1716#issuecomment-2569459152
+    -- Smarter Insert and Replace behavior:
+    --  Insert:  Using other word (StateEdit) "insert"
+    --      console.log(State|Create); -> console.log(StateEdit, StateCreate);
+    --  Replace: Using same word (StateCreate) "replace"
+    --      console.log(State|Create); -> console.log(StateCreate);
+    local confirmation = function(entry)
+        local behavior = cmp.ConfirmBehavior.Replace
+
+        if entry then
+            local newText = ''
+            local completionItem = entry.completion_item
+
+            if completionItem.textEdit then
+                newText = completionItem.textEdit.newText
+            elseif type(completionItem.insertText) == 'string' and completionItem.insertText ~= '' then
+                newText = completionItem.insertText
+            else
+                newText = completionItem.word or completionItem.label or ''
+            end
+
+            local diff_after = math.max(0, entry.replace_range['end'].character + 1) - entry.context.cursor.col
+
+            if entry.context.cursor_after_line:sub(1, diff_after) ~= newText:sub(-diff_after) then
+                behavior = cmp.ConfirmBehavior.Insert
+            end
+        end
+
+        cmp.confirm({ select = true, behavior = behavior })
+    end
 
     -- @see https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/config/default.lua
     -- @see :h cmp-config
     cmp.setup({
-        -- enabled = function() -- Using manual trigger
-        --     -- Disable completion if the cursor is `Comment` syntax group.
-        --     return not cmp.config.context.in_treesitter_capture('Comment')
-        -- end,
+        -- @thanks https://github.com/isaksamsten/nvim-config/blob/main/lua/plugins/coding.lua#L361
+        enabled = function() -- Using manual trigger
+            local disabled = false
+            local context = require('cmp.config.context')
+
+            -- From default configuration
+            disabled = disabled or (vim.api.nvim_get_option_value('buftype', { buf = 0 }) == 'prompt')
+            disabled = disabled or (vim.fn.reg_recording() ~= '')
+            disabled = disabled or (vim.fn.reg_executing() ~= '')
+            -- Keep Command Mode completion enabled when cursor is in a Comment
+            disabled = disabled or (vim.api.nvim_get_mode().mode == 'c')
+            -- Disable completion if the cursor is `Comment` syntax group.
+            disabled = disabled or (context.in_treesitter_capture('comment') == true or context.in_syntax_group('Comment'))
+
+            return not disabled
+        end,
+
+        performance = {
+            max_view_entries = 20, -- default: 200
+        },
+
+        -- No use nothing until explicit selection, default: types.cmp.PreselectMode.Item
+        preselect = cmp.PreselectMode.None,
 
         -- Manual trigger to avoid distracting (and annoyoning)
         completion = {
-            autocomplete = false,
+            autocomplete = false, --default: true, use yoa in Normal Mode
+            -- keyword_length = 2, -- default: 1 -> Feels weird wait :(
         },
 
-        -- No use nothing until explicit selection
-        preselect = cmp.PreselectMode.None,
+        -- Docs use extra SPACE in my eyes
+        view = {
+            docs = {
+                auto_open = false, -- default: true, use <C-g> in Insert|Select Mode
+            },
+        },
 
         -- Enable snippets
         snippet = {
@@ -4395,10 +4456,12 @@ lua <<EOF
             end,
         },
 
-        -- window = {
-        --     completion = cmp.config.window.bordered(),
-        --     documentation = cmp.config.window.bordered(),
-        -- },
+        window = {
+            documentation = {
+                border = 'rounded',
+                winhighlight = 'Normal:CursorLine,FloatBorder:FloatBorder,Search:None',
+            },
+        },
 
         -- @see https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/config/mapping.lua
         mapping = cmp.mapping.preset.insert({
@@ -4406,56 +4469,62 @@ lua <<EOF
 
             ['<C-u>'] = cmp.mapping.scroll_docs(-4), -- Define scroll in windows
 
-            -- ['<C-n>'] = cmp.mapping(function() -- Overwrite to select unique option by default
-            --     if cmp.visible() then
-            --         cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-            --     else
-            --         cmp.complete()
-            --     end
-
-            --     if #cmp.get_entries() == 1 then
-            --         cmp.confirm({ select = true })
-            --     end
-            -- end, {'i', 's'}),
-
-            ['<C-p>'] = cmp.mapping(function() -- Overwrite to select unique option by default
-                if cmp.visible() then
-                    cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+            ['<C-g>'] = cmp.mapping(function() -- Toggle docs view
+                if cmp.visible_docs() then
+                    cmp.close_docs()
                 else
-                    cmp.complete()
-                end
-
-                if #cmp.get_entries() == 1 then
-                    cmp.confirm({ select = true })
+                    cmp.open_docs()
                 end
             end, {'i', 's'}),
 
-            ['<Enter>'] = cmp.mapping( -- Define Enter behavior
-                cmp.mapping.confirm {
-                    behavior = cmp.ConfirmBehavior.Insert,
-                    select = true,
-                },
-                { 'i', 's' }
-            ),
-
-            -- ['<C-g>'] = function() -- Toggle docs view
-            --     if cmp.visible_docs() then
-            --         cmp.close_docs()
+            -- ['<C-n>'] = cmp.mapping(function(fallback) -- Overwrite to select unique option by default
+            --     if cmp.visible() then
+            --         cmp.select_next_item()
             --     else
-            --         cmp.open_docs()
+            --         fallback()
             --     end
-            -- end,
+
+            --     local entries = cmp.get_entries()
+
+            --     if #entries == 1 then
+            --         confirmation(entries[1])
+            --     end
+            -- end, {'i', 's'}),
+
+            ['<C-p>'] = cmp.mapping(function(fallback) -- Overwrite to select unique option by default
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                else
+                    fallback()
+                end
+
+                local entries = cmp.get_entries()
+
+                if #entries == 1 then
+                    confirmation(entries[1])
+                end
+            end, {'i', 's'}),
+
+            ['<Enter>'] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    confirmation(cmp.get_selected_entry())
+                else
+                    fallback()
+                end
+            end, { 'i', 's' }),
 
             -- ['<C-Space>'] = cmp.mapping.complete(),
         }),
 
-        matching = {
-            disallow_fuzzy_matching = true,
-            disallow_fullfuzzy_matching = true,
+        -- Defaults values allows: arrama -> array_map | array_combine options
+        -- matching = {
+        --     disallow_fuzzy_matching = false,
+        --     disallow_fullfuzzy_matching = false,
             -- disallow_partial_fuzzy_matching = true,
-            -- disallow_partial_matching = true,
-            -- disallow_prefix_unmatching = true,
-        },
+        --     disallow_partial_matching = false,
+        --     disallow_prefix_unmatching = false,
+        --     disallow_symbol_nonprefix_matching = true,
+        -- },
 
         sources = cmp.config.sources({
             {
@@ -4474,8 +4543,42 @@ lua <<EOF
             -- {
             --     name = 'ultisnips', -- Really?
             -- },
+        }),
         })
+
+    local config = require('cmp.config')
+
+    local toggle_ghost_text = function()
+        if vim.api.nvim_get_mode().mode ~= 'i' then
+            return
+        end
+
+        local cursor_column = vim.fn.col('.')
+        local current_line_contents = vim.fn.getline('.')
+        local character_after_cursor = current_line_contents:sub(cursor_column, cursor_column)
+        local should_enable_ghost_text = character_after_cursor == '' or vim.fn.match(character_after_cursor, [[\k]]) == -1
+        local current = config.get().experimental.ghost_text
+
+        if current ~= should_enable_ghost_text then
+            config.set_global({ experimental = { ghost_text = should_enable_ghost_text } })
+        end
+    end
+
+    vim.api.nvim_create_autocmd({ 'InsertEnter', 'CursorMovedI' }, {
+        callback = toggle_ghost_text,
     })
+
+    -- Toggle Autocompletion
+    -- @see https://github.com/gitaarik/nvim-cmp-toggle/blob/main/plugin/nvim_cmp_toggle.lua
+    vim.keymap.set('n', 'yoa', function()
+        local current = config.get().completion.autocomplete
+
+        if current and #current > 0 then
+            cmp.setup({ completion = { autocomplete = false } })
+        else
+            cmp.setup({ completion = { autocomplete = { cmp.TriggerEvent.TextChanged } } })
+        end
+    end)
 
     -- Disable in this buffers documentation window
     cmp.setup.filetype({ 'markdown', 'help' }, {
@@ -4819,6 +4922,7 @@ EOF
     autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 
     " VPM: Vim Presentation Mode: slide001.vpm, slide002.vpm, etc, syntax.vim
+    " @see https://github.com/maaslalani/slides
     "   sai toilet figlet
     autocmd FileType vpm nnoremap <silent> <buffer> <Left> :silent bprevious<Enter> :redraw!<Enter>
     autocmd FileType vpm nnoremap <silent> <buffer> <Right> :silent bnext<Enter> :redraw!<Enter>
