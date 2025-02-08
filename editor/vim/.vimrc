@@ -2343,13 +2343,19 @@ if g:isneovim
 
     " if has('gui_running')
     Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
-    Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
-    " Plug 'iguanacucumber/magazine.nvim', {'as': 'nvim-cmp'}   " Integrate autocomplete (beta mode)
-    " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
-    Plug 'hrsh7th/cmp-buffer'                                 " Integrate for buffer
-    " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
-    Plug 'hrsh7th/cmp-nvim-lsp'                               " Integrate for built-in LSP
-    " Plug 'dmitmel/cmp-vim-lsp'                                " Integrate for Vim
+
+    " Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
+    " Plug 'hrsh7th/cmp-nvim-lsp'                               " Integrate for built-in LSP
+    " Plug 'hrsh7th/cmp-buffer'                                 " Integrate for buffer
+    " " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
+    " " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
+
+    Plug 'iguanacucumber/magazine.nvim', {'as': 'nvim-cmp'}   " Integrate autocomplete (beta mode)
+    Plug 'iguanacucumber/mag-nvim-lsp', {'as': 'cmp-nvim-lsp'}" Integrate for built-in LSP (beta mode)
+    Plug 'iguanacucumber/mag-buffer', {'as': 'cmp-buffer'}    " Integrate for buffer (beta mode)
+    " Plug 'iguanacucumber/mag-cmdline', {'as': 'cmp-cmdline'}" Integrate for command line (beta mode)
+    " Plug 'https://codeberg.org/FelipeLema/cmp-async-path', {'as': 'cmp-path'} " Integrate for path (beta mode)
+
     Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
     " endif
 else
