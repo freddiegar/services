@@ -3484,6 +3484,7 @@ function! s:git_alias() abort
 endfunction
 
 nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
+nnoremap <silent> <Leader>gv :Git rm  % <Bar> echo 'Removed:  ' . expand('%') <Bar> bwipeout <Bar> call <SID>statusline('f')<Enter>
 " Show using glsa shorcut for: git ls-files -v | rg '^h ' | awk '{print \$2}'
 nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo 'Assume h: ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
 nnoremap <silent> <Leader>gU :Git update-index --no-assume-unchanged % <Bar> echo 'Unassume: ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
