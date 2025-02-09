@@ -712,7 +712,7 @@ function! GetNameBranch() abort
 
     let l:branchname = fugitive#Head(8)
 
-    return strlen(l:branchname) > 0 ? '  ' . tolower(split(l:branchname, '/')[0]) . ' ' : ' '
+    return strlen(l:branchname) > 0 ? '  ' . tolower(split(l:branchname, '/')[0]) : ''
 endfunction
 
 " executable (string)
@@ -737,7 +737,7 @@ function! GetVersion(executable) abort
         endif
     endif
 
-    return '  ' . l:version
+    return ':' . l:version
 endfunction
 
 function! GetTypeCurrentFile() abort
@@ -770,6 +770,25 @@ function! GetTypeCurrentFile() abort
     endif
 
     return '  ' . l:type
+endfunction
+
+function! ClientsStatusline() abort
+    let l:clients = get(b:, 'clients', '')
+    let l:filetype = &filetype !=# '' ? &filetype : &buftype
+
+    if !g:isneovim || strlen(l:clients) <= 0
+        return l:filetype
+    endif
+
+    let l:clients = substitute(l:clients, '_ls\|ls\|actor', '', 'g')
+
+    if l:clients !=# l:filetype
+        let l:clients = l:filetype . ':' . l:clients
+    else
+        let l:clients = ':' . l:clients
+    endif
+
+    return l:clients
 endfunction
 
 function! AsyncStatuslineFlag() abort
@@ -875,15 +894,14 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{GetNameCurrentFile()}            " Relative filename
 
         setlocal statusline+=%=                                 " New group (align right)
-        setlocal statusline+=\%m                                " Modified flag
-        setlocal statusline+=\%r                                " Read-only flag
-        setlocal statusline+=%{GetNameBranch()}                 " Branch name repository
         setlocal statusline+=%{&filetype!=#''?&filetype:&buftype}   " Is it require description?
 
         setlocal statusline+=\%<                                " Truncate long statusline here
+        setlocal statusline+=%{GetNameBranch()}                 " Branch name repository
+        if &fileencoding !=# 'utf-8'
         setlocal statusline+=\                                  " Extra space
         setlocal statusline+=%{&fileencoding.''}                " Is it require description?
-        setlocal statusline+=\                                  " Extra space
+        endif
         setlocal statusline+=%*                                 " Restart color
 
         return
@@ -923,10 +941,6 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
 
-    " if g:isneovim && luaeval('#vim.lsp.get_clients() > 0')
-    "     setlocal statusline+=%{'[L]'}                           " LSP enabled
-    " endif
-
     " if g:isneovim && exists('g:plug_autocompleted_loaded')
     "     setlocal statusline+=%{'[C]'}                           " Autocomplete enabled
     " endif
@@ -940,16 +954,22 @@ function! s:statusline(lastmode) abort
     "     setlocal statusline+=%{pomo#remaining_time().'m'}       " Pomodoro time
     " endif
 
-    setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
-    setlocal statusline+=%{&filetype!=#''?&filetype:&buftype}   " Is it require description?
+    setlocal statusline+=\                                      " Extra space
+    setlocal statusline+=%{ClientsStatusline()}                 " LSP clients attached
 
     if &filetype ==# 'php'
         setlocal statusline+=%{GetVersion('/usr/local/bin/phpx')}   " PHP version
     endif
 
     setlocal statusline+=\%<                                    " Truncate long statusline here
+
+    setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
+
+    if &fileencoding !=# 'utf-8'
     setlocal statusline+=\                                      " Extra space
     setlocal statusline+=%{&fileencoding.''}                    " Is it require description?
+    endif
+
     " setlocal statusline+=\                                      " Extra space
     " setlocal statusline+=c:%3c                                  " Cursor [c]olumn
 
@@ -3299,7 +3319,7 @@ endfunction
 augroup LargeFile
     autocmd!
 
-    autocmd BufReadPre * call <SID>check_large_file(expand('<afile>'))
+    autocmd BufWinEnter * call <SID>check_large_file(expand('<afile>'))
 augroup END
 
 " file (string)
@@ -4313,6 +4333,29 @@ lua <<EOF
 
             if client == nil then
                 return
+            end
+
+            if not vim.bo[event.buf].modifiable then
+                vim.lsp.buf_detach_client(event.buf, event.data.client_id)
+
+                vim.notify('Buffer ' .. bufnr .. ': is no modifiable, LSP deattached')
+
+                return
+            end
+
+            if vim.b[event.buf].clients == nil then
+                -- @see https://neovim.io/doc/user/lua-guide.html
+                for _, client in ipairs(vim.lsp.get_clients()) do
+                    local clients = {}
+
+                    for bufnr, _ in pairs(client.attached_buffers) do
+                        if bufnr == event.buf then
+                            table.insert(clients, client.name)
+
+                            vim.b[bufnr].clients= table.concat(clients, '|')
+                        end
+                    end
+                end
             end
 
             -- Not use noremap = true, it's not allow overwrite mapping for LSP
@@ -5749,9 +5792,8 @@ EOF
             echomsg l:message
         endif
 
-        if g:isneovim && expand('%') !=# '' && index(['c', 'vim', 'sh', 'php', 'rust', 'go', 'lua', 'ruby'], &filetype) >= 0
+        " First start dont load LSP, then... FORCE!
             silent LspStart
-        endif
 
         doautocmd <nomodeline> User UpdateStatusline
     endfunction
