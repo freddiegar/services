@@ -376,6 +376,74 @@ npm install -g vim-language-server
 npm install -g bash-language-server
 ```
 
+#### Javascript|Typescript (js, jsx, ts)
+
+[See](https://github.com/typescript-language-server/typescript-language-server)
+
+```bash
+npm install -g typescript-language-server typescript
+```
+
+#### Tailwindcss
+
+[See](https://github.com/tailwindlabs/tailwindcss-intellisense)
+
+```bash
+npm install -g @tailwindcss/language-server
+```
+
+#### JSON
+
+[See](https://github.com/hrsh7th/vscode-langservers-extracted)
+
+```bash
+npm install -g vscode-langservers-extracted
+```
+
+#### YAML
+
+[See](https://github.com/redhat-developer/yaml-language-server)
+
+```bash
+npm install -g yaml-language-server
+```
+
+#### SQL
+
+[See](https://github.com/joe-re/sql-language-server)
+
+```bash
+npm install -g sql-language-server
+
+mkdir -p ~/.config/sql-language-server/
+
+echo '{
+    "name": "db80",
+    "adapter": "mysql",
+    "host": "db80",
+    "port": 3306,
+    "user": "root",
+    "password": "N3uroSiS",
+    "database": "microsites"
+}' > /var/www/html/path/project/.sqllsrc.json
+
+echo '{
+    "connections": [
+        {
+            "name": "db80",
+            "adapter": "mysql",
+            "host": "db80",
+            "port": 3306,
+            "user": "root",
+            "password": "N3uroSiS",
+            "projectPaths": [
+                "/var/www/html/freddiegar/working/path/CODE/microsites"
+            ]
+        }
+    ]
+}' > ~/.config/sql-language-server/.sqllsrc.json
+```
+
 #### Lua
 
 [See](https://luals.github.io/wiki/build/)

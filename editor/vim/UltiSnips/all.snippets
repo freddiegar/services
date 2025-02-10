@@ -1,3 +1,7 @@
 snippet see "See Link"
 `!v trim(printf(&commentstring, ''))` @$1 ${0:`!v match(getreg('+'), '\chttp') == 0 ? getreg('+') : ''`}
 endsnippet
+
+snippet fn "Function" i
+function
+endsnippet

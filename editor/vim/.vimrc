@@ -4608,7 +4608,7 @@ lua <<EOF
         -- matching = {
         --     disallow_fuzzy_matching = false,
         --     disallow_fullfuzzy_matching = false,
-            -- disallow_partial_fuzzy_matching = true,
+        --     disallow_partial_fuzzy_matching = true,
         --     disallow_partial_matching = false,
         --     disallow_prefix_unmatching = false,
         --     disallow_symbol_nonprefix_matching = true,
@@ -4721,14 +4721,16 @@ lua <<EOF
     -- @see https://phpactor.readthedocs.io/en/master/reference/configuration.html
     require('lspconfig').phpactor.setup {
         capabilities = capabilities,
-        -- Turn off a lot diagnostics 'invalid' messages
         init_options = {
             ['logging.enabled'] = false,
             ['language_server_code_transform.import_globals'] = true,
             ['language_server_completion.trim_leading_dollar'] = true,
+
+            -- Turn off a lot diagnostics 'invalid' messages: Function array_map not found
             ['language_server.diagnostics_on_update'] = false,
             ['language_server.diagnostics_on_open'] = false,
             ['language_server.diagnostics_on_save'] = false,
+
             ['language_server_php_cs_fixer.enabled'] = false,
             ['language_server_phpstan.enabled'] = false,
             ['language_server_psalm.enabled'] = false,
@@ -4741,6 +4743,7 @@ lua <<EOF
             ['prophecy.enabled'] = false,
             ['symfony.enabled'] = false,
             ['file_path_resolver.enable_logging'] = false,
+
             ['indexer.exclude_patterns'] = {
                 '.git/**/*',
                 '/node_modules/**/*',
@@ -4753,6 +4756,28 @@ lua <<EOF
             }
         }
     }
+
+    require('lspconfig').jsonls.setup {
+        capabilities = capabilities
+    }
+
+    require('lspconfig').ts_ls.setup {
+        capabilities = capabilities
+    }
+
+    require('lspconfig').yamlls.setup {
+        capabilities = capabilities
+    }
+
+    -- Slower! HIGH RAM and CPU usage
+    -- require('lspconfig').tailwindcss.setup {
+    --     capabilities = capabilities
+    -- }
+
+    -- Don't works!
+    -- require('lspconfig').sqlls.setup {
+    --     capabilities = capabilities
+    -- }
 
     require('lspconfig').clangd.setup {
         -- cmd = {
@@ -5831,8 +5856,10 @@ EOF
             echomsg l:message
         endif
 
-        " First start dont load LSP, then... FORCE!
-            silent LspStart
+        " First start dont load LSP, then... FORCE! for each window
+        for winnr in range(1, winnr('$'))
+            silent execute 'silent! ' . winnr . 'windo LspStart'
+        endfor
 
         doautocmd <nomodeline> User UpdateStatusline
     endfunction
