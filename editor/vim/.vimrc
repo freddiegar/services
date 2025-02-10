@@ -1143,11 +1143,11 @@ for specialchar in split(',;.:=!?()_-', '\zs')
     silent execute "inoremap <silent> " . specialchar . " <C-g>u" . specialchar
 endfor
 
-" Undo break points in each Uppercase letter
-" Not use l: prefix (why nvim why!)
-for uppercase in split('ABCDEFGHIJKLMNOPQRSTUVWXYZ', '\zs')
-    silent execute "inoremap <silent> " . uppercase . " <C-g>u" . uppercase
-endfor
+function! s:undoinupper() abort
+    for uppercase in split('ABCDEFGHIJKLMNOPQRSTUVWXYZ', '\zs')
+        silent execute "inoremap <silent> " . uppercase . " <C-g>u" . uppercase
+    endfor
+endfunction
 
 " Delete word in Terminal Mode: <C-w>.
 inoremap <silent> <C-w> <C-g>u<C-w>
@@ -4404,37 +4404,51 @@ lua <<EOF
 
             if client.supports_method('textDocument/hover') then
                 vim.keymap.set('n', 'K', vim.lsp.buf.hover, options)
+            else
+                vim.keymap.set('n', 'K', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client.supports_method('textDocument/definition') then
                 vim.bo[event.buf].tagfunc = 'v:lua.vim.lsp.tagfunc'
                 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, options)
+            else
+                vim.keymap.set('n', 'gd', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client.supports_method('textDocument/declaration') then
                 vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, options)
+            else
+                vim.keymap.set('n', 'gD', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client.supports_method('textDocument/references') then
                 vim.keymap.set('n', 'gr', vim.lsp.buf.references, options)
+            else
+                vim.keymap.set('n', 'gr', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client.supports_method('textDocument/implementation') then
                 vim.keymap.set('n', 'gy', vim.lsp.buf.implementation, options)
+            else
+                vim.keymap.set('n', 'gy', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client.supports_method('textDocument/rename') then
                 vim.keymap.set('n', '<Leader>rll', vim.lsp.buf.rename, options)
+            else
+                vim.keymap.set('n', '<Leader>rll', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client.supports_method('textDocument/codeAction') then
-               vim.keymap.set('n', '<Leader>R', vim.lsp.buf.code_action, options)
+                vim.keymap.set('n', '<Leader>R', vim.lsp.buf.code_action, options)
+            else
+                vim.keymap.set('n', '<Leader>R', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client.supports_method('textDocument/inlayHint') then
-               vim.keymap.set('n', 'yoh', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, options)
-           else
-               vim.keymap.set('n', 'yoh', function() vim.notify('Nothing to do.') end, options)
+                vim.keymap.set('n', 'yoh', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, options)
+            else
+                vim.keymap.set('n', 'yoh', function() vim.notify('Nothing to do.') end, options)
             end
 
             vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
@@ -4727,6 +4741,9 @@ lua <<EOF
             ['language_server_completion.trim_leading_dollar'] = true,
 
             -- Turn off a lot diagnostics 'invalid' messages: Function array_map not found
+            -- @see https://phpactor.readthedocs.io/en/master/tips/performance.html#large-files
+            -- @see https://github.com/phpactor/phpactor/issues/2754
+            -- I use ALE for diagnostics|linter
             ['language_server.diagnostics_on_update'] = false,
             ['language_server.diagnostics_on_open'] = false,
             ['language_server.diagnostics_on_save'] = false,
@@ -5103,6 +5120,9 @@ EOF
 
     " I (almost) never used hashtag in PHP, better avoid annoyoning type!
     autocmd FileType php inoremap <silent> <buffer> # $
+    " Undo break points in each Uppercase letter (undo in camelCase aka: functions or variables)
+    " Not use l: prefix (why nvim why!)
+    autocmd FileType php call <SID>undoinupper()
 
     " PHP Testing
     autocmd FileType php let g:test#php#phpunit#executable = get(g:, 'test#php#phpunit#executable', '') !~? 'phpx'
