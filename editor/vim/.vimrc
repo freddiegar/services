@@ -258,12 +258,14 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:cache['x'] = {}
         " For [t]ypes files
         let g:cache['t'] = {}
+        " For [c]lients (LSP) files
+        let g:cache['c'] = {}
 
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
         let g:hasaia = filereadable(g:cwd . '/.hasaia') || filereadable(g:cwd . '/../.hasaia')
-        let g:hasts = g:isneovim && (filereadable(g:cwd . '/.hasts') || filereadable(g:cwd . '/../.hasts'))
+        let g:hasts = g:isneovim && (exists('g:neovide') || filereadable(g:cwd . '/.hasts') || filereadable(g:cwd . '/../.hasts'))
         let g:qfcommand = get(g:, 'qfcommand', '')
 
         " See changebrowser function
@@ -707,9 +709,10 @@ endfunction
 
 function! GetNameBranch() abort
     if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
-        return ' '
+        return ''
     endif
 
+    " Not cache, fugitive does that!
     let l:branchname = fugitive#Head(8)
 
     return strlen(l:branchname) > 0 ? '  ' . tolower(split(l:branchname, '/')[0]) : ''
@@ -780,15 +783,43 @@ function! ClientsStatusline() abort
         return l:filetype
     endif
 
-    let l:clients = substitute(l:clients, '_ls\|ls\|actor', '', 'g')
+    let l:bufnr = bufnr()
+    let l:cache = get(g:cache['c'], l:bufnr, '')
+
+    if !empty(l:cache)
+        return l:cache
+    endif
+
+    let l:clients = substitute(l:clients, '_ls$\|ls$\|actor$', '', 'g')
 
     if l:clients !=# l:filetype
-        let l:clients = l:filetype . ':' . l:clients
+        let l:extension = expand('%:e')
+        let l:clients = (strlen(l:extension) !=# 0 ? l:extension : l:filetype) . ':' . l:clients
     else
         let l:clients = ':' . l:clients
     endif
 
+    let g:cache['c'][l:bufnr] = l:clients
+
     return l:clients
+endfunction
+
+function! UnexpectedStatusline() abort
+    let l:extra = ''
+
+    if &fileformat !=# 'unix'
+        let l:extra = l:extra . ' ' . &fileformat
+    endif
+
+    if &fileencoding !=# 'utf-8'
+        let l:extra = l:extra . ' ' . &fileencoding
+    endif
+
+    if !empty(l:extra)
+        let l:extra = ' ' . l:extra
+    endif
+
+    return l:extra
 endfunction
 
 function! AsyncStatuslineFlag() abort
@@ -897,12 +928,14 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=%{&filetype!=#''?&filetype:&buftype}   " Is it require description?
 
         setlocal statusline+=\%<                                " Truncate long statusline here
+
         setlocal statusline+=%{GetNameBranch()}                 " Branch name repository
-        if &fileencoding !=# 'utf-8'
+
+        setlocal statusline+=%3*                                " User3 color
+        setlocal statusline+=%{UnexpectedStatusline()}          " Conditional data in statuline
+
         setlocal statusline+=\                                  " Extra space
-        setlocal statusline+=%{&fileencoding.''}                " Is it require description?
-        endif
-        setlocal statusline+=%*                                 " Restart color
+        setlocal statusline+=%*                                 " Reset color
 
         return
     endif
@@ -933,10 +966,6 @@ function! s:statusline(lastmode) abort
     setlocal statusline+=%{&undofile==0?'[n]':''}               " No undofile flag
     setlocal statusline+=%{&virtualedit=~#'all'?'[v]':''}       " Virtual edit flag
 
-    if exists('g:loaded_test')
-        setlocal statusline+=%{AsyncStatuslineFlag()}           " Async process info
-    endif
-
     if exists('g:loaded_gutentags')
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
     endif
@@ -948,6 +977,10 @@ function! s:statusline(lastmode) abort
     " if g:isneovim && exists('g:plug_treesitter_loaded')
     "     setlocal statusline+=%{'[T]'}                           " Treesitter enabled
     " endif
+
+    if exists('g:loaded_test')
+        setlocal statusline+=%{AsyncStatuslineFlag()}           " Async process info
+    endif
 
     " if exists('g:loaded_pomodoro') && pomo#remaining_time() !=# '' && !has('gui_running')
     "     setlocal statusline+=\                                  " Extra space
@@ -965,10 +998,9 @@ function! s:statusline(lastmode) abort
 
     setlocal statusline+=%{GetNameBranch()}                     " Branch name repository
 
-    if &fileencoding !=# 'utf-8'
-    setlocal statusline+=\                                      " Extra space
-    setlocal statusline+=%{&fileencoding.''}                    " Is it require description?
-    endif
+    setlocal statusline+=%3*                                    " User3 color
+    setlocal statusline+=%{UnexpectedStatusline()}              " Conditional data in statuline
+    setlocal statusline+=%*                                     " Reset color
 
     " setlocal statusline+=\                                      " Extra space
     " setlocal statusline+=c:%3c                                  " Cursor [c]olumn
@@ -2362,6 +2394,8 @@ if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
 
     " if has('gui_running')
+    " Plug 'williamboman/mason.nvim'                            " Install LSP from Editor
+    " Plug 'williamboman/mason-lspconfig.nvim'                  " Integrate LSP & Autocompletion
     Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
 
     " Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
@@ -2384,7 +2418,7 @@ else
     Plug 'machakann/vim-highlightedyank'                      " See yank preview
     Plug 'ludovicchabant/vim-gutentags'                       " Auto generate tags (not allowed 'for' option)
 
-    " Plug 'yegappan/lsp'                                       " LSP -> Not integrate mappings from UltiSnips
+    " Plug 'yegappan/lsp'                                       " LSP -> Not integrate mappings from UltiSnips easly..
 endif
 
 if g:hasts && !<SID>mustbeignore()
@@ -4424,6 +4458,8 @@ EOF
 lua <<EOF
     local cmp = require'cmp'
 
+    -- require("mason").setup()
+    -- require("mason-lspconfig").setup()
     require('lspconfig.ui.windows').default_options.border = 'single'
 
     -- @see https://youtu.be/gK31IVy0Gp0?t=250
@@ -6101,6 +6137,7 @@ EOF
 
             highlight! link User1 ErrorMsg
             highlight! link User2 WarningMsg
+            highlight! link User3 Search
             highlight! link ExtraWhitespace Error
             highlight! link WeirdWhitespace Warning
 
