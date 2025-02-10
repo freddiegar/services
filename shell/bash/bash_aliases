@@ -33,7 +33,8 @@ trace() {
 
 saU() {
     echo "\e[34mEnabling packages...\e[0m"
-    sudo sed -i 's/Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*
+    sudo sed -i 's/^Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*
+    sudo sed -i 's/^###Disabled deb /   deb /g' /etc/apt/sources.list.d/*
 
     checkcode $?
 
@@ -43,7 +44,8 @@ saU() {
     checkcode $?
 
     echo "\e[34mDisabling packages...\e[0m"
-    sudo sed -i 's/Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*
+    sudo sed -i 's/^Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*
+    sudo sed -i 's/^   deb /###Disabled deb /g' /etc/apt/sources.list.d/*
 
     checkcode $?
 
@@ -459,6 +461,8 @@ alias ccm="sudo chmod 770 -Rf var                       && sudo chown $USER:www-
 alias ppa="phpx artisan"
 alias ppw="sudo -u www-data phpx artisan"
 alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && ppa optimize:clear     && gco storage bootstrap"
+alias artisan="ppw"
+alias tinker="ppw tinker"
 
 alias ppv='ppa app-version:create --sha="$(git rev-parse HEAD)" --time="$(date -u +%Y%m%d%H%M%S)" --branch="$(git rev-parse --abbrev-ref HEAD)"'
 alias ppy="export APPLICATION_ENV=dev && phpx yii"
@@ -470,8 +474,8 @@ alias prx='export XDEBUG_SESSION=1 && export XDEBUG_CONFIG="idekey=PHPSTORM" && 
 alias psw="sudo update-alternatives --config php"
 
 # @see https://xdebug.org/docs/all_settings#mode
-alias vt="export XDEBUG_MODE=off       && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage && nn 'Ran tests successfully!'"
-alias vtc="export XDEBUG_MODE=coverage && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage && nn 'Ran tests successfully with coverage!'"
+alias vt="export XDEBUG_MODE=off && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage && nn 'Ran tests successfully!'"
+alias vtc="export XDEBUG_MODE=coverage && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error && nn 'Ran tests successfully with coverage!'"
 alias vT="phpx vendor/bin/phpunit --testdox"
 alias vts="phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage --testsuite"
 alias vtS="phpx vendor/bin/phpunit --testdox --testsuite"
