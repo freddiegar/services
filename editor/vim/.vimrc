@@ -3903,7 +3903,8 @@ endfunction
 command! -nargs=? -range -bang R call <SID>run(<range>, <bang>0, <f-args>)
 
 " @thanks https://vi.stackexchange.com/a/19875
-function s:runterm(range, interactive)
+" range (0,1,2), interactive (0/1), [command (string)]: void
+function s:runterm(range, interactive, ...)
     let l:bterminal = uniq(map(filter(getwininfo(), 'v:val.terminal'), 'v:val.bufnr'))
     let l:bterminal = len(l:bterminal) > 0 ? l:bterminal[0] : -1
 
@@ -3921,14 +3922,14 @@ function s:runterm(range, interactive)
         " @thanks https://vi.stackexchange.com/a/21937
         silent call win_gotoid(get(win_findbuf(l:bterminal), 0))
         call nvim_feedkeys(l:command . "\<Enter>", 'i', v:true)
-        " With sudo commands is weird
+        " With sudo commands is "weird"
         " call nvim_feedkeys(l:command . "\<Enter>\<C-\>\<C-n>\<C-\>\<C-N>\<C-w>w", 'i', v:true)
     else
         call term_sendkeys(l:bterminal, l:command . "\<Enter>")
     endif
 endfunction
 
-command! -nargs=? -range -bang RR call <SID>runterm(<range>, <bang>0, <f-args>)
+command! -nargs=* -range -bang RR call <SID>runterm(<range>, <bang>0, <f-args>)
 
 " range (0,1,2), interactive (0/1), [args (string)]: void
 function! s:get_selection(range, interactive, args) abort
@@ -4372,7 +4373,7 @@ lua <<EOF
             if not vim.bo[event.buf].modifiable then
                 vim.lsp.buf_detach_client(event.buf, event.data.client_id)
 
-                vim.notify('Buffer ' .. bufnr .. ': is no modifiable, LSP deattached')
+                vim.notify('Buffer ' .. event.buf .. ': is no modifiable, LSP deattached', vim.log.levels.WARN)
 
                 return
             end
@@ -4432,6 +4433,8 @@ lua <<EOF
 
             if client.supports_method('textDocument/inlayHint') then
                vim.keymap.set('n', 'yoh', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, options)
+           else
+               vim.keymap.set('n', 'yoh', function() vim.notify('Nothing to do.') end, options)
             end
 
             vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
