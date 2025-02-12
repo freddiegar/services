@@ -558,11 +558,11 @@ if !g:isneovim                                                  " Visual feedbac
     let &t_SI = "\e[6 q"                                        " Use solid line (6=|) on [S]tart [I]nsert Mode
     let &t_SR = "\e[4 q"                                        " Use solid underline (4=_) on [S]tart [R]eplace Mode
     let &t_EI = "\e[2 q"                                        " Use solid block (2) on [E]nd [I]nsert (or Replace) Mode
+else
+    set guicursor+=a:blinkon0                                   " Never blink the cursor, it applies to any TUI (default: on)
 endif
 
 if has('gui_running')
-    set guicursor+=a:blinkon0                                   " Never blink the cursor (default: on)
-
     augroup GUIOptions
         if exists('g:neovide') " (why nvim why!)
             " @see https://neovide.dev/
@@ -690,14 +690,14 @@ function! GetNameCurrentFile() abort
     "   /var/www/html/repo/services/.gitignore                  -> .gitignore
     "   /var/www/html/repo/services/docker/.gitignore           -> docker/.gitignore
     "   /var/www/html/repo/services/docker/conf/.gitignore      -> docker/conf/.gitignore
-    "   /var/www/html/repo/services/docker/conf/.gitignore > 60 -> d/c/.gitignore
+    "   /var/www/html/repo/services/docker/conf/.gitignore > 50 -> d/c/.gitignore
     "   /home/user/.vimrc                                       -> ~/.vimrc
     "   /etc/hosts                                              -> /e/hosts
     if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'checkhealth'], &filetype) >= 0 || expand('%') ==# ''
         return ''
     elseif get(b:, 'isversus', v:false)
         return expand('%:t')
-    elseif match(expand('%:p:h'), g:cwd) >= 0 && len(expand('%:~')) <= 60
+    elseif match(expand('%:p:h'), g:cwd) >= 0 && len(expand('%:~')) <= 50
         return expand('%:~')
     elseif match(expand('%:p:h'), g:cwd) >= 0
         let l:bpath = expand('%:.:h:gs@\v(/?\w{1})(\w+)@\1@g')
@@ -931,6 +931,7 @@ function! s:statusline(lastmode) abort
         setlocal statusline+=\%<                                " Truncate long statusline here
 
         setlocal statusline+=%{GetNameBranch()}                 " Branch name repository
+        setlocal statusline+=\                                  " Extra space
 
         setlocal statusline+=%3*                                " User3 color
         setlocal statusline+=%{UnexpectedStatusline()}          " Conditional data in statuline
@@ -962,6 +963,7 @@ function! s:statusline(lastmode) abort
     setlocal statusline+=\%r                                    " Read-only flag
     setlocal statusline+=%{&wrap==0?'':'[w]'}                   " Wrap flag
     setlocal statusline+=%{&wrapscan==0?'[s]':''}               " Wrapscan flag
+    setlocal statusline+=%{&scrollbind==0?'':'[b]'}             " Scrollbind flag
     setlocal statusline+=%{&paste==0?'':'[p]'}                  " Paste flag
     setlocal statusline+=%{&diff==0?'':'[d]'}                   " Diff mode flag
     setlocal statusline+=%{&undofile==0?'[n]':''}               " No undofile flag
@@ -1329,18 +1331,21 @@ function! s:file_versus(file) abort
 
     if bufwinnr(bufnr(fnameescape(l:alternate))) > -1
         " Reuse open buffer if exists in current window
-        silent execute 'drop ' . fnameescape(l:alternate)
+        silent execute 'keepalt drop ' . fnameescape(l:alternate)
 
         return
     endif
 
-    silent execute 'vsplit +' . line('.') . ' ' . fnameescape(l:alternate)
+    " Close any other versus file opened
+    silent execute "keepalt windo if get(b:, 'isversus') | bdelete! | endif"
+
+    silent execute 'keepalt vsplit +' . line('.') . ' ' . fnameescape(l:alternate)
     setlocal noswapfile
     setlocal noloadplugins
     setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
 
     silent let b:isversus = v:true
-    silent execute 'wincmd p'
+    silent execute 'keepalt wincmd p'
 endfunction
 
 " Don't write in update <- Sugar
@@ -1734,6 +1739,34 @@ function! s:append_char(type) abort
         if a:type ==# 'd'
             silent execute "normal! $\"_x\e"
             let l:repeatable = 'DeleteFinal'
+        elseif a:type ==# 'c' && index(['php'], &filetype) >= 0
+            if match(getline('.'), '@codeCoverageIgnore') < 0
+                silent execute "normal! A // @codeCoverageIgnore\e=="
+            endif
+
+            let l:repeatable = 'AddCurrentIgnoreCoverageMark'
+        elseif a:type ==# 'C' && index(['php'], &filetype) >= 0
+            if match(getline('.'), '@codeCoverageIgnore') > 0
+                silent execute "normal! $F;l\"_D"
+            endif
+
+            let l:repeatable = 'DropCurrentIgnoreCoverageMark'
+        elseif a:type ==# 'p' && index(['php'], &filetype) >= 0
+            if match(getline(line('.') - 1), '@codeCoverageIgnore') < 0
+                silent execute "normal! O// @codeCoverageIgnore\e=="
+
+                let l:ccursor = [l:ccursor[0], l:ccursor[1] + 1, l:ccursor[2], l:ccursor[3]]
+            endif
+
+            let l:repeatable = 'AddParagrahpIgnoreCoverageMark'
+        elseif a:type ==# 'P' && index(['php'], &filetype) >= 0
+            if match(getline(line('.') - 1), '@codeCoverageIgnore') > 0
+                silent execute "normal! k\"_dd"
+
+                let l:ccursor = [l:ccursor[0], l:ccursor[1] - 1, l:ccursor[2], l:ccursor[3]]
+            endif
+
+            let l:repeatable = 'DropParagrahpIgnoreCoverageMark'
         elseif a:type ==# 'i' && index(['php'], &filetype) >= 0
             let l:changerow = -(1 + &scrolloff)
 
@@ -1972,9 +2005,13 @@ function! s:go_line() abort
     try
         let l:word = expand('<cWORD>')
 
-        " PHPUnit testing | Background Format
-        if index(['^', '||'], l:word) >= 0
-            silent execute "normal! WviW\"zy"
+        " PHPUnit testing | Background Format | Cleanup
+        if index(['^', '||', '│', '|'], l:word) >= 0
+            silent execute 'normal mz'
+            " Try attempt next valid path
+            silent execute "keeppatterns normal! f/viW\"zy"
+            silent execute "normal 'z"
+            silent execute 'delmarks z'
 
             let l:word = trim(@z)
         endif
@@ -1988,6 +2025,8 @@ function! s:go_line() abort
         if match(getline('.'), l:separator) < 0
             throw 'Nothing to do.'
         endif
+
+        echo 'Jump to ' . split(l:word, '/')[-1] . ' using [' . l:separator . '] as separator.'
 
         let l:lbuffer = bufnr('%')
         let l:parts = split(trim(l:word, '"'), l:separator)
@@ -4090,7 +4129,7 @@ endfunction
 " Open notes in Normal|Select|Operator Mode
 nmap <silent> <C-w>, <Cmd>call <SID>notes(v:true)<Enter>
 nmap <silent> <C-w>; <Cmd>call <SID>notes(v:false)<Enter>
-nmap <silent> <C-w>t <Cmd>edit ~/working/notes/todo.md<Enter>
+nmap <silent> <C-w>t <Cmd>edit ~/working/notes/todo.md <Bar> normal! G<Enter>
 
 function! s:notes(append) abort
     let l:matches = []
@@ -4730,6 +4769,7 @@ lua <<EOF
     local lspconfig = require('lspconfig')
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
+    -- @see https://www.youtube.com/watch?v=LaS32vctfOY
     local lspservers = {
         vimls = {},
         bashls = {},
@@ -5098,6 +5138,14 @@ EOF
     autocmd FileType php nmap     <silent> <buffer> <i <Plug>AddIncompleteMarkRepeatable
     autocmd FileType php nnoremap <silent> <buffer> <Plug>DropIncompleteMarkRepeatable <Cmd>call <SID>append_char('I')<Enter>
     autocmd FileType php nmap     <silent> <buffer> >i <Plug>DropIncompleteMarkRepeatable
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>AddCurrentIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('c')<Enter>
+    autocmd FileType php nmap     <silent> <buffer> <c <Plug>AddCurrentIgnoreCoverageMarkRepeatable
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>DropCurrentIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('C')<Enter>
+    autocmd FileType php nmap     <silent> <buffer> >c <Plug>DropCurrentIgnoreCoverageMarkRepeatable
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>AddParagrahpIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('p')<Enter>
+    autocmd FileType php nmap     <silent> <buffer> <p <Plug>AddParagrahpIgnoreCoverageMarkRepeatable
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>DropParagrahpIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('P')<Enter>
+    autocmd FileType php nmap     <silent> <buffer> >p <Plug>DropParagrahpIgnoreCoverageMarkRepeatable
 
     " I (almost) never used hashtag in PHP, better avoid annoyoning type!
     autocmd FileType php inoremap <silent> <buffer> # $
@@ -5532,7 +5580,7 @@ EOF
     autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::select(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'z:delmarks z\r") | set nohlsearch
     " [s]tatement sql
     autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::statement(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'z:delmarks z\r") | set nohlsearch
-    " [x]ecute as tinker
+    " e[x]ecute as tinker
     autocmd BufEnter,BufNewFile *.sql call setreg('x', "mx@t:sleep 50m\ro\eItinker --execute='dump(\ep:sleep 50m\rkgJA)'\edd'x:delmarks x\r")
     " [e]xplain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
@@ -5558,57 +5606,72 @@ EOF
 
     " Cleanup queries log
     autocmd BufReadPost \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
+
     " Cleanup profiles log
     autocmd BufReadPost profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
+
     " Cleanup test debug log
     " :> dtest.log && phpx vendor/bin/phpunit --testdox --log-events-verbose-text dtest.log
-    autocmd BufReadPost dtest.log if !exists('b:cleanup')
-                \ | let b:cleanup = 1
-                \ | silent! keeppatterns
-                \ | execute "%s#^\\[\\d\\{2}:\\d\\{2}:\\d\\{2}.\\d\\{9} / ##g"
-                \ | execute "%s#\\] \\[\\d\\{6,9} bytes\\]##g"
-                \ | execute "g#^\\s*$#d_"
-                \ | execute "g#^ #g!#^\\s*- #d_"
-                \ | execute "g#^ #normal! kJ"
-                \ | %sort!
+    autocmd BufReadPost dtest.log
+                \ | if !exists('b:cleanup') && match(getline(1), ' PHPUnit Started ') > 0
+                \ |     let b:cleanup = 1
+                \ |     if &undolevels ==# -1 | setlocal undolevels=1 | endif
+                \ |     silent! execute "keeppatterns keepjumps %s#^\\[\\d\\{2}:\\d\\{2}:\\d\\{2}.\\d\\{9} / ##g"
+                \ |     silent! execute "keeppatterns keepjumps %s#\\] \\[\\d\\{6,9} bytes\\]##g"
+                \ |     silent! execute "keeppatterns keepjumps g#^\\s*$#d_"
+                \ |     silent! execute "keeppatterns keepjumps g#^ #g!#^\\s*- #d_"
+                \ |     silent! execute "keeppatterns keepjumps g#^ #normal! kJ"
+                \ |     silent! execute "keeppatterns keepjumps g# PHPUnit #d_"
+                \ |     %sort!
+                \ |     write
                 \ | endif
+
     " Cleanup test phpunit log
     " :> ptest.log && phpx vendor/bin/phpunit --testdox | tee -a ptest.log
-    autocmd BufReadPost ptest.log if !exists('b:cleanup')
-                \ | let b:cleanup = 1
-                \ | silent! execute "keeppatterns keepjumps g#^ ✔#d_"
-                \ | silent! execute "keeppatterns keepjumps g#^Time: #y z"
-                \ | silent! execute "keeppatterns keepjumps g#^[A-Za-z0-9\.]#d_"
-                \ | silent! execute "keeppatterns keepjumps g#/vendor/#d_"
-                \ | silent! execute "normal! :CE\r"
-                \ | silent! execute "keeppatterns keepjumps g#^ ✘#normal O"
-                \ | normal! "zpgg
+    " or
+    " testx.sh
+    autocmd BufReadPost *.log
+                \ | if !exists('b:cleanup') && getline(1)[0:7] ==# 'PHPUnit '
+                \ |     let b:cleanup = 1
+                \ |     if &undolevels ==# -1 | setlocal undolevels=1 | endif
+                \ |     silent! execute "keeppatterns keepjumps g#^ ✔#d_"
+                \ |     silent! execute "keeppatterns keepjumps g#^Time: #y z"
+                \ |     silent! execute "keeppatterns keepjumps g#^OK #y Z"
+                \ |     silent! execute "keeppatterns keepjumps g#^Tests: #y Z"
+                \ |     silent! execute "keeppatterns keepjumps g#^[A-Za-z0-9\.]#d_"
+                \ |     silent! execute "keeppatterns keepjumps g#/vendor/#d_"
+                \ |     silent! execute "keeppatterns keepjumps normal! :CE\r"
+                \ |     silent! execute "keeppatterns keepjumps g#^ ✘#normal O"
+                \ |     silent! execute "keeppatterns keepjumps normal! Go\e\"zpgg"
+                \ |     write
                 \ | endif
+
     " Debug mappings
     " redir! > editor/vim/vimkeys.txt | silent verbose map | redir END
     autocmd BufReadPost vimkeys.txt if !exists('b:cleanup')
-                \ | let b:cleanup = 1
-                \ | silent! keeppatterns
-                \ | execute "g/^$/d_"
-                \ | execute "g/Last set\\|keyboard /d_"
-                \ | execute "%s/^   /n  /"
-                \ | execute "g/[n\\|x\\|o\\v]  <Plug>/d_"
-                \ | %sort
-                \ | execute "normal gg/^o\rO\egg/^s\rO\egg/^v\rO\e/^x\rO\e"
+                \ |     let b:cleanup = 1
+                \ |     silent! execute "keeppatterns keepjumps g/^$/d_"
+                \ |     silent! execute "keeppatterns keepjumps g/Last set\\|keyboard /d_"
+                \ |     silent! execute "keeppatterns keepjumps %s/^   /n  /"
+                \ |     silent! execute "keeppatterns keepjumps g/[n\\|x\\|o\\v]  <Plug>/d_"
+                \ |     %sort
+                \ |     silent! execute "keeppatterns keepjumps normal gg/^o\rO\egg/^s\rO\egg/^v\rO\e/^x\rO\e"
+                \ |     write
                 \ | endif
+
     " Cleanup notes
     autocmd BufFilePost weekly-*.md if !exists('b:cleanup')
-                \ | let b:cleanup = 1
-                \ | silent! keeppatterns
-                \ | execute "normal! gg:CS\r\"_d}"
-                \ | execute "g/^@@.*/d_"
-                \ | execute "g/^- .*/d_"
-                \ | execute "g/^\\s\\{9}.*/d_"
-                \ | execute "g/^\\s\\{1}\\w.* \\w.*/normal S"
-                \ | execute "normal! gg0\<C-v>G0\"_x"
-                \ | execute "g/^\\s\\{4}[A-Z]*$/normal! ATL;DR;-----"
-                \ | execute "g/^[T|-]/normal! >>>>"
-                \ | execute "normal! ggIT: TO-DOI: IN-PROGRESSP: PULL-REQUESTQ: QA-TO-CERTIFYD: DONES: STOPPED\e"
+                \ |     let b:cleanup = 1
+                \ |     silent! execute "keeppatterns keepjumps normal! gg:CS\r\"_d}"
+                \ |     silent! execute "keeppatterns keepjumps g/^@@.*/d_"
+                \ |     silent! execute "keeppatterns keepjumps g/^- .*/d_"
+                \ |     silent! execute "keeppatterns keepjumps g/^\\s\\{9}.*/d_"
+                \ |     silent! execute "keeppatterns keepjumps g/^\\s\\{1}\\w.* \\w.*/normal S"
+                \ |     silent! execute "keeppatterns keepjumps normal! gg0\<C-v>G0\"_x"
+                \ |     silent! execute "keeppatterns keepjumps g/^\\s\\{4}[A-Z]*$/normal! ATL;DR;-----"
+                \ |     silent! execute "keeppatterns keepjumps g/^[T|-]/normal! >>>>"
+                \ |     silent! execute "keeppatterns keepjumps normal! ggIT: TO-DOI: IN-PROGRESSP: PULL-REQUESTQ: QA-TO-CERTIFYD: DONES: STOPPED\e"
+                \ |     write
                 \ | endif
 
     " Open files with external application
@@ -5861,9 +5924,7 @@ EOF
         endif
 
         " First start dont load LSP, then... FORCE! for each window
-        for winnr in range(1, winnr('$'))
-            silent execute 'silent! ' . winnr . 'windo LspStart'
-        endfor
+        silent execute 'silent! windo LspStart'
 
         doautocmd <nomodeline> User UpdateStatusline
     endfunction
