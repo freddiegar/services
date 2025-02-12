@@ -239,7 +239,8 @@
 " Registers and marks special used here
 " - "z  Save content yank in function, this no overwrite default register
 " - @z  Save temp content used in mappings
-" - mZ  Save position (line and column) to recover after close all buffers (using <Leader>Z)
+" - mz  Save position (line and column) to recover after close all buffers (using <Leader>Z)
+" - mx  Save position (line and column) to recover use in registers in combination with mz
 
 " @see :h initialization
 if !get(v:, 'vim_did_enter', !has('vim_starting'))
@@ -354,7 +355,7 @@ set hlsearch                                                    " Highligth matc
 set incsearch                                                   " Search first match while typing. On TOP return BOTTOM, on BOTTOM return TOP (default: off)
 
 " @see https://blog.jcoglan.com/2017/05/08/merging-with-diff3/
-set diffopt+=iwhite                                             " Ignore white spaces in diff mode
+" set diffopt+=iwhite                                             " Ignore white spaces in diff mode, GitSigns use this: https://github.com/lewis6991/gitsigns.nvim/issues/696#issuecomment-1356134393
 set diffopt+=vertical                                           " Start with vertical splits always
 set diffopt+=indent-heuristic                                   " Use same indent of file
 " @see https://deepai.org/publication/how-different-are-different-diff-algorithms-in-git-use-histogram-for-code-changes
@@ -2507,7 +2508,7 @@ function! s:runjob(command) abort
                     \ 'on_exit': { -> s:srunjob() },
                     \ })
     else
-        call job_start(l:command, {
+        call job_start(a:command, {
                     \ 'out_cb': function('s:rrunjob'),
                     \ 'err_cb': function('s:rrunjob'),
                     \ 'exit_cb': function('s:vrunjob'),
@@ -3210,7 +3211,7 @@ function! s:get_url(url, ...) abort
     if match(l:uri, 'http') < 0
         " Search URI
         " @inspired https://www.reddit.com/r/vim/comments/1d7971t/open_the_url_nearest_to_the_cursor_in_a_web/
-        let l:temp = getline(".")->split(' ')->map({_, v -> matchstr(v, '\chttp\(s\)\?:\/\/[a-z.@:?=&/\-0-9]\+')})->filter('!empty(v:val)')->sort()->uniq()
+        let l:temp = getline(".")->split(' ')->map({_, v -> matchstr(v, '\chttp\(s\)\?:\/\/[a-z.@:?=_&/\-0-9]\+')})->filter('!empty(v:val)')->sort()->uniq()
         let l:uri = len(l:temp) > 0 ? l:temp[0] : l:uri
     endif
 
@@ -3574,8 +3575,8 @@ nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' descr
 "   \r  -> Go to file
 
 " Go [h]ighligth [h]unk
-nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal /\\v^[<>=\|]{4,7}.*\rzz"<Enter>
-" nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal ?\\v^[<>=\|]{4,7}.*\rzz"<Enter>
+nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal /\\v^[<>=\|]{4,7}\\s?[a-zA-Z-_]*$\rzz"<Enter>
+" nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal ?\\v^[<>=\|]{4,7}\\s?[a-zA-Z-_]*$\rzz"<Enter>
 
 " if &diff <-- fails with diff mode opens from vim-fugitive
     " Diff [b]uffer
@@ -3803,6 +3804,10 @@ function! s:run(range, interactive, ...) abort
     let l:ignorechars = []
     let l:runner = &filetype
     let l:runners = ['&bash', '&php', '&sql', '&d2']
+
+    if index(l:runners, '&' . l:runner) < 0 && index(['markdown', 'sh'], l:runner) < 0
+        let l:runner = ''
+    endif
 
     if l:runner ==# ''
         let l:runner = confirm('Select runner:', join(l:runners, "\n"), 2, 'Q')
@@ -4112,9 +4117,13 @@ function! s:notes(append) abort
         silent execute "normal! Go\e"
     endif
 
+    let l:hoursrounded = strftime('%H')
     let l:minutesrounded = str2nr(round(strftime('%M') / 15.0) * 15)
 
-    silent execute "normal! Gzto== " . strftime('%H:') . repeat('0', 2 - len(l:minutesrounded)) . l:minutesrounded . " ==\r- \e"
+    let l:hoursrounded = l:minutesrounded ==# 60 ? str2nr(l:hoursrounded) + 1 : l:hoursrounded
+    let l:minutesrounded = l:minutesrounded ==# 60 ? '00' : l:minutesrounded
+
+    silent execute "normal! Gzto== " . repeat('0', 2 - len(l:hoursrounded)) . l:hoursrounded . ':' . repeat('0', 2 - len(l:minutesrounded)) . l:minutesrounded . " ==\r- \e"
 
     " let @+ = l:saved_start_register
 
@@ -4718,110 +4727,82 @@ lua <<EOF
     -- })
 
     -- @see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+    local lspconfig = require('lspconfig')
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-    require('lspconfig').vimls.setup {
-        capabilities = capabilities
-    }
+    local lspservers = {
+        vimls = {},
+        bashls = {},
+        lua_ls = {},
+        jsonls = {},
+        ts_ls = {},
+        yamlls = {},
+        -- Slower! HIGH RAM and CPU usage
+        -- tailwindcss = {},
+        -- Doesn't work?
+        -- sqlls = {},
+        -- https://haskell-language-server.readthedocs.io/en/latest/installation.html
+        -- https://github.com/elixir-lsp/elixir-ls
+        solargraph = {},
+        gopls = {},
+        rust_analyzer = {},
+        clangd = {
+            -- cmd = {
+            --     'clangd',
+            --     '--background-index',
+            --     '--suggest-missing-includes',
+            --     '--clang-tidy',
+            --     '--header-insertion=iwyu',
+            --     '--header-insertion-decorators',
+            -- },
+        },
+        -- @see https://phpactor.readthedocs.io/en/master/reference/configuration.html
+        phpactor = {
+            init_options = {
+                ['logging.enabled'] = false,
+                ['language_server_code_transform.import_globals'] = true,
+                ['language_server_completion.trim_leading_dollar'] = true,
 
-    require'lspconfig'.bashls.setup {
-        capabilities = capabilities
-    }
+                -- Turn off a lot diagnostics 'invalid' messages: Function array_map not found
+                -- @see https://phpactor.readthedocs.io/en/master/tips/performance.html#large-files
+                -- @see https://github.com/phpactor/phpactor/issues/2754
+                -- I use ALE for diagnostics|linter
+                ['language_server.diagnostics_on_update'] = false,
+                ['language_server.diagnostics_on_open'] = false,
+                ['language_server.diagnostics_on_save'] = false,
 
-    require('lspconfig').lua_ls.setup {
-        capabilities = capabilities
-    }
+                ['language_server_php_cs_fixer.enabled'] = false,
+                ['language_server_phpstan.enabled'] = false,
+                ['language_server_psalm.enabled'] = false,
+                ['completion_worse.completor.local_variable.enabled'] = false,
+                -- ['completion_worse.snippets'] = false, -- Disable autocompletion
+                ['completion_worse.completor.scf_class.enabled'] = false,
+                ['behat.enabled'] = false,
+                ['php_code_sniffer.enabled'] = false,
+                ['phpunit.enabled'] = true,
+                ['prophecy.enabled'] = false,
+                ['symfony.enabled'] = false,
+                ['file_path_resolver.enable_logging'] = false,
 
-    -- @see https://phpactor.readthedocs.io/en/master/reference/configuration.html
-    require('lspconfig').phpactor.setup {
-        capabilities = capabilities,
-        init_options = {
-            ['logging.enabled'] = false,
-            ['language_server_code_transform.import_globals'] = true,
-            ['language_server_completion.trim_leading_dollar'] = true,
-
-            -- Turn off a lot diagnostics 'invalid' messages: Function array_map not found
-            -- @see https://phpactor.readthedocs.io/en/master/tips/performance.html#large-files
-            -- @see https://github.com/phpactor/phpactor/issues/2754
-            -- I use ALE for diagnostics|linter
-            ['language_server.diagnostics_on_update'] = false,
-            ['language_server.diagnostics_on_open'] = false,
-            ['language_server.diagnostics_on_save'] = false,
-
-            ['language_server_php_cs_fixer.enabled'] = false,
-            ['language_server_phpstan.enabled'] = false,
-            ['language_server_psalm.enabled'] = false,
-            ['completion_worse.completor.local_variable.enabled'] = false,
-            -- ['completion_worse.snippets'] = false, -- Disable autocompletion
-            ['completion_worse.completor.scf_class.enabled'] = false,
-            ['behat.enabled'] = false,
-            ['php_code_sniffer.enabled'] = false,
-            ['phpunit.enabled'] = true,
-            ['prophecy.enabled'] = false,
-            ['symfony.enabled'] = false,
-            ['file_path_resolver.enable_logging'] = false,
-
-            ['indexer.exclude_patterns'] = {
-                '.git/**/*',
-                '/node_modules/**/*',
-                '/var/**/*',
-                '/storage/**/*',
-                '/tests/coverage/**/*',
-                '/vendor/**/Tests/**/*',
-                '/vendor/**/tests/**/*',
-                '/vendor/composer/**/*',
-            }
+                ['indexer.exclude_patterns'] = {
+                    '.git/**/*',
+                    '/node_modules/**/*',
+                    '/var/**/*',
+                    '/storage/**/*',
+                    '/tests/coverage/**/*',
+                    '/vendor/**/Tests/**/*',
+                    '/vendor/**/tests/**/*',
+                    '/vendor/composer/**/*',
+                }
+            },
         }
     }
 
-    require('lspconfig').jsonls.setup {
-        capabilities = capabilities
-    }
-
-    require('lspconfig').ts_ls.setup {
-        capabilities = capabilities
-    }
-
-    require('lspconfig').yamlls.setup {
-        capabilities = capabilities
-    }
-
-    -- Slower! HIGH RAM and CPU usage
-    -- require('lspconfig').tailwindcss.setup {
-    --     capabilities = capabilities
-    -- }
-
-    -- Don't works!
-    -- require('lspconfig').sqlls.setup {
-    --     capabilities = capabilities
-    -- }
-
-    require('lspconfig').clangd.setup {
-        -- cmd = {
-        --     'clangd',
-        --     '--background-index',
-        --     '--suggest-missing-includes',
-        --     '--clang-tidy',
-        --     '--header-insertion=iwyu',
-        --     '--header-insertion-decorators',
-        -- },
-        capabilities = capabilities
-    }
-
-    require('lspconfig').solargraph.setup {
-        capabilities = capabilities
-    }
-
-    -- https://haskell-language-server.readthedocs.io/en/latest/installation.html
-    -- https://github.com/elixir-lsp/elixir-ls
-
-    require('lspconfig').gopls.setup {
-        capabilities = capabilities
-    }
-
-    require('lspconfig').rust_analyzer.setup {
-        capabilities = capabilities
-    }
+    for lspserver, config in pairs(lspservers) do
+        lspconfig[lspserver].setup(vim.tbl_deep_extend('force', {}, {
+            capabilities = capabilities,
+        }, config))
+    end
 
     vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
 EOF
@@ -5163,9 +5144,10 @@ EOF
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rdd <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rdu <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>rrd <Cmd>call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rde <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l\"_2xds)") <Bar> execute "normal! @z" <Bar> delmarks z<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdn <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]a ?? null\el\"_2xds)") <Bar> execute "normal! @z" <Bar> delmarks z<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdg <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l4dli ?? \eds)") <Bar> execute "normal! @z" <Bar> delmarks z<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rde <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l\"_2xds)") <Bar> execute "normal! @z"<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdn <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]a ?? null\el\"_2xds)") <Bar> execute "normal! @z"<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdg <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l4dli ?? \eds)") <Bar> execute "normal! @z"<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>raf <Cmd>call setreg('z', "mz_\"_diwifunction\ef=\"_diwi{\r\eA;\r}\e`zf)a use ()<Left>\e==$F)") <Bar> execute "normal! @z" <Bar> delmarks z<Enter>
 
     autocmd FileType php nnoremap <silent> <Plug>SimplifyNamespaceRepeatable <Cmd>call <SID>rsn('word')<Enter>
     autocmd FileType php nmap <silent> <buffer> <Leader>rsn <Plug>SimplifyNamespaceRepeatable
@@ -5550,6 +5532,8 @@ EOF
     autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::select(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'z:delmarks z\r") | set nohlsearch
     " [s]tatement sql
     autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::statement(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'z:delmarks z\r") | set nohlsearch
+    " [x]ecute as tinker
+    autocmd BufEnter,BufNewFile *.sql call setreg('x', "mx@t:sleep 50m\ro\eItinker --execute='dump(\ep:sleep 50m\rkgJA)'\edd'x:delmarks x\r")
     " [e]xplain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
     " [j]son explain sql

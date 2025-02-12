@@ -136,6 +136,7 @@ $fileSkips = [
     '/app/ThreeDS/Authentication/AuthenticateProcess.php', // MPI
     '/app/Filters/Joins/Joins.php', // MPI
     '/app/Domain/Transaction/DTO/Vtex/TransactionData.php', // PL
+    '/app/WebService/InvoiceRest.php', // MS
 ];
 
 foreach ($fileSkips as $file) {
