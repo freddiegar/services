@@ -49,6 +49,14 @@ saU() {
 
     checkcode $?
 
+    if [ "$#" -eq 0 ]; then
+        nn "Update completed!"
+    fi
+}
+
+sAU() {
+    saU --ignore
+
     echo "\e[34mUpdating firefox...\e[0m"
     curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.xz && sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
 
@@ -58,6 +66,14 @@ saU() {
     curl -L "https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz" -o zen.tar.xz && sudo tar xvf zen.tar.xz -C /opt && rm -Rf zen.tar.xz
 
     checkcode $?
+
+    if [ "$#" -eq 0 ]; then
+        nn "Update (fully) completed!"
+    fi
+}
+
+SAU() {
+    sAU --ignore
 
     echo "\e[34mPulling docker images...\e[0m"
     sh ~/working/dockerpull.sh
@@ -71,6 +87,13 @@ saU() {
 
     echo "\e[34mDocker cleanup...\e[0m"
     dclean
+
+    echo "\e[34mUpdating composer global...\e[0m"
+    php8.4 `which composer` global update
+
+    if [ "$#" -eq 0 ]; then
+        nn "Update (FULLY) completed!"
+    fi
 }
 
 checkcode() {
@@ -201,7 +224,14 @@ pcs() {
 # Change Dir Project
 #   - cdp /var/www/html/flexphp
 cdp() {
-    cd "$@"/$(cd "$@" && command ls -L1 | fzf) && $EDITOR
+    cd "$@"/$(cd "$@" && command ls -L1 | fzf)
+
+    if [ "$PWD" = "$@" ]; then
+        # Nothing selected, canceled!
+        return 0
+    fi
+
+    $EDITOR
 
     return $?
 }
@@ -461,8 +491,9 @@ alias ccm="sudo chmod 770 -Rf var                       && sudo chown $USER:www-
 alias ppa="phpx artisan"
 alias ppw="sudo -u www-data phpx artisan"
 alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && ppa optimize:clear     && gco storage bootstrap"
-alias artisan="ppw"
-alias tinker="ppw tinker"
+# Simulate Vapor shortcuts for convenience
+alias artisan="ppa"
+alias tinker="ppa tinker"
 
 alias ppv='ppa app-version:create --sha="$(git rev-parse HEAD)" --time="$(date -u +%Y%m%d%H%M%S)" --branch="$(git rev-parse --abbrev-ref HEAD)"'
 alias ppy="export APPLICATION_ENV=dev && phpx yii"
