@@ -340,6 +340,36 @@ sudo apt-get install -y libxml2-utils
 sudo apt-get install -y miller
 ```
 
+## Vim Slides
+
+[See](https://github.com/maaslalani/slides)
+[Manual](http://bloodgate.com/perl/graph/manual/syntax.html)
+[Demo](https://youtu.be/wIyz7UQPL70)
+
+```go
+go install github.com/maaslalani/slides@latest
+sudo ln -s /home/$USER/go/bin/slides /usr/bin/slides
+
+# Dependency for graphs
+# @see https://metacpan.org/pod/Graph::Easy
+echo 'yes' | perl -MCPAN -e shell
+
+# After installation open shell
+perl -MCPAN -e shell
+install Graph::Easy
+# Check graph-easy path, check in PATH
+ls -la $HOME/perl5/bin
+
+# Create slides
+touch slides.md
+
+# Enable executions <C-e>
+chmod +x slides.md
+
+# Presentation mode
+slides slides.md
+```
+
 ### LSP
 
 #### C
@@ -486,6 +516,7 @@ echo '
 [See](https://go.dev/doc/install)
 [See 2](https://go.dev/doc/install/source)
 [See 3](https://github.com/golang/wiki/blob/master/Ubuntu.md#using-ppa)
+[See 4](https://thenewstack.io/golang-how-to-use-the-go-install-command/)
 
 ```bash
 curl -L https://go.dev/dl/go1.23.4.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
@@ -1216,6 +1247,19 @@ sudo journalctl --rotate
 sudo journalctl --vacuum-time=30days
 sudo journalctl --vacuum-size=50M
 # journalctl --disk-usage
+```
+
+# Avoid duplicates in PATH env
+
+[See](https://unix.stackexchange.com/a/149054)
+
+```bash
+echo $(command cat <<EOF
+\n
+# Avoid duplicates in PATH env\n
+export PATH=\$(perl -e 'print join(":", grep { not \$seen{\$_}++ } split(/:/, \$ENV{PATH}))')
+EOF
+) >> ~/.profile
 ```
 
 # Clean installation

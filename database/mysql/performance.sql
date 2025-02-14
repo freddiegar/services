@@ -22,11 +22,15 @@ LIMIT 10;
 
 -- Size in MB of tables by schema
 
-SELECT table_schema AS database_name, TABLE_NAME, round(sum((data_length + index_length)) / power(1024, 2), 2) `Size in MB`, round(sum((data_length + index_length + data_free)) / power(1024, 2), 2) `Allocated in MB`
+SELECT table_schema AS database_name,
+       TABLE_NAME,
+       round(sum((data_length + index_length)) / power(1024, 2), 2) `Size in MB`,
+       round(sum((data_length + index_length + data_free)) / power(1024, 2), 2) `Allocated in MB`
 FROM information_schema.tables
 WHERE table_schema = 'aceitar'
   AND table_type = 'BASE TABLE'
-GROUP BY table_schema, TABLE_NAME
+GROUP BY table_schema,
+         TABLE_NAME
 ORDER BY used_mb DESC;
 
 -- 10 more expensive queries
@@ -110,7 +114,8 @@ AND t.engine <> 'InnoDB'
 AND t.table_type = 'BASE TABLE';
 
 -- Find tables and indexes with the most latency
--- Amdhal's law: the overall performance improvement gained by optimizing a single part of a system, is limited by the fraction of time that the improved part is actually used
+-- Amdhal's law: the overall performance improvement gained by optimizing a single part of a system, is limited by the
+-- fraction of time that the improved part is actually used
 
 SELECT *
 FROM sys.schema_table_statistics
@@ -144,14 +149,19 @@ AND INDEX_LENGTH > DATA_LENGTH*1.5;
 
 -- Find tables with duplicate indexes
 
-SELECT table_schema,table_name,redundant_index_name AS redundant_index, redundant_index_columns AS redundant_columns, dominant_index_name AS covered_by_index,sql_drop_index
+SELECT table_schema,
+       TABLE_NAME,
+       redundant_index_name AS redundant_index,
+       redundant_index_columns AS redundant_columns,
+       dominant_index_name AS covered_by_index,
+       sql_drop_index
 FROM sys.schema_redundant_indexes
 WHERE 1=1
-AND table_schema = 'mpi_co'
-AND table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
-AND table_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
-AND table_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
-AND table_schema NOT LIKE '%phpunit';
+  AND table_schema = 'mpi_co'
+  AND table_schema NOT IN ('mysql', 'information_schema', 'sys', 'performance_schema')
+  AND table_schema NOT IN ('prestashop', 'wordpress', 'magento', 'xhgui', 'sylius')
+  AND table_schema NOT IN ('lubri_centro', 'registrar', 'lubri_centro_tmp', 'job_center')
+  AND table_schema NOT LIKE '%phpunit';
 
 -- Find unused indexes
 
@@ -242,48 +252,81 @@ ref:  NULL  -> There aren't join or there are a range condition (in, between, et
 |  1 | SIMPLE      | transaction_messages (15935) | NULL       | ref   | transaction_messages_transaction_id_foreign | transaction_messages_transaction_id_foreign | 4       | mpi.transactions.id |    4 |    20.00 | Using where                        |
 +----+-------------+------------------------------+------------+-------+---------------------------------------------+---------------------------------------------+---------+---------------------+------+----------+------------------------------------+
 
-Because type is ALL for each table, this output indicates that MySQL is generating a Cartesian product of all the tables; that is, every combination of rows. This takes quite a long time, because the product of the number of rows in each table must be examined. For the case at hand, this product is 74 × 2135 × 74 × 3872 = 45,268,558,720 rows. If the tables were bigger, you can only imagine how long it would take.
+Because type is ALL for each table, this output indicates that MySQL is generating a Cartesian product of all the tables;
+that is, every combination of rows. This takes quite a long time, because the product of the number of rows in each table
+must be examined. For the case at hand, this product is 74 × 2135 × 74 × 3872 = 45,268,558,720 rows. If the tables were
+bigger, you can only imagine how long it would take.
 
-System Name     Color   Text on Visual Diagram  Tooltip Related Information
+System Name       Color     Text on Visual Diagram                               Tooltip Related Information
 ----------------|---------|-----------------------------------------------------|------------------------------------------------------------------------------------------------
 SYSTEM          | Blue    | Single row: system constant                         | Very low cost
+
 CONST           | Blue    | Single row: constant                                | Very low cost
-EQ_REF          | Green   | Unique Key Lookup                                   | Low cost -- The optimizer is able to find an index that it can use to
-                                                                                    retrieve the required records. It is fast because the index search
-                                                                                    directly leads to the page with all the row data
-REF             | Green   | Non-Unique Key Lookup                               | Low-medium -- Low if the number of matching rows is small;
-                                                                                    NOTE: higher as the number of rows increases
-FULLTEXT        | Yellow  | Fulltext Index Search Specialized FULLTEXT search.  | Low -- for this specialized search requirement
-REF_OR_NULL     | Green   | Key Lookup + Fetch NULL Values                      | Low-medium -- if the number of matching rows is small;
+
+EQ_REF          | Green   | Unique Key Lookup                                   | Low cost -- The optimizer is able to
+                                                                                |   find an index that it can use to
+                                                                                |   retrieve the required records. It is
+                                                                                |   fast because the index search directly
+                                                                                |   leads to the page with all the row data
+
+REF             | Green   | Non-Unique Key Lookup                               | Low-medium -- Low if the number of
+                                                                                |   matching rows is small;
                                                                                 |   NOTE: higher as the number of rows increases
-INDEX_MERGE     | Green   | Index Merge                                         | Medium -- look for a better index selection in the query to improve performance
+
+FULLTEXT        | Yellow  | Fulltext Index Search Specialized FULLTEXT search.  | Low -- for this specialized search requirement
+
+REF_OR_NULL     | Green   | Key Lookup + Fetch NULL Values                      | Low-medium -- if the number of matching
+                                                                                |    rows is small;
+                                                                                |   NOTE: higher as the number of rows increases
+
+INDEX_MERGE     | Green   | Index Merge                                         | Medium -- look for a better index selection
+                                                                                |   in the query to improve performance
+
 UNIQUE_SUBQUERY | Orange  | Unique Key Lookup into table of subquery            | Low -- Used for efficient Subquery processing
+
 INDEX_SUBQUERY  | Orange  | Non-Unique Key Lookup into table of subquery        | Low -- Used for efficient Subquery processing
+
 RANGE           | Orange  | Index Range Scan                                    | Medium -- partial index scan
+
 INDEX           | Red     | Full Index Scan                                     | High -- especially for large indexes
-ALL             | Red     | Full Table Scan                                     | Very High -- very costly for large tables, but less of an impact for small ones.
-                                                                                |   No usable indexes were found for the table, which forces the optimizer to search every row.
-                                                                                |   This could also mean that the search range is so broad that the index would be useless.
-UNKNOWN         | Black   | unknown                                             | Note: This is the default, in case a match cannot be determined
+
+ALL             | Red     | Full Table Scan                                     | Very High -- very costly for large tables,
+                                                                                |   but less of an impact for small ones.
+                                                                                |   No usable indexes were found for the table,
+                                                                                |   which forces the optimizer to search every row.
+                                                                                |   This could also mean that the search range
+                                                                                |   is so broad that the index would be useless.
+
+UNKNOWN         | Black   | unknown                                             | Note: This is the default, in case a match
+                                                                                1   cannot be determined
 
 Proceso Interno al Añadir una Nueva Columna
     Validación de la Solicitud:
-        MySQL primero valida la instrucción ALTER TABLE para asegurarse de que es sintácticamente correcta y que todas las especificaciones son válidas.
+        MySQL primero valida la instrucción ALTER TABLE para asegurarse de que es sintácticamente correcta y que todas
+        las especificaciones son válidas.
     Bloqueo de la Tabla:
-        MySQL puede bloquear la tabla para evitar modificaciones mientras se realiza el cambio. El tipo de bloqueo depende de la operación y la configuración del servidor. En versiones recientes de MySQL (a partir de 5.6 y mejoradas en 8.0), se utilizan bloqueos menos restrictivos gracias a la operación de "in-place".
+        MySQL puede bloquear la tabla para evitar modificaciones mientras se realiza el cambio. El tipo de bloqueo depende
+        de la operación y la configuración del servidor. En versiones recientes de MySQL (a partir de 5.6 y mejoradas en 8.0),
+        se utilizan bloqueos menos restrictivos gracias a la operación de "in-place".
     Creación de una Nueva Tabla Temporal:
-        MySQL crea una nueva tabla temporal que es una copia de la tabla original, pero con la estructura modificada (es decir, con la nueva columna añadida).
+        MySQL crea una nueva tabla temporal que es una copia de la tabla original, pero con la estructura modificada
+        (es decir, con la nueva columna añadida).
         Esta nueva tabla temporal tiene el mismo esquema que la tabla original, pero con la nueva columna incluida.
     Copiado de Datos:
-        MySQL copia los datos de la tabla original a la nueva tabla temporal. Este proceso implica leer cada fila de la tabla original y escribirla en la tabla temporal.
-        Durante este proceso, se rellena la nueva columna con el valor por defecto si se ha especificado uno, o con NULL si no se ha especificado un valor por defecto.
+        MySQL copia los datos de la tabla original a la nueva tabla temporal. Este proceso implica leer cada fila de la
+        tabla original y escribirla en la tabla temporal.
+        Durante este proceso, se rellena la nueva columna con el valor por defecto si se ha especificado uno, o con NULL
+        si no se ha especificado un valor por defecto.
     Actualización de Índices:
         Si la nueva columna es parte de algún índice, MySQL actualizará los índices para incluir la nueva columna.
-        Esto puede implicar la reconstrucción de algunos índices, lo que puede ser una operación costosa en términos de tiempo y recursos.
+        Esto puede implicar la reconstrucción de algunos índices, lo que puede ser una operación costosa en términos de
+        tiempo y recursos.
     Renombrado de Tablas:
-        Una vez que todos los datos se han copiado a la nueva tabla temporal, MySQL renombra la tabla original y la nueva tabla temporal para que la nueva tabla temporal se convierta en la tabla activa.
+        Una vez que todos los datos se han copiado a la nueva tabla temporal, MySQL renombra la tabla original y la nueva
+        tabla temporal para que la nueva tabla temporal se convierta en la tabla activa.
         Este paso es generalmente rápido porque implica operaciones de renombrado de metadatos.
     Eliminación de la Tabla Original:
         Finalmente, MySQL elimina la tabla original, liberando el espacio en disco que ocupaba.
-        En algunos casos, MySQL puede mantener la tabla original temporalmente para permitir una reversión rápida si algo sale mal durante el proceso.
+        En algunos casos, MySQL puede mantener la tabla original temporalmente para permitir una reversión rápida si algo
+        sale mal durante el proceso.
 */
