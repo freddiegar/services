@@ -721,7 +721,7 @@ endfunction
 
 " executable (string)
 function! GetVersion(executable) abort
-    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
         return ''
     endif
 
@@ -747,7 +747,7 @@ endfunction
 function! GetTypeCurrentFile() abort
     let l:path = expand('%:p')
 
-    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
         return ''
     endif
 
@@ -825,7 +825,7 @@ endfunction
 
 function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
-                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
         return g:test_strategy ==# 'background' ? '[A]' : ''
     endif
@@ -1460,7 +1460,7 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 nnoremap <silent> <expr> <Leader>z
             \ &filetype ==# 'netrw'
             \ ? ":let g:netrwopen = 0 <Bar> bwipeout<Enter>"
-            \ : index(['', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+            \ : index(['', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
             \ ? ":bdelete!<Enter>"
             \ : ":update
             \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
@@ -2006,7 +2006,7 @@ function! s:go_line() abort
         let l:word = expand('<cWORD>')
 
         " PHPUnit testing | Background Format | Cleanup
-        if index(['^', '||', '│', '|'], l:word) >= 0
+        if index(['^', '||', '│', '|'], l:word) >= 0 || (match(l:word, ':') < 0 && match(l:word, '(') < 0)
             silent execute 'normal mz'
             " Try attempt next valid path
             silent execute "keeppatterns normal! f/viW\"zy"
@@ -2556,7 +2556,7 @@ function! s:runjob(command) abort
 endfunction
 
 " @thanks https://github.com/skanehira/translate.vim
-" range (0,1,2), inverse (0/1), [options (array: source, targe, text)]: void
+" range (0,1,2), inverse (0/1), [options (array: source, target, text)]: void
 function! s:translate(range, inverse, ...) abort
     let l:source = a:0 >= 2 ? a:1 : 'en'
     let l:target = a:0 >= 2 ? a:2 : (a:0 >= 1 ? a:1 : 'es')
@@ -2658,7 +2658,7 @@ let g:user_emmet_install_global = 0
 
 " " file (string): void
 " function! s:show_context(file) abort
-"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
 "         if exists(':ContextActivate')
 "             silent execute 'ContextDisable'
 "         endif
@@ -2891,11 +2891,12 @@ function! s:test_strategy() abort
     doautocmd <nomodeline> User AsyncRunPre
 endfunction
 
-nnoremap <silent> <Leader>tt :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestNearest ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tf :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestFile    ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>ts :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestSuite   ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tl :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> TestLast<Enter>
-nnoremap <silent> <Leader>tg :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> TestVisit<Enter>
+" Not close help buffer!
+nnoremap <silent> <Leader>tt :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tf :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestFile    ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>ts :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestSuite   ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+nnoremap <silent> <Leader>tl :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestLast<Enter>
+nnoremap <silent> <Leader>tg :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestVisit<Enter>
 nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
 
 " " Vim Debug
@@ -3431,7 +3432,7 @@ function! s:check_large_file(file) abort
         syntax enable
         call <SID>postcolorscheme()
 
-        echomsg 'The file has ' . l:hfsize . ' MB (<= ' . l:hmaxsize . ' MB), options were restored.'
+        " echomsg 'The file has ' . l:hfsize . ' MB (<= ' . l:hmaxsize . ' MB), options were restored.'
     endif
 endfunction
 
@@ -4330,7 +4331,9 @@ augroup AutoCommands
     autocmd BufReadPre * if &readonly | setlocal nomodifiable | endif
 
     " Some files are untouchable
-    autocmd BufReadPre fugitive://* setlocal nomodifiable readonly scrolloff=0 winfixheight | resize 10 | cclose | silent! bd! term://* | silent! bd! phpx* | windo if &filetype ==# 'help' | bd! | endif
+    " Not use BufReadPre or BufReadPost events, use BufWinEnter. We need to check filetype!
+    " G command, in GV commands options are setup in process: nomodifiable readonly, in GV! open filetype is: git
+    autocmd BufWinEnter fugitive://* if &filetype ==# 'fugitive' | setlocal scrolloff=0 winfixheight | resize 10 | endif | cclose | silent! bd! term://* | silent! bd! phpx* | windo if &filetype ==# 'help' | bd! | endif
 
     " Return to last edit position when opening files
     autocmd BufReadPost *
@@ -5165,9 +5168,9 @@ EOF
         \ 'all': '--no-coverage --stop-on-failure',
     \}
 
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestFile    --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> execute ':TestSuite   --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestFile    --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestSuite   --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
 
     " PHP Linter
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
@@ -5610,8 +5613,8 @@ EOF
     " Cleanup profiles log
     autocmd BufReadPost profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
 
-    " Cleanup test debug log
-    " :> dtest.log && phpx vendor/bin/phpunit --testdox --log-events-verbose-text dtest.log
+    " Cleanup test debug log.
+    " PHPUnit >= 10 :> dtest.log && phpx vendor/bin/phpunit --testdox --log-events-verbose-text dtest.log
     autocmd BufReadPost dtest.log
                 \ | if !exists('b:cleanup') && match(getline(1), ' PHPUnit Started ') > 0
                 \ |     let b:cleanup = 1
@@ -5635,6 +5638,7 @@ EOF
                 \ |     let b:cleanup = 1
                 \ |     if &undolevels ==# -1 | setlocal undolevels=1 | endif
                 \ |     silent! execute "keeppatterns keepjumps g#^ ✔#d_"
+                \ |     silent! execute "keeppatterns keepjumps g#^ ↩#d_"
                 \ |     silent! execute "keeppatterns keepjumps g#^Time: #y z"
                 \ |     silent! execute "keeppatterns keepjumps g#^OK #y Z"
                 \ |     silent! execute "keeppatterns keepjumps g#^Tests: #y Z"
@@ -5643,8 +5647,9 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps normal! :CE\r"
                 \ |     silent! execute "keeppatterns keepjumps g#^ ✘#normal O"
                 \ |     silent! execute "keeppatterns keepjumps normal! Go\e\"zpgg"
-                \ |     write
                 \ | endif
+                " After open it requires Enter to continue...
+                " \ |     write
 
     " Debug mappings
     " redir! > editor/vim/vimkeys.txt | silent verbose map | redir END
@@ -5689,7 +5694,7 @@ EOF
         let l:filter_type = a:0 > 0 && a:1 ==# 1 ? '--no-fixed-strings' : '--fixed-strings'
         let l:filter_ignore = a:0 > 1 && a:2 ==# 1 ? ' --no-ignore --hidden' : ' --ignore'
 
-        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
+        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*,*.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
 
         let l:initial_command = printf(l:finder_command, fzf#shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
@@ -5931,7 +5936,7 @@ EOF
 
     function! s:sessionremoveitem(item) abort
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
-                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive', 'dirvish', 'checkhealth', 'copilot-chat'], getbufvar(a:item, '&filetype')) >= 0
+                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive', 'GV', 'git', 'dirvish', 'checkhealth', 'copilot-chat'], getbufvar(a:item, '&filetype')) >= 0
                     \ || buflisted(a:item) == 0
                     \ || (match(a:item, '.') >= 0 && split(a:item, '\.')[-1] ==# 'dbout')
                     \ || isdirectory(a:item)
