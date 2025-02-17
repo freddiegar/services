@@ -384,6 +384,21 @@ vapor() {
     ~/.config/composer/vendor/bin/vapor "$@"
 }
 
+extended() {
+    COMMAND=$1
+    # @thanks https://stackoverflow.com/a/9057392
+    EXTRAS=${@:2}
+
+    if [ "$EXTRAS" = "" ]; then
+        COMMAND="`echo $COMMAND | sed -r 's/ @@==@@//g'`"
+    else
+        COMMAND="`echo $COMMAND | sed -r "s/@@==@@/$EXTRAS/g"`"
+    fi
+
+    # Use SHELL to enable usage alias in COMMAND
+    $SHELL -c "$COMMAND"
+}
+
 alias \?="apropos"
 alias a="alias"
 alias b="sh ~/working/mysqlramdisk.sh"
@@ -505,8 +520,8 @@ alias prx='export XDEBUG_SESSION=1 && export XDEBUG_CONFIG="idekey=PHPSTORM" && 
 alias psw="sudo update-alternatives --config php"
 
 # @see https://xdebug.org/docs/all_settings#mode
-alias vt="export XDEBUG_MODE=off && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage && nn 'Ran tests successfully!'"
-alias vtc="export XDEBUG_MODE=coverage && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error && nn 'Ran tests successfully with coverage!'"
+alias vt="extended \"export XDEBUG_MODE=off && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage @@==@@ && nn 'Ran tests successfully!'\""
+alias vtc="extended \"export XDEBUG_MODE=coverage && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error @@==@@ && nn 'Ran tests successfully with coverage!'\""
 alias vT="phpx vendor/bin/phpunit --testdox"
 alias vts="phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage --testsuite"
 alias vtS="phpx vendor/bin/phpunit --testdox --testsuite"
@@ -593,14 +608,16 @@ alias gcmsga="git commit --amend -S -m"
 alias gcmsgan="git commit --no-verify --amend -S -m"
 # # Redo last commit after changes, using same message
 # alias gcmsgo="git commit --no-edit -C ORIG_HEAD"
-alias gl="git pull"
-alias glo="git pull origin"
+alias gl="git pull --verbose"
+alias glo="git pull --verbose origin"
+# On conflicts with rebase is hard mode!
+alias glr="git pull --verbose --rebase origin"
 alias gm="git merge"
 # alias gmu="git merge upstream/master"
 # alias gma="git merge --abort"
 # alias gmc="git merge --continue"
-alias gp="git push"
-alias gpo="git push origin"
+alias gp="git push --verbose"
+alias gpo="git push --verbose origin"
 # alias gpt="git push --tags"
 # alias gptd="git push --delete origin"
 # Whoops git pull and push revert rescue!
@@ -626,7 +643,7 @@ alias ggc="git gc --prune=now"
 alias gck="git fsck --full --progress"
 # Repository [f]i[x]
 alias gfx="ggc && gck"
-alias gfa="git fetch --all --prune"
+alias gfa="git fetch --verbose --all --prune"
 # alias gfu="git fetch upstream"
 alias gco="git checkout"
 alias gcp="git cherry-pick"
@@ -665,10 +682,8 @@ alias gfr="git reset --hard HEAD && git fetch --all && git reset --hard FETCH_HE
 # alias gfrs="git flow release start"
 # alias gfrf="git flow release finish"
 
-alias gr="git rebase"
-# On conflicts with rebase is hard mode!
-alias grl="git pull --rebase origin"
-alias gri="git rebase --interactive"
+alias gr="git rebase --verbose"
+alias gri="git rebase --verbose --interactive"
 # alias grc="git rebase --continue"
 # alias gra="git rebase --abort"
 
