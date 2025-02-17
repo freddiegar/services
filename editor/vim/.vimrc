@@ -1043,7 +1043,7 @@ cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
 " Close popup from any filetype using Esc
-nnoremap <silent> <Esc> <Cmd>call <SID>popup_hide()<Enter>
+" nnoremap <silent> <Esc> <Cmd>call <SID>popup_hide()<Enter>
 
 " Convenience, same to ZZ BUT: keeps splits
 nnoremap <silent> ZZ :update <Bar> if has('gui_running') <Bar> wall <Bar> cd $HOME <Bar> else <Bar> qall <Bar> endif <Enter>
@@ -2451,6 +2451,7 @@ if g:isneovim
     " Plug 'https://codeberg.org/FelipeLema/cmp-async-path', {'as': 'cmp-path'} " Integrate for path (beta mode)
 
     Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
+    " Plug 'j-hui/fidget.nvim'                                  " LSP -> Progress ... distracting
     " endif
 else
     Plug 'airblade/vim-gitgutter'                             " Show signs changes if cwd is a git repository (using VimL)
@@ -2936,16 +2937,16 @@ let g:ale_disable_lsp = 1
 let g:ale_linters_explicit = 1
 let g:ale_lint_on_enter = 1
 let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_insert_leave = 0
+let g:ale_lint_on_insert_leave = 1
 let g:ale_set_balloons = 0
-let g:ale_set_loclist = 1
+let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 0
 let g:ale_set_highlights = 1
 let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
 let g:ale_echo_cursor = 0
 let g:ale_echo_msg_format = '%s'
-let g:ale_virtualtext_cursor = 'disabled'
+" let g:ale_virtualtext_cursor = 'disabled'
 
 function! s:diagnostics() abort
     call <SID>popup_hide()
@@ -4410,7 +4411,7 @@ EOF
         command! -nargs=0 LS LspStop
         command! -nargs=0 LL LspLog
 
-        " LSP Hover not shows formatting chars
+        " LSP Hover (aka: K) not shows formatting chars
         autocmd BufEnter,BufNewFile * if &filetype ==# 'markdown' && expand('%') ==# '' | setlocal conceallevel=3 concealcursor=nv | endif
 
 " Don't indent!
@@ -4423,13 +4424,13 @@ lua <<EOF
                 return
             end
 
-            if not vim.bo[event.buf].modifiable then
-                vim.lsp.buf_detach_client(event.buf, event.data.client_id)
+            -- if not vim.bo[event.buf].modifiable then
+            --     vim.lsp.buf_detach_client(event.buf, event.data.client_id)
 
-                vim.notify('Buffer ' .. event.buf .. ': is no modifiable, LSP deattached', vim.log.levels.WARN)
+            --     vim.notify('Buffer ' .. event.buf .. ': is no modifiable, LSP deattached', vim.log.levels.WARN)
 
-                return
-            end
+            --     return
+            -- end
 
             if vim.b[event.buf].clients == nil then
                 -- @see https://neovim.io/doc/user/lua-guide.html
@@ -4530,6 +4531,15 @@ lua <<EOF
 
     -- require("mason").setup()
     -- require("mason-lspconfig").setup()
+
+    -- require('fidget').setup({
+    --     progress = {
+    --         suppress_on_insert = true,
+    --         ignore_done_already = true,
+    --         ignore_empty_message = true,
+    --     },
+    -- })
+
     require('lspconfig.ui.windows').default_options.border = 'single'
 
     -- @see https://youtu.be/gK31IVy0Gp0?t=250
@@ -6285,9 +6295,9 @@ EOF
     autocmd FocusLost *.asc,hosts.yml if &modifiable ==# 1 | let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t') | endif
     autocmd FocusLost * silent! wall
 
-    autocmd InsertEnter * call <SID>popup_hide()
-    autocmd InsertLeave * call <SID>diagnostics()
-    autocmd User ALELintPost call <SID>diagnostics()
+    " autocmd InsertEnter * call <SID>popup_hide()
+    " autocmd InsertLeave * call <SID>diagnostics()
+    " autocmd User ALELintPost call <SID>diagnostics()
     autocmd User GitGutterStage silent call timer_start(0, function('s:reloadfugitive'))
     autocmd User GitSignsChanged silent call timer_start(0, function('s:reloadfugitive'))
 
