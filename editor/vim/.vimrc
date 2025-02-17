@@ -161,9 +161,9 @@
 "   'abc' ==? 'Abc'         evaluates to 1
 "   'abc' ==  'Abc'         evaluates to 1 if 'ignorecase' is set, 0 otherwise
 
-" SEARCHING
+" SEARCHING :h /magic
 "     \v    \m       \M       \V         matches ~
-"         'magic' 'nomagic'
+"    very  magic   nomagic   VERY
 "     a     a        a        a          literal 'a'
 "     \a    \a       \a       \a         any alphabetic character
 "     .     .        \.       \.         any character
@@ -3739,11 +3739,13 @@ lua << EOF
             -- vim.keymap.set('n', '<Leader>hi', gitsigns.preview_hunk_inline, options)
             vim.keymap.set('n', '<Leader>hq', gitsigns.setqflist, options)
             -- vim.keymap.set('n', '<Leader>hd', gitsigns.diffthis, options)
-            vim.keymap.set('n', '<Leader>hB', gitsigns.toggle_current_line_blame, options)
+            vim.keymap.set('n', '<Leader>hb', gitsigns.toggle_current_line_blame, options)
 
-            vim.keymap.set('n', '<leader>hb', function()
-                gitsigns.blame_line({ full = true })
-            end, options)
+            -- vim.keymap.set('n', '<Leader>hB', function()
+            --     gitsigns.blame_line({ full = true })
+            -- end, options)
+
+            vim.keymap.set('n', '<Leader>hw', gitsigns.toggle_word_diff, options)
         end
     })
 EOF
@@ -4143,7 +4145,7 @@ function! s:notes(append) abort
         silent execute 'edit ' . fnameescape(l:filename)
     endif
 
-    if a:append ==# v:false
+    if a:append ==# v:false || match(l:header, 'Saturday\|Sunday') >= 0
         return 0
     endif
 
