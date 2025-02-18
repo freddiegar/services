@@ -5627,6 +5627,7 @@ EOF
 
     " Cleanup test debug log.
     " PHPUnit >= 10 :> dtest.log && phpx vendor/bin/phpunit --testdox --log-events-verbose-text dtest.log
+    " PHPUnit <  10 :> dtest.log && phpx vendor/bin/phpunit --testdox --debug --verbose > dtest.log
     autocmd BufReadPost dtest.log
                 \ | if !exists('b:cleanup') && match(getline(1), ' PHPUnit Started ') > 0
                 \ |     let b:cleanup = 1
@@ -5637,8 +5638,23 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps g#^ #g!#^\\s*- #d_"
                 \ |     silent! execute "keeppatterns keepjumps g#^ #normal! kJ"
                 \ |     silent! execute "keeppatterns keepjumps g# PHPUnit #d_"
-                \ |     %sort!
-                \ |     write
+                \ |     silent! execute "%sort!"
+                \ |     silent! execute "write"
+                \ |     silent! execute "redraw!"
+                \ |     echomsg 'Cleaned-up: PHPUnit debug file >= 10'
+                \ | elseif !exists('b:cleanup') && getline(1)[0:7] ==# 'PHPUnit '
+                \ |     let b:cleanup = 1
+                \ |     if &undolevels ==# -1 | setlocal undolevels=1 | endif
+                \ |     silent! execute "keeppatterns keepjumps g!#\\(^ [✔\\|✘\\|↩]\\|^Test \\)#d_"
+                \ |     silent! execute "keeppatterns keepjumps g# started$#d_"
+                \ |     silent! execute "keeppatterns keepjumps %s#^Test '\\|' ended##g"
+                \ |     silent! execute "keeppatterns keepjumps g#^Tests#normal! j\"zyi[k0\"zPa \e"
+                \ |     silent! execute "keeppatterns keepjumps %s# ms # #g"
+                \ |     silent! execute "keeppatterns keepjumps g#^ [✔\\|✘\\|↩]#d_"
+                \ |     silent! execute "%sort! f"
+                \ |     silent! execute "write"
+                \ |     silent! execute "redraw!"
+                \ |     echomsg 'Cleaned-up: PHPUnit debug file < 10'
                 \ | endif
 
     " Cleanup test phpunit log
@@ -5646,7 +5662,7 @@ EOF
     " or
     " testx.sh
     autocmd BufReadPost *.log
-                \ | if !exists('b:cleanup') && getline(1)[0:7] ==# 'PHPUnit '
+                \ | if !exists('b:cleanup') && expand('%:t') !=# 'dtest.log' && getline(1)[0:7] ==# 'PHPUnit '
                 \ |     let b:cleanup = 1
                 \ |     if &undolevels ==# -1 | setlocal undolevels=1 | endif
                 \ |     silent! execute "keeppatterns keepjumps g#^ ✔#d_"
@@ -5659,6 +5675,7 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps normal! :CE\r"
                 \ |     silent! execute "keeppatterns keepjumps g#^ ✘#normal O"
                 \ |     silent! execute "keeppatterns keepjumps normal! Go\e\"zpgg"
+                \ |     echo 'Cleaned-up: PHPUnit test file'
                 \ | endif
                 " After open it requires Enter to continue...
                 " \ |     write
@@ -5671,9 +5688,11 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps g/Last set\\|keyboard /d_"
                 \ |     silent! execute "keeppatterns keepjumps %s/^   /n  /"
                 \ |     silent! execute "keeppatterns keepjumps g/[n\\|x\\|o\\v]  <Plug>/d_"
-                \ |     %sort
+                \ |     silent! execute "%sort"
                 \ |     silent! execute "keeppatterns keepjumps normal gg/^o\rO\egg/^s\rO\egg/^v\rO\e/^x\rO\e"
-                \ |     write
+                \ |     silent! execute "write"
+                \ |     silent! execute "redraw!"
+                \ |     echomsg 'Cleaned-up: Vim Keys file'
                 \ | endif
 
     " Cleanup notes
@@ -5688,7 +5707,9 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps g/^\\s\\{4}[A-Z]*$/normal! ATL;DR;-----"
                 \ |     silent! execute "keeppatterns keepjumps g/^[T|-]/normal! >>>>"
                 \ |     silent! execute "keeppatterns keepjumps normal! ggIT: TO-DOI: IN-PROGRESSP: PULL-REQUESTQ: QA-TO-CERTIFYD: DONES: STOPPED\e"
-                \ |     write
+                \ |     silent! execute "write"
+                \ |     silent! execute "redraw!"
+                \ |     echomsg 'Cleaned-up: Weekly notes file'
                 \ | endif
 
     " Open files with external application
