@@ -355,7 +355,7 @@ set hlsearch                                                    " Highligth matc
 set incsearch                                                   " Search first match while typing. On TOP return BOTTOM, on BOTTOM return TOP (default: off)
 
 " @see https://blog.jcoglan.com/2017/05/08/merging-with-diff3/
-" set diffopt+=iwhite                                             " Ignore white spaces in diff mode, GitSigns use this: https://github.com/lewis6991/gitsigns.nvim/issues/696#issuecomment-1356134393
+set diffopt+=iwhite                                             " Ignore white spaces in diff mode, GitSigns use this: https://github.com/lewis6991/gitsigns.nvim/issues/696#issuecomment-1356134393
 set diffopt+=vertical                                           " Start with vertical splits always
 set diffopt+=indent-heuristic                                   " Use same indent of file
 " @see https://deepai.org/publication/how-different-are-different-diff-algorithms-in-git-use-histogram-for-code-changes
@@ -968,6 +968,7 @@ function! s:statusline(lastmode) abort
     setlocal statusline+=%{&diff==0?'':'[d]'}                   " Diff mode flag
     setlocal statusline+=%{&undofile==0?'[n]':''}               " No undofile flag
     setlocal statusline+=%{&virtualedit=~#'all'?'[v]':''}       " Virtual edit flag
+    " setlocal statusline+=%{&diffopt=~#'iwhite'?'':'[i]'}        " Ignore whitespace in changes flag
 
     if exists('g:loaded_gutentags')
         setlocal statusline+=%{gutentags#statusline()!=#''?'[t]':''} " Async process tags
@@ -1547,6 +1548,9 @@ nnoremap <silent> yod :<C-u>setlocal scrollbind!<Enter>
 nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
+" nnoremap <silent> yoi :<C-u>setlocal <C-r>=(&diffopt =~# 'iwhite')
+"             \ ? 'diffopt-=iwhite'
+"             \ : 'diffopt+=iwhite' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
 
 nnoremap <silent> <Plug>GetColorRepeatable <Cmd>call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'), 'GetColorRepeatable')<Enter>
 nmap <silent> <Leader>gC <Plug>GetColorRepeatable
@@ -3707,6 +3711,18 @@ lua << EOF
             changedelete = { text = ':' },
             untracked    = { text = ':' },
         },
+        diff_opts = {
+            -- Check: echo &diffopt
+            internal = true,
+            linematch = 40,
+            ignore_blank_lines = false,
+            ignore_whitespace_change = false,
+            ignore_whitespace = false,
+            ignore_whitespace_change_at_eol = false,
+            vertical = true,
+            indent_heuristic = true,
+            algorithm = 'histogram',
+        },
         -- current_line_blame_opts = {
         --     delay = 2000,
         -- },
@@ -5727,7 +5743,7 @@ EOF
         let l:filter_type = a:0 > 0 && a:1 ==# 1 ? '--no-fixed-strings' : '--fixed-strings'
         let l:filter_ignore = a:0 > 1 && a:2 ==# 1 ? ' --no-ignore --hidden' : ' --ignore'
 
-        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*,*.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
+        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,.idea/*,.vscode/*.var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*,*.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
 
         let l:initial_command = printf(l:finder_command, fzf#shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
