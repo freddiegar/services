@@ -4149,12 +4149,14 @@ endfunction
 " Open notes in Normal|Select|Operator Mode
 nmap <silent> <C-w>, <Cmd>call <SID>notes(v:true)<Enter>
 nmap <silent> <C-w>; <Cmd>call <SID>notes(v:false)<Enter>
-nmap <silent> <C-w>t <Cmd>edit ~/working/notes/todo.md <Bar> normal! G<Enter>
+nmap <silent> <C-w>t <Cmd>call <SID>notes(v:true,  '~/working/notes/todo.md')<Enter>
+nmap <silent> <C-w>T <Cmd>call <SID>notes(v:false, '~/working/notes/todo.md')<Enter>
 
-function! s:notes(append) abort
+function! s:notes(append, ...) abort
     let l:matches = []
     let l:header = '>> ' . strftime('%A, %d of %B %Y')
-    let l:filename = expand('~/working/notes/notes_' . strftime('%Y%m') . '.md')
+    let l:headertime = ''
+    let l:filename = a:0 >= 1 ? a:1 : expand('~/working/notes/notes_' . strftime('%Y%m') . '.md')
 
     if bufname('%') !=# '' && split(bufname('%'), '/')[-1] ==# split(l:filename, '/')[-1]
         silent update!
@@ -4176,13 +4178,17 @@ function! s:notes(append) abort
         silent execute "normal! Go\e"
     endif
 
-    let l:hoursrounded = strftime('%H')
-    let l:minutesrounded = str2nr(round(strftime('%M') / 15.0) * 15)
+    if match(l:filename, 'todo.md') < 0
+        let l:hoursrounded = strftime('%H')
+        let l:minutesrounded = str2nr(round(strftime('%M') / 15.0) * 15)
 
-    let l:hoursrounded = l:minutesrounded ==# 60 ? str2nr(l:hoursrounded) + 1 : l:hoursrounded
-    let l:minutesrounded = l:minutesrounded ==# 60 ? '00' : l:minutesrounded
+        let l:hoursrounded = l:minutesrounded ==# 60 ? str2nr(l:hoursrounded) + 1 : l:hoursrounded
+        let l:minutesrounded = l:minutesrounded ==# 60 ? '00' : l:minutesrounded
 
-    silent execute "normal! Gzto== " . repeat('0', 2 - len(l:hoursrounded)) . l:hoursrounded . ':' . repeat('0', 2 - len(l:minutesrounded)) . l:minutesrounded . " ==\r- \e"
+        let l:headertime = "== " . repeat('0', 2 - len(l:hoursrounded)) . l:hoursrounded . ':' . repeat('0', 2 - len(l:minutesrounded)) . l:minutesrounded . " ==\r"
+    endif
+
+    silent execute "normal! Gzto" . l:headertime . "- \e"
 
     " let @+ = l:saved_start_register
 
