@@ -892,7 +892,8 @@ if !g:isneovim
     set ttyscroll=3                                             " Lines to scroll (default: 999)
 endif
 
-set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
+" Always show statusline (default: 1=if windows greater that 1). In nvim use statusline global
+silent execute 'set laststatus=' . (g:isneovim ? '3' : '2')
 set showtabline=0                                               " Never show tabs (default: 1=tabs > 1)
 
 " lastmode (string)
