@@ -521,7 +521,7 @@ set number                                                      " Number in curs
 set numberwidth=5                                               " Number size, aka: 9999␣ (default: 4=999␣)
 set relativenumber                                              " Relative number (slower) (default: off)
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
-set synmaxcol=256                                               " Only highlight the first N columns (default: 3000)
+set synmaxcol=512                                               " Only highlight the first N columns (default: 3000)
 "              └ weight in bytes
 set updatetime=200                                              " Time (in ms) await for any: git-gutter, events. RIP :redir
 
@@ -6434,8 +6434,8 @@ function! s:get_hlinfo() abort
         return
     endif
 
-    syntax sync minlines=256
-    syntax sync maxlines=256
+    syntax sync minlines=512
+    syntax sync maxlines=512
 
     echo 'Highligth: ' . join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), ',')
                 \ . ' -> ' . synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
