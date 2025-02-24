@@ -4157,7 +4157,7 @@ function! s:notes(append, ...) abort
     let l:matches = []
     let l:header = '>> ' . strftime('%A, %d of %B %Y')
     let l:headertime = ''
-    let l:filename = a:0 >= 1 ? a:1 : expand('~/working/notes/notes_' . strftime('%Y%m') . '.md')
+    let l:filename = a:0 >= 1 ? expand(a:1) : expand('~/working/notes/notes_' . strftime('%Y%m') . '.md')
 
     if bufname('%') !=# '' && split(bufname('%'), '/')[-1] ==# split(l:filename, '/')[-1]
         silent update!
