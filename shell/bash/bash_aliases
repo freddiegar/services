@@ -57,15 +57,25 @@ saU() {
 sAU() {
     saU --ignore
 
-    echo "\e[34mUpdating firefox...\e[0m"
-    curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.xz && sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
+    URL="https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US"
+    TMP=~/.mozilla/.lastsize
 
-    checkcode $?
+    if [ "`downloadble $URL $TMP`" = "1" ]; then
+        echo "\e[34mUpdating firefox...\e[0m"
+        curl -L $URL -o firefox.tar.xz && sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
 
-    echo "\e[34mUpdating zen...\e[0m"
-    curl -L "https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz" -o zen.tar.xz && sudo tar xvf zen.tar.xz -C /opt && rm -Rf zen.tar.xz
+        checkcode $?
+    fi
 
-    checkcode $?
+    URL="https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz"
+    TMP=~/.zen/.lastsize
+
+    if [ "`downloadble $URL $TMP`" = "1" ]; then
+        echo "\e[34mUpdating zen...\e[0m"
+        curl -L $URL -o zen.tar.xz && sudo tar xvf zen.tar.xz -C /opt && rm -Rf zen.tar.xz
+
+        checkcode $?
+    fi
 
     if [ "$#" -eq 0 ]; then
         nn "Update (fully) completed!"
@@ -397,6 +407,32 @@ extended() {
 
     # Use SHELL to enable usage alias in COMMAND
     $SHELL -c "$COMMAND"
+}
+
+downloadble() {
+    curl -s -L -I $1 | tail -n15 | grep -i -e "^content-length: " | awk '{print $2}' > /tmp/currentsize
+
+    if [ "`downloadsize $1 $2`" = "`command cat /tmp/currentsize | tr -d "\n" || echo 1`" ]; then
+        echo 0
+
+        return 0
+    fi
+
+    cp -p /tmp/currentsize $2
+
+    echo 1
+}
+
+downloadsize() {
+    if [ -f $2 ]; then
+        command cat $2 | tr -d "\n"
+
+        return 0
+    fi
+
+    curl -s -L -I $1 > $2 && tail -n15 $2 | grep -i -e "^content-length: " | awk '{print $2}' > $2 | command cat $2 | tr -d "\n" || echo 0
+
+    return 0
 }
 
 alias \?="apropos"
