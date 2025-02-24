@@ -1662,6 +1662,14 @@ https://extensions.gnome.org/extension/2/move-clock/
 https://ubuntuhandbook.org/index.php/2020/03/hide-activities-button-ubuntu-18-04/
 ```
 
+## Screenshot++
+
+[See](https://flameshot.org/#features)
+
+```bash
+sudo apt-get install -y flameshot
+```
+
 ## RSA SecureID
 
 [See](https://sourceforge.net/p/stoken/wiki/Home/)

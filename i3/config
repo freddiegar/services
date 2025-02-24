@@ -4,7 +4,7 @@
 # Introduction: https://www.youtube.com/watch?v=QnYN2CTb1hM& (by Author)
 
 # Shortcuts base available:
-#   Shifted (+Shift+):      Y
+#   Shifted (+Shift+):
 #   Unshifted ($mode+):     c, g, i, n, o, t, u, y, z
 
 # Detect keys pressed
@@ -415,6 +415,7 @@ bindsym $mod+Shift+p exec --no-startup-id postman
 bindsym $mod+Shift+t exec --no-startup-id microsoft-edge
 bindsym $mod+Shift+v exec --no-startup-id virt-manager
 bindsym $mod+Shift+u exec --no-startup-id filezilla
+bindsym $mod+Shift+y exec --no-startup-id flameshot gui
 bindsym $mod+Shift+z exec --no-startup-id zen
 
 # @see https://www.reddit.com/r/i3wm/comments/2y9aj9/what_are_your_favourite_configuration_tips/
