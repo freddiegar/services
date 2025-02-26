@@ -5643,7 +5643,7 @@ EOF
     autocmd FileType zsh call setreg('t', "gg_ da\"pI\"\eggJf[lyE_/-a\rWviWPGA\"\e")
 
     " Cleanup queries log
-    autocmd BufReadPost \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | endif
+    autocmd BufReadPost \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | setlocal filetype=sql | endif
 
     " Cleanup profiles log
     autocmd BufReadPost profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
@@ -6164,8 +6164,20 @@ EOF
             silent call add(l:cleanup, 'end of file lines')
         endif
 
-        if index(l:options, 'q') >= 0
+        if index(l:options, 'q') >= 0 && getline(1) !=# '' " Ignores clean-up files
+            silent! keeppatterns retab
+            silent! keeppatterns g!/^\d\{4}-/normal! kJ
             silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\| AS \|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|set session \| Connect\|mysqld\|version_comment\|general_log\|IN_PROCCES\|UPDATE /v/ WHEN /d_
+            " Don't order only by column required
+            " silent! keeppatterns %!sort -f -k2 -n
+            silent! keeppatterns %s/\(^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\) \(\d\{4,6}\)/\2 \1/
+            silent! keeppatterns %sort
+            silent! keeppatterns %s/\(^\d\{4,6}\) \(\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\)/\2 \1/
+            silent! keeppatterns %s/\s\+/ /g
+            " Avoid append doble semicolon (;)
+            silent! keeppatterns g/^\d\{4}-.*[^;]$/normal! A;
+            silent! keeppatterns g/Query use /normal! O
+            silent! keeppatterns g/Query SET NAMES u/normal! O
 
             silent call add(l:cleanup, 'queries')
         endif
