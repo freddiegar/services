@@ -1070,7 +1070,7 @@ nnoremap <silent> vv _vg_
 
 " Emphasis in window, like <C-w>o, but don't close others
 nnoremap <silent> <C-w>O :silent wincmd _ <Bar> silent wincmd <Bar><Enter>
-tnoremap <silent> <C-w>O <C-\><C-n>:silent wincmd _ <Bar> silent wincmd <Bar> <Bar> normal i<Enter>
+tnoremap <silent> <C-w>O <C-\><C-n>:silent wincmd _ <Bar> silent wincmd <Bar> <Bar> normal! i<Enter>
 
 " Quickly resize
 " @thanks https://stackoverflow.com/questions/53670098/vim-using-vcount1-as-argument-of-a-mapping
@@ -1271,8 +1271,8 @@ endfunction
 " Backup
 command! -nargs=? -complete=file B call <SID>backup(<f-args>)
 
-" Explorer
-command! -nargs=1 -complete=dir E execute "normal :!vifm <f-args><Enter>"
+" Explorer (why nvim why!)
+command! -nargs=1 -complete=dir E execute "normal! :!vifm <f-args><Enter>"
 
 " Universal Tags
 command! -nargs=0 -bang U GutentagsUpdate<bang>
@@ -1476,7 +1476,7 @@ nnoremap <silent> <expr> <Leader>z
             \ <Bar> endif<Enter>"
 
 " Close all except current buffer (saving changes)
-nnoremap <silent> <Leader>Z :wall <Bar> execute "normal mZ" <Bar> %bdelete <Bar> execute "normal `Z" <Bar> bdelete # <Bar> delmarks Z<Enter>
+nnoremap <silent> <Leader>Z :wall <Bar> execute "normal! mZ" <Bar> %bdelete <Bar> execute "normal! `Z" <Bar> bdelete # <Bar> delmarks Z<Enter>
 
 nnoremap <silent> <Plug>AppendSemicolonRepeatable <Cmd>call <SID>append_char('a')<Enter>
 nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
@@ -2013,10 +2013,10 @@ function! s:go_line() abort
 
         " PHPUnit testing | Background Format | Cleanup
         if index(['^', '||', '│', '|'], l:word) >= 0 || (match(l:word, ':') < 0 && match(l:word, '(') < 0)
-            silent execute 'normal mz'
+            silent execute 'normal! mz'
             " Try attempt next valid path
             silent execute "keeppatterns normal! f/viW\"zy"
-            silent execute "normal 'z"
+            silent execute "normal! 'z"
             silent execute 'delmarks z'
 
             let l:word = trim(@z)
@@ -3622,8 +3622,8 @@ nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' descr
 "   \r  -> Go to file
 
 " Go [h]ighligth [h]unk
-nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal /\\v^[<>=\|]{4,7}\\s?[a-zA-Z-_]*$\rzz"<Enter>
-" nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal ?\\v^[<>=\|]{4,7}\\s?[a-zA-Z-_]*$\rzz"<Enter>
+nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal! /\\v^[<>=\|]{4,7}\\s?[a-zA-Z0-9-_]*$\rzz"<Enter>
+" nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal! ?\\v^[<>=\|]{4,7}\\s?[a-zA-0-9Z0-9-_]*$\rzz"<Enter>
 
 " if &diff <-- fails with diff mode opens from vim-fugitive
     " Diff [b]uffer
@@ -3662,22 +3662,22 @@ nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal /\\v^[<>=\|]{4,7
 
     function! s:conflict(type) abort
         if a:type ==# 'current'
-            silent execute "keeppatterns keepjumps normal \"_dd-/\\v^[=\|]{4,7}.*\rV/\\v^[>]{4,7}.*\r\"_d\r\r"
+            silent execute "keeppatterns keepjumps normal! \"_dd-/\\v^[=\|]{4,7}.*\rV/\\v^[>]{4,7}.*\r\"_d\r\r"
             silent! call repeat#set("\<Plug>ConflictCurrentRepeatable")
 
             echo 'Local (current) change selected.'
         elseif a:type ==# 'new'
-            silent execute "keeppatterns keepjumps normal V/\\v^[=\|]{4,7}.*\r\"_d/\\v^[>]{4,7}.*\r\"_dd\r\r"
+            silent execute "keeppatterns keepjumps normal! V/\\v^[=\|]{4,7}.*\r\"_d/\\v^[>]{4,7}.*\r\"_dd\r\r"
             silent! call repeat#set("\<Plug>ConflictNewRepeatable")
 
             echo 'Remote (new) change selected.'
         elseif a:type ==# 'quite'
-            silent execute "keeppatterns keepjumps normal 0V/\\v^[>]{4,7}.*\r\"_D\r\r"
+            silent execute "keeppatterns keepjumps normal! 0V/\\v^[>]{4,7}.*\r\"_D\r\r"
             silent! call repeat#set("\<Plug>ConflictQuiteRepeatable")
 
             echo 'Ignore (quite) changes selected.'
         else " fully
-            silent execute "keeppatterns keepjumps normal \"_dd/\\v^[=\|]{4,7}.*\r\"_D/\\v^[>]{4,7}.*\r\"_dd\r\r"
+            silent execute "keeppatterns keepjumps normal! \"_dd/\\v^[=\|]{4,7}.*\r\"_D/\\v^[>]{4,7}.*\r\"_dd\r\r"
             silent! call repeat#set("\<Plug>ConflictFullyRepeatable")
 
             echo 'Merge (fully) change selected.'
@@ -4242,12 +4242,12 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
     autocmd FileType markdown setlocal syntax=OFF
-    autocmd FileType sql setlocal commentstring=--\ %s
+    " autocmd FileType sql setlocal commentstring=--\ %s
     autocmd FileType sql silent let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
-    autocmd FileType sql inoremap <silent> <expr> <buffer> <C-n>
-                \ match(getline('.')[col('.') - 2], '\W') >= 0 && match(getline('.')[col('.') - 2], '\.') < 0 ? "\<C-x>\<C-n>" :
-                \ pumvisible() ?  "\<C-n>" :
-                \ "\<C-x>\<C-o>"
+    " autocmd FileType sql inoremap <silent> <expr> <buffer> <C-n>
+    "             \ match(getline('.')[col('.') - 2], '\W') >= 0 && match(getline('.')[col('.') - 2], '\.') < 0 ? "\<C-x>\<C-n>" :
+    "             \ pumvisible() ?  "\<C-n>" :
+    "             \ "\<C-x>\<C-o>"
     autocmd FileType sql nnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:false) <Bar> call <SID>statusline('f')<Enter>
     autocmd FileType sql vnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:true) <Bar> call <SID>statusline('f')<Enter>
     " Fails using @d
@@ -4259,16 +4259,16 @@ augroup AutoCommands
         endif
 
         if a:onselection
-            silent execute "normal \egv"
+            silent execute "normal! \egv"
             silent execute "'<,'>!sqlformat --reindent --keywords upper -"
-            silent execute "normal \e"
+            silent execute "normal! \e"
 
             return
         endif
 
-        silent execute 'normal mz'
+        silent execute 'normal! mz'
         silent execute '%!sqlformat --wrap_after 140 --keywords upper -'
-        silent execute "normal 'z"
+        silent execute "normal! 'z"
         silent execute 'delmarks z'
     endfunction
 
@@ -4281,9 +4281,9 @@ augroup AutoCommands
         endif
 
         if a:onselection
-            silent execute "normal \egv"
+            silent execute "normal! \egv"
             silent execute "'<,'>!xmllint --format --recover -"
-            silent execute "normal \e"
+            silent execute "normal! \e"
 
             return
         endif
@@ -4406,7 +4406,7 @@ require 'nvim-treesitter.configs'.setup({
     },
     indent = {
         enable = true, -- must be on ... or indent fails!
-        disable = {'diff'},
+        disable = {'diff', 'markdown'},
     },
     incremental_selection = {
         enable = false,
@@ -5702,7 +5702,7 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps g#^[A-Za-z0-9\.]#d_"
                 \ |     silent! execute "keeppatterns keepjumps g#/vendor/#d_"
                 \ |     silent! execute "keeppatterns keepjumps normal! :CE\r"
-                \ |     silent! execute "keeppatterns keepjumps g#^ ✘#normal O"
+                \ |     silent! execute "keeppatterns keepjumps g#^ ✘#normal! O"
                 \ |     silent! execute "keeppatterns keepjumps normal! Go\e\"zpgg"
                 \ |     echo 'Cleaned-up: PHPUnit test file'
                 \ | endif
@@ -5718,7 +5718,7 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps %s/^   /n  /"
                 \ |     silent! execute "keeppatterns keepjumps g/[n\\|x\\|o\\v]  <Plug>/d_"
                 \ |     silent! execute "%sort"
-                \ |     silent! execute "keeppatterns keepjumps normal gg/^o\rO\egg/^s\rO\egg/^v\rO\e/^x\rO\e"
+                \ |     silent! execute "keeppatterns keepjumps normal! gg/^o\rO\egg/^s\rO\egg/^v\rO\e/^x\rO\e"
                 \ |     silent! execute "write"
                 \ |     silent! execute "redraw!"
                 \ |     echomsg 'Cleaned-up: Vim Keys file'
@@ -5731,7 +5731,7 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps g/^@@.*/d_"
                 \ |     silent! execute "keeppatterns keepjumps g/^- .*/d_"
                 \ |     silent! execute "keeppatterns keepjumps g/^\\s\\{9}.*/d_"
-                \ |     silent! execute "keeppatterns keepjumps g/^\\s\\{1}\\w.* \\w.*/normal S"
+                \ |     silent! execute "keeppatterns keepjumps g/^\\s\\{1}\\w.* \\w.*/normal! S"
                 \ |     silent! execute "keeppatterns keepjumps normal! gg0\<C-v>G0\"_x"
                 \ |     silent! execute "keeppatterns keepjumps g/^\\s\\{4}[A-Z]*$/normal! ATL;DR;-----"
                 \ |     silent! execute "keeppatterns keepjumps g/^[T|-]/normal! >>>>"
@@ -6212,16 +6212,16 @@ EOF
 
         if index(l:options, 'i') >= 0
             silent execute "keeppatterns keepjumps g!/^[=-]/d_"
-            silent execute "keeppatterns keepjumps g/^== /normal ddp"
+            silent execute "keeppatterns keepjumps g/^== /normal! ddp"
             silent! execute "keeppatterns keepjumps %s/^- \\(\\w\\+\\).*/\\1/g"
             silent! execute "keeppatterns keepjumps %s/[ =]//g"
             silent! execute "keeppatterns keepjumps %s/:/./g"
-            silent execute "keeppatterns keepjumps g/[A-Z]/normal J"
+            silent execute "keeppatterns keepjumps g/[A-Z]/normal! J"
             silent! execute "keeppatterns keepjumps %s/ 0/ /g"
             call setreg('q', "$\"zyiwDA=(z*100)/60\r\e")
-            silent execute "keeppatterns keepjumps g/^\\w\\+/normal @q"
+            silent execute "keeppatterns keepjumps g/^\\w\\+/normal! @q"
             call setreg('q', "j_WyiWk$BPa-\e\"zyiWDi =z\r\e")
-            silent execute "keeppatterns keepjumps g/^\\w\\+/normal @q"
+            silent execute "keeppatterns keepjumps g/^\\w\\+/normal! @q"
             silent execute "keeppatterns keepjumps g/\\(Almuerzo\\|FDD\\)/d_"
             silent execute "normal! :CS\r"
             %sort
@@ -6233,17 +6233,18 @@ EOF
         endif
 
         if index(l:options, 'g') >= 0
-            silent execute 'normal mz'
+            silent execute 'normal! mz'
             call setreg('z', '')
             silent! execute "keeppatterns keepjumps g/^Checking: /yank Z"
-            silent execute "normal 'z\"zp"
+            silent execute "normal! 'z\"zp"
             silent execute 'delmarks z'
             call setreg('z', '0f>ll"_d0')
-            silent execute "normal :CL\r/Checking: \rvip"
-            silent execute ":normal @z"
-            silent execute "normal vip:!sort\r"
-            silent execute "normal vip:!uniq\r"
-            silent execute "normal \eO2024\ej>}"
+            silent execute "normal! :CL\r/Checking: \rvip"
+            " Not use normal! <Bang>, it uses remaps
+            silent execute "normal @z"
+            silent execute "normal! vip:!sort\r"
+            silent execute "normal! vip:!uniq\r"
+            silent execute "normal! \eO2024\ej>}"
 
             silent call add(l:cleanup, 'projects')
         endif
