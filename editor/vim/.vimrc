@@ -1430,6 +1430,7 @@ function! s:openvimrc(action) abort
 endfunction
 
 " Turn-off highlighting
+" Not use normal! <Bang>, it uses remaps
 nnoremap <silent> <nowait> <expr> <Enter>
             \ &buftype ==# 'quickfix' ? "\rzzzv" :
             \ &buftype ==# 'nofile' && index(['vim', ''], &filetype) >= 0 ? "\r" :
@@ -5618,13 +5619,13 @@ EOF
     " [n]o comments sql
     autocmd BufEnter,BufNewFile *.sql call setreg('n', "vip:s/--.*$/@@==@@/ge\rvip:g/^\\s*@@==@@\\|^$/d_\rvip:s/@@==@@/ /ge\r") | set nohlsearch
     " [o]ne line sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('o', "@nvip:join\r")
+    autocmd BufEnter,BufNewFile *.sql call setreg('o', "@nvipJ")
     " [t]inker sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::select(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'z:delmarks z\r") | set nohlsearch
+    autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::select(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'zmz") | set nohlsearch
     " [s]tatement sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::statement(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'z:delmarks z\r") | set nohlsearch
+    autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::statement(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'zmz") | set nohlsearch
     " e[x]ecute as tinker
-    autocmd BufEnter,BufNewFile *.sql call setreg('x', "mx@t:sleep 50m\ro\eItinker --execute='dump(\ep:sleep 50m\rkgJA)'\edd'x:delmarks x\r")
+    autocmd BufEnter,BufNewFile *.sql call setreg('x', "mx@to\eItinker --execute=\"dump(\epkgJA)\"\e0vi(:s/\\%V\"/\\\\\"/ge\rdd'xmx")
     " [e]xplain sql
     autocmd BufEnter,BufNewFile *.sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
     " [j]son explain sql
