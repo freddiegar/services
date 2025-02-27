@@ -3902,6 +3902,11 @@ function! s:run(range, interactive, ...) abort
             return
         endif
     elseif (l:runner ==# 3 || index(['sql'], l:runner) >= 0) && <SID>db() !=# ''
+        " Ignores timestamp connection information in debug logs for queries
+        if l:command =~? '\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z'
+            let l:command = substitute(getline('.'), '^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\s\d\{4,6}\sQuery\s', '', 'g')
+        endif
+
         " Avoid a lot results in SELECT without LIMIT (freezing)
         if trim(l:command) =~? '^\<select\>' && l:command !~? 'limit \d\+'
             let l:limit = 10
