@@ -451,7 +451,7 @@ if executable('rg')
     " @see https://vi.stackexchange.com/questions/13662/is-there-a-way-to-update-the-quickfix-entries-after-running-cdo-cfdo
     command! -nargs=0 -bar C call setqflist(map(getqflist(), 'extend(v:val, {"text":get(getbufline(v:val.bufnr, v:val.lnum),0)})'))
 
-    nnoremap <Leader>gG :Grep =expand('<cword>')<Enter>
+    nnoremap <Leader>gG :Grep =expand('<cword>')<CR>
 
     " No learn new command, use :grep and :lgrep with superpowers
     cnoreabbrev <expr> grep (getcmdtype() ==# ':' && getcmdline() =~# '^grep') ? 'Grep' : 'grep'
@@ -611,8 +611,8 @@ if has('gui_running')
         cnoremap <S-Insert> <C-r>+
 
         " @thanks https://github.com/tpope/dotfiles/blob/c31d6515e126ce2e52dbb11a7b01f4ac4cc2bd0c/.vimrc#L139
-        nnoremap <silent> <A--> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)-1','')<Enter>
-        nnoremap <silent> <A-+> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)+1','')<Enter>
+        nnoremap <silent> <A--> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)-1','')<CR>
+        nnoremap <silent> <A-+> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)+1','')<CR>
     augroup END
 endif
 
@@ -665,7 +665,7 @@ let g:netrw_keepdir = 1                                         " Keep current d
 let g:netrw_preview = 1                                         " Preview in vertical mode (default: horizontal)
 let g:netrw_alto = 1                                            " Change from above to below splitting (default: depends)
 let g:netrw_altv = 1                                            " Change from left to right splitting (default: depends)
-let g:netrw_browse_split = 0                                    " Open file in same window after <Enter> (default: 0=same window)
+let g:netrw_browse_split = 0                                    " Open file in same window after <CR> (default: 0=same window)
 let g:netrw_winsize = 20                                        " Keep same size after open file in previews (default: 50=50%)
 let g:netrw_liststyle = 3                                       " Show as tree: folders and files always. Cycling: i
 let g:netrw_localcopydircmd = 'cp -r'                           " Copy dirs recursive (default: cp)
@@ -1045,18 +1045,18 @@ cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
 " Close popup from any filetype using Esc
-" nnoremap <silent> <Esc> <Cmd>call <SID>popup_hide()<Enter>
+" nnoremap <silent> <Esc> <Cmd>call <SID>popup_hide()<CR>
 
 " Convenience, same to ZZ BUT: keeps splits
-nnoremap <silent> ZZ :update <Bar> if has('gui_running') <Bar> wall <Bar> cd $HOME <Bar> else <Bar> qall <Bar> endif <Enter>
+nnoremap <silent> ZZ :update <Bar> if has('gui_running') <Bar> wall <Bar> cd $HOME <Bar> else <Bar> qall <Bar> endif <CR>
 
 " Utility
 " @tip Macro until end of buffer: VG:normal @x
 nnoremap <silent> Q @@
 " Don't add <C-u>
-xnoremap <silent> Q :normal! @@<Enter>gv
+xnoremap <silent> Q :normal! @@<CR>gv
 " Don't work as expected. Works append chars
-xnoremap <silent> . :normal! .<Enter>gv
+xnoremap <silent> . :normal! .<CR>gv
 nnoremap <silent> Y y$
 xnoremap <silent> Y $y
 xnoremap <silent> $ $h
@@ -1069,8 +1069,8 @@ nnoremap <silent> gV `[v`]
 nnoremap <silent> vv _vg_
 
 " Emphasis in window, like <C-w>o, but don't close others
-nnoremap <silent> <C-w>O :silent wincmd _ <Bar> silent wincmd <Bar><Enter>
-tnoremap <silent> <C-w>O <C-\><C-n>:silent wincmd _ <Bar> silent wincmd <Bar> <Bar> normal! i<Enter>
+nnoremap <silent> <C-w>O :silent wincmd _ <Bar> silent wincmd <Bar><CR>
+tnoremap <silent> <C-w>O <C-\><C-n>:silent wincmd _ <Bar> silent wincmd <Bar> <Bar> normal! i<CR>
 
 " Quickly resize
 " @thanks https://stackoverflow.com/questions/53670098/vim-using-vcount1-as-argument-of-a-mapping
@@ -1092,8 +1092,8 @@ nnoremap <Leader><BS> :g/\<C-r><C-w>\>/
 nnoremap <Leader>rll *``[{V%::s/<C-r>///gIc<Left><Left><Left><Left>
 nnoremap <Leader>rgg *``:%s/<C-r>///gIc<Left><Left><Left><Left>
 
-nnoremap <silent> H <Cmd>call <SID>searchenvvar('F')<Enter>
-nnoremap <silent> L <Cmd>call <SID>searchenvvar('f')<Enter>
+nnoremap <silent> H <Cmd>call <SID>searchenvvar('F')<CR>
+nnoremap <silent> L <Cmd>call <SID>searchenvvar('f')<CR>
 
 " direction (string): void
 function! s:searchenvvar(direction) abort
@@ -1139,8 +1139,8 @@ nnoremap <silent> <C-u> <C-u>zzzv
 " @thanks put-Visual-mode
 " xnoremap <silent> p "_dp
 " xnoremap <silent> P "_dP
-xnoremap <silent> * "zy/\V<C-r>z<Enter>
-xnoremap <silent> # "zy?\V<C-r>z<Enter>
+xnoremap <silent> * "zy/\V<C-r>z<CR>
+xnoremap <silent> # "zy?\V<C-r>z<CR>
 
 " Undo break points (<C-g>u = Start new change)
 " Not use l: prefix (why nvim why!)
@@ -1157,7 +1157,7 @@ endfunction
 " Delete word in Terminal Mode: <C-w>.
 inoremap <silent> <C-w> <C-g>u<C-w>
 inoremap <silent> <C-u> <C-g>u<C-u>
-" inoremap <silent> <Enter> <C-g>u<Enter> <-- Prefer pum_on_enter()
+" inoremap <silent> <CR> <C-g>u<CR> <-- Prefer pum_on_enter()
 
 " " @simple https://github.com/Raimondi/delimitMate
 " " Annoyoning!
@@ -1170,8 +1170,8 @@ inoremap <silent> <C-u> <C-g>u<C-u>
 " nnoremap <silent> <expr> J v:count1 > 1 ? 'JJ' : 'J'
 
 " Move complete (n) lines selected (:move) and indent (gv=gv). Don't add <C-u>
-xnoremap <silent> <expr> J ":move '>+" . (v:count1) . "\<Enter>gv=gv"
-xnoremap <silent> <expr> K ":move '<-" . (v:count1 + 1) . "\<Enter>gv=gv"
+xnoremap <silent> <expr> J ":move '>+" . (v:count1) . "\<CR>gv=gv"
+xnoremap <silent> <expr> K ":move '<-" . (v:count1 + 1) . "\<CR>gv=gv"
 
 " Save previous position in mark ', (<C-o> not works as expected)
 " Using screen rows (g option), wrap works as you expect!
@@ -1272,7 +1272,7 @@ endfunction
 command! -nargs=? -complete=file B call <SID>backup(<f-args>)
 
 " Explorer (why nvim why!)
-command! -nargs=1 -complete=dir E execute "normal! :!vifm <f-args><Enter>"
+command! -nargs=1 -complete=dir E execute "normal! :!vifm <f-args><CR>"
 
 " Universal Tags
 command! -nargs=0 -bang U GutentagsUpdate<bang>
@@ -1377,11 +1377,11 @@ command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
 nmap <silent> <F1> mzgg=G`z
 
 " Open explore in current work directory (toggle)
-nmap <silent> <C-w>. <Cmd>call <SID>toggle_netrw(getcwd(), v:false)<Enter>
+nmap <silent> <C-w>. <Cmd>call <SID>toggle_netrw(getcwd(), v:false)<CR>
 
 " Open explore in current file directory (toggle)
 " @overwrite :h CTRL-W_:
-nmap <silent> <C-w>: <Cmd>call <SID>toggle_netrw(expand('%:p:h'), v:false)<Enter>
+nmap <silent> <C-w>: <Cmd>call <SID>toggle_netrw(expand('%:p:h'), v:false)<CR>
 
 let g:netrwopen = get(g:, 'netrwopen', 0)
 
@@ -1412,10 +1412,10 @@ function! s:toggle_netrw(dir, force) abort
 endfunction
 
 " Fast Vim configuration (and plugins)
-nmap <silent> <F10> <Cmd>call <SID>openvimrc('edit')<Enter>
+nmap <silent> <F10> <Cmd>call <SID>openvimrc('edit')<CR>
 
 " Open in Vertical Split using: Shift + F10
-nmap <silent> <F20> <Cmd>call <SID>openvimrc('vsplit')<Enter>
+nmap <silent> <F20> <Cmd>call <SID>openvimrc('vsplit')<CR>
 
 function! s:openvimrc(action) abort
     if expand('%:t') ==# '.vimrc'
@@ -1431,11 +1431,11 @@ endfunction
 
 " Turn-off highlighting
 " Not use normal! <Bang>, it uses remaps
-nnoremap <silent> <nowait> <expr> <Enter>
+nnoremap <silent> <nowait> <expr> <CR>
             \ &buftype ==# 'quickfix' ? "\rzzzv" :
             \ &buftype ==# 'nofile' && index(['vim', ''], &filetype) >= 0 ? "\r" :
-            \ exists('w:winpopup') ? ":silent execute \"normal \\e\"<Enter>" :
-            \ ":nohlsearch<Enter>"
+            \ exists('w:winpopup') ? ":silent execute \"normal \\e\"<CR>" :
+            \ ":nohlsearch<CR>"
 
 " Preserve default register ("x) in Normal|Select|Operator Mode
 noremap <silent> <Leader>x "_x
@@ -1449,22 +1449,22 @@ noremap <silent> <Leader>S "_S
 
 " Show/Copied current filename (long path)
 nnoremap <silent> <Leader>L :let @+=expand('%:p')
-            \ <Bar> echo 'Copied:   ' . @+<Enter>
+            \ <Bar> echo 'Copied:   ' . @+<CR>
 
 " Show/Copied current filename (only name)
 nnoremap <silent> <Leader>N :let @+=expand('%:t')
-            \ <Bar> echo 'Copied:   ' . @+<Enter>
+            \ <Bar> echo 'Copied:   ' . @+<CR>
 
 " Copied current position (using relative path)
 nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
-            \ <Bar> echo 'Copied:   ' . @+<Enter>
+            \ <Bar> echo 'Copied:   ' . @+<CR>
 
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
             \ &filetype ==# 'netrw'
-            \ ? ":let g:netrwopen = 0 <Bar> bwipeout<Enter>"
+            \ ? ":let g:netrwopen = 0 <Bar> bwipeout<CR>"
             \ : index(['', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
-            \ ? ":bdelete!<Enter>"
+            \ ? ":bdelete!<CR>"
             \ : ":update
             \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
             \ <Bar>  silent close
@@ -1473,29 +1473,29 @@ nnoremap <silent> <expr> <Leader>z
             \ <Bar>  bdelete #
             \ <Bar> else
             \ <Bar>  bdelete %
-            \ <Bar> endif<Enter>"
+            \ <Bar> endif<CR>"
 
 " Close all except current buffer (saving changes)
-nnoremap <silent> <Leader>Z :wall <Bar> execute "normal! mZ" <Bar> %bdelete <Bar> execute "normal! `Z" <Bar> bdelete # <Bar> delmarks Z<Enter>
+nnoremap <silent> <Leader>Z :wall <Bar> execute "normal! mZ" <Bar> %bdelete <Bar> execute "normal! `Z" <Bar> bdelete # <Bar> delmarks Z<CR>
 
-nnoremap <silent> <Plug>AppendSemicolonRepeatable <Cmd>call <SID>append_char('a')<Enter>
+nnoremap <silent> <Plug>AppendSemicolonRepeatable <Cmd>call <SID>append_char('a')<CR>
 nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
 
-nnoremap <silent> <Plug>DeleteFinalRepeatable <Cmd>call <SID>append_char('d')<Enter>
+nnoremap <silent> <Plug>DeleteFinalRepeatable <Cmd>call <SID>append_char('d')<CR>
 nmap <silent> <Leader>sa <Plug>DeleteFinalRepeatable
 
 " @simple https://github.com/tpope/vim-unimpaired
-nnoremap <silent> <C-1> :<C-u>silent! cfirst<Enter>
-nnoremap <silent> <C-k> :<C-u>silent! botright copen <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif<Enter>
-nnoremap <silent> <C-j> :<C-u>silent! cclose <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif<Enter>
-nnoremap <silent> <C-h> :<C-u>silent! colder<Enter>
-nnoremap <silent> <C-l> :<C-u>silent! cnewer<Enter>
-nnoremap <silent> <C-9> :<C-u>silent! clast<Enter>
+nnoremap <silent> <C-1> :<C-u>silent! cfirst<CR>
+nnoremap <silent> <C-k> :<C-u>silent! botright copen <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif<CR>
+nnoremap <silent> <C-j> :<C-u>silent! cclose <Bar> silent! bd! fugitive://* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif<CR>
+nnoremap <silent> <C-h> :<C-u>silent! colder<CR>
+nnoremap <silent> <C-l> :<C-u>silent! cnewer<CR>
+nnoremap <silent> <C-9> :<C-u>silent! clast<CR>
 
-nnoremap <silent> [q :<C-u>silent! call <SID>cnavigation('cprev')<Enter>zzzv
-nnoremap <silent> ]q :<C-u>silent! call <SID>cnavigation('cnext')<Enter>zzzv
-nnoremap <silent> [Q :<C-u>silent! cfirst<Enter>zzzv
-nnoremap <silent> ]Q :<C-u>silent! clast<Enter>zzzv
+nnoremap <silent> [q :<C-u>silent! call <SID>cnavigation('cprev')<CR>zzzv
+nnoremap <silent> ]q :<C-u>silent! call <SID>cnavigation('cnext')<CR>zzzv
+nnoremap <silent> [Q :<C-u>silent! cfirst<CR>zzzv
+nnoremap <silent> ]Q :<C-u>silent! clast<CR>zzzv
 
 function! s:cnavigation(action) abort
     let l:isnext = a:action ==# 'cnext'
@@ -1516,107 +1516,107 @@ function! s:cnavigation(action) abort
     silent execute a:action
 endfunction
 
-nnoremap <silent> <A-1> :<C-u>silent! lfirst<Enter>
-nnoremap <silent> <A-k> :<C-u>silent! lopen<Enter>
-nnoremap <silent> <A-j> :<C-u>silent! lclose<Enter>
-nnoremap <silent> <A-h> :<C-u>silent! lolder<Enter>
-nnoremap <silent> <A-l> :<C-u>silent! lnewer<Enter>
-nnoremap <silent> <A-9> :<C-u>silent! llast<Enter>
+nnoremap <silent> <A-1> :<C-u>silent! lfirst<CR>
+nnoremap <silent> <A-k> :<C-u>silent! lopen<CR>
+nnoremap <silent> <A-j> :<C-u>silent! lclose<CR>
+nnoremap <silent> <A-h> :<C-u>silent! lolder<CR>
+nnoremap <silent> <A-l> :<C-u>silent! lnewer<CR>
+nnoremap <silent> <A-9> :<C-u>silent! llast<CR>
 
-nnoremap <silent> [l :<C-u>silent! lprevious<Enter>zzzv
-nnoremap <silent> ]l :<C-u>silent! lnext<Enter>zzzv
-nnoremap <silent> [L :<C-u>silent! lfirst<Enter>zzzv
-nnoremap <silent> ]L :<C-u>silent! llast<Enter>zzzv
+nnoremap <silent> [l :<C-u>silent! lprevious<CR>zzzv
+nnoremap <silent> ]l :<C-u>silent! lnext<CR>zzzv
+nnoremap <silent> [L :<C-u>silent! lfirst<CR>zzzv
+nnoremap <silent> ]L :<C-u>silent! llast<CR>zzzv
 
-nnoremap <silent> [b :<C-u>silent! bprevious<Enter>
-nnoremap <silent> ]b :<C-u>silent! bnext<Enter>
-nnoremap <silent> [B :<C-u>silent! bfirst<Enter>
-nnoremap <silent> ]B :<C-u>silent! blast<Enter>
+nnoremap <silent> [b :<C-u>silent! bprevious<CR>
+nnoremap <silent> ]b :<C-u>silent! bnext<CR>
+nnoremap <silent> [B :<C-u>silent! bfirst<CR>
+nnoremap <silent> ]B :<C-u>silent! blast<CR>
 
-nnoremap <silent> yol :<C-u>set list!<Enter>
-nnoremap <silent> yoc :<C-u>set cursorline!<Enter>
-nnoremap <silent> you :<C-u>set cursorcolumn!<Enter>
-nnoremap <silent> yor :<C-u>set relativenumber!<Enter>
-nnoremap <silent> yos :<C-u>set wrapscan!<Enter>
+nnoremap <silent> yol :<C-u>set list!<CR>
+nnoremap <silent> yoc :<C-u>set cursorline!<CR>
+nnoremap <silent> you :<C-u>set cursorcolumn!<CR>
+nnoremap <silent> yor :<C-u>set relativenumber!<CR>
+nnoremap <silent> yos :<C-u>set wrapscan!<CR>
 nnoremap <silent> yot :<C-u>set <C-r>=(&colorcolumn > 0)
             \ ? 'colorcolumn=0'
-            \ : 'colorcolumn=121'<Enter><Enter>
+            \ : 'colorcolumn=121'<CR><CR>
 nnoremap <silent> yob :<C-u>set <C-r>=(&background ==# 'light')
             \ ? 'background=dark'
-            \ : 'background=light' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
-nnoremap <silent> yow :<C-u>setlocal wrap!<Enter>
-nnoremap <silent> yom :<C-u>setlocal modifiable!<Enter>
-nnoremap <silent> yod :<C-u>setlocal scrollbind!<Enter>
+            \ : 'background=light' <Bar> doautocmd <nomodeline> User UpdateStatusline<CR><CR>
+nnoremap <silent> yow :<C-u>setlocal wrap!<CR>
+nnoremap <silent> yom :<C-u>setlocal modifiable!<CR>
+nnoremap <silent> yod :<C-u>setlocal scrollbind!<CR>
 nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
-            \ : 'virtualedit+=all' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
+            \ : 'virtualedit+=all' <Bar> doautocmd <nomodeline> User UpdateStatusline<CR><CR>
 " nnoremap <silent> yoi :<C-u>setlocal <C-r>=(&diffopt =~# 'iwhite')
 "             \ ? 'diffopt-=iwhite'
-"             \ : 'diffopt+=iwhite' <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter><Enter>
+"             \ : 'diffopt+=iwhite' <Bar> doautocmd <nomodeline> User UpdateStatusline<CR><CR>
 
-nnoremap <silent> <Plug>GetColorRepeatable <Cmd>call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'), 'GetColorRepeatable')<Enter>
+nnoremap <silent> <Plug>GetColorRepeatable <Cmd>call <SID>go_url('https://www.color-hex.com/color/' . substitute(expand('<cword>'), '#', '', 'g'), 'GetColorRepeatable')<CR>
 nmap <silent> <Leader>gC <Plug>GetColorRepeatable
 
-nnoremap <silent> <Plug>GetClickUpRepeatable <Cmd>call <SID>go_url('https://app.clickup.com/t/31051369/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetClickUpRepeatable')<Enter>
+nnoremap <silent> <Plug>GetClickUpRepeatable <Cmd>call <SID>go_url('https://app.clickup.com/t/31051369/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetClickUpRepeatable')<CR>
 nmap <silent> <Leader>gK <Plug>GetClickUpRepeatable
 
-nnoremap <silent> <Plug>GetVulnerabilityRepeatable <Cmd>call <SID>go_url('https://nvd.nist.gov/vuln/detail/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetCVERepeatable')<Enter>
+nnoremap <silent> <Plug>GetVulnerabilityRepeatable <Cmd>call <SID>go_url('https://nvd.nist.gov/vuln/detail/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetCVERepeatable')<CR>
 nmap <silent> <Leader>gV <Plug>GetVulnerabilityRepeatable
 
 nnoremap <silent> <Leader>gs :let @+=strftime('%Y%m%d%H%M%S')
-            \ <Bar> echo 'Copied:   ' . @+<Enter>
+            \ <Bar> echo 'Copied:   ' . @+<CR>
 
 nnoremap <silent> <Leader>gS :let @+=system("date +'%Y-%m-%d %H:%M:%S' -ud @" . expand('<cword>'))
-            \ <Bar> echo 'Copied:   ' . @+<Enter>
+            \ <Bar> echo 'Copied:   ' . @+<CR>
 
 nnoremap <silent> <Leader>ge :let @+=<SID>get_fake()
-            \ <Bar> echomsg 'Copied:   ' . @+<Enter>
+            \ <Bar> echomsg 'Copied:   ' . @+<CR>
 
 " Shortcuts for Date/Times in Insert Mode
-inoremap <silent> <F6> <C-r>='Y-m-d'<Enter>
-inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d')<Enter>
-inoremap <silent> <F7> <C-r>='Y-m-d H:i:s'<Enter>
-inoremap <silent> <S-F7> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<Enter>
+inoremap <silent> <F6> <C-r>='Y-m-d'<CR>
+inoremap <silent> <S-F6> <C-r>=strftime('%Y-%m-%d')<CR>
+inoremap <silent> <F7> <C-r>='Y-m-d H:i:s'<CR>
+inoremap <silent> <S-F7> <C-r>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 
 " Same!, but in Normal Mode
 " Not use normal! <Bang>, it uses remaps
-nnoremap <silent> <F6> :execute "normal i\<F6>\e"<Enter>
-nnoremap <silent> <S-F6> :execute "normal i\<S-F6>\e"<Enter>
-nnoremap <silent> <F7> :execute "normal i\<F7>\e"<Enter>
-nnoremap <silent> <S-F7> :execute "normal i\<S-F7>\e"<Enter>
+nnoremap <silent> <F6> :execute "normal i\<F6>\e"<CR>
+nnoremap <silent> <S-F6> :execute "normal i\<S-F6>\e"<CR>
+nnoremap <silent> <F7> :execute "normal i\<F7>\e"<CR>
+nnoremap <silent> <S-F7> :execute "normal i\<S-F7>\e"<CR>
 
 " Same!, but in Command Mode
 " Not use <silent>
-cnoremap <S-F6> <C-r>=strftime('%Y-%m-%d')<Enter>
-cnoremap <S-F7> <C-r>=strftime('%Y-%m-%d-%H-%M-%S')<Enter>
+cnoremap <S-F6> <C-r>=strftime('%Y-%m-%d')<CR>
+cnoremap <S-F7> <C-r>=strftime('%Y-%m-%d-%H-%M-%S')<CR>
 
-nnoremap <silent> <Plug>GetReverseRepeatable <Cmd>call <SID>get_reverse('word')<Enter>
+nnoremap <silent> <Plug>GetReverseRepeatable <Cmd>call <SID>get_reverse('word')<CR>
 nmap <silent> <Leader>gr <Plug>GetReverseRepeatable
 
-nnoremap <silent> <Leader>gx :call <SID>changebrowser()<Enter>
+nnoremap <silent> <Leader>gx :call <SID>changebrowser()<CR>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
-            \ <Bar> echomsg 'Copied:   ' . @+<Enter>
+            \ <Bar> echomsg 'Copied:   ' . @+<CR>
 
 nnoremap <silent> <Leader>gH :let @+=<SID>generate_hash()
-            \ <Bar> echomsg 'Copied:   ' . @+<Enter>
+            \ <Bar> echomsg 'Copied:   ' . @+<CR>
 
 nnoremap <silent> <Leader>gM :let mask=<SID>generate_mask('word')
             \ <Bar> if len(mask) > 0
             \ <Bar> let @+=mask[1]
             \ <Bar> echomsg 'Copied:   ' . mask[0] . ' -> ' . @+
-            \ <Bar> endif<Enter>
+            \ <Bar> endif<CR>
 
 xnoremap <silent> <Leader>gM :<C-u>let mask=<SID>generate_mask(visualmode())
             \ <Bar> if len(mask) > 0
             \ <Bar> let @+=mask[1]
             \ <Bar> echomsg 'Copied:   ' . mask[0] . ' -> ' . @+
-            \ <Bar> endif<Enter>
+            \ <Bar> endif<CR>
 
-nnoremap <silent> <Plug>DeleteMethodRepeatable <Cmd>call <SID>delete_method()<Enter>
+nnoremap <silent> <Plug>DeleteMethodRepeatable <Cmd>call <SID>delete_method()<CR>
 nmap <silent> dm <Plug>DeleteMethodRepeatable
 
-nnoremap <silent> <Plug>DeleteInnerCallRepeatable <Cmd>call <SID>delete_call('vbc', 'Inner')<Enter>
+nnoremap <silent> <Plug>DeleteInnerCallRepeatable <Cmd>call <SID>delete_call('vbc', 'Inner')<CR>
 nmap <silent> dc <Plug>DeleteInnerCallRepeatable
 
 function! s:delete_call(flags, type) abort
@@ -2062,7 +2062,7 @@ endfunction
 
 " Docs rescue
 " @thanks https://github.com/Phantas0s/.dotfiles
-nnoremap <silent> <Leader>gd <Cmd>call <SID>go_docs(expand('<cword>'))<Enter>
+nnoremap <silent> <Leader>gd <Cmd>call <SID>go_docs(expand('<cword>'))<CR>
 
 " word (string)
 function s:go_docs(word) abort
@@ -2151,18 +2151,18 @@ function s:go_docs(word) abort
     silent call <SID>go_url(l:docsurl . l:word)
 endfunction
 
-nnoremap <silent> <Plug>GetMaskedRepeatable <Cmd>call <SID>get_masked('word')<Enter>
+nnoremap <silent> <Plug>GetMaskedRepeatable <Cmd>call <SID>get_masked('word')<CR>
 nmap <silent> <Leader>gm <Plug>GetMaskedRepeatable
 
-xnoremap <silent> <Leader>gm :<C-u>call <SID>get_masked(visualmode())<Enter>
+xnoremap <silent> <Leader>gm :<C-u>call <SID>get_masked(visualmode())<CR>
 
 " Buffers navigation
-nnoremap <silent> <Leader><Leader> :Buffers<Enter>
-nnoremap <silent> <Tab> <Cmd>call <SID>cycling_buffers(1)<Enter>
+nnoremap <silent> <Leader><Leader> :Buffers<CR>
+nnoremap <silent> <Tab> <Cmd>call <SID>cycling_buffers(1)<CR>
 
-xnoremap <silent> <Leader><Leader> :<C-u>Buffers<Enter>
+xnoremap <silent> <Leader><Leader> :<C-u>Buffers<CR>
 " Snippets using $VISUAL with :vnoremap fails!. First SELECT after expand snippet using <Tab>
-" xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<Enter>
+" xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<CR>
 
 " @simple https://github.com/tpope/vim-rsi
 " Insert Mode navigation (Forget Arrows)
@@ -2182,24 +2182,24 @@ inoremap <silent> <C-f> <C-o>W
 inoremap <silent> <C-z> <Esc><C-z>
 
 if has('gui_running')
-    nnoremap <silent> <C-z> :M<Enter>
-    inoremap <silent> <C-z> <Esc>:M<Enter>
+    nnoremap <silent> <C-z> :M<CR>
+    inoremap <silent> <C-z> <Esc>:M<CR>
 endif
 
 " Completions using only current buffer (avoids delay with <C-n> or <C-p> when I open bigger logs files :)
 " IMPORTANT: Kill context completion using <C-x><C-p> and <C-x><C-n>
 inoremap <silent> <expr> <C-n>
             \ pumvisible() ? "\<Down>" :
-            \ "\<C-x>\<C-n>\<C-r>=<SID>pum_autoselect()\<Enter>"
+            \ "\<C-x>\<C-n>\<C-r>=<SID>pum_autoselect()\<CR>"
 inoremap <silent> <expr> <C-x><C-n>
             \ pumvisible() ? "\<Down>" :
-            \ "\<C-n>\<C-r>=<SID>pum_autoselect()\<Enter>"
+            \ "\<C-n>\<C-r>=<SID>pum_autoselect()\<CR>"
 inoremap <silent> <expr> <C-p>
             \ pumvisible() ? "\<Up>" :
-            \ "\<C-x>\<C-p>\<C-r>=<SID>pum_autoselect()\<Enter>"
+            \ "\<C-x>\<C-p>\<C-r>=<SID>pum_autoselect()\<CR>"
 inoremap <silent> <expr> <C-x><C-p>
             \ pumvisible() ? "\<Up>" :
-            \ "\<C-p>\<C-r>=<SID>pum_autoselect()\<Enter>"
+            \ "\<C-p>\<C-r>=<SID>pum_autoselect()\<CR>"
 
 " Only one option? Select it!
 function! s:pum_autoselect() abort
@@ -2229,7 +2229,7 @@ cnoremap <C-l> <Right>
 cnoremap <C-b> <C-Left>
 " @overwrite :h c_CTRL-F
 cnoremap <C-f> <C-Right>
-" cnoremap %% =fnameescape(expand('%'))<Enter>
+" cnoremap %% =fnameescape(expand('%'))<CR>
 " Replace because annoyoning wait after typing % in [s]ubstitution command
 cnoreabbrev <expr> %% (getcmdtype() ==# ':' && getcmdline() !~# '^%%' && getcmdline() =~# '%%') ? fnameescape(expand('%')) : '%%'
 
@@ -2249,30 +2249,30 @@ cnoremap <C-x><C-h> /var/www/html/
 cnoremap <C-x><C-k> .git/hooks/pre-commit
 cnoremap <C-x><C-a> ~/.bash_aliases
 cnoremap <C-x><C-f> <C-u>set filetype=
-cnoremap <C-x><C-b> <C-u>='!sha256sum %'<Enter>
-cnoremap <C-x><C-w> =join(['~/working', g:working[0], 'CODE', g:working[1] . '/'], '/')<Enter>
-cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env'], '/')<Enter>
-cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')<Enter>
-cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<Enter>
+cnoremap <C-x><C-b> <C-u>='!sha256sum %'<CR>
+cnoremap <C-x><C-w> =join(['~/working', g:working[0], 'CODE', g:working[1] . '/'], '/')<CR>
+cnoremap <C-x><C-e> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env'], '/')<CR>
+cnoremap <C-x><C-t> =join(['~/working', g:working[0], 'CODE', g:working[1], '.env.testing'], '/')<CR>
+cnoremap <C-x><C-q> =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<CR>
 
 " Open sql file
 " @overwrite :h CTRL-W_q
-nnoremap <silent> <C-w>q :edit =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<Enter><Enter>
+nnoremap <silent> <C-w>q :edit =join(['~/working', g:working[0], 'CODE', g:working[1], g:working[1] . '.sql'], '/')<CR><CR>
 
 " Use them inside dir project!
-cnoremap <C-x><C-y> <C-u>='!cp -p '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
-cnoremap <C-x><C-m> <C-u>='!mv -i '<Enter>=expand('%:p')<Enter> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter>
-cnoremap <C-x><C-r> <C-u>keepalt saveas =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<Enter> <Bar> ='!rm ' . expand('%')<Enter>
-cnoremap <C-x><C-i> <C-u>='!ln '<Enter>=expand('%:p')<Enter> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<Enter>
-cnoremap <C-x><C-s> <C-u>='!ln -s '<Enter>=expand('%:p')<Enter> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<Enter>
+cnoremap <C-x><C-y> <C-u>='!cp -p '<CR>=expand('%:p')<CR> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<CR>
+cnoremap <C-x><C-m> <C-u>='!mv -i '<CR>=expand('%:p')<CR> =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<CR>
+cnoremap <C-x><C-r> <C-u>keepalt saveas =join(['~/working', g:working[0], 'CODE', g:working[1], expand('%:.')], '/')<CR> <Bar> ='!rm ' . expand('%')<CR>
+cnoremap <C-x><C-i> <C-u>='!ln '<CR>=expand('%:p')<CR> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<CR>
+cnoremap <C-x><C-s> <C-u>='!ln -s '<CR>=expand('%:p')<CR> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<CR>
 
 " Get and Upload files
-cnoremap <C-x><C-g> <C-u>='!curl -L '<Enter>=getreg('+')<Enter>=' > '<Enter>=split(getreg('+'), '/')[-1]<Enter>
-cnoremap <C-x><C-u> <C-u>='!curl --upload-file '<Enter>=expand('%:p')<Enter> https://free.keep.sh
+cnoremap <C-x><C-g> <C-u>='!curl -L '<CR>=getreg('+')<CR>=' > '<CR>=split(getreg('+'), '/')[-1]<CR>
+cnoremap <C-x><C-u> <C-u>='!curl --upload-file '<CR>=expand('%:p')<CR> https://free.keep.sh
 
 " gZip (and show dotfiles)
 cnoremap <C-x><C-o> <C-u>!gzip -d *.gz
-cnoremap <C-x><C-z> <C-u>='!gzip -k -c '<Enter>=expand('%:p')<Enter>=' > ~/Downloads/'<Enter>=substitute(split(expand('%:p'), '/')[-1], '^\.', '', 'g') . '.gz'<Enter>
+cnoremap <C-x><C-z> <C-u>='!gzip -k -c '<CR>=expand('%:p')<CR>=' > ~/Downloads/'<CR>=substitute(split(expand('%:p'), '/')[-1], '^\.', '', 'g') . '.gz'<CR>
 
 " incr (int)
 function! s:cycling_buffers(incr) abort
@@ -2585,7 +2585,7 @@ endfunction
 command! -nargs=* -range -bang T call <SID>translate(<range>, <bang>0, <f-args>)
 
 " Sound of silence
-nnoremap <silent> <Leader>gW <Cmd>call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<Enter>
+nnoremap <silent> <Leader>gW <Cmd>call <SID>go_url('https://www.wordreference.com/es/translation.asp?tranword=' . expand('<cword>'))<CR>
 
 " Snippets (Default Maps: <Tab> <C-j> <C-k>)
 " @see https://github.com/SirVer/ultisnips
@@ -2642,7 +2642,7 @@ let g:user_emmet_install_global = 0
 " let g:goyo_height = '100%'
 " let g:goyo_bg = '#1D2021'
 
-" nmap <silent> <F12> :Goyo<Enter>
+" nmap <silent> <F12> :Goyo<CR>
 
 " " Limelight
 " " @see https://github.com/junegunn/limelight.vim
@@ -2655,7 +2655,7 @@ let g:user_emmet_install_global = 0
 " let g:pomodoro_time_slack = 10
 " let g:pomodoro_notification_cmd = 'aplay /usr/share/sounds/sound-icons/prompt.wav && i3-msg --quiet "exec i3-nagbar --font \"pango:fira code retina\" --type warning --message \"Time to chill out!\", fullscreen disable"'
 
-" nmap <silent> <F3> :execute 'PomodoroStart in ' . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<Enter>
+" nmap <silent> <F3> :execute 'PomodoroStart in ' . g:working[1] <Bar> doautocmd <nomodeline> User UpdateStatusline<CR>
 
 " " Context
 " " @see https://github.com/wellle/context.vim
@@ -2707,7 +2707,7 @@ let g:highlightedyank_highlight_duration = 200
 " let g:tagbar_autofocus = 1
 " let g:tagbar_no_status_line = 1
 "
-" nmap <silent> <F8> :TagbarToggle<Enter>
+" nmap <silent> <F8> :TagbarToggle<CR>
 
 " Undo Tree
 " @see https://github.com/mbbill/undotree
@@ -2716,7 +2716,7 @@ let g:undotree_UndoDir = g:undodir
 let g:undotree_HelpLine = 0
 let g:undotree_ShortIndicators = 1
 
-nmap <silent> <C-w>u :UndotreeToggle<Enter>
+nmap <silent> <C-w>u :UndotreeToggle<CR>
 
 " IAA
 " @see https://github.com/github/copilot.vim
@@ -2761,63 +2761,63 @@ let $FZF_DEFAULT_OPTS .= ' --history=' . $HOME . '/.fzf_history'
 let $FZF_DEFAULT_COMMAND="find . -path '*/\.*' -type d -prune -o -type f -print -o -type l -print 2> /dev/null | sed s/^..//"
 
 " String in current work directory
-nnoremap <silent> <Leader>f <Cmd>call <SID>find_filter('find', g:cwd)<Enter>
-xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode() . 'find', g:cwd)<Enter>
+nnoremap <silent> <Leader>f <Cmd>call <SID>find_filter('find', g:cwd)<CR>
+xnoremap <silent> <Leader>f :<C-u>call <SID>find_filter(visualmode() . 'find', g:cwd)<CR>
 
-nnoremap <silent> <Leader>F <Cmd>call <SID>find_filter('word', g:cwd)<Enter>
-xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file', g:cwd)<Enter>
+nnoremap <silent> <Leader>F <Cmd>call <SID>find_filter('word', g:cwd)<CR>
+xnoremap <silent> <Leader>F :<C-u>call <SID>find_filter('file', g:cwd)<CR>
 
 " String [W]ork files in current work directory
-nnoremap <silent> <Leader>W <Cmd>call <SID>find_filter('find', g:dsource)<Enter>
-xnoremap <silent> <Leader>W :<C-u>call <SID>find_filter(visualmode() . 'find', g:dsource)<Enter>
+nnoremap <silent> <Leader>W <Cmd>call <SID>find_filter('find', g:dsource)<CR>
+xnoremap <silent> <Leader>W :<C-u>call <SID>find_filter(visualmode() . 'find', g:dsource)<CR>
 
 " String [J]avascript|typescript|vue files in current work directory
-nnoremap <silent> <Leader>J <Cmd>call <SID>find_filter('find', g:djavascipt)<Enter>
-xnoremap <silent> <Leader>J :<C-u>call <SID>find_filter(visualmode() . 'find', g:djavascipt)<Enter>
+nnoremap <silent> <Leader>J <Cmd>call <SID>find_filter('find', g:djavascipt)<CR>
+xnoremap <silent> <Leader>J :<C-u>call <SID>find_filter(visualmode() . 'find', g:djavascipt)<CR>
 
 " String [T]est files in current work directory
-nnoremap <silent> <Leader>T <Cmd>call <SID>find_filter('find', g:dtests)<Enter>
-xnoremap <silent> <Leader>T :<C-u>call <SID>find_filter(visualmode() . 'find', g:dtests)<Enter>
+nnoremap <silent> <Leader>T <Cmd>call <SID>find_filter('find', g:dtests)<CR>
+xnoremap <silent> <Leader>T :<C-u>call <SID>find_filter(visualmode() . 'find', g:dtests)<CR>
 
 " String [I]nside current file directory
-nnoremap <silent> <Leader>I <Cmd>call <SID>find_filter('ifind', expand('%:h'))<Enter>
-xnoremap <silent> <Leader>I :<C-u>call <SID>find_filter(visualmode() . 'ifind', expand('%:h'))<Enter>
+nnoremap <silent> <Leader>I <Cmd>call <SID>find_filter('ifind', expand('%:h'))<CR>
+xnoremap <silent> <Leader>I :<C-u>call <SID>find_filter(visualmode() . 'ifind', expand('%:h'))<CR>
 
 " String [A]ll files in current work directory
-nnoremap <silent> <Leader>A <Cmd>call <SID>find_filter('afind', g:cwd)<Enter>
-xnoremap <silent> <Leader>A :<C-u>call <SID>find_filter(visualmode() . 'afind', g:cwd)<Enter>
+nnoremap <silent> <Leader>A <Cmd>call <SID>find_filter('afind', g:cwd)<CR>
+xnoremap <silent> <Leader>A :<C-u>call <SID>find_filter(visualmode() . 'afind', g:cwd)<CR>
 
 " String re[G]ex in current work directory
-nnoremap <silent> <Leader>G <Cmd>call <SID>find_filter('regex', g:cwd)<Enter>
-xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter(visualmode() . 'regex', g:cwd)<Enter>
+nnoremap <silent> <Leader>G <Cmd>call <SID>find_filter('regex', g:cwd)<CR>
+xnoremap <silent> <Leader>G :<C-u>call <SID>find_filter(visualmode() . 'regex', g:cwd)<CR>
 
 " String reg[E]x in all files of current work directory
-nnoremap <silent> <Leader>E <Cmd>call <SID>find_filter('aregex', g:cwd)<Enter>
-xnoremap <silent> <Leader>E :<C-u>call <SID>find_filter(visualmode() . 'aregex', g:cwd)<Enter>
+nnoremap <silent> <Leader>E <Cmd>call <SID>find_filter('aregex', g:cwd)<CR>
+xnoremap <silent> <Leader>E :<C-u>call <SID>find_filter(visualmode() . 'aregex', g:cwd)<CR>
 
 " String reg[e]x in current file directory
-nnoremap <silent> <Leader>e <Cmd>call <SID>find_filter('iregex', expand('%:h'))<Enter>
-xnoremap <silent> <Leader>e :<C-u>call <SID>find_filter(visualmode() . 'iregex', expand('%:h'))<Enter>
+nnoremap <silent> <Leader>e <Cmd>call <SID>find_filter('iregex', expand('%:h'))<CR>
+xnoremap <silent> <Leader>e :<C-u>call <SID>find_filter(visualmode() . 'iregex', expand('%:h'))<CR>
 
 " Files [i]nside current file directory (show all files in specific directory)
-nnoremap <silent> <Leader>i :IFiles<Enter>
-xnoremap <silent> <Leader>i :<C-u>IFiles<Enter>
+nnoremap <silent> <Leader>i :IFiles<CR>
+xnoremap <silent> <Leader>i :<C-u>IFiles<CR>
 
 " Files in current work directory
-nnoremap <silent> <Leader>p :Files<Enter>
-xnoremap <silent> <Leader>p :<C-u>Files<Enter>
+nnoremap <silent> <Leader>p :Files<CR>
+xnoremap <silent> <Leader>p :<C-u>Files<CR>
 
 " WFiles or Files in current work directory
-nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
-xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'WFiles' : 'Files') . "<Enter>"
+nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'WFiles' : 'Files') . "<CR>"
+xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'WFiles' : 'Files') . "<CR>"
 
 " Files [n]otes directory
-nnoremap <silent> <Leader>n <Cmd>Files ~/working/notes<Enter>
-xnoremap <silent> <Leader>n :<C-u>Files ~/working/notes<Enter>
+nnoremap <silent> <Leader>n <Cmd>Files ~/working/notes<CR>
+xnoremap <silent> <Leader>n :<C-u>Files ~/working/notes<CR>
 
 " Marks in current project directory
-nnoremap <silent> <Leader>M :Marks<Enter>
-xnoremap <silent> <Leader>M :<C-u>Marks<Enter>
+nnoremap <silent> <Leader>M :Marks<CR>
+xnoremap <silent> <Leader>M :<C-u>Marks<CR>
 
 " AsyncRun
 " @see https://github.com/skywind3000/asyncrun.vim
@@ -2899,12 +2899,12 @@ function! s:test_strategy() abort
 endfunction
 
 " Not close help buffer!
-nnoremap <silent> <Leader>tt :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tf :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestFile    ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>ts :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestSuite   ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-nnoremap <silent> <Leader>tl :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestLast<Enter>
-nnoremap <silent> <Leader>tg :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestVisit<Enter>
-nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<Enter>
+nnoremap <silent> <Leader>tt :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<CR>
+nnoremap <silent> <Leader>tf :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestFile    ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<CR>
+nnoremap <silent> <Leader>ts :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestSuite   ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<CR>
+nnoremap <silent> <Leader>tl :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestLast<CR>
+nnoremap <silent> <Leader>tg :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestVisit<CR>
+nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<CR>
 
 " " Vim Debug
 " " @see https://github.com/vim-vdebug/vdebug
@@ -2943,7 +2943,7 @@ let g:ale_disable_lsp = 1
 let g:ale_linters_explicit = 1
 let g:ale_lint_on_enter = 1
 let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_insert_leave = 0
 let g:ale_set_balloons = 0
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 0
@@ -3128,15 +3128,15 @@ let g:suda#prompt = printf('[sudo] password for %s: ', $USER)
 
 " " Use <Tab> to select pum value or jump between placeholder in snippets
 " inoremap <silent> <expr> <Tab>
-"             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
-"             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
+"             \ UltiSnips#CanExpandSnippet() ? "\<C-r>=UltiSnips#ExpandSnippet()\<CR>" :
+"             \ UltiSnips#CanJumpForwards() ? "\<C-r>=UltiSnips#JumpForwards()\<CR>" :
 "             \ pumvisible() ? "\<C-n>" :
 "             \ "\<Tab>"
 
 " " In snippets with predefined values|content it uses Select Mode. WIP
 " snoremap <silent> <expr> <Tab>
-"             \ UltiSnips#CanExpandSnippet() ? "\<Esc>i\<C-r>=UltiSnips#ExpandSnippet()\<Enter>" :
-"             \ UltiSnips#CanJumpForwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpForwards()\<Enter>" :
+"             \ UltiSnips#CanExpandSnippet() ? "\<Esc>i\<C-r>=UltiSnips#ExpandSnippet()\<CR>" :
+"             \ UltiSnips#CanJumpForwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpForwards()\<CR>" :
 "             \ pumvisible() ? "\<C-n>" :
 "             \ "\<Tab>"
 
@@ -3144,12 +3144,12 @@ let g:suda#prompt = printf('[sudo] password for %s: ', $USER)
 " " Konsole change shortcut <S-Tab> to <C-S-Tab>
 " " @see https://vim.fandom.com/wiki/Smart_mapping_for_tab_completion
 " inoremap <silent> <expr> <Esc>[Z
-"             \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
+"             \ UltiSnips#CanJumpBackwards() ? "\<C-r>=UltiSnips#JumpBackwards()\<CR>" :
 "             \ pumvisible() ? "\<C-p>" :
 "             \ "\<C-d>"
 
 " snoremap <silent> <expr> <Esc>[Z
-"             \ UltiSnips#CanJumpBackwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpBackwards()\<Enter>" :
+"             \ UltiSnips#CanJumpBackwards() ? "\<Esc>i\<C-r>=UltiSnips#JumpBackwards()\<CR>" :
 "             \ pumvisible() ? "\<C-p>" :
 "             \ "\<C-d>"
 
@@ -3159,10 +3159,10 @@ inoremap <silent> <nowait> <expr> <Esc>
             \ pumvisible() ? "\<C-e>" :
             \ "\<Esc>"
 
-" Make <Enter> auto-select the first completion item
-inoremap <silent> <nowait> <expr> <Enter>
-            \ pumvisible() ? "\<C-r>=<SID>pum_on_enter()\<Enter>" :
-            \ "\<C-g>u\<Enter>"
+" Make <CR> auto-select the first completion item
+inoremap <silent> <nowait> <expr> <CR>
+            \ pumvisible() ? "\<C-r>=<SID>pum_on_enter()\<CR>" :
+            \ "\<C-g>u\<CR>"
 
 function! s:pum_on_enter() abort
     " Using <C-n>                   Using <C-x><C-n>
@@ -3181,7 +3181,7 @@ endfunction
 " nmap <silent> gy <Plug>(coc-implementation)
 
 " Use K to show documentation in preview window
-nnoremap <silent> K <Cmd>call <SID>show_documentation()<Enter>
+nnoremap <silent> K <Cmd>call <SID>show_documentation()<CR>
 
 function! s:show_documentation() abort
     let l:word = expand('<cword>')
@@ -3215,11 +3215,11 @@ endfunction
 " endif
 
 " @see https://github.com/vim/vim/issues/4738
-nnoremap <silent> <Plug>GoUrlRepeatable <Cmd>call <SID>go_url(expand('<cWORD>'))<Enter>
+nnoremap <silent> <Plug>GoUrlRepeatable <Cmd>call <SID>go_url(expand('<cWORD>'))<CR>
 nmap <silent> gx <Plug>GoUrlRepeatable
 
 nnoremap <silent> <Plug>GetUrlRepeatable :let @+=<SID>get_url(expand('<cWORD>'))
-            \ <Bar> echo len(@+) > 0 ? 'Copied:   ' . @+[0 : winwidth(0) - 15] : ''<Enter>
+            \ <Bar> echo len(@+) > 0 ? 'Copied:   ' . @+[0 : winwidth(0) - 15] : ''<CR>
 nmap <silent> gX <Plug>GetUrlRepeatable
 
 " dependency (string): void
@@ -3336,8 +3336,8 @@ function! s:go_url(url, ...) abort
     echo 'Opened:   ' . l:uri[0 : winwidth(0) - 15]
 endfunction
 
-nnoremap <silent> gf <Cmd>call <SID>go_file(expand('<cfile>'))<Enter>
-nnoremap <silent> gF <Cmd>call <SID>go_line()<Enter>
+nnoremap <silent> gf <Cmd>call <SID>go_file(expand('<cfile>'))<CR>
+nnoremap <silent> gF <Cmd>call <SID>go_line()<CR>
 
 " ffile (string)
 function! s:go_file(ffile) abort
@@ -3517,14 +3517,14 @@ let g:gutentags_ctags_extra_args = [
 " @see https://github.com/tpope/vim-fugitive
 let g:fugitive_no_maps = 1
 
-nmap <silent> <C-w>e :if filereadable('.env') <Bar> edit .env <Bar> else <Bar> echo 'Nothing to do.' <Bar> endif <Enter>
-nmap <silent> <C-w>E :if filereadable('.env.testing') <Bar> edit .env.testing <Bar> else <Bar> echo 'Nothing to do.' <Bar> endif <Enter>
+nmap <silent> <C-w>e :if filereadable('.env') <Bar> edit .env <Bar> else <Bar> echo 'Nothing to do.' <Bar> endif <CR>
+nmap <silent> <C-w>E :if filereadable('.env.testing') <Bar> edit .env.testing <Bar> else <Bar> echo 'Nothing to do.' <Bar> endif <CR>
 
-nmap <silent> <C-w>y <Cmd>call <SID>gbrowse('url', v:true)<Enter>
-nmap <silent> <C-w>Y <Cmd>call <SID>gbrowse('url', v:false)<Enter>
+nmap <silent> <C-w>y <Cmd>call <SID>gbrowse('url', v:true)<CR>
+nmap <silent> <C-w>Y <Cmd>call <SID>gbrowse('url', v:false)<CR>
 
-nmap <silent> <C-w>a <Cmd>call <SID>gbrowse('commit', v:true)<Enter>
-nmap <silent> <C-w>A <Cmd>call <SID>gbrowse('commit', v:false)<Enter>
+nmap <silent> <C-w>a <Cmd>call <SID>gbrowse('commit', v:true)<CR>
+nmap <silent> <C-w>A <Cmd>call <SID>gbrowse('commit', v:false)<CR>
 
 function! s:gbrowse(mode, copy) abort
     if !a:copy && !<SID>isrunning('/bin/sh -c ' . g:browser)
@@ -3591,13 +3591,13 @@ function! s:git_alias() abort
     return l:aliases
 endfunction
 
-nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
-nnoremap <silent> <Leader>gv :Git rm  % <Bar> echo 'Removed:  ' . expand('%') <Bar> bwipeout <Bar> call <SID>statusline('f')<Enter>
+nnoremap <silent> <Leader>ga :Git add % <Bar> echo 'Added:    ' . expand('%') <Bar> call <SID>statusline('f')<CR>
+nnoremap <silent> <Leader>gv :Git rm  % <Bar> echo 'Removed:  ' . expand('%') <Bar> bwipeout <Bar> call <SID>statusline('f')<CR>
 " Show using glsa shorcut for: git ls-files -v | rg '^h ' | awk '{print \$2}'
-nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo 'Assume h: ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
-nnoremap <silent> <Leader>gU :Git update-index --no-assume-unchanged % <Bar> echo 'Unassume: ' . expand('%') <Bar> call <SID>statusline('f')<Enter>
+nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo 'Assume h: ' . expand('%') <Bar> call <SID>statusline('f')<CR>
+nnoremap <silent> <Leader>gU :Git update-index --no-assume-unchanged % <Bar> echo 'Unassume: ' . expand('%') <Bar> call <SID>statusline('f')<CR>
 " Use directory project over directory of current file
-nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' describe --abbrev=0 ' . expand('<cWORD>'))" <Bar> echo 'Tagged in: ' . @t <Bar> call <SID>statusline('f')<Enter>
+nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' describe --abbrev=0 ' . expand('<cWORD>'))" <Bar> echo 'Tagged in: ' . @t <Bar> call <SID>statusline('f')<CR>
 
 " Resolve conflicts
 " @see https://vim.fandom.com/wiki/A_better_Vimdiff_Git_mergetool
@@ -3622,19 +3622,19 @@ nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' descr
 "   \r  -> Go to file
 
 " Go [h]ighligth [h]unk
-nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal! /\\v^[<>=\|]{4,7}\\s?[a-zA-Z0-9-_]*$\rzz"<Enter>
-" nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal! ?\\v^[<>=\|]{4,7}\\s?[a-zA-0-9Z0-9-_]*$\rzz"<Enter>
+nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal! /\\v^[<>=\|]{4,7}\\s?[a-zA-Z0-9-_]*$\rzz"<CR>
+" nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal! ?\\v^[<>=\|]{4,7}\\s?[a-zA-0-9Z0-9-_]*$\rzz"<CR>
 
 " if &diff <-- fails with diff mode opens from vim-fugitive
     " Diff [b]uffer
     nnoremap <silent> <expr> <Leader>gb
-                \ &diff ? ":execute 'diffoff'<Enter>" :
-                \ ":execute 'diffthis'<Enter>"
+                \ &diff ? ":execute 'diffoff'<CR>" :
+                \ ":execute 'diffthis'<CR>"
 
     " Diff [w]indow
     nnoremap <silent> <expr> <Leader>gw
-                \ &diff ? ":execute 'windo diffoff'<Enter>" :
-                \ ":execute 'windo diffthis'<Enter>"
+                \ &diff ? ":execute 'windo diffoff'<CR>" :
+                \ ":execute 'windo diffthis'<CR>"
 
     " *-----------*-----------*------------*
     " |   ( gf)   |           |   ( gj)    |
@@ -3644,16 +3644,16 @@ nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal! /\\v^[<>=\|]{4,
     " |        vim-fugitive window         |
     " *------------*------------*----------*
 
-    nnoremap <silent> <Leader>gf :diffget //2<Enter>
-    nnoremap <silent> <Leader>gj :diffget //3<Enter>
-    nnoremap <silent> <Leader>gg :Gwrite <Bar> edit %<Enter>
+    nnoremap <silent> <Leader>gf :diffget //2<CR>
+    nnoremap <silent> <Leader>gj :diffget //3<CR>
+    nnoremap <silent> <Leader>gg :Gwrite <Bar> edit %<CR>
 
     " Get [c]urrent, [n]ew, full[y] changes or [q]uite in conflicts
     " With cursor in <<<<<<< then:
-    nnoremap <silent> <Plug>ConflictCurrentRepeatable <Cmd>call <SID>conflict('current')<Enter>
-    nnoremap <silent> <Plug>ConflictNewRepeatable <Cmd>call <SID>conflict('new')<Enter>
-    nnoremap <silent> <Plug>ConflictFullyRepeatable <Cmd>call <SID>conflict('fully')<Enter>
-    nnoremap <silent> <Plug>ConflictQuiteRepeatable <Cmd>call <SID>conflict('quite')<Enter>
+    nnoremap <silent> <Plug>ConflictCurrentRepeatable <Cmd>call <SID>conflict('current')<CR>
+    nnoremap <silent> <Plug>ConflictNewRepeatable <Cmd>call <SID>conflict('new')<CR>
+    nnoremap <silent> <Plug>ConflictFullyRepeatable <Cmd>call <SID>conflict('fully')<CR>
+    nnoremap <silent> <Plug>ConflictQuiteRepeatable <Cmd>call <SID>conflict('quite')<CR>
 
     nmap <silent> <Leader>gc <Plug>ConflictCurrentRepeatable
     nmap <silent> <Leader>gn <Plug>ConflictNewRepeatable
@@ -3783,14 +3783,14 @@ else
     let g:gitgutter_show_msg_on_hunk_jumping = 0
     let g:gitgutter_grep = g:filterprg
 
-    nmap <silent> <expr> <Leader>k &diff ? "[czzzv" : ":GitGutterPrevHunk<Enter>zzzv"
-    nmap <silent> <expr> <Leader>j &diff ? "]czzzv" : ":GitGutterNextHunk<Enter>zzzv"
+    nmap <silent> <expr> <Leader>k &diff ? "[czzzv" : ":GitGutterPrevHunk<CR>zzzv"
+    nmap <silent> <expr> <Leader>j &diff ? "]czzzv" : ":GitGutterNextHunk<CR>zzzv"
     nmap <silent> <Leader>mm <Plug>(GitGutterStageHunk)
     nmap <silent> <Leader>hu <Plug>(GitGutterUndoHunk)
     nmap <silent> <Leader>hp <Plug>(GitGutterPreviewHunk)
-    nmap <silent> <Leader>hq <Cmd>GitGutterQuickFixCurrentFile <Bar> copen <Enter>
-    " nmap <silent> <Leader>hd <Cmd>GitGutterDiffOrig<Enter>
-    " nmap <silent> <Leader>hf <Cmd>GitGutterFold<Enter>
+    nmap <silent> <Leader>hq <Cmd>GitGutterQuickFixCurrentFile <Bar> copen <CR>
+    " nmap <silent> <Leader>hd <Cmd>GitGutterDiffOrig<CR>
+    " nmap <silent> <Leader>hf <Cmd>GitGutterFold<CR>
 endif
 
 " After stage hunk, reload fugitive if it's open
@@ -3992,11 +3992,11 @@ function s:runterm(range, interactive, ...)
     if g:isneovim
         " @thanks https://vi.stackexchange.com/a/21937
         silent call win_gotoid(get(win_findbuf(l:bterminal), 0))
-        call nvim_feedkeys(l:command . "\<Enter>", 'i', v:true)
+        call nvim_feedkeys(l:command . "\<CR>", 'i', v:true)
         " With sudo commands is "weird"
-        " call nvim_feedkeys(l:command . "\<Enter>\<C-\>\<C-n>\<C-\>\<C-N>\<C-w>w", 'i', v:true)
+        " call nvim_feedkeys(l:command . "\<CR>\<C-\>\<C-n>\<C-\>\<C-N>\<C-w>w", 'i', v:true)
     else
-        call term_sendkeys(l:bterminal, l:command . "\<Enter>")
+        call term_sendkeys(l:bterminal, l:command . "\<CR>")
     endif
 endfunction
 
@@ -4052,7 +4052,7 @@ endfunction
 " " @see https://github.com/AndrewRadev/tagalong.vim
 " let g:tagalong_filetypes = ['html', 'xml']
 
-nnoremap <silent> <Plug>SplitRepeatable <Cmd>call <SID>split()<Enter>
+nnoremap <silent> <Plug>SplitRepeatable <Cmd>call <SID>split()<CR>
 nmap <silent> gS <Plug>SplitRepeatable
 
 " @see https://github.com/AndrewRadev/splitjoin.vim
@@ -4154,10 +4154,10 @@ function! s:exception() abort
 endfunction
 
 " Open notes in Normal|Select|Operator Mode
-nmap <silent> <C-w>, <Cmd>call <SID>notes(v:true)<Enter>
-nmap <silent> <C-w>; <Cmd>call <SID>notes(v:false)<Enter>
-nmap <silent> <C-w>t <Cmd>call <SID>notes(v:true,  '~/working/notes/todo.md')<Enter>
-nmap <silent> <C-w>T <Cmd>call <SID>notes(v:false, '~/working/notes/todo.md')<Enter>
+nmap <silent> <C-w>, <Cmd>call <SID>notes(v:true)<CR>
+nmap <silent> <C-w>; <Cmd>call <SID>notes(v:false)<CR>
+nmap <silent> <C-w>t <Cmd>call <SID>notes(v:true,  '~/working/notes/todo.md')<CR>
+nmap <silent> <C-w>T <Cmd>call <SID>notes(v:false, '~/working/notes/todo.md')<CR>
 
 function! s:notes(append, ...) abort
     let l:matches = []
@@ -4248,8 +4248,8 @@ augroup AutoCommands
     "             \ match(getline('.')[col('.') - 2], '\W') >= 0 && match(getline('.')[col('.') - 2], '\.') < 0 ? "\<C-x>\<C-n>" :
     "             \ pumvisible() ?  "\<C-n>" :
     "             \ "\<C-x>\<C-o>"
-    autocmd FileType sql nnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:false) <Bar> call <SID>statusline('f')<Enter>
-    autocmd FileType sql vnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:true) <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType sql nnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:false) <Bar> call <SID>statusline('f')<CR>
+    autocmd FileType sql vnoremap <silent> <buffer> <F1> <Cmd>call <SID>sqlfixer(v:true) <Bar> call <SID>statusline('f')<CR>
     " Fails using @d
     " autocmd FileType sql inoremap <silent> ` ``<Left>
 
@@ -4272,8 +4272,8 @@ augroup AutoCommands
         silent execute 'delmarks z'
     endfunction
 
-    autocmd FileType xml nnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:false) <Bar> call <SID>statusline('f')<Enter>
-    autocmd FileType xml vnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:true) <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType xml nnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:false) <Bar> call <SID>statusline('f')<CR>
+    autocmd FileType xml vnoremap <silent> <buffer> <F1> <Cmd>call <SID>xmlfixer(v:true) <Bar> call <SID>statusline('f')<CR>
 
     function! s:xmlfixer(onselection) abort
         if bufname('%') !=# ''
@@ -4333,22 +4333,22 @@ augroup AutoCommands
 
     " Manipulate current directory or file using dot (.) and [y]ank
     " @thanks https://vi.stackexchange.com/a/39410
-    autocmd FileType netrw nmap <nowait> <buffer> . :<C-u>! =netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))<Enter><Home><C-Right>
-    autocmd FileType netrw nmap <silent> <buffer> yy :let @+=="netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))"<Enter><Enter>
+    autocmd FileType netrw nmap <nowait> <buffer> . :<C-u>! =netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))<CR><Home><C-Right>
+    autocmd FileType netrw nmap <silent> <buffer> yy :let @+=="netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))"<CR><CR>
 
     " Like many others (vim-plug, GV, undotree) q is [q]uit. So sorry Tim!
-    autocmd FileType qf map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
-    autocmd FileType help map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
-    autocmd FileType diff map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
-    autocmd FileType netrw map <silent> <nowait> <buffer> q <Cmd>call <SID>toggle_netrw('', v:true)<Enter>
-    autocmd FileType tagbar map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
-    autocmd FileType checkhealth map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>
+    autocmd FileType qf map <silent> <nowait> <buffer> q <Cmd>bdelete!<CR>
+    autocmd FileType help map <silent> <nowait> <buffer> q <Cmd>bdelete!<CR>
+    autocmd FileType diff map <silent> <nowait> <buffer> q <Cmd>bdelete!<CR>
+    autocmd FileType netrw map <silent> <nowait> <buffer> q <Cmd>call <SID>toggle_netrw('', v:true)<CR>
+    autocmd FileType tagbar map <silent> <nowait> <buffer> q <Cmd>bdelete!<CR>
+    autocmd FileType checkhealth map <silent> <nowait> <buffer> q <Cmd>bdelete!<CR>
     autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
     autocmd FileType fugitiveblame map <silent> <nowait> <buffer> q gq
-    autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq | map <silent> <nowait> <buffer> <Enter> gq
+    autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq | map <silent> <nowait> <buffer> <CR> gq
 
     " Not append last space before close if, its append a <Space>
-    autocmd BufEnter,BufReadPost,BufNewFile * if (!&modifiable || &readonly) && empty(maparg('q', 'n')) | map <silent> <nowait> <buffer> q <Cmd>bdelete!<Enter>| endif
+    autocmd BufEnter,BufReadPost,BufNewFile * if (!&modifiable || &readonly) && empty(maparg('q', 'n')) | map <silent> <nowait> <buffer> q <Cmd>bdelete!<CR>| endif
 
     " Some files are prohibited
     autocmd BufReadPre vendor/* setlocal nomodifiable
@@ -4699,7 +4699,7 @@ lua <<EOF
                 end
             end, {'i', 's'}),
 
-            ['<Enter>'] = cmp.mapping(function(fallback)
+            ['<CR>'] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     confirmation(cmp.get_selected_entry())
                 else
@@ -4950,8 +4950,8 @@ lua << EOF
 EOF
     endfunction
 
-    nnoremap <silent> <Leader>l <Cmd>call <SID>iaa_features()<Enter>
-    xnoremap <silent> <Leader>l :<C-u>call <SID>iaa_features()<Enter>
+    nnoremap <silent> <Leader>l <Cmd>call <SID>iaa_features()<CR>
+    xnoremap <silent> <Leader>l :<C-u>call <SID>iaa_features()<CR>
 
     " @thanks https://jsuarez.dev/blog/copilot_chat_neovim/
     " @see https://github.com/CopilotC-Nvim/CopilotChat.nvim
@@ -5059,7 +5059,7 @@ EOF
                     \ |     tnoremap <silent> <buffer> <C-w>l <C-\><C-N><C-w>l
                     \ |     tnoremap <silent> <buffer> <C-w>w <C-\><C-N><C-w>w
                     \ |     tnoremap <silent> <buffer> <C-w>p <C-\><C-N><C-w>p
-                    \ |     nnoremap <silent> <buffer> <Enter> i<Enter>
+                    \ |     nnoremap <silent> <buffer> <CR> i<CR>
                     \ | endif
                     \ | if match(getbufvar(bufnr('%'), 'term_title'), 'phpunit') >= 0
                     \ |     resize 10
@@ -5119,17 +5119,17 @@ EOF
     " VPM: Vim Presentation Mode: slide001.vpm, slide002.vpm, etc, syntax.vim
     " @see https://github.com/maaslalani/slides
     "   sai toilet figlet
-    autocmd FileType vpm nnoremap <silent> <buffer> <Left> :silent bprevious<Enter> :redraw!<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer> <Right> :silent bnext<Enter> :redraw!<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer> <Left> :silent bprevious<CR> :redraw!<CR>
+    autocmd FileType vpm nnoremap <silent> <buffer> <Right> :silent bnext<CR> :redraw!<CR>
     " TOIlet
-    autocmd FileType vpm nnoremap <silent> <buffer> >f :.!toilet -w 200 -f small<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer> >F :.!toilet -w 200 -f standard<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer> >k :.!toilet -w 200 -f small -k<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer> >K :.!toilet -w 200 -f standard -k<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer> >w :.!toilet -w 200 -f small -W<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer> >W :.!toilet -w 200 -f standard -W<Enter>
-    autocmd FileType vpm nnoremap <silent> <buffer> >b :.!toilet -w 200 -f term -F border<Enter>
-    autocmd FileType vpm xnoremap <silent> <buffer> >b :!toilet -w 200 -f term -F border<Enter>
+    autocmd FileType vpm nnoremap <silent> <buffer> >f :.!toilet -w 200 -f small<CR>
+    autocmd FileType vpm nnoremap <silent> <buffer> >F :.!toilet -w 200 -f standard<CR>
+    autocmd FileType vpm nnoremap <silent> <buffer> >k :.!toilet -w 200 -f small -k<CR>
+    autocmd FileType vpm nnoremap <silent> <buffer> >K :.!toilet -w 200 -f standard -k<CR>
+    autocmd FileType vpm nnoremap <silent> <buffer> >w :.!toilet -w 200 -f small -W<CR>
+    autocmd FileType vpm nnoremap <silent> <buffer> >W :.!toilet -w 200 -f standard -W<CR>
+    autocmd FileType vpm nnoremap <silent> <buffer> >b :.!toilet -w 200 -f term -F border<CR>
+    autocmd FileType vpm xnoremap <silent> <buffer> >b :!toilet -w 200 -f term -F border<CR>
 
     " D2: Diagrams from CLI
     " @see https://d2lang.com/tour/cheat-sheet -> https://terrastruct-site-assets.s3.us-west-1.amazonaws.com/documents/d2_cheat_sheet.pdf
@@ -5177,18 +5177,18 @@ EOF
 
     " PHP Customization
     " autocmd FileType php inoremap <silent> <buffer> -> -><C-x><C-n>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>uu <Cmd>call phpactor#UseAdd()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Plug>AddIncompleteMarkRepeatable <Cmd>call <SID>append_char('i')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>uu <Cmd>call phpactor#UseAdd()<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>AddIncompleteMarkRepeatable <Cmd>call <SID>append_char('i')<CR>
     autocmd FileType php nmap     <silent> <buffer> <i <Plug>AddIncompleteMarkRepeatable
-    autocmd FileType php nnoremap <silent> <buffer> <Plug>DropIncompleteMarkRepeatable <Cmd>call <SID>append_char('I')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>DropIncompleteMarkRepeatable <Cmd>call <SID>append_char('I')<CR>
     autocmd FileType php nmap     <silent> <buffer> >i <Plug>DropIncompleteMarkRepeatable
-    autocmd FileType php nnoremap <silent> <buffer> <Plug>AddCurrentIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('c')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>AddCurrentIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('c')<CR>
     autocmd FileType php nmap     <silent> <buffer> <c <Plug>AddCurrentIgnoreCoverageMarkRepeatable
-    autocmd FileType php nnoremap <silent> <buffer> <Plug>DropCurrentIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('C')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>DropCurrentIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('C')<CR>
     autocmd FileType php nmap     <silent> <buffer> >c <Plug>DropCurrentIgnoreCoverageMarkRepeatable
-    autocmd FileType php nnoremap <silent> <buffer> <Plug>AddParagrahpIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('p')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>AddParagrahpIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('p')<CR>
     autocmd FileType php nmap     <silent> <buffer> <p <Plug>AddParagrahpIgnoreCoverageMarkRepeatable
-    autocmd FileType php nnoremap <silent> <buffer> <Plug>DropParagrahpIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('P')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Plug>DropParagrahpIgnoreCoverageMarkRepeatable <Cmd>call <SID>append_char('P')<CR>
     autocmd FileType php nmap     <silent> <buffer> >p <Plug>DropParagrahpIgnoreCoverageMarkRepeatable
 
     " I (almost) never used hashtag in PHP, better avoid annoyoning type!
@@ -5209,9 +5209,9 @@ EOF
         \ 'all': '--no-coverage --stop-on-failure',
     \}
 
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestFile    --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestSuite   --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tF :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestFile    --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>tS :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestSuite   --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<CR>
 
     " PHP Linter
     autocmd FileType php let g:ale_linters = {'php': ['php', 'phpmd']}
@@ -5220,42 +5220,42 @@ EOF
 
     " PHP Refactor
     " @see https://github.com/phpactor/phpactor
-    " autocmd FileType php nnoremap <silent> <buffer> <Leader>rnc <Cmd>call phpactor#ClassNew()<Enter>
-    " autocmd FileType php nnoremap <silent> <buffer> <Leader>rxc <Cmd>call phpactor#ClassExpand()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>ruu <Cmd>call phpactor#ImportMissingClasses()<Enter>
+    " autocmd FileType php nnoremap <silent> <buffer> <Leader>rnc <Cmd>call phpactor#ClassNew()<CR>
+    " autocmd FileType php nnoremap <silent> <buffer> <Leader>rxc <Cmd>call phpactor#ClassExpand()<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>ruu <Cmd>call phpactor#ImportMissingClasses()<CR>
 
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rmf <Cmd>call phpactor#MoveFile()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rcf <Cmd>call phpactor#CopyFile()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rmf <Cmd>call phpactor#MoveFile()<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rcf <Cmd>call phpactor#CopyFile()<CR>
 
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>ric <Cmd>call <SID>phpactor('implement_contracts')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rap <Cmd>call <SID>phpactor('add_missing_properties')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rcc <Cmd>call <SID>phpactor('complete_constructor')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rfn <Cmd>call <SID>phpactor('fix_namespace_class_name')<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rfg <Cmd>call setreg('z', "orfg\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rfs <Cmd>call setreg('z', "orfs\t\e/    {\rh") <Bar> execute "normal! @z"<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdd <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdu <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rrd <Cmd>call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rde <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l\"_2xds)") <Bar> execute "normal! @z"<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdn <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]a ?? null\el\"_2xds)") <Bar> execute "normal! @z"<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdg <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l4dli ?? \eds)") <Bar> execute "normal! @z"<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>raf <Cmd>call setreg('z', "mz_\"_diwifunction\ef=\"_diwi{\r\eA;\r}\e`zf)a use ()<Left>\e==$F)") <Bar> execute "normal! @z" <Bar> delmarks z<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>ric <Cmd>call <SID>phpactor('implement_contracts')<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rap <Cmd>call <SID>phpactor('add_missing_properties')<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rcc <Cmd>call <SID>phpactor('complete_constructor')<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rfn <Cmd>call <SID>phpactor('fix_namespace_class_name')<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rfg <Cmd>call setreg('z', "orfg\t\e/    {\rh") <Bar> execute "normal! @z"<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rfs <Cmd>call setreg('z', "orfs\t\e/    {\rh") <Bar> execute "normal! @z"<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdd <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodd\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdu <Cmd>call setreg('z', "mzI$vtmp = \e/\\v;\(\\s\)*\(\\/\\/\)?.*$\rodu\tvtmp") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rrd <Cmd>call setreg('z', "mz_3dw/\\v;\(\\s\)*\(\\/\\/\)?.*$\rj\"_dd") <Bar> execute "normal! @z\e`z" <Bar> delmarks z <Bar> nohlsearch<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rde <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l\"_2xds)") <Bar> execute "normal! @z"<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdn <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]a ?? null\el\"_2xds)") <Bar> execute "normal! @z"<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rdg <Cmd>call setreg('z', "diwf,dIaF,i[]\ehpf]l4dli ?? \eds)") <Bar> execute "normal! @z"<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>raf <Cmd>call setreg('z', "mz_\"_diwifunction\ef=\"_diwi{\r\eA;\r}\e`zf)a use ()<Left>\e==$F)") <Bar> execute "normal! @z" <Bar> delmarks z<CR>
 
-    autocmd FileType php nnoremap <silent> <Plug>SimplifyNamespaceRepeatable <Cmd>call <SID>rsn('word')<Enter>
+    autocmd FileType php nnoremap <silent> <Plug>SimplifyNamespaceRepeatable <Cmd>call <SID>rsn('word')<CR>
     autocmd FileType php nmap <silent> <buffer> <Leader>rsn <Plug>SimplifyNamespaceRepeatable
 
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rci <Cmd>call phpactor#ClassInflect()<Enter>
-    autocmd FileType php xnoremap <silent> <buffer> <Leader>rem :<C-u>call phpactor#ExtractMethod()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rec <Cmd>call phpactor#ExtractConstant()<Enter>
-    autocmd FileType php xnoremap <silent> <buffer> <Leader>ree :<C-u>call phpactor#ExtractExpression(v:true)<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>rff <Cmd>call <SID>rff()<Enter>
-    autocmd FileType php nnoremap <silent> <buffer> <Leader>R   <Cmd>call phpactor#ContextMenu()<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rci <Cmd>call phpactor#ClassInflect()<CR>
+    autocmd FileType php xnoremap <silent> <buffer> <Leader>rem :<C-u>call phpactor#ExtractMethod()<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rec <Cmd>call phpactor#ExtractConstant()<CR>
+    autocmd FileType php xnoremap <silent> <buffer> <Leader>ree :<C-u>call phpactor#ExtractExpression(v:true)<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>rff <Cmd>call <SID>rff()<CR>
+    autocmd FileType php nnoremap <silent> <buffer> <Leader>R   <Cmd>call phpactor#ContextMenu()<CR>
 
     if !g:isneovim
-        autocmd FileType php nmap <silent> <buffer> gd <Cmd>call <SID>phpgd()<Enter>
-        " autocmd FileType php nmap <silent> <buffer> gd <Cmd>call phpactor#GotoDefinition()<Enter>
-        " autocmd FileType php nmap <silent> <buffer> gr <Cmd>call phpactor#FindReferences()<Enter>
-        " autocmd FileType php nmap <silent> <buffer> gy <Cmd>call phpactor#GotoImplementations()<Enter>
+        autocmd FileType php nmap <silent> <buffer> gd <Cmd>call <SID>phpgd()<CR>
+        " autocmd FileType php nmap <silent> <buffer> gd <Cmd>call phpactor#GotoDefinition()<CR>
+        " autocmd FileType php nmap <silent> <buffer> gr <Cmd>call phpactor#FindReferences()<CR>
+        " autocmd FileType php nmap <silent> <buffer> gy <Cmd>call phpactor#GotoImplementations()<CR>
     endif
 
     function! s:phpgd() abort
@@ -5413,7 +5413,7 @@ EOF
     endfunction
 
     " Go parent (extends) or implements (interface) file from 'any' position
-    autocmd FileType php nmap <silent> <buffer> gX <Cmd>call <SID>go_parent()<Enter>
+    autocmd FileType php nmap <silent> <buffer> gX <Cmd>call <SID>go_parent()<CR>
 
     function! s:go_parent() abort
         let l:pattern = ' extends \| implements '
@@ -5430,8 +5430,8 @@ EOF
     endfunction
 
     " Search current file(Y) or function(y) implementations
-    autocmd FileType php nmap <silent> <buffer> gY <Cmd>call <SID>get_implementations('file')<Enter>
-    autocmd FileType php nmap <silent> <buffer> gy <Cmd>call <SID>get_implementations('word')<Enter>
+    autocmd FileType php nmap <silent> <buffer> gY <Cmd>call <SID>get_implementations('file')<CR>
+    autocmd FileType php nmap <silent> <buffer> gy <Cmd>call <SID>get_implementations('word')<CR>
 
     " type (string)
     function! s:get_implementations(type) abort
@@ -5469,8 +5469,8 @@ EOF
     endfunction
 
     " Search current file(R) or function(r) references
-    autocmd FileType php nmap <silent> <buffer> gR <Cmd>call <SID>get_references('file')<Enter>
-    autocmd FileType php nmap <silent> <buffer> gr <Cmd>call <SID>get_references('word')<Enter>
+    autocmd FileType php nmap <silent> <buffer> gR <Cmd>call <SID>get_references('file')<CR>
+    autocmd FileType php nmap <silent> <buffer> gr <Cmd>call <SID>get_references('word')<CR>
 
     " type (string)
     function! s:get_references(type) abort
@@ -5504,7 +5504,7 @@ EOF
     endfunction
 
     " PHP Fixer
-    autocmd FileType php nnoremap <silent> <buffer> <F1> <Cmd>call <SID>phpfixer() <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType php nnoremap <silent> <buffer> <F1> <Cmd>call <SID>phpfixer() <Bar> call <SID>statusline('f')<CR>
 
     function! s:phpfixer() abort
         if bufname('%') ==# ''
@@ -5567,10 +5567,10 @@ EOF
         echo 'Fixer ' . l:fixertype . ' v' . l:fixerversion . ' applied.'
     endfunction
 
-    autocmd FileType vim-plug nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
-    autocmd FileType crontab nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs('crontab')<Enter>
+    autocmd FileType vim-plug nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<CR>
+    autocmd FileType crontab nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs('crontab')<CR>
 
-    autocmd FileType d2 nnoremap <silent> <buffer> <F1> <Cmd>call <SID>d2fixer() <Bar> call <SID>statusline('f')<Enter>
+    autocmd FileType d2 nnoremap <silent> <buffer> <F1> <Cmd>call <SID>d2fixer() <Bar> call <SID>statusline('f')<CR>
 
     function! s:d2fixer() abort
         if bufname('%') !=# ''
@@ -5580,10 +5580,10 @@ EOF
         silent execute '%r!d2 fmt ' . expand('%:p')
     endfunction
 
-    autocmd FileType json nnoremap <silent> <buffer> <F1> <Cmd>call <SID>jsonfixer() <Bar> call <SID>statusline('f')<Enter>
-    autocmd FileType json nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
-    autocmd FileType json nnoremap <silent> <buffer> <Leader>gi :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Enter>
-    autocmd FileType json nnoremap <silent> <buffer> <Leader>gI :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'), v:true)<Enter>
+    autocmd FileType json nnoremap <silent> <buffer> <F1> <Cmd>call <SID>jsonfixer() <Bar> call <SID>statusline('f')<CR>
+    autocmd FileType json nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<CR>
+    autocmd FileType json nnoremap <silent> <buffer> <Leader>gi :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<CR>
+    autocmd FileType json nnoremap <silent> <buffer> <Leader>gI :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'), v:true)<CR>
 
     function! s:jsonfixer() abort
         if bufname('%') !=# ''
@@ -6059,7 +6059,7 @@ EOF
     "     call writefile(['call setqflist(' . a:qflist . ')', 'call setqflist([], "a", ' . a:qfinfo . ')'], g:session_file, 'a')
     " endfunction
 
-    " nnoremap <Leader>w <Cmd>call <SID>sessionsave() <Bar> echo 'Session saved.'<Enter>
+    " nnoremap <Leader>w <Cmd>call <SID>sessionsave() <Bar> echo 'Session saved.'<CR>
 
     function! s:sessionsave() abort
         if <SID>mustbeignore()
@@ -6443,9 +6443,9 @@ EOF
 augroup END
 
 if g:isneovim
-    nmap <silent> <F4> <Cmd>Inspect<Enter>
+    nmap <silent> <F4> <Cmd>Inspect<CR>
 else
-    nmap <silent> <F4> <Cmd>call <SID>get_hlinfo()<Enter>
+    nmap <silent> <F4> <Cmd>call <SID>get_hlinfo()<CR>
 endif
 
 " @thanks https://stackoverflow.com/questions/9464844/how-to-get-group-name-of-highlighting-under-cursor-in-vim#9464929
@@ -6462,8 +6462,8 @@ function! s:get_hlinfo() abort
                 \ . ' -> ' . g:colors_name
 endfunction
 
-nmap <silent> <C-w>m <Cmd>call <SID>vpm()<Enter>
-nmap <silent> <C-w>M :set relativenumber! number! hidden! ruler!<Enter>
+nmap <silent> <C-w>m <Cmd>call <SID>vpm()<CR>
+nmap <silent> <C-w>M :set relativenumber! number! hidden! ruler!<CR>
 
 let g:vpm = 0
 
