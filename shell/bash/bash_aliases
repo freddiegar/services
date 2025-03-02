@@ -435,6 +435,10 @@ downloadsize() {
     return 0
 }
 
+cl() {
+    cd $1 && ls -la
+}
+
 alias \?="apropos"
 alias a="alias"
 alias b="sh ~/working/mysqlramdisk.sh"
@@ -461,6 +465,7 @@ alias x="exit"
 alias y="sh ~/working/syntaxer.sh"
 alias z="sh ~/working/sprinter.sh"
 
+alias P="[ \$0 = 'zsh' ] && export PS1=\"%1~> \" || export PS1=\"\\W> \""
 alias O="xargs -r -I {}"
 # @thanks https://stackoverflow.com/a/4509648
 alias W="find /var/www/html/{evertec,flexphp,freddiegar} -mindepth 1 -maxdepth 1 -type d | fzf | O -- sh ~/.config/i3/workspace {} 2>&1 > /dev/null"
@@ -554,6 +559,9 @@ alias pex="sudo phpenmod xdebug"
 alias pdx="sudo phpdismod xdebug"
 alias prx='export XDEBUG_SESSION=1 && export XDEBUG_CONFIG="idekey=PHPSTORM" && phpx'
 alias psw="sudo update-alternatives --config php"
+
+# @see https://make.wordpress.org/cli/handbook/guides/installing/
+alias wpx="phpx `which wp`"
 
 # @see https://xdebug.org/docs/all_settings#mode
 alias vt="extended \"export XDEBUG_MODE=off && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage @@==@@ && nn 'Ran tests successfully!'\""
