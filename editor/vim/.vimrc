@@ -14,6 +14,7 @@
 " @see https://prirai.github.io/books/unix-koans.html
 " @see https://rwx.gg/tools/editors/vi/how/magic/
 " @see https://whyisitsogood.wiki/Vim
+" @see https://fernandocejas.com/blog/engineering/2021-08-04-cooking-effective-code-reviews/
 
 " HUMOR?
 " @see https://www.monkeyuser.com/2016/bugfixing-for-developers/
@@ -4243,6 +4244,7 @@ augroup AutoCommands
 
     autocmd FileType markdown setlocal syntax=OFF
     " autocmd FileType sql setlocal commentstring=--\ %s
+    autocmd FileType sql setlocal tabstop=2
     autocmd FileType sql silent let b:db=<SID>db() | setlocal omnifunc=vim_dadbod_completion#omni
     " autocmd FileType sql inoremap <silent> <expr> <buffer> <C-n>
     "             \ match(getline('.')[col('.') - 2], '\W') >= 0 && match(getline('.')[col('.') - 2], '\.') < 0 ? "\<C-x>\<C-n>" :
@@ -6359,8 +6361,8 @@ EOF
     autocmd FocusLost * silent! wall
 
     " autocmd InsertEnter * call <SID>popup_hide()
-    " autocmd InsertLeave * call <SID>diagnostics()
-    " autocmd User ALELintPost call <SID>diagnostics()
+    autocmd InsertLeave * call <SID>diagnostics()
+    autocmd User ALELintPost call <SID>diagnostics()
     autocmd User GitGutterStage silent call timer_start(0, function('s:reloadfugitive'))
     autocmd User GitSignsChanged silent call timer_start(0, function('s:reloadfugitive'))
 
