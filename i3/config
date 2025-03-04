@@ -616,7 +616,7 @@ set $mode_control Control (k)eys, (n)etwork, (s)ound, (r)esources, (d)ocker
 
 mode "$mode_control" {
     # Control Keys
-    bindsym k exec          --no-startup-id [ "`pgrep screenkey`" = "" ] && screenkey --no-systray --font-size small || pkill -f screenkey, mode "default"
+    bindsym k exec          --no-startup-id [ "`pgrep screenkey`" = "" ] && screenkey --no-systray --font FiraCodeRetina --position fixed --geometry $(slop -n -f '%g') --opacity 0.65 || pkill -f screenkey, mode "default"
     # Control Network
     # bindsym n exec          konsole --nofork --fullscreen -e 'nmtui', mode "default"
     bindsym n exec          urxvt -name __nmtui -e sh -c 'nmtui', mode "default"

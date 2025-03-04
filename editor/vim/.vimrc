@@ -857,10 +857,10 @@ function! AsyncStatuslineFlag() abort
 endfunction
 
 function! s:mustbeignore() abort
-    return argc() > 0 && (
+"              stdin vim                     stdin nvim
+    return get(v:argv, 1, '') ==# '-' || get(v:argv, 2, '') ==# '-' || argc() > 0 && (
                 \ index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], argv()[0]) >= 0
                 \ || argv()[0] =~? '.bash_aliases\|.vimrc\|.config*\|.zsh*\|.git/*\|hosts\|crontab\|errors\.err\|tags\|storage\|/tmp')
-                \ || get(v:argv, 1, '') ==# '-'
                 \ || (len(g:working) > 0 && g:working[0] =~? 'plugged')
                 \ || (len(g:working) > 1 && g:working[1][0 : 2] =~? '_\|ro-'
                 \ )
@@ -1464,7 +1464,7 @@ nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
 nnoremap <silent> <expr> <Leader>z
             \ &filetype ==# 'netrw'
             \ ? ":let g:netrwopen = 0 <Bar> bwipeout<CR>"
-            \ : index(['', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+            \ : index(['', 'diff', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
             \ ? ":bdelete!<CR>"
             \ : ":update
             \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
@@ -5619,33 +5619,33 @@ EOF
     autocmd BufEnter,BufNewFile .vimrc call setreg('t', "\"ayiWj\"byiWj ciW=((b*100)/a)-100\r\e")
 
     " [n]o comments sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('n', "vip:s/--.*$/@@==@@/ge\rvip:g/^\\s*@@==@@\\|^$/d_\rvip:s/@@==@@/ /ge\r") | set nohlsearch
+    autocmd FileType sql call setreg('n', "vip:s/--.*$/@@==@@/ge\rvip:g/^\\s*@@==@@\\|^$/d_\rvip:s/@@==@@/ /ge\r") | set nohlsearch
     " [o]ne line sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('o', "@nvipJ")
+    autocmd FileType sql call setreg('o', "@nvipJ")
     " [t]inker sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('t', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::select(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'zmz") | set nohlsearch
+    autocmd FileType sql call setreg('t', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::select(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'zmz") | set nohlsearch
     " [s]tatement sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::statement(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'zmz") | set nohlsearch
+    autocmd FileType sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::statement(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'zmz") | set nohlsearch
     " e[x]ecute as tinker
-    autocmd BufEnter,BufNewFile *.sql call setreg('x', "mx@to\eItinker --execute=\"dump(\epkgJA)\"\e0vi(:s/\\%V\"/\\\\\"/ge\rdd'xmx")
+    autocmd FileType sql call setreg('x', "mx@to\eItinker --execute=\"dump(\epkgJA)\"\e0vi(:s/\\%V\"/\\\\\"/ge\rdd'xmx")
     " [e]xplain sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
+    autocmd FileType sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
     " [j]son explain sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('j', "IEXPLAIN FORMAT=json \eEa SQL_NO_CACHE\e")
+    autocmd FileType sql call setreg('j', "IEXPLAIN FORMAT=json \eEa SQL_NO_CACHE\e")
     " [a]nalize sql > MySQL 8.0
-    autocmd BufEnter,BufNewFile *.sql call setreg('a', "IEXPLAIN ANALYZE \eEa SQL_NO_CACHE\e")
+    autocmd FileType sql call setreg('a', "IEXPLAIN ANALYZE \eEa SQL_NO_CACHE\e")
     " [u]ndo explain sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('u', "vip:s/\\cEXPLAIN \\|ANALYZE \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e") | set nohlsearch
+    autocmd FileType sql call setreg('u', "vip:s/\\cEXPLAIN \\|ANALYZE \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e") | set nohlsearch
     " [d]esribe sql
-    autocmd BufEnter,BufNewFile *.sql call setreg('d', "_/\\c from \rEw\"zyiwODESCRIBE `\e\"zpA`;\e0")
+    autocmd FileType sql call setreg('d', "_/\\c from \rEw\"zyiwODESCRIBE `\e\"zpA`;\e0")
     " [i]ndexes show
-    autocmd BufEnter,BufNewFile *.sql call setreg('i', "_/\\c from \rEw\"zyiwOSHOW INDEXES FROM `\e\"zpA`;\e0")
+    autocmd FileType sql call setreg('i', "_/\\c from \rEw\"zyiwOSHOW INDEXES FROM `\e\"zpA`;\e0")
     " [c]reate show
-    autocmd BufEnter,BufNewFile *.sql call setreg('c', "_/\\c from \rEw\"zyiwOSHOW CREATE TABLE `\e\"zpA`;\e0")
+    autocmd FileType sql call setreg('c', "_/\\c from \rEw\"zyiwOSHOW CREATE TABLE `\e\"zpA`;\e0")
     " [v]isualizate explain sql
-    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('v', "@evip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp@u") | endif
+    autocmd FileType sql if <SID>db() !=# '' | call setreg('v', "@evip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp@u") | endif
     " [r]un sql
-    autocmd BufEnter,BufNewFile *.sql if <SID>db() !=# '' | call setreg('r', "vip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp") | endif
+    autocmd FileType sql if <SID>db() !=# '' | call setreg('r', "vip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp") | endif
 
     " [t]ag release
     autocmd FileType zsh call setreg('t', "gg_ da\"pI\"\eggJf[lyE_/-a\rWviWPGA\"\e")

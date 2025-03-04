@@ -1336,7 +1336,7 @@ grep "MANPAGER=\|MANROFFOPT=\|BAT_THEME=" ~/.profile
 
 echo '
 # @thanks https://github.com/sharkdp/bat/issues/2753
-export MANPAGER="sh -c '"'"'col -bx \| bat -l man -p'"'"'"
+export MANPAGER="sh -c '"'"'col -bx \| bat --language man --plain'"'"'"
 export MANROFFOPT="-c"
 export BAT_THEME="gruvbox-dark"' >> ~/.profile
 ```
@@ -1640,6 +1640,8 @@ sudo apt-get install -y kazam
 ```
 
 ## ScreenKey -> only X11
+
+[See](https://www.thregr.org/wavexx/software/screenkey/)
 
 ```bash
 sudo apt-get install -y screenkey
