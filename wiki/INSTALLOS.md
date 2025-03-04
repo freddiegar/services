@@ -1341,6 +1341,13 @@ export MANROFFOPT="-c"
 export BAT_THEME="gruvbox-dark"' >> ~/.profile
 ```
 
+## Best less
+
+echo '
+# @thanks https://www.jwillikers.com/pagers-and-syntax-highlighting
+export LESSOPEN="| bat --color always %s"' >> ~/.profile
+```
+
 # Vifm (Terminal File Manager with Vim Style)
 
 [See](https://wiki.vifm.info/index.php?title=Manual)
@@ -1894,9 +1901,9 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 24.10
 uname -r
-# 6.11.0-13-generic
+# 6.11.0-18-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
-# 2.2.40
+# 2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
 # 14.2.0
 openssl version | awk '{print $2}'
@@ -1917,9 +1924,9 @@ zsh --version | awk '{print $2}'
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
 # https://github.com/vim/vim/releases/tag/v9.1.#
 # 9.1.Included patches: 1-16, 647-648, 678, 697, 689, 17-496, 707
-echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1" "$2}'`
+echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1"-"$2}'`
 # Stable:   v0.7.2-LuaJIT 2.1.0-beta3
-# Unstable: v0.11.0-dev-LuaJIT 2.1.1719379426
+# Unstable: v0.11.0-dev-LuaJIT-2.1.1719379426
 neovide --version | awk '{print $2}'
 # 0.13.3
 vifm --version | grep -e "^Version" | awk '{print $2}'
@@ -1931,7 +1938,7 @@ git --version | awk '{print $3}'
 git lfs version
 # git-lfs/3.5.0 (GitHub; linux amd64; go 1.22.2)
 docker --version | awk '{print $3}' | sed 's/,//g'
-# 27.4.1
+# 28.0.1
 docker-compose --version | awk '{print $4}'
 # v2.32.1
 feh --version | grep version | awk '{print $3}'
@@ -1955,7 +1962,7 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.3.15
+# 8.4.4
 # nvm --version
 # # 0.39.3
 npm --version
@@ -1963,7 +1970,7 @@ npm --version
 node --version
 # v21.7.3
 mysql --version | awk '{print $3}'
-# 8.0.40-0ubuntu0.24.10.1
+# 8.0.41-0ubuntu0.24.10.1
 # stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
@@ -1971,7 +1978,7 @@ python3 --version | awk '{print $2}'
 ruby --version | awk '{print $2}'
 # 3.3.4
 rustc --version | awk '{print $2}'
-# 1.81.0
+# 1.84.1
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.23.4
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
@@ -1989,12 +1996,14 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 134.0b10
+# 136.0b9
+zen --version | awk '{print $3}'
+# 1.8.2t
 dpkg --list | wc --lines
-# 2531
+# 2590
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 93
+# 97
 apt list --installed | wc --lines
-# 2337
+# 2390
 apt-mark showmanual | wc --lines
-# 420
+# 442

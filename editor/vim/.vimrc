@@ -1548,6 +1548,7 @@ nnoremap <silent> yob :<C-u>set <C-r>=(&background ==# 'light')
 nnoremap <silent> yow :<C-u>setlocal wrap!<CR>
 nnoremap <silent> yom :<C-u>setlocal modifiable!<CR>
 nnoremap <silent> yod :<C-u>setlocal scrollbind!<CR>
+nnoremap <silent> yox :<C-u>setlocal expandtab!<CR>
 nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
             \ : 'virtualedit+=all' <Bar> doautocmd <nomodeline> User UpdateStatusline<CR><CR>
@@ -3626,6 +3627,9 @@ nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' descr
 nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal! /\\v^[<>=\|]{4,7}\\s?[a-zA-Z0-9-_]*$\rzz"<CR>
 " nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal! ?\\v^[<>=\|]{4,7}\\s?[a-zA-0-9Z0-9-_]*$\rzz"<CR>
 
+" nnoremap <silent> <expr> <Leader>j if &diff <Bar> silent! execute "keepjumps normal! /^@@\rzt" <Bar> endif<CR>
+" nnoremap <silent> <expr> <Leader>k if &diff <Bar> silent! execute "keepjumps normal! ?^@@\rzt" <Bar> endif<CR>
+
 " if &diff <-- fails with diff mode opens from vim-fugitive
     " Diff [b]uffer
     nnoremap <silent> <expr> <Leader>gb
@@ -4003,12 +4007,15 @@ endfunction
 
 command! -nargs=* -range -bang RR call <SID>runterm(<range>, <bang>0, <f-args>)
 
-" range (0,1,2), interactive (0/1), [args (string)]: void
-function! s:get_selection(range, interactive, args) abort
+" range (0,1,2), interactive (0/1), [args (string), trim (bool), join (bool), joinchar (string)]: string|List
+function! s:get_selection(range, interactive, args, ...) abort
     let l:selection = ''
+    let l:trim = a:0 >= 1 ? a:1 : v:true
+    let l:join = a:0 >= 2 ? a:2 : v:true
+    let l:joinchar = a:0 >= 3 ? a:3 : ' '
 
     if len(a:args) > 0
-        let l:selection = join(a:args, ' ')
+        let l:selection = l:join ? join(a:args, l:joinchar) ? a:args
     elseif a:range == 2 " Visual mode
         " @see https://vi.stackexchange.com/a/11028
         let [l:lnum1, l:col1] = getpos("'<")[1 : 2]
@@ -4025,7 +4032,7 @@ function! s:get_selection(range, interactive, args) abort
             let l:comment = trim(split(&commentstring)[0])
 
             for l:line in l:lines
-                let l:line = trim(l:line)
+                let l:line = l:trim ? trim(l:line) : l:line
 
                 " Starting
                 if l:line =~# '^' . l:comment
@@ -4040,10 +4047,10 @@ function! s:get_selection(range, interactive, args) abort
                 silent call add(l:cleanlines, l:line)
             endfor
 
-            let l:selection = join(l:cleanlines, ' ')
+            let l:selection = l:join ? join(l:cleanlines, l:joinchar) : l:cleanlines
         endif
     elseif !a:interactive
-        let l:selection = trim(getline('.'))
+        let l:selection = l:trim ? trim(getline('.')) : getline('.')
     endif
 
     return l:selection
@@ -6103,6 +6110,7 @@ EOF
     "     [e]nd of file lines
     "     [f]orce
     "    t[i]mes
+    "     [h]unks
     "     [k]eys
     "     [m]arks
     "     [p]rofile log
@@ -6251,6 +6259,47 @@ EOF
             silent call add(l:cleanup, 'projects')
         endif
 
+        if index(l:options, 'h') >= 0
+            let l:matches = []
+            silent execute "keeppatterns keepjumps %g/^@@/let l:matches+=[{'lnum':line('.')}]"
+            silent execute "keeppatterns keepjumps normal! Go\eI@@ -\egg"
+            let l:numberhunks = len(l:matches)
+
+            while l:numberhunks > 0
+                silent execute "keeppatterns keepjumps normal! /^@@\rv/^@@\r\e"
+
+                let l:lines = <SID>get_selection(2, 0, [], v:false, v:false)
+
+                let l:counter = 0
+
+                for l:line in l:lines
+                    " echo l:line[0] . '>' . l:line
+
+                    if l:line[0] ==# '-' || l:line[0] ==# '+' || match(l:line, '{+\|[-') >= 0
+                        let l:counter = l:counter + 1
+                    endif
+                endfor
+
+                " echo l:counter
+
+                if l:counter ==# 0
+                    silent execute "keeppatterns keepjumps normal! gvb\"_d"
+
+                    if getline('.') ==# ''
+                        silent execute "keeppatterns keepjumps normal! \"_dd"
+                    endif
+                endif
+
+                silent execute "keeppatterns keepjumps normal! k"
+
+                let l:numberhunks = l:numberhunks - 1
+            endwhile
+
+            silent execute "normal! :CL\rgg0"
+
+            silent call add(l:cleanup, 'empty hunks')
+        endif
+
         " silent call cursor(l:ccursor) <- Change cursor position!
         silent call setpos('.', l:ccursor)
 
@@ -6263,6 +6312,7 @@ EOF
 
     command! -nargs=0 CB call <SID>cleanup('vfb')
     command! -nargs=0 CC call <SID>cleanup('vfced')
+    command! -nargs=0 CH call <SID>cleanup('vfh')
     command! -nargs=0 CE call <SID>cleanup('vftey')
     command! -nargs=0 CG call <SID>cleanup('vfg')
     command! -nargs=0 CK call <SID>cleanup('vfk')

@@ -439,6 +439,33 @@ cl() {
     cd $1 && ls -la
 }
 
+ignorematches() {
+    if [ "$2" = "" ]; then
+        echo "\e[31mPattern is required!\e[0m"
+
+        return 1
+    fi
+
+    # TMPFILE="`mktemp`.diff" && git diff --ignore-space-change --ignore-all-space $1 --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*' | g -v "[-|+].*$2.*" | g -v "[-|+]\s*$" > $TMPFILE && v -c "CH" -c"wq" $TMPFILE && bat --language diff --plain $TMPFILE
+    TMPFILE="`mktemp`.diff" && git diff --ignore-space-change --ignore-all-space $1 --ignore-blank-lines --ignore-matching-lines '^(\s*)?(\[-)?(\{+)?(\s+)?[\/\*].*' | g -v "([-|+]|[\[-|{+]).*$2.*"  | g -v "^(̣[-|+]|(\s*)?[\[-|{+])\s*$" > $TMPFILE && v -c "CH" -c"wq" $TMPFILE && bat --language diff --plain $TMPFILE
+}
+
+gdI() {
+    ignorematches '' $1
+}
+
+gdcI() {
+    ignorematches '--cached' $1
+}
+
+gddI() {
+    ignorematches '--word-diff' $1
+}
+
+gddcI() {
+    ignorematches '--cached --word-diff' $1
+}
+
 alias \?="apropos"
 alias a="alias"
 alias b="sh ~/working/mysqlramdisk.sh"
@@ -449,6 +476,7 @@ alias f="fzf"
 alias g="grepx"
 alias h="sh ~/working/mysqlschema.sh"
 alias i="ping 8.8.8.8 -c 100"
+# Use v in less to open in $EDITOR
 alias l="less"
 alias m="man"
 alias n="neovide"
@@ -641,8 +669,9 @@ alias gdc="git diff --ignore-space-change --ignore-all-space --cached"
 alias gddc="git diff --ignore-space-change --ignore-all-space --cached --word-diff"
 alias gdca="git diff --cached"
 alias gddca="git diff --cached --word-diff"
+# Ignores comments
 alias gdi="git diff --ignore-space-change --ignore-all-space --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*'"
-alias gdci="git diff --ignore-space-change --ignore-all-space --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*' --cached"
+alias gdci="git diff --ignore-space-change --ignore-all-space --cached --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*'"
 alias ga="git add"
 alias gcm="git commit -S"
 alias gcmn="git commit --no-verify -S"
