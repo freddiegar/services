@@ -1045,8 +1045,8 @@ cnoremap <Down> <Nop>
 cnoremap <Left> <Nop>
 cnoremap <Right> <Nop>
 
-" Close popup from any filetype using Esc
-" nnoremap <silent> <Esc> <Cmd>call <SID>popup_hide()<CR>
+" Close popup from any filetype using Esc aka: diagnostics()
+nnoremap <silent> <Esc> <Cmd>call <SID>popup_hide()<CR>
 
 " Convenience, same to ZZ BUT: keeps splits
 nnoremap <silent> ZZ :update <Bar> if has('gui_running') <Bar> wall <Bar> cd $HOME <Bar> else <Bar> qall <Bar> endif <CR>
@@ -2812,6 +2812,10 @@ xnoremap <silent> <Leader>p :<C-u>Files<CR>
 " WFiles or Files in current work directory
 nnoremap <silent> <expr> <Leader>o ":" . (g:hasgit ? 'WFiles' : 'Files') . "<CR>"
 xnoremap <silent> <expr> <Leader>o ":<C-u>" . (g:hasgit ? 'WFiles' : 'Files') . "<CR>"
+
+" OFiles or Files in parent current work directory
+nnoremap <silent> <expr> <Leader>O ":" . (g:hasgit ? 'OFiles' : "Files expand('%:h:h')") . "<CR>"
+xnoremap <silent> <expr> <Leader>O ":<C-u>" . (g:hasgit ? 'OFiles' : "Files expand('%:h:h')") . "<CR>"
 
 " Files [n]otes directory
 nnoremap <silent> <Leader>n <Cmd>Files ~/working/notes<CR>
@@ -5798,6 +5802,8 @@ EOF
     command! -bang -nargs=? -complete=dir WFiles call <SID>rgffzf('git', g:cwd, <q-args>, <bang>0)
 
     command! -bang -nargs=? -complete=dir IFiles call <SID>rgffzf('fls', expand('%:p:h'), <q-args>, <bang>0)
+
+    command! -bang -nargs=? -complete=dir OFiles call <SID>rgffzf('fls', expand('%:h:h'), <q-args>, <bang>0)
 
     " Git blame
     " @thanks https://gist.github.com/romainl/5b827f4aafa7ee29bdc70282ecc31640

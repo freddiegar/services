@@ -446,8 +446,8 @@ ignorematches() {
         return 1
     fi
 
-    # TMPFILE="`mktemp`.diff" && git diff --ignore-space-change --ignore-all-space $1 --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*' | g -v "[-|+].*$2.*" | g -v "[-|+]\s*$" > $TMPFILE && v -c "CH" -c"wq" $TMPFILE && bat --language diff --plain $TMPFILE
-    TMPFILE="`mktemp`.diff" && git diff --ignore-space-change --ignore-all-space $1 --ignore-blank-lines --ignore-matching-lines '^(\s*)?(\[-)?(\{+)?(\s+)?[\/\*].*' | g -v "([-|+]|[\[-|{+]).*$2.*"  | g -v "^(̣[-|+]|(\s*)?[\[-|{+])\s*$" > $TMPFILE && v -c "CH" -c"wq" $TMPFILE && bat --language diff --plain $TMPFILE
+    # TMPFILE="`mktemp`" && git diff --ignore-space-change --ignore-all-space $1 --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*' | g -v "[-|+].*$2.*" | g -v "[-|+]\s*$" > $TMPFILE && v -c "CH" -c"wq" $TMPFILE && bat --language diff --plain $TMPFILE && rm -f $TMPFILE
+    TMPFILE="`mktemp`" && git diff --ignore-space-change --ignore-all-space $1 --ignore-blank-lines --ignore-matching-lines '^(\s*)?(\[-)?(\{+)?(\s+)?[\/\*].*' | g -v "([-|+]|[\[-|{+]).*$2.*"  | g -v "^(̣[-|+]|(\s*)?[\[-|{+])\s*$" > $TMPFILE && v -c "CH" -c"wq" $TMPFILE && bat --language diff --plain $TMPFILE && rm -f $TMPFILE
 }
 
 gdI() {
