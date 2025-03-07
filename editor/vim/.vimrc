@@ -1357,7 +1357,7 @@ cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() =~# '^w') ? 'update' 
 " isregex (1/0), file (string), [filter (string)]: void
 function! s:file_filter(isregex, file, filter) abort
     if a:file ==# ''
-        echo 'Nothing to do.'
+        echo 'Nothing to do. (empty name)'
 
         return
     endif
@@ -1372,7 +1372,7 @@ endfunction
 
 " [F]ilter data in files easily
 " @see https://vimways.org/2019/vim-and-the-shell/
-command! -nargs=? -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
+command! -nargs=+ -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
 
 " Sorry but :help is better
 nmap <silent> <F1> mzgg=G`z
@@ -2348,6 +2348,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc, 9.1 has built-in (:packadd comment) same for nvim but... this respect empty lines
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
+Plug 'tpope/vim-abolish'                                        " [c]oe[r]cion: s: snake_case, m MixedCase, c camelCase, p PascalCase, u UPPER_CASE, - dash-case, . dot.case
+                                                                " :%S/square/rectangle/g -> replace Square -> Rectangle | square -> rectangle | SQUARE -> RECTANGLE
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
 " Plug 'justinmk/vim-dirvish'                                     " Vifm but from Vim
