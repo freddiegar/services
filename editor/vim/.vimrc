@@ -2245,6 +2245,7 @@ cnoremap <C-x><C-n> noautocmd cdo
 
 " @simple https://github.com/tpope/vim-eunuch
 " Shortcuts to recurrent files or directories
+cnoremap <C-x><C-v> .vimrc.setup
 cnoremap <C-x><C-d> ~/Downloads/
 cnoremap <C-x><C-l> ~/.vimrc.local
 cnoremap <C-x><C-h> /var/www/html/
@@ -4221,7 +4222,7 @@ augroup AutoCommands
     autocmd!
 
     " Reload after save (if asyncrun isn't running!) and run PlugInstall if there are missing plugins
-    autocmd BufWritePost .vimrc,.vimrc.local nested if get(g:, 'asyncrun_status', '') !=# 'running' | source $MYVIMRC | endif
+    autocmd BufWritePost .vimrc,.vimrc.local,.vimrc.setup nested if get(g:, 'asyncrun_status', '') !=# 'running' | source $MYVIMRC | endif
                 \ | if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
                 \ |     PlugInstall
                 \ | endif
@@ -5972,9 +5973,9 @@ EOF
         if !argc() && g:hasgit && empty(v:this_session) && filereadable(g:session_file) && !&modified
             silent! execute 'source ' . g:session_file
 
-            let l:message = 'Loaded ' . l:session . '##ENV####INF####IAA##.'
+            let l:message = 'Loaded ' . l:session . '##ENV####INF####IAA####HTS##.'
         elseif !argc() && g:hasgit
-            let l:message = 'Created ' . l:session . '##ENV####INF####IAA##.'
+            let l:message = 'Created ' . l:session . '##ENV####INF####IAA####HTS##.'
         endif
 
         if l:envfile !=# ''
@@ -5992,6 +5993,10 @@ EOF
             let l:message = l:message ==# '' ? 'Enabled AI Assistant.' : substitute(l:message, '##IAA##', ' (using IA)', '')
         endif
 
+        if g:hasts
+            let l:message = l:message ==# '' ? 'Enabled TS Syntax.' : substitute(l:message, '##HTS##', ' (and TS)', '')
+        endif
+
         set undofile                                            " Enable undo world (default: off)
         let &undodir = g:undodir
 
@@ -6003,6 +6008,7 @@ EOF
             let l:message = substitute(l:message, '##ENV##', '', '')
             let l:message = substitute(l:message, '##INF##', '', '')
             let l:message = substitute(l:message, '##IAA##', '', '')
+            let l:message = substitute(l:message, '##HTS##', '', '')
 
             echomsg l:message
         endif
@@ -6628,6 +6634,10 @@ endtry
 
 if filereadable(expand('~/.vimrc.local'))
     source ~/.vimrc.local
+endif
+
+if filereadable('.vimrc.setup')
+    source .vimrc.setup
 endif
 
 execute 'augroup END'

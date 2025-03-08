@@ -6,6 +6,8 @@
 .hasaia
 # Enable Treesitter
 .hasts
+# Enable Extra Settings in Workspace
+.vimrc.setup
 # aka: composer hole
 vendor
 # aka: npm hole
