@@ -1572,7 +1572,7 @@ nnoremap <silent> <Leader>gS :let @+=system("date +'%Y-%m-%d %H:%M:%S' -ud @" . 
             \ <Bar> echo 'Copied:   ' . @+<CR>
 
 nnoremap <silent> <Leader>ge :let @+=<SID>get_fake()
-            \ <Bar> echomsg 'Copied:   ' . @+<CR>
+            \ <Bar> call Message('Copied:   ' . @+)<CR>
 
 " Shortcuts for Date/Times in Insert Mode
 inoremap <silent> <F6> <C-r>='Y-m-d'<CR>
@@ -1598,21 +1598,21 @@ nmap <silent> <Leader>gr <Plug>GetReverseRepeatable
 nnoremap <silent> <Leader>gx :call <SID>changebrowser()<CR>
 
 nnoremap <silent> <Leader>gP :let @+=<SID>generate_password()
-            \ <Bar> echomsg 'Copied:   ' . @+<CR>
+            \ <Bar> call Message('Copied:   ' . @+)<CR>
 
 nnoremap <silent> <Leader>gH :let @+=<SID>generate_hash()
-            \ <Bar> echomsg 'Copied:   ' . @+<CR>
+            \ <Bar> call Message('Copied:   ' . @+)<CR>
 
 nnoremap <silent> <Leader>gM :let mask=<SID>generate_mask('word')
             \ <Bar> if len(mask) > 0
             \ <Bar> let @+=mask[1]
-            \ <Bar> echomsg 'Copied:   ' . mask[0] . ' -> ' . @+
+            \ <Bar> call Message('Copied:   ' . mask[0] . ' -> ' . @+)
             \ <Bar> endif<CR>
 
 xnoremap <silent> <Leader>gM :<C-u>let mask=<SID>generate_mask(visualmode())
             \ <Bar> if len(mask) > 0
             \ <Bar> let @+=mask[1]
-            \ <Bar> echomsg 'Copied:   ' . mask[0] . ' -> ' . @+
+            \ <Bar> call Message('Copied:   ' . mask[0] . ' -> ' . @+)
             \ <Bar> endif<CR>
 
 nnoremap <silent> <Plug>DeleteMethodRepeatable <Cmd>call <SID>delete_method()<CR>
@@ -3441,14 +3441,14 @@ function! s:check_large_file(file) abort
         setlocal undolevels=-1
 
         echohl WarningMsg
-        echomsg 'The file has ' . l:hfsize . ' MB (> ' . l:hmaxsize . ' MB), so some options were changed.'
+        call Message('The file has ' . l:hfsize . ' MB (> ' . l:hmaxsize . ' MB), so some options were changed.')
         echohl None
     elseif !exists('g:syntax_on') && bufname('%') !=# ''
         filetype detect
         syntax enable
         call <SID>postcolorscheme()
 
-        " echomsg 'The file has ' . l:hfsize . ' MB (<= ' . l:hmaxsize . ' MB), options were restored.'
+        " call Message('The file has ' . l:hfsize . ' MB (<= ' . l:hmaxsize . ' MB), options were restored.')
     endif
 endfunction
 
@@ -4166,6 +4166,14 @@ endfunction
 
 function! s:exception() abort
     return join(split(v:exception, ' ')[1:-1], ' ')
+endfunction
+
+function! Message(message, ...) abort
+    let l:ignoreonstart = a:0 > 0 ? a:1 : v:false
+
+    if !l:ignoreonstart
+        echomsg strftime('%T') . '> ' . a:message
+    endif
 endfunction
 
 " Open notes in Normal|Select|Operator Mode
@@ -5686,7 +5694,7 @@ EOF
                 \ |     silent! execute "%sort!"
                 \ |     silent! execute "write"
                 \ |     silent! execute "redraw!"
-                \ |     echomsg 'Cleaned-up: PHPUnit debug file >= 10'
+                \ |     call Message('Cleaned-up: PHPUnit debug file >= 10')
                 \ | elseif !exists('b:cleanup') && getline(1)[0:7] ==# 'PHPUnit '
                 \ |     let b:cleanup = 1
                 \ |     if &undolevels ==# -1 | setlocal undolevels=1 | endif
@@ -5699,7 +5707,7 @@ EOF
                 \ |     silent! execute "%sort! f"
                 \ |     silent! execute "write"
                 \ |     silent! execute "redraw!"
-                \ |     echomsg 'Cleaned-up: PHPUnit debug file < 10'
+                \ |     call Message('Cleaned-up: PHPUnit debug file < 10')
                 \ | endif
 
     " Cleanup test phpunit log
@@ -5737,7 +5745,7 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps normal! gg/^o\rO\egg/^s\rO\egg/^v\rO\e/^x\rO\e"
                 \ |     silent! execute "write"
                 \ |     silent! execute "redraw!"
-                \ |     echomsg 'Cleaned-up: Vim Keys file'
+                \ |     call Message('Cleaned-up: Vim Keys file')
                 \ | endif
 
     " Cleanup notes
@@ -5754,7 +5762,7 @@ EOF
                 \ |     silent! execute "keeppatterns keepjumps normal! ggIT: TO-DOI: IN-PROGRESSP: PULL-REQUESTQ: QA-TO-CERTIFYD: DONES: STOPPED\e"
                 \ |     silent! execute "write"
                 \ |     silent! execute "redraw!"
-                \ |     echomsg 'Cleaned-up: Weekly notes file'
+                \ |     call Message('Cleaned-up: Weekly notes file')
                 \ | endif
 
     " Open files with external application
@@ -5899,7 +5907,7 @@ EOF
         endif
 
         if l:message !=# ''
-            echomsg l:message
+            call Message(l:message)
         endif
     endfunction
 
@@ -5965,7 +5973,7 @@ EOF
         let l:session = split(g:session_file, '/')[-1]
 
         if <SID>mustbeignore()
-            echomsg 'Any session was ignored.'
+            call Message('Any session was ignored.')
 
             return
         endif
@@ -6010,7 +6018,7 @@ EOF
             let l:message = substitute(l:message, '##IAA##', '', '')
             let l:message = substitute(l:message, '##HTS##', '', '')
 
-            echomsg l:message
+            call Message(l:message)
         endif
 
         " First start dont load LSP, then... FORCE! for each window
@@ -6099,7 +6107,7 @@ EOF
             " call <SID>sessionsetqf(l:qflist, l:qfinfo)
 
             if has('gui_running')
-                echomsg 'Saved ' . split(g:session_file, '/')[-1]
+                call Message('Saved ' . split(g:session_file, '/')[-1])
             endif
 
             let v:this_session = ''
