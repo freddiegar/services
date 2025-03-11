@@ -269,6 +269,7 @@ if !get(v:, 'vim_did_enter', !has('vim_starting'))
         let g:hasaia = filereadable(g:cwd . '/.hasaia') || filereadable(g:cwd . '/../.hasaia')
         let g:hasts = g:isneovim && (exists('g:neovide') || filereadable(g:cwd . '/.hasts') || filereadable(g:cwd . '/../.hasts'))
         let g:qfcommand = get(g:, 'qfcommand', '')
+        let g:gitcommand = 'git --no-pager --no-optional-locks --literal-pathspecs -c gc.auto=0'
 
         " See changebrowser function
         let g:browser = get(g:, 'browser', 'zen')
@@ -932,8 +933,8 @@ function! s:statusline(lastmode) abort
 
         setlocal statusline+=\%<                                " Truncate long statusline here
 
-        setlocal statusline+=%{GetNameBranch()}                 " Branch name repository
-        setlocal statusline+=\                                  " Extra space
+        " setlocal statusline+=%{GetNameBranch()}                 " Branch name repository
+        " setlocal statusline+=\                                  " Extra space
 
         setlocal statusline+=%3*                                " User3 color
         setlocal statusline+=%{UnexpectedStatusline()}          " Conditional data in statuline
@@ -1279,62 +1280,80 @@ command! -nargs=1 -complete=dir E execute "normal! :!vifm <f-args><CR>"
 command! -nargs=0 -bang U GutentagsUpdate<bang>
 
 " Diff
-command! -nargs=0 D call <SID>file_diff(expand('%'))
+command! -nargs=0 -bang D  call <SID>file_diff(expand('%'), <bang>0, '--ignore-space-change --ignore-all-space')
+command! -nargs=0 -bang DD call <SID>file_diff(expand('%'), <bang>0, '--ignore-space-change --ignore-all-space --cached')
 
-" file (string): void
-function! s:file_diff(file) abort
+" file (string), split (bool), options (string): void
+function! s:file_diff(file, split, options) abort
     if !g:hasgit
         echo 'Nothing to do (no git).'
 
         return 1
     endif
 
-    let l:result = system('git diff ' . a:file)
+    let l:result = system(g:gitcommand .' diff ' . a:options . ' ' . a:file)
 
     if l:result ==# ''
-        echo 'Nothing to do.'
+        echo 'Nothing to do (no diff).'
 
         return 1
     endif
 
-    new
+    silent execute 'keepalt ' . (a:split ? 'new' : 'vnew')
     setlocal noswapfile
     setlocal noloadplugins
     setfiletype diff
     setlocal paste
-    silent execute 'normal! i' . l:result
-    setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
-    normal! gg
+    silent execute 'normal! i' . trim(l:result)
+    setlocal nowrap nolist nomodifiable nomodified nobuflisted nopaste bufhidden=delete
+    normal! gg0
+
+    silent execute 'keepalt wincmd p'
 endfunction
 
 " Versus
-command! -nargs=0 V call <SID>file_versus(expand('%'))
+command! -nargs=? -bang V  call <SID>file_versus(expand('%'), <bang>0, '<args>')
+command! -nargs=? -bang VV call <SID>file_versus(expand('%'), <bang>0, 'develop')
 
-" file (string): void
-function! s:file_versus(file) abort
+" file (string), split (bool) revision (string): void
+function! s:file_versus(file, split, revision) abort
     if !g:hasgit || a:file ==# ''
         echo 'Nothing to do (no git).'
 
         return 1
     endif
 
+    let l:line = line('.')
+    let l:revision = len(a:revision) > 0 ? a:revision : 'HEAD'
+    let l:alternate = fnameescape(substitute(l:revision, '/', '-', 'g') . '-' . split(a:file, '/')[-1])
+
     if get(b:, 'isversus', v:false)
-        echo 'Nothing to do (ready!).'
+        echo 'Nothing to do (already versus!).'
 
         return 2
     endif
 
-    let l:alternate = '/' . join(split(g:cwd, '/')[0 : -2], '/') . '/ro-' . g:working[1] . '/' . a:file
+    let l:result = system(g:gitcommand . ' show ' . l:revision . ':' . a:file)
 
-    if !filereadable(l:alternate)
-        echo 'Nothing to do (' . l:alternate . ').'
+    if v:shell_error > 0                                        " <-- $? @see https://www.gnu.org/software/bash/manual/bash.html
+        echohl WarningMsg
+        echo len(l:result) > 0 ? l:result : 'Return:   ' . v:shell_error
+        echohl None
 
         return 3
     endif
 
-    if bufwinnr(bufnr(fnameescape(l:alternate))) > -1
+    if l:result ==# ''
+        echo 'Nothing to do (empty show).'
+
+        return 4
+    endif
+
+    if bufwinnr(bufnr(l:alternate)) > -1
         " Reuse open buffer if exists in current window
-        silent execute 'keepalt drop ' . fnameescape(l:alternate)
+        silent execute 'keepalt drop ' . l:alternate
+
+        silent execute ':' . l:line
 
         return
     endif
@@ -1342,10 +1361,14 @@ function! s:file_versus(file) abort
     " Close any other versus file opened
     silent execute "keepalt windo if get(b:, 'isversus') | bdelete! | endif"
 
-    silent execute 'keepalt vsplit +' . line('.') . ' ' . fnameescape(l:alternate)
+    silent execute 'keepalt ' . (a:split ? 'split' : 'vsplit') . ' ' . l:alternate
     setlocal noswapfile
     setlocal noloadplugins
-    setlocal nowrap nolist nomodifiable nomodified nobuflisted bufhidden=delete
+    setlocal paste
+    silent execute 'normal! i' . trim(l:result)
+    silent execute ':' . l:line
+    silent execute 'normal! 0'
+    setlocal nowrap nolist nomodifiable nomodified nobuflisted nopaste bufhidden=delete
 
     silent let b:isversus = v:true
     silent execute 'keepalt wincmd p'
@@ -3606,7 +3629,7 @@ nnoremap <silent> <Leader>gv :Git rm  % <Bar> echo 'Removed:  ' . expand('%') <B
 nnoremap <silent> <Leader>gu :Git update-index --assume-unchanged % <Bar> echo 'Assume h: ' . expand('%') <Bar> call <SID>statusline('f')<CR>
 nnoremap <silent> <Leader>gU :Git update-index --no-assume-unchanged % <Bar> echo 'Unassume: ' . expand('%') <Bar> call <SID>statusline('f')<CR>
 " Use directory project over directory of current file
-nnoremap <silent> <Leader>gt :execute "let @t=system('git -C ' . g:cwd . ' describe --abbrev=0 ' . expand('<cWORD>'))" <Bar> echo 'Tagged in: ' . @t <Bar> call <SID>statusline('f')<CR>
+nnoremap <silent> <Leader>gt :execute "let @t=system(g:gitcommand . ' -C ' . g:cwd . ' describe --abbrev=0 ' . expand('<cWORD>'))" <Bar> echo 'Tagged in: ' . @t <Bar> call <SID>statusline('f')<CR>
 
 " Resolve conflicts
 " @see https://vim.fandom.com/wiki/A_better_Vimdiff_Git_mergetool
@@ -3970,7 +3993,7 @@ function! s:run(range, interactive, ...) abort
         let @+ = l:run
 
         echohl WarningMsg
-        echo len(l:result) ? l:result : 'Return:   ' . v:shell_error
+        echo len(l:result) > 0 ? l:result : 'Return:   ' . v:shell_error
         echohl None
 
         return 1
@@ -5831,7 +5854,7 @@ EOF
         "  -C: Or the commit that created the file
         "  -C: Or any commit
         "  -L: Line range
-        let l:result = systemlist('git blame -w -M ' . a:options . '-L ' . a:line1 . ',' . a:line2 . ' ' . shellescape(expand('%:p')))
+        let l:result = systemlist(g:gitcommand . ' blame -w -M ' . a:options . '-L ' . a:line1 . ',' . a:line2 . ' ' . shellescape(expand('%:p')))
 
         let l:commit = len(l:result) > 0 ? split(l:result[0])[0] : '0000000000'
 
