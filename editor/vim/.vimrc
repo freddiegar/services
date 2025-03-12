@@ -4066,18 +4066,18 @@ function! s:get_selection(range, interactive, args, ...) abort
 
             " Drop comments in selection
             let l:cleanlines = []
-            let l:comment = trim(split(&commentstring)[0])
+            let l:comment = &commentstring !=# '' ? trim(split(&commentstring)[0]) : ''
 
             for l:line in l:lines
                 let l:line = l:trim ? trim(l:line) : l:line
 
                 " Starting
-                if l:line =~# '^' . l:comment
+                if l:comment !=# '' && l:line =~# '^' . l:comment
                     continue
                 endif
 
                 " In middle
-                if l:line =~# l:comment
+                if l:comment !=# '' && l:line =~# l:comment
                     let l:line = substitute(l:line, l:comment . '.*$', '', 'g')
                 endif
 
@@ -4228,7 +4228,7 @@ function! s:notes(append, ...) abort
         return 0
     endif
 
-    " let l:saved_start_register = @+
+    let l:saved_start_register = @+
 
     silent execute 'keeppatterns keepjumps %g/^' . l:header . "/let l:matches+=[{'lnum':line('.')}]"
 
@@ -4250,7 +4250,7 @@ function! s:notes(append, ...) abort
 
     silent execute "normal! Gzto" . l:headertime . "- \e"
 
-    " let @+ = l:saved_start_register
+    let @+ = l:saved_start_register
 
     return 0
 endfunction
@@ -5704,6 +5704,11 @@ EOF
     autocmd FileType sql if <SID>db() !=# '' | call setreg('r', "vip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp") | endif
 
     " [e]nglish translation
+    autocmd FileType json call setreg('e', "_f:vi\":T en =expand('%:p:h:t')\r\r:sleep 5\rvi\"P")
+    " [s]panish translation
+    autocmd FileType json call setreg('s', "_f:vi\":T es =expand('%:p:h:t')\r\r:sleep 5\rvi\"P")
+
+    " [e]nglish translation
     autocmd FileType php call setreg('e', "_f>vi':T en =expand('%:p:h:t')\r\r:sleep 5\rvi'P")
     " [s]panish translation
     autocmd FileType php call setreg('s', "_f>vi':T es =expand('%:p:h:t')\r\r:sleep 5\rvi'P")
@@ -6231,7 +6236,11 @@ EOF
         endif
 
         if index(l:options, 'k') >= 0
-            silent! keeppatterns %s/: ".*"\(,\)\?//e
+            if &filetype ==# 'php'
+                silent! keeppatterns %s/ => .*//e
+            else
+                silent! keeppatterns %s/: ".*"\(,\)\?//e
+            endif
 
             silent call add(l:cleanup, 'json values')
         endif
