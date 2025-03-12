@@ -5572,13 +5572,16 @@ EOF
 
         " Setup default
         let l:fixertype = 'global'
-        let l:fixerpath = 'php-cs-fixer'
+        let l:fixerpath = '/usr/local/bin/php-cs-fixer'
+        let l:fixerphpx = 'php8.3' " PHP 8.4 doesnt work
         let l:fixerversion = 'unknow'
         let l:configpath = '/var/www/html/freddiegar/services/'
 
+        " Setup repository
         if executable('vendor/bin/php-cs-fixer')
             let l:fixertype = 'local'
             let l:fixerpath = 'vendor/bin/php-cs-fixer'
+            let l:fixerphpx = 'phpx'
         endif
 
         if !executable(l:fixerpath)
@@ -5589,7 +5592,7 @@ EOF
             return ''
         endif
 
-        let l:fixerversion = system('phpx ' . l:fixerpath . " --version 2> /dev/null | cut -d ' ' -f 4 | cut -d '.' -f 1 | tr -d '\n'")
+        let l:fixerversion = system(l:fixerphpx . ' ' . l:fixerpath . " --version 2> /dev/null | cut -d ' ' -f 4 | cut -d '.' -f 1 | tr -d '\n'")
 
         " Setup default
         let l:configversion = l:fixerversion
@@ -5615,7 +5618,7 @@ EOF
 
         silent update!
 
-        let l:result = system('phpx ' . l:fixerpath . ' fix ' . expand('%') . ' --config="' . l:configfile . '"')
+        let l:result = system(l:fixerphpx . ' ' . l:fixerpath . ' fix ' . expand('%') . ' --config="' . l:configfile . '"')
 
         silent edit!
 

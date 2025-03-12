@@ -843,7 +843,7 @@ Test legacy code in PHP
 # Unit Test in  PHP
 composer global require phpunit/phpunit
 # Fixes PHP
-composer global require friendsofphp/php-cs-fixer
+composer global require friendsofphp/php-cs-fixer --dev
 # Simulate request from Apache
 composer global require jelix/fakeserverconf
 ```
