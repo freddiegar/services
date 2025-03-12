@@ -1152,7 +1152,7 @@ endfor
 
 function! s:undoinupper() abort
     for uppercase in split('ABCDEFGHIJKLMNOPQRSTUVWXYZ', '\zs')
-        silent execute "inoremap <silent> " . uppercase . " <C-g>u" . uppercase
+        silent execute "inoremap <silent> <buffer> " . uppercase . " <C-g>u" . uppercase
     endfor
 endfunction
 
@@ -2405,7 +2405,7 @@ Plug 'kristijanhusak/vim-dadbod-completion', {'for': 'sql'}     " DB autocomplet
 " Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 
 Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
-" Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
+Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
 Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
 " Plug 'romainl/vim-qf'                                           " Run Cfilter using wrapper: Keep|Filter, Reject|Filter!, Restore
 Plug 'mbbill/undotree'                                          " Run undo world: g-, g+ . Not use 'on' option.
@@ -2569,7 +2569,7 @@ function! s:srunjob() abort
 
     let @+ = join(s:result)
 
-    echo @+
+    call Message(@+)
 endfunction
 
 " command (string)
@@ -2599,13 +2599,15 @@ function! s:translate(range, inverse, ...) abort
     let l:content = <SID>get_selection(a:range, 0, l:fwords)
     let l:command = ['curl', '-s', '-L', 'https://script.google.com/macros/s/AKfycbywwDmlmQrNPYoxL90NCZYjoEzuzRcnRuUmFCPzEqG7VdWBAhU/exec', '-d']
 
-    if a:inverse ==# '!'
-        let l:command = l:command + [json_encode({'source': l:target, 'target': l:source, 'text': l:content})]
-    else
-        let l:command = l:command + [json_encode({'source': l:source, 'target': l:target, 'text': l:content})]
+    if a:inverse ==# 1
+        let l:tempor = l:target
+        let l:target = l:source
+        let l:source = l:tempor
     endif
 
-    echo 'Translating...'
+    let l:command = l:command + [json_encode({'source': l:source, 'target': l:target, 'text': l:content})]
+
+    call Message('T ' . l:source .  ' > ' . l:target . ': ' . l:content[0 : 15])
 
     call <SID>runjob(l:command)
 endfunction
@@ -2938,36 +2940,41 @@ nnoremap <silent> <Leader>tl :cclose <Bar> silent! bd! fugitive//* <Bar> silent!
 nnoremap <silent> <Leader>tg :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> TestVisit<CR>
 nnoremap <silent> <Leader>tq <Cmd>call <SID>test_strategy()<CR>
 
-" " Vim Debug
-" " @see https://github.com/vim-vdebug/vdebug
-" let g:vdebug_keymap = #{
-"             \ run: '<Home>',
-"             \ run_to_cursor: '<S-Home>',
-"             \ step_over: '<Right>',
-"             \ step_into: '<Down>',
-"             \ step_out: '<Up>',
-"             \ detach: '<Left>',
-"             \ close: '<End>',
-"             \ set_breakpoint: '<Leader>q',
-"             \ get_context: '<Leader>Q',
-"             \ eval_under_cursor: '<Leader>v',
-"             \ eval_visual: '<Leader>V',
-"             \}
-"
-" if !exists('g:vdebug_options')
-"     let g:vdebug_options = {}
-" endif
-"
-" let g:vdebug_options = #{
-"             \ port: 9003,
-"             \ timeout: 10,
-"             \ on_close: 'detach',
-"             \ break_on_open: 0,
-"             \ watch_window_style: 'compact',
-"             \ simplified_status: 1,
-"             \ continuous_mode: 1,
-"             \ ide_key: 'PHPSTORM',
-"             \}
+" Vim Debug
+" @see https://github.com/vim-vdebug/vdebug
+let g:vdebug_keymap = #{
+            \ run: '<Home>',
+            \ run_to_cursor: '<S-Home>',
+            \ step_over: '<Right>',
+            \ step_into: '<Down>',
+            \ step_out: '<Up>',
+            \ detach: '<Left>',
+            \ close: '<End>',
+            \ set_breakpoint: '<Leader>q',
+            \ get_context: '<Leader>Q',
+            \ eval_under_cursor: '<Leader>v',
+            \ eval_visual: '<Leader>V',
+            \}
+
+if !exists('g:vdebug_options')
+    let g:vdebug_options = {}
+endif
+
+let g:vdebug_options = #{
+            \ port: 9003,
+            \ timeout: 10,
+            \ on_close: 'detach',
+            \ break_on_open: 0,
+            \ watch_window_style: 'compact',
+            \ simplified_status: 1,
+            \ continuous_mode: 1,
+            \ ide_key: 'PHPSTORM',
+            \}
+
+" @see :h VdebugOptions-path_maps. TL;DR: remote: local
+" let g:vdebug_options.path_maps = {
+"             \ '/remote/docker/path': $PWD,
+"             \ }
 
 " ALE
 " @see https://github.com/dense-analysis/ale
@@ -3654,8 +3661,8 @@ nnoremap <silent> <Leader>gt :execute "let @t=system(g:gitcommand . ' -C ' . g:c
 "   \r  -> Go to file
 
 " Go [h]ighligth [h]unk
-nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal! /\\v^[<>=\|]{4,7}\\s?[a-zA-Z0-9-_]*$\rzz"<CR>
-" nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal! ?\\v^[<>=\|]{4,7}\\s?[a-zA-0-9Z0-9-_]*$\rzz"<CR>
+nnoremap <silent> <Leader>hh :silent! execute "keepjumps normal! /\\v^[<>=\|]{4,7}\\s?[a-zA-Z0-9]?\\s?.*$\rzz"<CR>
+" nnoremap <silent> <Leader>HH :silent! execute "keepjumps normal! ?\\v^[<>=\|]{4,7}\\s?[a-zA-Z0-9]?\\s?.*$\rzz"<CR>
 
 " nnoremap <silent> <expr> <Leader>j if &diff <Bar> silent! execute "keepjumps normal! /^@@\rzt" <Bar> endif<CR>
 " nnoremap <silent> <expr> <Leader>k if &diff <Bar> silent! execute "keepjumps normal! ?^@@\rzt" <Bar> endif<CR>
@@ -5224,6 +5231,7 @@ EOF
 
     " PHP Customization
     " autocmd FileType php inoremap <silent> <buffer> -> -><C-x><C-n>
+    autocmd FileType php nnoremap <silent> <Home>   :VdebugStart<CR>
     autocmd FileType php nnoremap <silent> <buffer> <Leader>uu <Cmd>call phpactor#UseAdd()<CR>
     autocmd FileType php nnoremap <silent> <buffer> <Plug>AddIncompleteMarkRepeatable <Cmd>call <SID>append_char('i')<CR>
     autocmd FileType php nmap     <silent> <buffer> <i <Plug>AddIncompleteMarkRepeatable
@@ -5692,6 +5700,11 @@ EOF
     " [r]un sql
     autocmd FileType sql if <SID>db() !=# '' | call setreg('r', "vip:R\r:sleep 500m\r\<C-w>wggj\"zyG\<C-w>w\<C-w>o\"zp") | endif
 
+    " [e]nglish translation
+    autocmd FileType php call setreg('e', "_f>vi':T en =expand('%:p:h:t')\r\r:sleep 5\rvi'P")
+    " [s]panish translation
+    autocmd FileType php call setreg('s', "_f>vi':T es =expand('%:p:h:t')\r\r:sleep 5\rvi'P")
+
     " [t]ag release
     autocmd FileType zsh call setreg('t', "gg_ da\"pI\"\eggJf[lyE_/-a\rWviWPGA\"\e")
 
@@ -6056,6 +6069,7 @@ EOF
                     \ || buflisted(a:item) == 0
                     \ || (match(a:item, '.') >= 0 && split(a:item, '\.')[-1] ==# 'dbout')
                     \ || isdirectory(a:item)
+                    \ || match(a:item, 'Debugger*') >= 0
                     \ || (g:working[1] !=# 'working' && a:item =~? '\/notes\/' && getbufvar(a:item, '&filetype') ==# 'markdown')
                     \ || (g:working[1] !=# 'services' && a:item !~? 'editor/' && a:item =~? '.vimrc*' && getbufvar(a:item, '&filetype') ==# 'vim')
     endfunction

@@ -813,7 +813,7 @@ echo '
 [ -f ~/.bash_aliases ] && \. ~/.bash_aliases' >> ~/.zshenv
 ```
 
-# PHP 8.3
+# PHP
 
 ```bash
 echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only oldest Ubuntu or with oldest version's PHP (Tune ubuntu version is required :|)
@@ -838,6 +838,16 @@ sudo apt-get install -y php8.4-xml
 sudo apt-get install -y php8.4-zip
 ## sudo apt-get remove php8.4\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
+```
+
+## PHP Xdebug (I'm not god)
+
+```bash
+sudo apt-get install -y php7.4-xdebug
+sudo apt-get install -y php8.1-xdebug
+sudo apt-get install -y php8.2-xdebug
+sudo apt-get install -y php8.3-xdebug
+sudo apt-get install -y php8.4-xdebug
 ```
 
 ## Composer for PHP

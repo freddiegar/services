@@ -469,18 +469,18 @@ sudo phpdismod ast
 
 ### Troubles
 
-1. E: Could not connect to client. :-(
+0. E: Could not connect to client. :-(
 - Check config in IDE, specialy: port enable
 - Check IP in: `xdebug.remote_host`
 - Check Port in: `xdebug.remote_port`
 
-2. E: Time-out connecting to client (Waited: 200 ms). :-(
+0. E: Time-out connecting to client (Waited: 200 ms). :-(
 - Start listening in IDE
 
-3. E: Cannot install, php_dir for channel "pecl.php.net" is not writeable by the current user
+0. E: Cannot install, php_dir for channel "pecl.php.net" is not writeable by the current user
 - Run command as sudo user
 
-4. E: Xdebug requires Zend Engine API version 420210902.
+0. E: Xdebug requires Zend Engine API version 420210902.
    E: The Zend Engine API version 320190902 which is installed, is outdated.
 - Check API `zend_extension` is equals in PHP version, not? Fixed!
     php -i | grep '^Zend Extension =>'
@@ -489,6 +489,9 @@ sudo phpdismod ast
     sudo apt install php7.4-xdebug
 - Set path extension to relative path:
     zend_extension=/usr/lib/php/20210902/xdebug.so -> zend_extension=xdebug.so
+
+0. Check connection from web server to localhost (Editor)
+    telnet host.docker.internal 9003
 
 ### VSCode
 
