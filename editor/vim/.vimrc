@@ -895,7 +895,8 @@ if !g:isneovim
 endif
 
 " Always show statusline (default: 1=if windows greater that 1). In nvim use statusline global
-silent execute 'set laststatus=' . (g:isneovim ? '3' : '2')
+" silent execute 'set laststatus=' . (g:isneovim ? '3' : '2')
+set laststatus=2                                                " Always show statusline (default: 1=if windows greater that 1)
 set showtabline=0                                               " Never show tabs (default: 1=tabs > 1)
 
 " lastmode (string)
@@ -4202,7 +4203,8 @@ function! Message(message, ...) abort
     let l:ignoreonstart = a:0 > 0 ? a:1 : v:false
 
     if !l:ignoreonstart
-        echomsg strftime('%T') . '> ' . a:message
+        " echomsg strftime('%T') . '> ' . a:message
+        echomsg a:message
     endif
 endfunction
 
@@ -6045,9 +6047,9 @@ EOF
             let l:message = l:message ==# '' ? 'Enabled AI Assistant.' : substitute(l:message, '##IAA##', ' (using IA)', '')
         endif
 
-        if g:hasts
-            let l:message = l:message ==# '' ? 'Enabled TS Syntax.' : substitute(l:message, '##HTS##', ' (and TS)', '')
-        endif
+        " if g:hasts
+        "     let l:message = l:message ==# '' ? 'Enabled TS Syntax.' : substitute(l:message, '##HTS##', ' (and TS)', '')
+        " endif
 
         set undofile                                            " Enable undo world (default: off)
         let &undodir = g:undodir
