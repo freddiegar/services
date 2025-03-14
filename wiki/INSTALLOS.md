@@ -1764,6 +1764,17 @@ sudo apt-get install onefetch
 # echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
 ```
 
+# Redshif (for my eyes please)
+
+[See](https://github.com/jonls/redshift)
+
+```bash
+sudo apt-get install redshift
+mkdir -p ~/.config/redshift
+ln -s `pwd`/redshift/redshift.conf ~/.config/redshift/redshift.conf
+# sudo apt-get remove redshift && sudo apt-get autoremove
+```
+
 # Picom (alternative for xcompmgr)
 
 [See](https://github.com/yshui/picom)
