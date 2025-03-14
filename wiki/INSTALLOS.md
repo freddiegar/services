@@ -1764,6 +1764,18 @@ sudo apt-get install onefetch
 # echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
 ```
 
+# Picom (alternative for xcompmgr)
+
+[See](https://github.com/yshui/picom)
+
+```bash
+sudo apt-get install picom
+mkdir -p ~/.config/picom
+ln -s `pwd`/picom/picom.conf ~/.config/picom/picom.conf
+# sudo apt-get remove picom && sudo apt-get autoremove
+```
+> Slower and more customizable, In fact: I dont use it
+
 ## Auto-cpufreq (well: bluetooth fails)
 
 [See](https://github.com/AdnanHodzic/auto-cpufreq?tab=readme-ov-file#auto-cpufreq-installer)
