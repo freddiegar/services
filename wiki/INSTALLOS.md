@@ -1931,11 +1931,12 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 # Summary
 
 ## Commands
+> :Rj_wv$Pj
 
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 24.10
 uname -r
-# 6.11.0-18-generic
+# 6.11.0-19-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -1962,7 +1963,7 @@ echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | gr
 # Stable:   v0.7.2-LuaJIT 2.1.0-beta3
 # Unstable: v0.11.0-dev-LuaJIT-2.1.1719379426
 neovide --version | awk '{print $2}'
-# 0.13.3
+# 0.14.1
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.12
 curl --version | grep -e "^curl " | awk '{print $2}'
@@ -1996,7 +1997,7 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.4.4
+# 8.4.5
 # nvm --version
 # # 0.39.3
 npm --version
@@ -2016,7 +2017,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.23.4
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(a484466e)
+# 6.1.0(f272e5cf)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -2030,14 +2031,14 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 136.0b9
+# 137.0b6
 zen --version | awk '{print $3}'
-# 1.8.2t
+# 1.10t
 dpkg --list | wc --lines
-# 2590
+# 2592
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 97
+# 95
 apt list --installed | wc --lines
-# 2390
+# 2338
 apt-mark showmanual | wc --lines
 # 442

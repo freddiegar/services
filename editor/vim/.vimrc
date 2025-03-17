@@ -244,7 +244,9 @@
 " - mx  Save position (line and column) to recover use in registers in combination with mz
 
 " @see :h initialization
-if !get(v:, 'vim_did_enter', !has('vim_starting'))
+let g:initialization = !get(v:, 'vim_did_enter', !has('vim_starting'))
+
+if g:initialization
     " cwd (string)
     function! s:initialize(cwd) abort
         let g:cwd = a:cwd
@@ -2551,10 +2553,11 @@ endfunction
 " channel (channel), message (string)
 function! s:vrunjob(channel, message) abort
     " Don't add silent
-    call <SID>srunjob()
+    call <SID>srunjob(v:false)
 endfunction
 
-function! s:srunjob() abort
+" copy (bool)
+function! s:srunjob(copy) abort
     if g:isneovim
         " EOF is a single-item list (why nvim why!)
         call remove(s:result, -1)
@@ -2568,19 +2571,23 @@ function! s:srunjob() abort
         return
     endif
 
-    let @+ = join(s:result)
+    let l:response = join(s:result)
 
-    call Message(@+)
+    if a:copy ==# v:true
+        let @+ = l:response
+    endif
+
+    call Message(l:response)
 endfunction
 
-" command (string)
-function! s:runjob(command) abort
+" command (string), copy (bool)
+function! s:runjob(command, copy) abort
     let s:result = []
 
     if g:isneovim
         call jobstart(a:command, {
                     \ 'on_stdout': { id, data -> extend(s:result, data) },
-                    \ 'on_exit': { -> s:srunjob() },
+                    \ 'on_exit': { -> s:srunjob(a:copy) },
                     \ })
     else
         call job_start(a:command, {
@@ -2610,7 +2617,7 @@ function! s:translate(range, inverse, ...) abort
 
     call Message('T ' . l:source .  ' > ' . l:target . ': ' . l:content[0 : 15])
 
-    call <SID>runjob(l:command)
+    call <SID>runjob(l:command, v:true)
 endfunction
 
 command! -nargs=* -range -bang T call <SID>translate(<range>, <bang>0, <f-args>)
@@ -6701,13 +6708,9 @@ endif
 
 execute 'augroup END'
 
-" function! s:quote(...) abort
-"    let l:quote = system("curl -s https://zenquotes.io/api/random | jq -r '.[0] | .q + \" \" + .a'")
-
-"    echo l:quote
-" endfunction
-
-" call timer_start(1000, function('s:quote'))
+if g:initialization && g:isneovim
+    call timer_start(1000, <SID>runjob("curl -s https://zenquotes.io/api/random | jq -r '.[0] | .q + \" \" + .a'", v:false))
+endif
 
 filetype on                                                     " Enable filetype detection, trigger FileType event (set filetype in buffer)
 filetype plugin on                                              " Enable filetype detection plugin
