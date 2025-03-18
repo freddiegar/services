@@ -456,7 +456,23 @@ zend_extension=/usr/lib/php/20210902/xdebug.so
 
 > For Linux use path: `/etc/php/{vr}/mods-available/xdebug.ini` aka: `vim /etc/php/8.1/mods-available/xdebug.ini`
 
+## PCOV
+
+[See](https://github.com/krakjoe/pcov)
+
+```bash
+sudo pecl install -f pcov
+
+echo 'extension=/usr/lib/php/20240924/pcov.so' | sudo tee /etc/php/8.4/mods-available/pcov.ini
+
+sudo phpenmod pcov
+sudo phpdismod pcov
+```
+> PHP 8.4: sudo pecl install -f pcov-1.0.12
+
 ## AST
+
+[See](https://github.com/nikic/php-ast)
 
 ```bash
 sudo pecl install -f ast

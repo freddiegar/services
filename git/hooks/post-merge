@@ -15,7 +15,9 @@ REF=$(echo `git reflog -2 | tail -n 1` | cut -d" " -f 1)
 MERGED_BRANCH=$(echo `git reflog -1` | cut -d" " -f 4 | sed "s/://")
 MERGED_REF=$(git rev-parse --verify --short HEAD)
 
-echo "post-merge: $BRANCH ($REF) $MERGED_BRANCH ($MERGED_REF) $1"
+if [ $REF != $MERGED_REF ]; then
+    echo "post-merge: $BRANCH ($REF) $MERGED_BRANCH ($MERGED_REF) $1"
+fi
 
 if [ -d "$GLOBAL" ] && [ -f "$GLOBAL/post-checkout" ]; then
     HOOK="$GLOBAL/post-checkout"

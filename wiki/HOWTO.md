@@ -439,6 +439,14 @@ displayDetailsOnTestsThatTriggerWarnings="true"
 
 ```
 
+or
+
+```bash
+
+php8.4 vendor/bin/phpunit --configuration phpunit-pipelines.xml --no-coverage --display-deprecations --testsuite Acl > Acl.log
+
+```
+
 Enable autosuggestions in oh-my-zsh
 
 ```bash
