@@ -2132,7 +2132,7 @@ function s:go_docs(word) abort
         let l:docsurl = 'https://hub.docker.com/r/'
         let l:saved_unnamed_register = @@
 
-        silent execute "normal! 02WviW\"zy"
+        silent execute "normal! _WviW\"zy"
 
         let l:word = split(trim(@z), ':')[0]
 
@@ -6051,12 +6051,12 @@ EOF
         endif
 
         if g:hasaia
-            let l:message = l:message ==# '' ? 'Enabled AI Assistant.' : substitute(l:message, '##IAA##', ' (using IA)', '')
+            let l:message = l:message ==# '' ? 'Support AI Assistant.' : substitute(l:message, '##IAA##', ' (using IA)', '')
         endif
 
-        " if g:hasts
-        "     let l:message = l:message ==# '' ? 'Enabled TS Syntax.' : substitute(l:message, '##HTS##', ' (and TS)', '')
-        " endif
+        if g:hasts
+            let l:message = l:message ==# '' ? 'Support TS Syntax.' : substitute(l:message, '##HTS##', ' (and TS)', '')
+        endif
 
         set undofile                                            " Enable undo world (default: off)
         let &undodir = g:undodir
