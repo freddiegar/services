@@ -245,6 +245,7 @@
 
 " @see :h initialization
 let g:initialization = !get(v:, 'vim_did_enter', !has('vim_starting'))
+let g:reinitialization = get(g:, 'reinitialization', v:true)    " Smart load local and setup extra vimrc each time (it's used in: gVim and neovide)
 
 if g:initialization
     " cwd (string)
@@ -570,7 +571,7 @@ if has('gui_running')
     augroup GUIOptions
         if exists('g:neovide') " (why nvim why!)
             " @see https://neovide.dev/
-            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h15
+            autocmd UIEnter * set guifont=Fira\ Code\ Retina,Monospace,JetBrains\ Mono:h14
                         \ | let g:neovide_confirm_quit = v:false
                         \ | let g:neovide_floating_shadow = v:false
                         \ | let g:neovide_hide_mouse_when_typing = v:true
@@ -586,13 +587,15 @@ if has('gui_running')
             set guioptions+=k                                   " Windows [k]eep size after change GUI
             set guioptions+=!                                   " Use terminal with external commands, no simulate
 
+            set guicursor+=a:blinkon0                           " Never blink the cursor, it applies too in gVim (default: on)
+
             " Using i3 the whole screen height will be used by the window
             set guiheadroom=0
 
-            autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Fira Code Retina 17', '')
+            autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Fira Code Retina 14', '')
                         \ | set guiligatures=!\"#$%&()*+-./:<=>?@[]^_{\|~
-            " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 17', '')
-            " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'JetBrains Mono 17', '')
+            " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'Monospace 14', '')
+            " autocmd GUIEnter * let &g:guifont = substitute(&g:guifont, '^$', 'JetBrains Mono 14', '')
 
             " @see https://vimhelp.org/autocmd.txt.html#GUIFailed
             autocmd GUIFailed * qall
@@ -615,6 +618,7 @@ if has('gui_running')
         cnoremap <S-Insert> <C-r>+
 
         " @thanks https://github.com/tpope/dotfiles/blob/c31d6515e126ce2e52dbb11a7b01f4ac4cc2bd0c/.vimrc#L139
+        " C-{ - | + } works in Neovide, BUT C-{ - } doesn't work in gVim (why!), then I use Alt key
         nnoremap <silent> <A--> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)-1','')<CR>
         nnoremap <silent> <A-+> :let &guifont = substitute(&guifont,'\d\+$','\=submatch(0)+1','')<CR>
     augroup END
@@ -1543,22 +1547,22 @@ function! s:cnavigation(action) abort
     silent execute a:action
 endfunction
 
-nnoremap <silent> <A-1> :<C-u>silent! lfirst<CR>
-nnoremap <silent> <A-k> :<C-u>silent! lopen<CR>
-nnoremap <silent> <A-j> :<C-u>silent! lclose<CR>
-nnoremap <silent> <A-h> :<C-u>silent! lolder<CR>
-nnoremap <silent> <A-l> :<C-u>silent! lnewer<CR>
-nnoremap <silent> <A-9> :<C-u>silent! llast<CR>
+" nnoremap <silent> <A-1> :<C-u>silent! lfirst<CR>
+" nnoremap <silent> <A-k> :<C-u>silent! lopen<CR>
+" nnoremap <silent> <A-j> :<C-u>silent! lclose<CR>
+" nnoremap <silent> <A-h> :<C-u>silent! lolder<CR>
+" nnoremap <silent> <A-l> :<C-u>silent! lnewer<CR>
+" nnoremap <silent> <A-9> :<C-u>silent! llast<CR>
 
-nnoremap <silent> [l :<C-u>silent! lprevious<CR>zzzv
-nnoremap <silent> ]l :<C-u>silent! lnext<CR>zzzv
-nnoremap <silent> [L :<C-u>silent! lfirst<CR>zzzv
-nnoremap <silent> ]L :<C-u>silent! llast<CR>zzzv
+" nnoremap <silent> [l :<C-u>silent! lprevious<CR>zzzv
+" nnoremap <silent> ]l :<C-u>silent! lnext<CR>zzzv
+" nnoremap <silent> [L :<C-u>silent! lfirst<CR>zzzv
+" nnoremap <silent> ]L :<C-u>silent! llast<CR>zzzv
 
-nnoremap <silent> [b :<C-u>silent! bprevious<CR>
-nnoremap <silent> ]b :<C-u>silent! bnext<CR>
-nnoremap <silent> [B :<C-u>silent! bfirst<CR>
-nnoremap <silent> ]B :<C-u>silent! blast<CR>
+" nnoremap <silent> [b :<C-u>silent! bprevious<CR>
+" nnoremap <silent> ]b :<C-u>silent! bnext<CR>
+" nnoremap <silent> [B :<C-u>silent! bfirst<CR>
+" nnoremap <silent> ]B :<C-u>silent! blast<CR>
 
 nnoremap <silent> yol :<C-u>set list!<CR>
 nnoremap <silent> yoc :<C-u>set cursorline!<CR>
@@ -2615,7 +2619,7 @@ function! s:translate(range, inverse, ...) abort
 
     let l:command = l:command + [json_encode({'source': l:source, 'target': l:target, 'text': l:content})]
 
-    call Message('T ' . l:source .  ' > ' . l:target . ': ' . l:content[0 : 15])
+    call Message('Translate ' . l:source .  ' > ' . l:target . ': ' . l:content[0 : 20])
 
     call <SID>runjob(l:command, v:true)
 endfunction
@@ -2868,7 +2872,7 @@ let g:asyncrun_skip = 1
 " Disable local errorformats (default: 1)
 let g:asyncrun_local = 0
 " Icon used in statusline (custom setup)
-let g:asyncrun_icon = ''
+let g:asyncrun_icon = get(g:, 'asyncrun_icon', '')
 
 " command (string)
 function! AsyncRunCommand(command) abort
@@ -4270,6 +4274,7 @@ augroup AutoCommands
 
     " Reload after save (if asyncrun isn't running!) and run PlugInstall if there are missing plugins
     autocmd BufWritePost .vimrc,.vimrc.local,.vimrc.setup nested if get(g:, 'asyncrun_status', '') !=# 'running' | source $MYVIMRC | endif
+                \ | let g:reinitialization = v:true
                 \ | if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
                 \ |     PlugInstall
                 \ | endif
@@ -5721,6 +5726,10 @@ EOF
     autocmd FileType php call setreg('e', "_f>vi':T en =expand('%:p:h:t')\r\r:sleep 5\rvi'P")
     " [s]panish translation
     autocmd FileType php call setreg('s', "_f>vi':T es =expand('%:p:h:t')\r\r:sleep 5\rvi'P")
+    " [l]og word under cursor
+    autocmd FileType php call setreg('l', "\"zyiw}ologger()->debug(__FILE__ . ':' . __LINE__, [$]);\e3h\"zp")
+    " [c]ompact log word under cursor
+    autocmd FileType php call setreg('c', "\"zyiw}ologger()->debug(__FILE__ . ':' . __LINE__, compact(''));\e4h\"zp")
 
     " [t]ag release
     autocmd FileType zsh call setreg('t', "gg_ da\"pI\"\eggJf[lyE_/-a\rWviWPGA\"\e")
@@ -6055,7 +6064,7 @@ EOF
         endif
 
         if g:hasts
-            let l:message = l:message ==# '' ? 'Support TS Syntax.' : substitute(l:message, '##HTS##', ' (and TS)', '')
+            let l:message = l:message ==# '' ? '' : substitute(l:message, '##HTS##', ' (and TS)', '')
         endif
 
         set undofile                                            " Enable undo world (default: off)
@@ -6698,11 +6707,11 @@ catch /^Vim\%((\a\+)\)\=:E185/
     colorscheme default
 endtry
 
-if filereadable(expand('~/.vimrc.local'))
+if filereadable(expand('~/.vimrc.local')) && (g:initialization || g:reinitialization)
     source ~/.vimrc.local
 endif
 
-if filereadable('.vimrc.setup')
+if filereadable('.vimrc.setup') && (g:initialization || g:reinitialization)
     source .vimrc.setup
 endif
 
@@ -6720,3 +6729,5 @@ filetype indent on                                              " Enable auto-in
 syntax enable                                                   " Enable syntax highlighting as is (on != enable), MUST BE after filetype
                                                                 "   on    : Overrule your settings with the defaults (overrules existing colors)
                                                                 "   enable: Will keep most of your current color settings (only sets groups that weren't)
+
+let g:reinitialization = v:false                                " Disable reload local and setup extra vimrc each time (it's used in: gVim and neovide)
