@@ -33,8 +33,14 @@ COMPOSER_AUDIT_ABANDONED=ignore phpx /usr/local/bin/composer audit || exit $?
 fi
 
 # Run fixer before add message to commit
+PHPCS=""
+
 if [ $FPHP = 0 ]; then
     echo -n ""
+elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpcs  '`" != "" ] && [ "`jq '.scripts."phpcs"' composer.json`" != "" ]; then
+    PHPCS="$(jq '.scripts."phpcs"' composer.json | sed 's/\"//g')"
+elif [ "`phpx /usr/local/bin/composer list | grepx -F '  php-cs  '`" != "" ] && [ "`jq '.scripts."php-cs"' composer.json`" != "" ]; then
+    PHPCS="$(jq '.scripts."php-cs"' composer.json | sed 's/\"//g')"
 elif [ -f .php_cs ]; then
     phpx vendor/bin/php-cs-fixer fix --config=.php_cs -v || exit $?
 elif [ -f .php-cs-fixer.php ]; then
@@ -43,6 +49,24 @@ elif [ -f .phpcs.xml ]; then
     phpx vendor/bin/phpcbf --colors -s --standard=.phpcs.xml || exit $?
 else
     echo "\e[31mFixer not found.\e[0m"
+fi
+
+if [ "$PHPCS" != "" ]; then
+    if [ "$PHPCS" = "null" ]; then
+        PHPCS=""
+    elif [ "`echo "$PHPCS" | grepx "^phpcs "`" != "" ]; then
+        PHPCS="phpx vendor/bin/$PHPCS"
+    elif [ "`echo "$PHPCS" | grepx "^@php "`" != "" ]; then
+        PHPCS="phpx $PHPCS"
+    else
+        PHPCS="phpx $PHPCS"
+    fi
+fi
+
+if [ "$PHPCS" != "" ]; then
+    echo $PHPCS
+
+    $PHPCS || exit $?
 fi
 
 if [ "$REPO" != "microsites" ] && [ "$REPO" != "threedsecure-merchant-plugin" ] && [ "$REPO" != "activity-client" ]; then
