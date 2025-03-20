@@ -439,8 +439,6 @@ exec --no-startup-id urxvt
 exec --no-startup-id ~/.config/i3/battery-popup -L 20 -l 10 -t 2m -m "Battery is low!"
 # Init background image
 exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-`ls ~/BG/*.jpeg | wc --lines` -n1).jpeg
-# Init background transparency
-exec --no-startup-id xcompmgr -c -C -o.1 &
 # Init IP public
 exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
 
@@ -452,6 +450,18 @@ bindsym $mod+Shift+i exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
 
 # Set default browser
 exec_always --no-startup-id xdg-settings set default-web-browser firefox.desktop
+
+# Init background transparency
+# -c shadows with fuzzy edges
+# -C avoid drawing shadows on dock/panel windows
+# -f fade windows in/out when opening/closing
+# -I Specifies the opacity change between steps while fading in (use: 0.028).
+# -O Specifies the opacity change between steps while fading out (use: 0.03).
+# -D Specifies the time (in milliseconds) between steps in a fade.
+# -a automatic server-side compositing (not use: disable transparency)
+# -o opacity (default: .75)
+exec_always --no-startup-id ([ "`ps -fea | rg -F 'xcompmgr' | rg -v -F ' rg '`" = "" ] && xcompmgr -c -C -f -D 10 -o.1 &)
+# exec_always --no-startup-id ([ "`ps -fea | rg -F 'picom' | rg -v -F ' rg '`" = "" ] && picom --config ~/.config/picom/picom.conf)
 
 # @see /usr/share/X11/xkb/rules/base.lst
 # Disable Repeat Keys
