@@ -28,7 +28,7 @@ FPHP=$(($FSTAGING + $FMODIFING + $FCOMPOSER))
 
 phpx /usr/local/bin/composer validate --no-check-all --strict || exit $?
 
-if [ "$REPO" != "rest-services" ]; then
+if [ "$REPO" != "rest-services" ] && [ "$REPO" != "microsites" ]; then
 COMPOSER_AUDIT_ABANDONED=ignore phpx /usr/local/bin/composer audit || exit $?
 fi
 

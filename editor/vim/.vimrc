@@ -2214,8 +2214,8 @@ inoremap <silent> <C-f> <C-o>W
 inoremap <silent> <C-z> <Esc><C-z>
 
 if has('gui_running')
-    nnoremap <silent> <C-z> :M<CR>
-    inoremap <silent> <C-z> <Esc>:M<CR>
+    nnoremap <silent> <expr> <C-z> tabpagenr('$') > 1 ? ':tabnext<CR>' : ':M<CR>'
+    inoremap <silent> <C-z> <Esc>:normal \<C-z>
 endif
 
 " Completions using only current buffer (avoids delay with <C-n> or <C-p> when I open bigger logs files :)
@@ -5127,7 +5127,8 @@ EOF
                     \ |     tnoremap <silent> <buffer> <C-w>l <C-\><C-N><C-w>l
                     \ |     tnoremap <silent> <buffer> <C-w>w <C-\><C-N><C-w>w
                     \ |     tnoremap <silent> <buffer> <C-w>p <C-\><C-N><C-w>p
-                    \ |     nnoremap <silent> <buffer> <CR> i<CR>
+                    \ |     tnoremap <silent> <buffer> fg     <C-\><C-N>:tabnext<CR>
+                    \ |     nnoremap <silent> <buffer> <CR>   i<CR>
                     \ | endif
                     \ | if match(getbufvar(bufnr('%'), 'term_title'), 'phpunit') >= 0
                     \ |     resize 10
@@ -5165,6 +5166,7 @@ EOF
                     \ | setlocal fillchars+=eob:\
                     \ | if expand('%')[-3 :] !=? '!sh'
                     \ |     tnoremap <silent> <buffer> <Esc> <C-\><C-n>
+                    \ |     tnoremap <silent> <buffer> fg    <C-\><C-N>:tabnext<CR>
                     \ | endif
                     \ | if match(expand('%'), 'phpunit') >= 0
                     \ |     resize 10
