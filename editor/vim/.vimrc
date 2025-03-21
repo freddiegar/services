@@ -2471,6 +2471,7 @@ endif
 " Plug 'terrastruct/d2-vim', {'for': 'd2'}                        " Better highlight d2 syntax
 
 if g:isneovim
+    Plug 'laytan/cloak.nvim'                                  " Secrets always are secret!
     Plug 'lewis6991/gitsigns.nvim'                            " Show signs changes if cwd is a git repository (using Lua)
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
 
@@ -3747,6 +3748,35 @@ for [s:shortcut, s:command] in <SID>git_alias() + [['gh', 'Git blame'], ['gst', 
 endfor
 
 if g:isneovim
+" Don't indent!
+" @see  https://github.com/laytan/cloak.nvim
+lua << EOF
+    local cloak = require('cloak')
+    local options = { silent = true }
+
+    cloak.setup({
+        cloak_telescope = false,
+        patterns = {
+            {
+                file_pattern = '.env*',
+                cloak_pattern = '=.+',
+                replace = nil,
+            },
+            {
+                file_pattern = {
+                    'auth.json', -- composer
+                    'apps.json', -- copilot-chat
+                },
+                cloak_pattern = ':.+',
+                replace = nil,
+            },
+        },
+    })
+
+    vim.keymap.set('n', '<C-h>', cloak.toggle, options)
+    vim.keymap.set('n', '<C-s>', cloak.uncloak_line, options)
+EOF
+
 " Don't indent!
 " @see  https://github.com/lewis6991/gitsigns.nvim
 lua << EOF
@@ -6719,7 +6749,7 @@ endif
 
 execute 'augroup END'
 
-if g:initialization && g:isneovim
+if g:initialization && exists('g:neovide')
     call timer_start(1000, <SID>runjob("curl -s https://zenquotes.io/api/random | jq -r '.[0] | .q + \" \" + .a'", v:false))
 endif
 
