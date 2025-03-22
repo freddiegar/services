@@ -763,6 +763,7 @@ alias gra="git rebase --abort"
 # @see https://git-scm.com/docs/git-log#_pretty_formats
 alias glog="git log --graph --abbrev-commit --pretty=format:'%C(red)%h%C(reset)%C(yellow)%d%C(reset) %s %C(green)(%ar) %C(bold blue)<%aN>%C(reset)'"
 alias glop="glog -p"
+alias glom="glog | head -10"
 alias gloz="git log --reverse --pretty=format:'%s' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
 # export _GIT_SINCE="2024-01-01"
 # export _GIT_UNTIL="2024-01-31"

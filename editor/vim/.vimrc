@@ -6342,6 +6342,8 @@ EOF
         endif
 
         if index(l:options, 'i') >= 0
+            let l:regq = getreg('q')
+
             silent execute "keeppatterns keepjumps g!/^[=-]/d_"
             silent execute "keeppatterns keepjumps g/^== /normal! ddp"
             silent! execute "keeppatterns keepjumps %s/^- \\(\\w\\+\\).*/\\1/g"
@@ -6360,7 +6362,13 @@ EOF
             silent! execute "keeppatterns keepjumps %s/^G /G\\\&C /g"
             silent! execute "keeppatterns keepjumps %s/^SGM /G\\\&C /g"
 
+            call setreg('q', l:regq)
+
             silent call add(l:cleanup, 'times')
+        endif
+
+        if index(l:options, 'I') >= 0
+            silent normal G?>> Monday,nvvvv:enewh:enewh:enewh:enewhk0y/>>jpknjy//plpknjy//plpknjy//plpknjyGplpkc:windo CT
         endif
 
         if index(l:options, 'g') >= 0
@@ -6444,6 +6452,7 @@ EOF
     command! -nargs=0 CR call <SID>cleanup('vfr')
     command! -nargs=0 CS call <SID>cleanup('vfte')
     command! -nargs=0 CT call <SID>cleanup('vfi')
+    command! -nargs=0 EP call <SID>cleanup('vfI')
 
     " title (string)
     function! s:settitle(title) abort
