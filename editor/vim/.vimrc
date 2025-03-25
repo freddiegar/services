@@ -3943,6 +3943,16 @@ command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
 
 " range (0,1,2), interactive (0/1), [command (string)]: void
 function! s:run(range, interactive, ...) abort
+    " Examples:
+    "   let g:make = '!phpx --file 2022/day/6/code > 2022/day/6/output'
+    "   let b:make = "redir! > 2022/day/6/output | execute '!phpx --file %' | redir END"
+    "   let g:make = "redir! > 2022/day/6/output | execute '!phpx --file 2022/day/6/code' | redir END"
+    if get(b:, 'make', get(g:, 'make')) !=# ''
+        execute get(b:, 'make', get(g:, 'make'))
+
+        return
+    endif
+
     let l:command = <SID>get_selection(a:range, a:interactive, a:000)
 
     let l:execute = ''
@@ -4094,7 +4104,7 @@ function! s:get_selection(range, interactive, args, ...) abort
     let l:joinchar = a:0 >= 3 ? a:3 : ' '
 
     if len(a:args) > 0
-        let l:selection = l:join ? join(a:args, l:joinchar) ? a:args
+        let l:selection = l:join ? join(a:args, l:joinchar) : a:args
     elseif a:range == 2 " Visual mode
         " @see https://vi.stackexchange.com/a/11028
         let [l:lnum1, l:col1] = getpos("'<")[1 : 2]
