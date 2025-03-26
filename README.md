@@ -621,6 +621,7 @@ Load certificate in browser
 ```
 Authorities -> Import -> ssl/certs/ca.cert.pem -> Identify Websites
 ```
+> Upload CA in browser: /var/www/html/freddiegar/services/docker/ssl/ca.cert.pem
 > Not exists? check below to generate item
 
 ###  On Linux

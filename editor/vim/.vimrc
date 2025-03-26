@@ -3758,17 +3758,44 @@ lua << EOF
         cloak_telescope = false,
         patterns = {
             {
-                file_pattern = '.env*',
-                cloak_pattern = '=.+',
-                replace = nil,
+                file_pattern = {
+                    '.env*', -- environment (of course!)
+                },
+                cloak_pattern = {
+                    { '(KEY=).+', replace = '%1'},
+                    { '(PASS=).+', replace = '%1'},
+                    { '(PASSWORD=).+', replace = '%1'},
+                    { '(DSN=).+', replace = '%1'},
+                    { '(SECRET=).+', replace = '%1'},
+                    { '(TOKEN=).+', replace = '%1'},
+                },
+            },
+            {
+                file_pattern = {
+                    '*.asc', -- encrypted
+                },
+                cloak_pattern = {
+                    ': .+',
+                    { '([A-Z]=).+', replace = '%1' },
+                },
             },
             {
                 file_pattern = {
                     'auth.json', -- composer
                     'apps.json', -- copilot-chat
                 },
-                cloak_pattern = ':.+',
-                replace = nil,
+                cloak_pattern = {
+                    ':.+',
+                },
+            },
+            {
+                file_pattern = {
+                    '*.sql', -- sql
+                    '*.log', -- "maybe" sql
+                },
+                cloak_pattern = {
+                    { '(Pass:).+', replace = '%1' },
+                },
             },
         },
     })
@@ -6314,7 +6341,7 @@ EOF
         if index(l:options, 'q') >= 0 && getline(1) !=# '' " Ignores clean-up files
             silent! keeppatterns retab
             silent! keeppatterns g!/^\d\{4}-/normal! kJ
-            silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\| AS \|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|set session \| Connect\|mysqld\|version_comment\|general_log\|IN_PROCCES\|UPDATE /v/ WHEN /d_
+            silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|set session \| Connect\|mysqld\|version_comment\|general_log\|IN_PROCCES\|UPDATE /v/ WHEN /d_
             " Don't order only by column required
             " silent! keeppatterns %!sort -f -k2 -n
             silent! keeppatterns %s/\(^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\) \(\d\{4,6}\)/\2 \1/
@@ -6546,8 +6573,8 @@ EOF
     " BufFilePost:  After changes name's current file (why nvim why!)
     autocmd BufEnter,BufFilePost * call <SID>settitle(join([GetNameCurrentPath(), GetNameCurrentFile()], '')) | call <SID>statusline('f')
 
-    " Hide sensible information (maybe share all screen or pair programming)
-    autocmd FocusLost *.asc,hosts.yml if &modifiable ==# 1 | let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t') | endif
+    " Hide sensible information (maybe share all screen or pair programming). "Alternative" to cloak
+    " autocmd FocusLost *.asc,hosts.yml if &modifiable ==# 1 | let afile = expand('<afile>') | silent execute 'update ' . afile | execute 'bdelete ' . afile | echo 'Sensible: ' . fnamemodify(afile, ':t') | endif
     autocmd FocusLost * silent! wall
 
     " autocmd InsertEnter * call <SID>popup_hide()
