@@ -755,6 +755,12 @@ alias gfr="git reset --hard HEAD && git fetch --all && git reset --hard FETCH_HE
 # alias gfrs="git flow release start"
 # alias gfrf="git flow release finish"
 
+# Not rebase commit that exist outside your repository and that people may have based work on!
+# Rebase changes hash commits, that is a huge PROBLEM resolving conflicts
+# Revert rebase:
+#   git reflog
+#   Search: "HEAD@{14} rebase (start)" and copy before HEAD, in this case HEAD@{15}
+#   git reset --hard HEAD@{15}
 alias gr="git rebase --verbose"
 alias gri="git rebase --verbose --interactive"
 alias grc="git rebase --continue"
