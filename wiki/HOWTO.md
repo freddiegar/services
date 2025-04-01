@@ -308,6 +308,8 @@ gpg> key 1  // encryption subkey: ssb*
 gpg> expire
     1y
 gpg> save
+
+gpg --list-keys
 ```
 
 # Get data from certificate tls

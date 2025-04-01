@@ -4616,54 +4616,54 @@ lua <<EOF
 
             -- @run lua=vim.lsp.protocol.Methods
             -- @see https://neovim.io/doc/user/lsp.html#lsp-api
-            if client.supports_method('textDocument/completion') then
+            if client:supports_method('textDocument/completion') then
                 vim.bo[event.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
             end
 
-            if client.supports_method('textDocument/hover') then
+            if client:supports_method('textDocument/hover') then
                 vim.keymap.set('n', 'K', vim.lsp.buf.hover, options)
             else
                 vim.keymap.set('n', 'K', function() vim.notify('Nothing to do.') end, options)
             end
 
-            if client.supports_method('textDocument/definition') then
+            if client:supports_method('textDocument/definition') then
                 vim.bo[event.buf].tagfunc = 'v:lua.vim.lsp.tagfunc'
                 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, options)
             else
                 vim.keymap.set('n', 'gd', function() vim.notify('Nothing to do.') end, options)
             end
 
-            if client.supports_method('textDocument/declaration') then
+            if client:supports_method('textDocument/declaration') then
                 vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, options)
             else
                 vim.keymap.set('n', 'gD', function() vim.notify('Nothing to do.') end, options)
             end
 
-            if client.supports_method('textDocument/references') then
+            if client:supports_method('textDocument/references') then
                 vim.keymap.set('n', 'gr', vim.lsp.buf.references, options)
             else
                 vim.keymap.set('n', 'gr', function() vim.notify('Nothing to do.') end, options)
             end
 
-            if client.supports_method('textDocument/implementation') then
+            if client:supports_method('textDocument/implementation') then
                 vim.keymap.set('n', 'gy', vim.lsp.buf.implementation, options)
             else
                 vim.keymap.set('n', 'gy', function() vim.notify('Nothing to do.') end, options)
             end
 
-            if client.supports_method('textDocument/rename') then
+            if client:supports_method('textDocument/rename') then
                 vim.keymap.set('n', '<Leader>rll', vim.lsp.buf.rename, options)
             else
                 vim.keymap.set('n', '<Leader>rll', function() vim.notify('Nothing to do.') end, options)
             end
 
-            if client.supports_method('textDocument/codeAction') then
+            if client:supports_method('textDocument/codeAction') then
                 vim.keymap.set('n', '<Leader>R', vim.lsp.buf.code_action, options)
             else
                 vim.keymap.set('n', '<Leader>R', function() vim.notify('Nothing to do.') end, options)
             end
 
-            if client.supports_method('textDocument/inlayHint') then
+            if client:supports_method('textDocument/inlayHint') then
                 vim.keymap.set('n', 'yoh', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, options)
             else
                 vim.keymap.set('n', 'yoh', function() vim.notify('Nothing to do.') end, options)
@@ -6341,7 +6341,7 @@ EOF
         if index(l:options, 'q') >= 0 && getline(1) !=# '' " Ignores clean-up files
             silent! keeppatterns retab
             silent! keeppatterns g!/^\d\{4}-/normal! kJ
-            silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|set session \| Connect\|mysqld\|version_comment\|general_log\|IN_PROCCES\|UPDATE /v/ WHEN /d_
+            silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|set session \| Connect\|mysqld\|version_comment\|general_log\|IN_PROCCES/v/ WHEN /d_
             " Don't order only by column required
             " silent! keeppatterns %!sort -f -k2 -n
             silent! keeppatterns %s/\(^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\) \(\d\{4,6}\)/\2 \1/
