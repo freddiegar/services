@@ -2506,6 +2506,7 @@ endif
 
 if g:hasts && !<SID>mustbeignore()
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Highligth ++
+    " Plug 'nvim-treesitter/nvim-treesitter-context'            " Highligth +++
 endif
 
 if g:hasaia && g:hasgit && !<SID>mustbeignore()
@@ -3762,12 +3763,15 @@ lua << EOF
                     '.env*', -- environment (of course!)
                 },
                 cloak_pattern = {
+                    { '(DSN=).+', replace = '%1'},
                     { '(KEY=).+', replace = '%1'},
+                    { '(LOGIN=).+', replace = '%1'},
                     { '(PASS=).+', replace = '%1'},
                     { '(PASSWORD=).+', replace = '%1'},
-                    { '(DSN=).+', replace = '%1'},
                     { '(SECRET=).+', replace = '%1'},
                     { '(TOKEN=).+', replace = '%1'},
+                    { '(USER=).+', replace = '%1'},
+                    { '(USERNAME=).+', replace = '%1'},
                 },
             },
             {
@@ -4622,51 +4626,35 @@ lua <<EOF
 
             if client:supports_method('textDocument/hover') then
                 vim.keymap.set('n', 'K', vim.lsp.buf.hover, options)
-            else
-                vim.keymap.set('n', 'K', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client:supports_method('textDocument/definition') then
                 vim.bo[event.buf].tagfunc = 'v:lua.vim.lsp.tagfunc'
                 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, options)
-            else
-                vim.keymap.set('n', 'gd', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client:supports_method('textDocument/declaration') then
                 vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, options)
-            else
-                vim.keymap.set('n', 'gD', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client:supports_method('textDocument/references') then
                 vim.keymap.set('n', 'gr', vim.lsp.buf.references, options)
-            else
-                vim.keymap.set('n', 'gr', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client:supports_method('textDocument/implementation') then
                 vim.keymap.set('n', 'gy', vim.lsp.buf.implementation, options)
-            else
-                vim.keymap.set('n', 'gy', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client:supports_method('textDocument/rename') then
                 vim.keymap.set('n', '<Leader>rll', vim.lsp.buf.rename, options)
-            else
-                vim.keymap.set('n', '<Leader>rll', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client:supports_method('textDocument/codeAction') then
                 vim.keymap.set('n', '<Leader>R', vim.lsp.buf.code_action, options)
-            else
-                vim.keymap.set('n', '<Leader>R', function() vim.notify('Nothing to do.') end, options)
             end
 
             if client:supports_method('textDocument/inlayHint') then
                 vim.keymap.set('n', 'yoh', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, options)
-            else
-                vim.keymap.set('n', 'yoh', function() vim.notify('Nothing to do.') end, options)
             end
 
             vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
