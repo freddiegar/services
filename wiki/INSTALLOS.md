@@ -6,6 +6,11 @@ ___
 # User
 
 ```bash
+cut -d: -f1 /etc/passwd
+sudo deluser --remove-home user
+
+---------------
+
 useradd -D
 sudo useradd --create-ho[m]e --[u]id 1000 --[s]hell /bin/bash --[c]omment Freddie freddie
 sudo usermod -aG sudo freddie
@@ -24,6 +29,7 @@ sudo swapoff -a
 cat /etc/fstab | grep swap
 sudo fallocate -l 8G /swap.img
 sudo mkswap /swap.img
+sudo chown 0600 /swap.img
 sudo swapon -a
 ```
 
@@ -44,7 +50,7 @@ reboot
 cat /etc/default/locale
 echo "\n" | sudo update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en
 # On error, generate locale, uncomment in this file en_US.UTF-8 (and comment current)
-# vi /etc/locale.gen
+# sudo vi /etc/locale.gen
 # Regenerate options
 # sudo locale-gen
 
@@ -69,7 +75,9 @@ sudo chown freddie:freddie /var/www -R
 git clone https://github.com/freddiegar/services.git /var/www/html/freddiegar/services
 ```
 > Sync .ssh (and .gnupg) keys (if there any)
+
 > tar -czvf ssh.tar.gz .ssh     -> tar -xzvf ssh.tar.gz --overwrite .ssh
+
 > tar -czvf gnupg.tar.gz .gnupg -> tar -xzvf gnupg.tar.gz --overwrite .gnupg
 
 Now, we can to use SSH
@@ -653,6 +661,18 @@ git commit -m "Added lfs support"
 
 ## Undo LFS behaviour
 git lfs migrate export --include="*.sql.gz" --everything
+```
+
+### LFS Delete Files in Server
+
+[See](https://www.atlassian.com/git/tutorials/git-lfs#deleting-remote-files)
+[GitHub](https://docs.github.com/en/repositories/working-with-files/managing-large-files/removing-files-from-git-large-file-storage)
+
+```bash
+git log -p <commit-lfs-file>
+git log -p d67e6a7
+git log --all -p -S <oid>
+git log --all -p -S d67e6a7
 ```
 
 ## GIT Stats
@@ -1931,12 +1951,13 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 # Summary
 
 ## Commands
-> :Rj_wv$Pj
+:Rj_wv$P/\v^\w+
 
+```bash
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 24.10
 uname -r
-# 6.11.0-19-generic
+# 6.11.0-21-generic
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -1956,12 +1977,11 @@ bash --version | grep -e "bash" | awk '{print $4}'
 # 5.2.32(1)-release
 zsh --version | awk '{print $2}'
 # 5.9
-echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
 # https://github.com/vim/vim/releases/tag/v9.1.#
+echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
 # 9.1.Included patches: 1-16, 647-648, 678, 697, 689, 17-496, 707
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1"-"$2}'`
-# Stable:   v0.7.2-LuaJIT 2.1.0-beta3
-# Unstable: v0.11.0-dev-LuaJIT-2.1.1719379426
+# v0.12.0-dev-LuaJIT-2.1.1719379426
 neovide --version | awk '{print $2}'
 # 0.14.1
 vifm --version | grep -e "^Version" | awk '{print $2}'
@@ -1973,7 +1993,7 @@ git --version | awk '{print $3}'
 git lfs version
 # git-lfs/3.5.0 (GitHub; linux amd64; go 1.22.2)
 docker --version | awk '{print $3}' | sed 's/,//g'
-# 28.0.1
+# 28.0.4
 docker-compose --version | awk '{print $4}'
 # v2.32.1
 feh --version | grep version | awk '{print $3}'
@@ -2017,7 +2037,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.23.4
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(f272e5cf)
+# 6.1.0(ee714a41)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -2031,14 +2051,15 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 137.0b6
+# 137.0b10
 zen --version | awk '{print $3}'
-# 1.10t
+# 1.10.3t
 dpkg --list | wc --lines
-# 2592
+# 2595
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
 # 95
 apt list --installed | wc --lines
-# 2338
+2388
 apt-mark showmanual | wc --lines
 # 442
+```

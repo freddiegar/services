@@ -2,6 +2,9 @@
 -- https://orangematter.solarwinds.com/2019/02/05/the-left-prefix-index-rule/
 -- https://www.forknerds.com/reduce-the-size-of-mysql/
 
+-- Alters and operations
+-- https://dev.mysql.com/doc/refman/8.4/en/innodb-online-ddl-operations.html
+
 -- @see https://www.atlassian.com/data/databases/understanding-strorage-sizes-for-mysql-text-data-types
 -- TEXT:        65,535 characters           64 KB
 -- MEDIUMTEXT:  16,777,215                  16 MB

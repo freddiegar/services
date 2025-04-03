@@ -19,40 +19,24 @@ $config = RectorConfig::configure()
     ->withPreparedSets(deadCode: true, codeQuality: true, codingStyle: true)
 
     ->withSkip([
-        // \Rector\CodeQuality\Rector\Array_\CallableThisArrayToAnonymousFunctionRector::class, // Routes in Laravel are weirds to read
         \Rector\CodeQuality\Rector\Catch_\ThrowWithPreviousExceptionRector::class,
         \Rector\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector::class,
-        // \Rector\CodeQuality\Rector\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector::class,
         \Rector\CodeQuality\Rector\FuncCall\CompactToVariablesRector::class,
+        \Rector\CodeQuality\Rector\FuncCall\SimplifyRegexPatternRector::class, // Simple is a conspiration
         \Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector::class,
         \Rector\CodeQuality\Rector\If_\ExplicitBoolCompareRector::class,
-        \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
         \Rector\CodeQuality\Rector\Isset_\IssetOnPropertyObjectToPropertyExistsRector::class, // @see https://github.com/rectorphp/rector/issues/6642
-        \Rector\CodeQuality\Rector\FuncCall\SimplifyRegexPatternRector::class, // Simple is a conspiration
+        \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
         \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector::class,
-        \Rector\CodingStyle\Rector\String_\UseClassKeywordForClassNameResolutionRector::class,
-        // \Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector::class,
-        // \Rector\CodingStyle\Rector\ClassMethod\RemoveDoubleUnderscoreInMethodNameRector::class,
-        // \Rector\CodingStyle\Rector\ClassMethod\UnSpreadOperatorRector::class,
+        \Rector\CodingStyle\Rector\ClassMethod\MakeInheritedMethodVisibilitySameAsParentRector::class,
         \Rector\CodingStyle\Rector\Closure\StaticClosureRector::class,
         \Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector::class,
         \Rector\CodingStyle\Rector\Encapsed\WrapEncapsedVariableInCurlyBracesRector::class,
         \Rector\CodingStyle\Rector\PostInc\PostIncDecToPreIncDecRector::class,
-        // \Rector\CodingStyle\Rector\Switch_\BinarySwitchToIfElseRector::class,
-        \Rector\CodingStyle\Rector\ClassMethod\MakeInheritedMethodVisibilitySameAsParentRector::class,
-        \Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector::class,
+        \Rector\CodingStyle\Rector\String_\UseClassKeywordForClassNameResolutionRector::class,
         \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedConstructorParamRector::class,
+        \Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector::class,
         \Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector::class,
-        \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
-        // \Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector::class,
-        \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
-        \Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class,
-        \Rector\Php80\Rector\FunctionLike\MixedTypeRector::class, // Break contracts __construct's Mailable by example
-        \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
-        \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read
-        \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
-        \Rector\Php81\Rector\MethodCall\MyCLabsMethodCallToEnumConstRector::class, // MPI fails
-        \Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class, // For now ignores
     ]);
 
 $path = getcwd() . \DIRECTORY_SEPARATOR . 'composer.json';
@@ -67,6 +51,57 @@ $vendor = $data['require'] ?? [];
 $vendor += $data['require-dev'] ?? [];
 
 $extraSkips = [];
+$phpVersion = PHP_VERSION;
+
+if (isset($vendor['php'])) {
+    $phpVersion = str_replace(['^', '~'], '', $vendor['php']);
+
+    if (strlen($phpVersion) === 3 ) {
+        $phpVersion .= '.0';
+    }
+}
+
+// echo 'PHP: ' . $phpVersion . PHP_EOL;
+
+if (version_compare($phpVersion, '5.5.0', '>=')) {
+    $extraSkips = array_merge($extraSkips, [
+        \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
+    ]);
+}
+
+// if (version_compare($phpVersion, '7.0.0', '>=')) {
+//     $extraSkips = array_merge($extraSkips, [
+//         // \Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector::class,
+//     ]);
+// }
+
+if (version_compare($phpVersion, '7.4.0', '>=')) {
+    $extraSkips = array_merge($extraSkips, [
+        \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
+        \Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class,
+    ]);
+}
+
+if (version_compare($phpVersion, '8.0.0', '>=')) {
+    $extraSkips = array_merge($extraSkips, [
+        // \Rector\Php80\Rector\FunctionLike\MixedTypeRector::class, // Break contracts __construct's Mailable by example -> deprecated
+    ]);
+}
+
+if (version_compare($phpVersion, '8.1.0', '>=')) {
+    $extraSkips = array_merge($extraSkips, [
+        \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
+        \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read, avoid (string) casting convert
+        \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
+        \Rector\Php81\Rector\MethodCall\MyCLabsMethodCallToEnumConstRector::class, // MPI fails
+    ]);
+}
+
+if (version_compare($phpVersion, '8.3.0', '>=')) {
+    $extraSkips = array_merge($extraSkips, [
+        \Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class, // For now ignores
+    ]);
+}
 
 if (isset($vendor['phpunit/phpunit'])) {
     $version = (string)preg_replace('/[^0-9.]/', '', $vendor['phpunit/phpunit']);
@@ -115,7 +150,7 @@ if (isset($vendor['laravel/framework'])) {
         case $version < 12:
         default:
             $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_110;
-            $extraSkips = array_merge([
+            $extraSkips = array_merge($extraSkips, [
                 \RectorLaravel\Rector\Class_\ModelCastsPropertyToCastsMethodRector::class, // Fails with json_encode Cast
             ]);
 
