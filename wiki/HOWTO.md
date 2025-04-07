@@ -426,6 +426,32 @@ Pin: release a=*
 Pin-Priority: -10' | sudo tee /etc/apt/preferences.d/nosnap.pref
 ```
 
+Show deprecations details in Laravel
+
+```php
+# In TestCase.php
+
+protected function setUp(): void
+{
+    parent::setUp();
+
+    $this->withoutDeprecationHandling();
+}
+
+```
+
+Show deprecations details in PHPUnit 9.6
+
+```xml
+# phpunit.xml
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" backupStaticAttributes="false" bootstrap="./vendor/autoload.php" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+
+<php>
+    <ini name="error_reporting" value="-1"/>
+    <server name="PHPUNIT_ERROR_HANDLER" value="PHPUnit\Util\ErrorHandler::handleDeprecation"/>
+</php>
+```
+
 Show deprecations details in PHPUnit 10
 
 In phpunit.xml file [adds](https://stackoverflow.com/a/77101546/15601185)

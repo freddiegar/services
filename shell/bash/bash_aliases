@@ -592,8 +592,8 @@ alias psw="sudo update-alternatives --config php"
 alias wpx="phpx `which wp`"
 
 # @see https://xdebug.org/docs/all_settings#mode
-alias vt="extended \"export XDEBUG_MODE=off && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --display-deprecations --no-coverage @@==@@ && nn 'Ran tests successfully!'\""
-alias vtc="extended \"export XDEBUG_MODE=coverage && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --display-deprecations @@==@@ && nn 'Ran tests successfully with coverage!'\""
+alias vt="extended \"export XDEBUG_MODE=off && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage @@==@@ && nn 'Ran tests successfully!'\""
+alias vtc="extended \"export XDEBUG_MODE=coverage && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error @@==@@ && nn 'Ran tests successfully with coverage!'\""
 alias vT="phpx vendor/bin/phpunit --testdox"
 alias vts="phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage --testsuite"
 alias vtS="phpx vendor/bin/phpunit --testdox --testsuite"

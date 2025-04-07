@@ -5329,10 +5329,10 @@ EOF
                 \ : get(g:, 'test#php#phpunit#executable')
                 \ | if get(g:, 'test#last_command', '') ==# ''
                 \ |     let g:test#last_strategy = g:test_strategy
-                \ |     let g:test#last_command = g:test#php#phpunit#executable . ' --colors --no-coverage --stop-on-failure ' . g:dtests
+                \ |     let g:test#last_command = g:test#php#phpunit#executable . ' --colors --no-coverage --stop-on-defect ' . g:dtests
                 \ | endif
     autocmd FileType php let g:test#php#phpunit#options = {
-        \ 'all': '--no-coverage --stop-on-failure',
+        \ 'all': '--no-coverage --stop-on-defect',
     \}
 
     autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<CR>
@@ -5798,8 +5798,8 @@ EOF
     autocmd BufReadPost profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
 
     " Cleanup test debug log.
-    " PHPUnit >= 10 :> dtest.log && phpx vendor/bin/phpunit --testdox --log-events-verbose-text dtest.log
-    " PHPUnit <  10 :> dtest.log && phpx vendor/bin/phpunit --testdox --debug --verbose > dtest.log
+    " PHPUnit >= 10 :> dtest.log && phpx vendor/bin/phpunit --testdox --no-coverage --log-events-verbose-text dtest.log
+    " PHPUnit <  10 :> dtest.log && phpx vendor/bin/phpunit --testdox --no-coverage --debug --verbose > dtest.log
     autocmd BufReadPost dtest.log
                 \ | if !exists('b:cleanup') && match(getline(1), ' PHPUnit Started ') > 0
                 \ |     let b:cleanup = 1
