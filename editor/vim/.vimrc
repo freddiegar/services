@@ -3990,9 +3990,18 @@ function! s:run(range, interactive, ...) abort
     let l:ignorechars = []
     let l:runner = &filetype
     let l:runners = ['&bash', '&php', '&sql', '&d2']
+    let l:guessed = v:false
 
     if index(l:runners, '&' . l:runner) < 0 && index(['markdown', 'sh'], l:runner) < 0
         let l:runner = ''
+    endif
+
+    " Guessing...
+    let l:suffix = trim(split(l:command, ' ')[0])
+
+    if index(['php', 'phpx', 'artisan', 'tinker'], l:suffix) >= 0
+        let l:guessed = v:true
+        let l:runner = 'php'
     endif
 
     if l:runner ==# ''
@@ -4019,7 +4028,11 @@ function! s:run(range, interactive, ...) abort
         let l:execute = 'phpx --run "%s"'
         let l:ignorechars = ["'"]
 
-        if filereadable('artisan')
+        if l:guessed ==# v:true
+            execute '!' . l:command
+
+            return
+        elseif filereadable('artisan')
             " dump() doesn't allow multiple sentences split by semicolon (;) :(
             let l:execute = 'echo "%s" | phpx artisan tinker --no-interaction'
         elseif a:range ==# 0 && a:interactive ==# 1
@@ -5182,7 +5195,6 @@ EOF
                     \ |     tnoremap <silent> <buffer> <C-w>l <C-\><C-N><C-w>l
                     \ |     tnoremap <silent> <buffer> <C-w>w <C-\><C-N><C-w>w
                     \ |     tnoremap <silent> <buffer> <C-w>p <C-\><C-N><C-w>p
-                    \ |     tnoremap <silent> <buffer> fg     <C-\><C-N>:tabnext<CR>
                     \ |     nnoremap <silent> <buffer> <CR>   i<CR>
                     \ | endif
                     \ | if match(getbufvar(bufnr('%'), 'term_title'), 'phpunit') >= 0
@@ -5197,7 +5209,7 @@ EOF
         "             \ | setlocal norelativenumber
 
         " (why nvim why!)
-        autocmd BufEnter term://* startinsert
+        autocmd BufEnter term://*/zsh startinsert
 
         " autocmd TermLeave * setlocal number
         "             \ | setlocal relativenumber
@@ -5221,7 +5233,6 @@ EOF
                     \ | setlocal fillchars+=eob:\
                     \ | if expand('%')[-3 :] !=? '!sh'
                     \ |     tnoremap <silent> <buffer> <Esc> <C-\><C-n>
-                    \ |     tnoremap <silent> <buffer> fg    <C-\><C-N>:tabnext<CR>
                     \ | endif
                     \ | if match(expand('%'), 'phpunit') >= 0
                     \ |     resize 10

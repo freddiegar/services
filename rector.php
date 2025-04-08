@@ -12,6 +12,7 @@ require_once realpath('/home/freddie/.config/composer/vendor/autoload.php');
 
 use Rector\Config\RectorConfig;
 
+// @see https://getrector.com/find-rule
 // @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md
 
 $config = RectorConfig::configure()
@@ -84,6 +85,7 @@ if (version_compare($phpVersion, '7.4.0', '>=')) {
 
 if (version_compare($phpVersion, '8.0.0', '>=')) {
     $extraSkips = array_merge($extraSkips, [
+        \Rector\Php80\Rector\Switch_\ChangeSwitchToMatchRector::class, // Sometimes break my test
         // \Rector\Php80\Rector\FunctionLike\MixedTypeRector::class, // Break contracts __construct's Mailable by example -> deprecated
     ]);
 }
