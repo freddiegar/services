@@ -1,7 +1,8 @@
 HOW TO (Tears in my eyes)
 ___
 
-Laravel cache permissions. see
+# Laravel cache permissions.
+
 https://stackoverflow.com/questions/52065513/your-configuration-files-are-not-serializable
 ```bash
 COMMAND:
@@ -324,6 +325,7 @@ openssl x509 -in duckduckgo.com.pem -noout -dates
 # Check expirations in seconds 60*60*24*30 -> 2592000
 openssl x509 -in duckduckgo.com.pem -noout -checkend 2592000
 ```
+
 # Fix Bluetooth issue
 
 [See](https://www.reddit.com/r/Ubuntu/comments/owbdc3/boot_error_bluetooth_failed_to_send_firmware_data/)
@@ -411,6 +413,7 @@ bluetoothctl devices
 > # untrust 41:42:2F:7A:4C:D4
 > connect 41:42:2F:7A:4C:D4
 > # disconnect 41:42:2F:7A:4C:D4
+> exit
 
 Remove snap
 
@@ -520,7 +523,7 @@ Install AWS VPN Client
 [See](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/client-vpn-connect-linux-release-notes.html)
 
 ```bash
-curl -L https://d20adtppz83p9s.cloudfront.net/GTK/latest/debian-repo/pool/ubuntu-20.04/awsvpnclient_amd64.deb -o awsvpnclient.deb
+curl -L https://d20adtppz83p9s.cloudfront.net/GTK/5.2.0/awsvpnclient_amd64.deb -o awsvpnclient.deb
 sudo dpkg -i awsvpnclient.deb
 rm -f awsvpnclient.deb
 ## sudo dpkg --remove awsvpnclient

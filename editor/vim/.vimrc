@@ -3802,6 +3802,22 @@ lua << EOF
                     { '(Pass:).+', replace = '%1' },
                 },
             },
+            {
+                file_pattern = {
+                    'hosts.yml', -- gh
+                },
+                cloak_pattern = {
+                    { '(oauth_token:).+', replace = '%1' },
+                },
+            },
+            {
+                file_pattern = {
+                    '.wakatime.cfg', -- wakatime (doubts?)
+                },
+                cloak_pattern = {
+                    { '(api_key=).+', replace = '%1' },
+                },
+            },
         },
     })
 

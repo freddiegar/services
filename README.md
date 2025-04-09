@@ -55,8 +55,8 @@ Allow access from another networks segment to containers development network
 
 ```bash
 # Connect another network in each container and use name over ip
-docker network connect <network-name> db
-docker network connect <network-name> cache
+docker network connect <network-name> db80
+docker network connect development db80
 ```
 ### Hosts
 

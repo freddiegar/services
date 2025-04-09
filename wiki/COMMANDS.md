@@ -1545,13 +1545,13 @@ mkdir -p ~/.config/nvim
 ln -s `pwd`/editor/neovim/init.vim ~/.config/nvim/init.vim
 
 # Install (Latest)
-echo "\n" | sudo add-apt-repository ppa:neovim-ppa/stable
-# echo "\n" | sudo add-apt-repository ppa:neovim-ppa/unstable
+# echo "\n" | sudo add-apt-repository ppa:neovim-ppa/stable
+echo "\n" | sudo add-apt-repository ppa:neovim-ppa/unstable
 
 sudo apt-get install -y neovim
 
-# On unstable (0.10.0), it requires and neovim module for Snippets!
-# Test WITHOUT install: sudo apt-get install -y python3-pip libpython3-dev
+# On unstable (>= 0.10.0), it requires and neovim module for Snippets!
+# Works WITHOUT install: sudo apt-get install -y python3-pip libpython3-dev
 # sudo apt-get install -y python3-pynvim
 
 # sudo apt-get remove -y neovim && sudo apt-get autoremove
@@ -1563,7 +1563,11 @@ sudo apt-get install -y neovim
 ## CoC Settings
 ln -s `pwd`/editor/vim/coc-settings.json ~/.config/nvim/coc-settings.json
 ```
+> Disable to use saU alias
+> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*neovim*.sources
+
 > GUI?:
+> sudo apt-get install -y cmake libfreetype6-dev libfontconfig1-dev xclip
 > @see https://neovide.dev/installation.html#linux-source
 >   cargo install --git https://github.com/neovide/neovide
 >   cargo uninstall neovide

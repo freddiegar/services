@@ -845,6 +845,8 @@ gh config set -h github.com git_protocol ssh
 ## or Interactive
 gh auth login
 ```
+> Disable to use saU alias
+> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*github-cli*.list
 
 ## Wallpapers in i3
 
@@ -885,7 +887,7 @@ sudo apt-get install -y php8.4-zip
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
 ```
 > Disable to use saU alias
-> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/ondrej*.sources
+> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*ondrej*.sources
 
 ## PHP Xdebug (I'm not god)
 
@@ -1155,6 +1157,8 @@ echo 'default-cache-ttl 86400
 max-cache-ttl 864000
 default-cache-ttl-ssh 86400
 max-cache-ttl-ssh 864000' > ~/.gnupg/gpg-agent.conf
+
+grep "default-cache-ttl\|max-cache-ttl\|default-cache-ttl-ssh\|max-cache-ttl-ssh" ~/.gnupg/gpg-agent.conf
 ```
 
 # Postman
@@ -1165,14 +1169,6 @@ curl -L "https://dl.pstmn.io/download/latest/linux_64" -o postman.tar.gz
 sudo tar -xvf postman.tar.gz -C /opt && rm -Rf postman.tar.gz
 sudo ln -s /opt/Postman/Postman /usr/bin/postman
 ## rm -Rf /usr/bin/postman
-```
-
-# Opera
-
-```bash
-sudo apt-get install opera-stable
-
-## sudo apt-get remove opera && sudo apt-get autoremove
 ```
 
 # Zen (Firefox for this days 2025-01-28 is slower and CPU eater)
@@ -1194,50 +1190,50 @@ sudo ln -s /opt/firefox/firefox /usr/bin/firefox
 ## sudo rm -Rf /usr/bin/firefox && sudo rm -Rf /opt/firefox
 ```
 
-## Firefox Developer Edition Shortcut
+## Enchance Security
+
+[See](https://support.mozilla.org/en-US/kb/linux-security-warning?as=u&utm_source=inproduct)
 
 ```bash
-echo '[Desktop Entry]
-Encoding=UTF-8
-Version=1.0
-Name=Firefox Web Browser Developer Edition
-NoDisplay=true
-Type=Application
-Comment=Browse the WWW
-GenericName=Web Browser
-Keywords=Internet;WWW;Browser;Web
-Exec=/usr/bin/firefox %u
-Terminal=false
-X-MultipleArgs=false
-Icon=/opt/firefox/browser/chrome/icons/default/default128.png
-Categories=GNOME;GTK;Network;WebBrowser;
-StartupNotify=true
-Actions=new-window;new-private-window;
-StartupWMClass=Firefox Developer Edition
-MimeType=x-scheme-handler/unknown;x-scheme-handler/about;text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
+# Zen
 
-[Desktop Action new-window]
-Name=Open a New Window
-Exec=/usr/bin/firefox -new-window
-MimeType=x-scheme-handler/unknown;x-scheme-handler/about;text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
+echo "# This profile allows everything and only exists to give the
+# application a name instead of having the label \"unconfined\"
+abi <abi/4.0>,
+include <tunables/global>
+profile zen-local
+/opt/zen/{zen,zen-bin,updater}
+flags=(unconfined) {
+	userns,
+	# Site-specific additions and overrides. See local/README for details.
+	include if exists <local/zen>
+}" | sudo tee /etc/apparmor.d/zen-local
 
-[Desktop Action new-private-window]
-Name=Open a New Private Window
-Exec=/usr/bin/firefox -private-window
-MimeType=x-scheme-handler/unknown;x-scheme-handler/about;text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;' > ~/.local/share/applications/firefox.desktop
+# Firefox
+
+echo "# This profile allows everything and only exists to give the
+# application a name instead of having the label \"unconfined\"
+abi <abi/4.0>,
+include <tunables/global>
+profile firefox-local
+/opt/firefox/{firefox,firefox-bin,updater}
+flags=(unconfined) {
+	userns,
+	# Site-specific additions and overrides. See local/README for details.
+	include if exists <local/firefox>
+}" | sudo tee /etc/apparmor.d/firefox-local
+
+sudo systemctl restart apparmor.service
 ```
 
-## Enable in i3 as default browser
-
-[See](https://forum.endeavouros.com/t/i3-default-browser-change/14381/14)
+# Opera
 
 ```bash
-# see ~/.config/mimeapps.list and replace using firefox.desktop if it is necesary
-sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/firefox.desktop
-
-# xdg-mime query default x-scheme-handler/https
-# CAUTION: xdg-mime default firefox.desktop text/xml text/html application/xhtml+xml x-scheme-handler/http x-scheme-handler/https
+curl -L https://download3.operacdn.com/ftp/pub/opera/desktop/117.0.5408.197/linux/opera-stable_117.0.5408.197_amd64.deb -o opera.deb
+sudo dpkg -i opera.deb && rm -f opera.deb
 ```
+> Disable to use saU alias
+> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*opera*.list
 
 # JetBrains Mono
 
@@ -1323,6 +1319,7 @@ sudo apt-get install -y ripgrep
 ```bash
 # [L|X]Ubuntu 18.10+ | Rg v0.22.1
 sudo apt-get install -y bat
+sudo ln -s `which batcat` /usr/bin/bat
 
 # [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
 cd ~
@@ -1344,16 +1341,23 @@ grep "MANPAGER=\|MANROFFOPT=\|BAT_THEME=" ~/.profile
 
 echo '
 # @thanks https://github.com/sharkdp/bat/issues/2753
-export MANPAGER="sh -c '"'"'col -bx \| bat --language man --plain'"'"'"
+export MANPAGER="sh -c '"'"'col -bx | bat -l man -p'"'"'"
 export MANROFFOPT="-c"
 export BAT_THEME="gruvbox-dark"' >> ~/.profile
+
+grep "MANPAGER=\|MANROFFOPT=\|BAT_THEME=" ~/.profile
 ```
 
 ## Best less
 
+```bash
+grep "LESSOPEN=" ~/.profile
+
 echo '
 # @thanks https://www.jwillikers.com/pagers-and-syntax-highlighting
 export LESSOPEN="| bat --color always %s"' >> ~/.profile
+
+grep "LESSOPEN=" ~/.profile
 ```
 
 # Vifm (Terminal File Manager with Vim Style)
@@ -1407,7 +1411,7 @@ composer global require fakerphp/faker --dev
 [See](https://github.com/infection/infection/releases)
 
 ```bash
-sudo curl -L https://github.com/infection/infection/releases/download/0.29.6/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.29.14/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command:
 ## infection -j$(nproc)
@@ -1440,7 +1444,7 @@ sudo chmod +x /usr/local/bin/phpcpd
 [See](https://github.com/phpmetrics/PhpMetrics/releases)
 
 ```bash
-sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v3.0.0rc6/phpmetrics.phar -o /usr/local/bin/phpmetrics
+sudo curl -L https://github.com/phpmetrics/PhpMetrics/releases/download/v3.0.0rc8/phpmetrics.phar -o /usr/local/bin/phpmetrics
 sudo chmod +x /usr/local/bin/phpmetrics
 ## Command:
 ## phpmetrics --excluded-dirs vendor --report-html=./tests/coverage/phpmetrics .
@@ -1496,23 +1500,6 @@ sudo pecl upgrade
 sudo pecl upgrade -f xdebug
 ```
 
-## Linking
-
-[See](https://xdebug.org/docs/all_settings#file_link_format)
-
-```bash
-mkdir ~/bin
-echo "#\!/bin/sh
-
-f=\`echo \$1 | cut -d @ -f 1 | sed 's/xdebug:\/\///'\`
-l=\`echo \$1 | cut -d @ -f 2\`
-gvim --remote-tab +\$l \$f
-" > ~/bin/ff-xdebug.sh
-
-# Permissions
-sudo chmod +x ~/bin/ff-xdebug.sh
-```
-
 ## Throuble
 
 Maybe need run as `sudo` user! or:
@@ -1549,92 +1536,6 @@ phpize && ./configure && make && sudo make install && cd /var/www/html
 sudo apt-get install -y filezilla
 ```
 
-## VSCode (Don't use snap for this, security risk)
-
-[Download](https://code.visualstudio.com/docs/?dv=linux64_deb)
-
-```bash
-# VS Code
-cd ~
-curl -L "https://vscode.download.prss.microsoft.com/dbazure/download/stable/fabdb6a30b49f79a7aba0f2ad9df9b399473380f/code_1.96.2-1734607745_amd64.deb" -o vscode.deb
-sudo dpkg -i vscode.deb
-rm -f vscode.deb
-## sudo apt-get remove code && sudo apt-get autoremove
-```
-
-## Sublime Text
-
-```bash
-cd ~
-curl -L https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublime-text.gpg > /dev/null
-echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-
-sudo apt-get update
-sudo apt-get install -y sublime-text
-## sudo apt-get remove sublime-text && sudo apt-get autoremove
-## sudo rm /etc/apt/sources.list.d/sublime-text.list
-```
-
-#### Font ST3
-
-Menu -> Preferences -> Settings -> User Settings File
-
-```json
-{
-    ...
-    "font_face": "Fira Code",
-    "font_size": 18,
-    "font_options": [
-        "gray_antialias"
-    ],
-    "show_encoding": false,
-    "show_line_endings": false,
-    "default_line_ending": "unix",
-    "draw_white_space": "all",
-    "translate_tabs_to_spaces": true,
-    "word_wrap": false
-    ...
-}
-```
-
-### Vi(ntage) Mode
-
-#### Enable
-1. Ctrl + Shift + P: Install Package Control
-2. Ctrl + Shift + P: Package Control: Enable Package<Enter>
-3. Select Vintage Option
-
-Ready! Vi Layout On :D
-
-#### Disable
-1. Ctrl + Shift + P: Package Control: Disable Package<Enter>
-2. Select Vintage Option
-
-Ready! Vi Layout Off :(
-
-## Ubuntu: Gnome Tweak Tool
-
-```bash
-gnome-shell --version
-sudo apt-get install -y gnome-tweak-tool
-## sudo apt-get remove gnome-tweak-tool && sudo apt-get autoremove
-```
-
-## Ubuntu: Gnome Clocks
-
-```bash
-gnome-shell --version
-sudo apt-get install -y gnome-clocks
-## sudo apt-get remove gnome-clocks && sudo apt-get autoremove
-```
-
-## Install Xdebug Profiler
-
-```bash
-sudo apt-get install -y kcachegrind
-## sudo apt-get remove kcachegrind && sudo apt-get autoremove
-```
-
 ## OBS - Open Broadcasting Software
 
 ```bash
@@ -1647,36 +1548,11 @@ mkdir $HOME/obs
 ## sudo apt-get remove obs-studio ffmpeg && sudo apt-get autoremove && echo "\n" | sudo add-apt-repository --remove ppa:obsproject/obs-studio
 ```
 
-## Screen Recording
-
-```bash
-sudo apt-get install -y kazam
-## sudo apt-get remove kazam && sudo apt-get autoremove
-```
-
-## ScreenKey -> only X11
-
 [See](https://www.thregr.org/wavexx/software/screenkey/)
 
 ```bash
 sudo apt-get install -y screenkey
 ## sudo apt-get remove screenkey && sudo apt-get autoremove
-```
-
-## Ubuntu: CPU Usage Bar
-
-```bash
-sudo apt-get install -y indicator-multiload
-## sudo apt-get remove indicator-multiload && sudo apt-get autoremove
-```
-
-## Extensions GUI
-
-```bash
-# Clock to right (Frippery Move Clock)
-https://extensions.gnome.org/extension/2/move-clock/
-# Activities button hidden
-https://ubuntuhandbook.org/index.php/2020/03/hide-activities-button-ubuntu-18-04/
 ```
 
 ## Screenshot++
@@ -1685,25 +1561,6 @@ https://ubuntuhandbook.org/index.php/2020/03/hide-activities-button-ubuntu-18-04
 
 ```bash
 sudo apt-get install -y flameshot
-```
-
-## RSA SecureID
-
-[See](https://sourceforge.net/p/stoken/wiki/Home/)
-
-```bash
-# Oldest
-echo "\n" && sudo add-apt-repository ppa:cernekee/ppa
-sudo apt-get update
-sudo apt-get install -y stoken libstoken-dev
-## sudo apt-get remove stoken libstoken-dev && sudo apt-get autoremove
-## echo "\n" | sudo add-apt-repository --remove ppa:cernekee/ppa # Only Ubuntu
-
-# Newest
-sudo apt-get install -y stoken
-## sudo apt-get remove stoken && sudo apt-get autoremove
-## Start
-stoken-gui --small &
 ```
 
 ## Google Chrome
@@ -1716,14 +1573,17 @@ sudo apt-get update
 sudo apt-get install -y google-chrome-stable
 ## sudo apt-get remove google-chrome-stable && sudo apt-get autoremove
 ```
+> Disable to use saU alias
+> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*chrome*.list
 
 ## Brave (Anime ;P)
 
 ```bash
-sudo apt-get update
-sudo apt-get install -y brave-browser
+curl -fsS https://dl.brave.com/install.sh | sh
 ## sudo apt-get remove brave-browser && sudo apt-get autoremove
 ```
+> Disable to use saU alias
+> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*brave*.list
 
 ## Microsoft Edge (for Teams :()
 
@@ -1743,6 +1603,9 @@ sudo apt install microsoft-edge-stable
 > -rw-r--r-- 1 root root 2794 Mar 26  2021 ubuntu-keyring-2012-cdimage.gpg
 > -rw-r--r-- 1 root root 1733 Mar 26  2021 ubuntu-keyring-2018-archive.gpg
 
+> Disable to use saU alias
+> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*microsoft-edge*.list
+
 ## GNUPG (Legacy)
 
 ```bash
@@ -1756,52 +1619,57 @@ Not snap please
 
 ```bash
 echo "\n" | sudo add-apt-repository ppa:o2sh/onefetch
+# @see /etc/apt/sources.list.d/o2sh-ubuntu-onefetch-oracular.sources :: oracular -> noble
+sudo sed -i 's/^Suites: ocular/Suites: noble/g' /etc/apt/sources.list.d/*onefetch*.sources
+
 sudo apt-get update
 sudo apt-get install onefetch
 # onefetch /path/git
 # echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
 ```
+> Disable to use saU alias
+> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*onefetch*.sources
 
-# Redshif (for my eyes please)
+# # Redshif (for my eyes please)
+#
+# [See](https://github.com/jonls/redshift)
+#
+# ```bash
+# sudo apt-get install redshift
+# mkdir -p ~/.config/redshift
+# ln -s `pwd`/redshift/redshift.conf ~/.config/redshift/redshift.conf
+# # sudo apt-get remove redshift && sudo apt-get autoremove
+# ```
 
-[See](https://github.com/jonls/redshift)
+# # Picom (alternative for xcompmgr)
+#
+# [See](https://github.com/yshui/picom)
+#
+# ```bash
+# sudo apt-get install picom
+# mkdir -p ~/.config/picom
+# ln -s `pwd`/picom/picom.conf ~/.config/picom/picom.conf
+# # sudo apt-get remove picom && sudo apt-get autoremove
+# ```
+# > Slower and more customizable, In fact: I dont use it
 
-```bash
-sudo apt-get install redshift
-mkdir -p ~/.config/redshift
-ln -s `pwd`/redshift/redshift.conf ~/.config/redshift/redshift.conf
-# sudo apt-get remove redshift && sudo apt-get autoremove
-```
-
-# Picom (alternative for xcompmgr)
-
-[See](https://github.com/yshui/picom)
-
-```bash
-sudo apt-get install picom
-mkdir -p ~/.config/picom
-ln -s `pwd`/picom/picom.conf ~/.config/picom/picom.conf
-# sudo apt-get remove picom && sudo apt-get autoremove
-```
-> Slower and more customizable, In fact: I dont use it
-
-## Auto-cpufreq (well: bluetooth fails)
-
-[See](https://github.com/AdnanHodzic/auto-cpufreq?tab=readme-ov-file#auto-cpufreq-installer)
-
-```bash
-git clone --depth=1 https://github.com/AdnanHodzic/auto-cpufreq.git
-cd auto-cpufreq
-sudo ./auto-cpufreq-installer
-sudo auto-cpufreq --install
-auto-cpufreq --stats
-sudo systemctl enable auto-cpufreq
-sudo systemctl status auto-cpufreq
-
-sudo auto-cpufreq --update=/var/www/html/AdnanHodzic/auto-cpufreq
-## sudo systemctl disable auto-cpufreq
-## sudo auto-cpufreq --remove
-```
+# ## Auto-cpufreq (well: bluetooth fails)
+#
+# [See](https://github.com/AdnanHodzic/auto-cpufreq?tab=readme-ov-file#auto-cpufreq-installer)
+#
+# ```bash
+# git clone --depth=1 https://github.com/AdnanHodzic/auto-cpufreq.git
+# cd auto-cpufreq
+# sudo ./auto-cpufreq-installer
+# sudo auto-cpufreq --install
+# auto-cpufreq --stats
+# sudo systemctl enable auto-cpufreq
+# sudo systemctl status auto-cpufreq
+#
+# sudo auto-cpufreq --update=/var/www/html/AdnanHodzic/auto-cpufreq
+# ## sudo systemctl disable auto-cpufreq
+# ## sudo auto-cpufreq --remove
+# ```
 
 ## Virtual Machine
 
@@ -1893,18 +1761,24 @@ chmod 700 /root/module-signing/sign-vbox-modules
 
 ## Remove Snap Unused
 
-In olders Ubuntu versions < 24.10
+In olders Ubuntu versions <= 24.10
 
 ```bash
 sudo snap list
 
 sudo snap remove firefox
-sudo snap remove gnome-3-28-1804
 sudo snap remove gnome-42-2204
+sudo snap remove gnome-3-28-1804
+sudo snap remove desktop-security-center
 sudo snap remove gtk-common-themes
 sudo snap remove snap-store
 sudo snap remove snapd-desktop-integration
+sudo snap remove bare
+sudo snap remove firmware-updater
+sudo snap remove prompting-client
+sudo snap remove core22
 sudo snap remove teams-for-linux
+sudo snap remove snapd
 ```
 
 ## Remove LibreOffice
@@ -1927,20 +1801,26 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 
 # Summary
 
+[Versus](https://www.cpu-monkey.com/en/compare_cpu-intel_core_i7_1260p-vs-intel_core_ultra_7_155u)
+
 ## Commands
-:Rj_wv$P/\v^\w+
+:Rj_wv$P/\v^\w+
 
 ```bash
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 24.10
 uname -r
 # 6.11.0-21-generic
+cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
+# Intel(R) Core(TM) Ultra 7 155U
+cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
+# 31825796 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
 # 14.2.0
 openssl version | awk '{print $2}'
-# 3.0.10
+# 3.3.1
 # 1.1.1w
 i3 --version | awk '{print $3}'
 # 4.23
@@ -1960,7 +1840,7 @@ echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep 
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1"-"$2}'`
 # v0.12.0-dev-LuaJIT-2.1.1719379426
 neovide --version | awk '{print $2}'
-# 0.14.1
+# 0.15.0
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.12
 curl --version | grep -e "^curl " | awk '{print $2}'
@@ -1972,7 +1852,7 @@ git lfs version
 docker --version | awk '{print $3}' | sed 's/,//g'
 # 28.0.4
 docker-compose --version | awk '{print $4}'
-# v2.32.1
+# v2.34.0
 feh --version | grep version | awk '{print $3}'
 # 3.10.2
 maim --version | awk '{print $1}'
@@ -2010,16 +1890,16 @@ python3 --version | awk '{print $2}'
 ruby --version | awk '{print $2}'
 # 3.3.4
 rustc --version | awk '{print $2}'
-# 1.84.1
+# 1.86.0
 go version | awk '{print $3}' | sed 's/go//g'
-# 1.23.4
+# 1.24.2
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
 # 6.1.0(c3b5484)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
 # 20230507
-ncftpput --version | head -1 | awk '{print $2}'
+# ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 pipewire --version | head -2 | awk '{print $4}'
 # 1.2.4
@@ -2028,15 +1908,15 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 137.0b10
+# 138.0b5
 zen --version | awk '{print $3}'
-# 1.10.3t
+# 1.11.2t
 dpkg --list | wc --lines
-# 2595
+# 2124
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 95
+# 108
 apt list --installed | wc --lines
-2388
+# 2117
 apt-mark showmanual | wc --lines
-# 442
+# 244
 ```
