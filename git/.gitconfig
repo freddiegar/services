@@ -52,3 +52,4 @@
 	wordDiff = true
 [advice]
 	mergeConflict = false
+	addEmptyPathspec = false

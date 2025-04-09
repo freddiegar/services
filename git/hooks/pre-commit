@@ -161,13 +161,24 @@ if [ "`echo "$COMMAND" | grepx -F "memory_limit"`" != "" ]; then
     COMMAND=$(echo "$COMMAND" | sed 's/-d memory_limit=[0-9]*[M|G][[:space:]]\?//')
 fi
 
-# Quickly stop on Failures | Errors
-if [ "`echo "$COMMAND" | grepx -F -- "--stop-on-failure"`" = "" ]; then
+# Quickly Stop on Failures | Errors | Warning | Risky
+# NOT in Deprecation | Notices
+QUICKFAIL="`echo "$COMMAND" | grepx -F -- "--stop-on-defect"`"
+
+if [ "$QUICKFAIL" = "" ] && [ "`echo "$COMMAND" | grepx -F -- "--stop-on-failure"`" = "" ]; then
     COMMAND="$COMMAND --stop-on-failure"
 fi
 
-if [ "`echo "$COMMAND" | grepx -F -- "--stop-on-error"`" = "" ]; then
+if [ "$QUICKFAIL" = "" ] && [ "`echo "$COMMAND" | grepx -F -- "--stop-on-error"`" = "" ]; then
     COMMAND="$COMMAND --stop-on-error"
+fi
+
+if [ "$QUICKFAIL" = "" ] && [ "`echo "$COMMAND" | grepx -F -- "--stop-on-warning"`" = "" ]; then
+    COMMAND="$COMMAND --stop-on-warning"
+fi
+
+if [ "$QUICKFAIL" = "" ] && [ "`echo "$COMMAND" | grepx -F -- "--stop-on-risky"`" = "" ]; then
+    COMMAND="$COMMAND --stop-on-risky"
 fi
 
 if [ "`echo "$COMMAND" | grepx -F -- "--no-coverage"`" = "" ]; then

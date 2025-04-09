@@ -3991,9 +3991,18 @@ function! s:run(range, interactive, ...) abort
     let l:ignorechars = []
     let l:runner = &filetype
     let l:runners = ['&bash', '&php', '&sql', '&d2']
+    let l:guessed = v:false
 
     if index(l:runners, '&' . l:runner) < 0 && index(['markdown', 'sh'], l:runner) < 0
         let l:runner = ''
+    endif
+
+    " Guessing...
+    let l:suffix = trim(split(l:command, ' ')[0])
+
+    if index(['php', 'phpx', 'artisan', 'tinker'], l:suffix) >= 0
+        let l:guessed = v:true
+        let l:runner = 'php'
     endif
 
     if l:runner ==# ''
@@ -4020,7 +4029,11 @@ function! s:run(range, interactive, ...) abort
         let l:execute = 'phpx --run "%s"'
         let l:ignorechars = ["'"]
 
-        if filereadable('artisan')
+        if l:guessed ==# v:true
+            execute '!' . l:command
+
+            return
+        elseif filereadable('artisan')
             " dump() doesn't allow multiple sentences split by semicolon (;) :(
             let l:execute = 'echo "%s" | phpx artisan tinker --no-interaction'
         elseif a:range ==# 0 && a:interactive ==# 1
@@ -5183,7 +5196,6 @@ EOF
                     \ |     tnoremap <silent> <buffer> <C-w>l <C-\><C-N><C-w>l
                     \ |     tnoremap <silent> <buffer> <C-w>w <C-\><C-N><C-w>w
                     \ |     tnoremap <silent> <buffer> <C-w>p <C-\><C-N><C-w>p
-                    \ |     tnoremap <silent> <buffer> fg     <C-\><C-N>:tabnext<CR>
                     \ |     nnoremap <silent> <buffer> <CR>   i<CR>
                     \ | endif
                     \ | if match(getbufvar(bufnr('%'), 'term_title'), 'phpunit') >= 0
@@ -5198,7 +5210,7 @@ EOF
         "             \ | setlocal norelativenumber
 
         " (why nvim why!)
-        autocmd BufEnter term://* startinsert
+        autocmd BufEnter term://*/zsh startinsert
 
         " autocmd TermLeave * setlocal number
         "             \ | setlocal relativenumber
@@ -5222,7 +5234,6 @@ EOF
                     \ | setlocal fillchars+=eob:\
                     \ | if expand('%')[-3 :] !=? '!sh'
                     \ |     tnoremap <silent> <buffer> <Esc> <C-\><C-n>
-                    \ |     tnoremap <silent> <buffer> fg    <C-\><C-N>:tabnext<CR>
                     \ | endif
                     \ | if match(expand('%'), 'phpunit') >= 0
                     \ |     resize 10
@@ -5330,10 +5341,10 @@ EOF
                 \ : get(g:, 'test#php#phpunit#executable')
                 \ | if get(g:, 'test#last_command', '') ==# ''
                 \ |     let g:test#last_strategy = g:test_strategy
-                \ |     let g:test#last_command = g:test#php#phpunit#executable . ' --colors --no-coverage --stop-on-failure ' . g:dtests
+                \ |     let g:test#last_command = g:test#php#phpunit#executable . ' --colors --no-coverage --stop-on-defect ' . g:dtests
                 \ | endif
     autocmd FileType php let g:test#php#phpunit#options = {
-        \ 'all': '--no-coverage --stop-on-failure',
+        \ 'all': '--no-coverage --stop-on-defect',
     \}
 
     autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<CR>
@@ -5799,8 +5810,8 @@ EOF
     autocmd BufReadPost profile*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfp') | endif
 
     " Cleanup test debug log.
-    " PHPUnit >= 10 :> dtest.log && phpx vendor/bin/phpunit --testdox --log-events-verbose-text dtest.log
-    " PHPUnit <  10 :> dtest.log && phpx vendor/bin/phpunit --testdox --debug --verbose > dtest.log
+    " PHPUnit >= 10 :> dtest.log && phpx vendor/bin/phpunit --testdox --no-coverage --log-events-verbose-text dtest.log
+    " PHPUnit <  10 :> dtest.log && phpx vendor/bin/phpunit --testdox --no-coverage --debug --verbose > dtest.log
     autocmd BufReadPost dtest.log
                 \ | if !exists('b:cleanup') && match(getline(1), ' PHPUnit Started ') > 0
                 \ |     let b:cleanup = 1
