@@ -67,6 +67,15 @@ sudo apt-get install -y software-properties-common git-core
 ```
 > By example: add-apt-repository
 
+## GIT Configuration
+
+[See](http://git-scm.com/docs/git-mergetool)
+
+```bash
+ln -s `pwd`/git/.gitconfig ~/.gitconfig
+ln -s `pwd`/git/.gitignore ~/.gitignore
+```
+
 ## Sync config files using git
 
 ```bash
@@ -217,6 +226,7 @@ grep 'Remove-Unused-Kernel-Packages\|Remove-Unused-Dependencies\|Automatic-Reboo
 # Disabled IPP Service: 631 (Internet Printer Protocol)
 
 ```bash
+# Hack: .w !bash
 sudo service cups stop && sudo systemctl disable cups
 sudo apt-get remove -y --purge cups\* && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
@@ -226,487 +236,7 @@ sudo apt-get remove -y --purge cups\* && sudo apt-get clean -y && sudo apt-get a
 ```bash
 sudo service plymouth stop && sudo systemctl disable plymouth
 sudo service plymouth-log stop && sudo systemctl disable plymouth-log
-sudo apt-get remove plymouth-* plymouth
-```
-
-# Main and extra utils
-
-```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 xsel xcompmgr feh pavucontrol pulseaudio-utils maim xclip ncal
-## sudo apt-get remove unzip curl tree nmap htop i3 xsel xcompmgr feh pavucontrol pulseaudio-utils maim xclip ncal && sudo apt-get autoremove
-```
-
-## i3
-
-```bash
-mkdir -p ~/.config/i3
-ln -s `pwd`/i3/config ~/.config/i3/config
-ln -s `pwd`/i3/status.conf ~/.config/i3/status.conf
-ln -s `pwd`/i3/battery ~/.config/i3/battery-popup
-ln -s `pwd`/i3/workspace ~/.config/i3/workspace
-```
-> On VM:
-> cp -p /var/www/html/freddiegar/services/i3/config ~/.config/i3/config
-> Change $mod Mod4 -> Mod1
-> sed -i 's/$mod Mod4/$mod Mod1/g' ~/.config/i3/config
-> Change $meta Mod1 -> Mod4
-> sed -i 's/$meta Mod1/$meta Mod4/g' ~/.config/i3/config
-
-### Set i3 as WM
-
-```bash
-sudo update-alternatives --config x-session-manager
-# if not is available i3:
-# sudo update-alternatives --install /usr/bin/x-session-manager x-session-manager /usr/bin/i3 60
-```
-
-### Start i3 after StartX
-
-[See](https://www.reddit.com/r/i3wm/comments/72oiwl/how_do_i_set_environment_variables_so_that_they/)
-
-```bash
-cat ~/.xinitrc
-
-echo 'dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
-xrdb -I$HOME ~/.Xresources
-exec i3' >> ~/.xinitrc
-```
-
-# ## Konsole Profile prefer urxvt
-#
-# ```bash
-# sudo apt-get install -y konsole
-# ## sudo apt-get remove konsole && sudo apt-get autoremove
-#
-# rm -f ~/.local/share/konsole/*.profile
-# rm -f ~/.local/share/konsole/*.colorscheme
-#
-# ln -s `pwd`/emulator/konsole/konsole.profile ~/.local/share/konsole/konsole.profile
-# ln -s `pwd`/emulator/konsole/Dark.colorscheme ~/.local/share/konsole/Dark.colorscheme
-# ln -s `pwd`/emulator/konsole/Light.colorscheme ~/.local/share/konsole/Light.colorscheme
-# ```
-
-## Vim Configuration
-
-```bash
-sudo apt-get install -y vim
-## sudo apt-get remove vim && sudo apt-get autoremove
-
-# Set as default editor
-sudo update-alternatives --config editor
-
-rm -f ~/.viminfo
-ln -s `pwd`/editor/vim/.vimrc ~/.vimrc
-
-## CoC Settings
-mkdir ~/.vim
-ln -s `pwd`/editor/vim/coc-settings.json ~/.vim/coc-settings.json
-
-## PHPActor Settings
-mkdir -p ~/.config/phpactor
-ln -s `pwd`/editor/vim/phpactor.json ~/.config/phpactor/phpactor.json
-sudo ln -s ~/.vim/plugged/phpactor/bin/phpactor /usr/local/bin/phpactor
-```
-
-## Vim Copy/Paste (Share SO)
-
-```bash
-# Check: +xterm_clipboard
-vim --version | grep xterm_clipboard
-# if -xterm_clipboard then
-# sudo apt-get install -y vim-gtk3
-## In olders versions use: vim-gnome
-# Check again ;)
-```
-
-## Vim JSON Development (and Git Hooks)
-
-[See](https://jqlang.github.io/jq/)
-
-```bash
-sudo apt-get install -y jq
-# sudo apt remove jq && sudo apt-get autoremove
-```
-
-## Vim SQL Development
-
-```bash
-sudo apt-get install -y sqlformat
-# sudo apt remove sqlformat && sudo apt-get autoremove
-```
-
-## Vim XML Development
-
-```bash
-sudo apt-get install -y libxml2-utils
-# sudo apt remove libxml2-utils && sudo apt-get autoremove
-```
-
-## Vim CSV to JSON
-
-```bash
-sudo apt-get install -y miller
-```
-
-## Vim Slides
-
-[See](https://github.com/maaslalani/slides)
-[Manual](http://bloodgate.com/perl/graph/manual/syntax.html)
-[Demo](https://youtu.be/wIyz7UQPL70)
-[AscciArt](https://www.asciiart.eu/text-to-ascii-art)
-
-```go
-go install github.com/maaslalani/slides@latest
-sudo ln -s /home/$USER/go/bin/slides /usr/bin/slides
-
-# Dependency for graphs
-# @see https://metacpan.org/pod/Graph::Easy
-echo 'yes' | perl -MCPAN -e shell
-
-# After installation open shell
-perl -MCPAN -e shell
-install Graph::Easy
-# Check graph-easy path, check in PATH
-ls -la $HOME/perl5/bin
-
-# Create slides
-touch slides.md
-
-# Enable executions <C-e>
-chmod +x slides.md
-
-# Presentation mode
-slides slides.md
-```
-
-### LSP
-
-#### C
-
-[See](https://llvm.org/docs/GettingStarted.html#overview)
-[See 2](https://www.jianshu.com/p/3c7eae5c0c68)
-[See 3](https://github.com/llvm/llvm-project/releases)
-[See 4](https://apt.llvm.org/)
-
-```bash
-cd ~
-# sudo apt-get install libncurses5
-sudo apt-get install -y clang-17 clangd-17 lldb-17 lld-17
-sudo ln -s /usr/bin/clang-17 /usr/bin/clang
-sudo ln -s /usr/bin/clang++-17 /usr/bin/clang++
-sudo ln -s /usr/bin/clang-cpp-17 /usr/bin/clang-cpp
-sudo ln -s /usr/bin/clangd-17 /usr/bin/clangd
-# clangd --version
-```
-
-#### Vim
-
-[See](https://github.com/iamcco/vim-language-server)
-
-```bash
-npm install -g vim-language-server
-```
-
-#### Sh
-
-[See](https://github.com/iamcco/vim-language-server)
-
-```bash
-npm install -g bash-language-server
-```
-
-#### Javascript|Typescript (js, jsx, ts)
-
-[See](https://github.com/typescript-language-server/typescript-language-server)
-
-```bash
-npm install -g typescript-language-server typescript
-```
-
-#### Tailwindcss
-
-[See](https://github.com/tailwindlabs/tailwindcss-intellisense)
-
-```bash
-npm install -g @tailwindcss/language-server
-```
-
-#### JSON
-
-[See](https://github.com/hrsh7th/vscode-langservers-extracted)
-
-```bash
-npm install -g vscode-langservers-extracted
-```
-
-#### YAML
-
-[See](https://github.com/redhat-developer/yaml-language-server)
-
-```bash
-npm install -g yaml-language-server
-```
-
-#### SQL
-
-[See](https://github.com/joe-re/sql-language-server)
-
-```bash
-npm install -g sql-language-server
-
-mkdir -p ~/.config/sql-language-server/
-
-echo '{
-    "name": "db80",
-    "adapter": "mysql",
-    "host": "db80",
-    "port": 3306,
-    "user": "root",
-    "password": "N3uroSiS",
-    "database": "microsites"
-}' > /var/www/html/path/project/.sqllsrc.json
-
-echo '{
-    "connections": [
-        {
-            "name": "db80",
-            "adapter": "mysql",
-            "host": "db80",
-            "port": 3306,
-            "user": "root",
-            "password": "N3uroSiS",
-            "projectPaths": [
-                "/var/www/html/freddiegar/working/path/CODE/microsites"
-            ]
-        }
-    ]
-}' > ~/.config/sql-language-server/.sqllsrc.json
-```
-
-#### Lua
-
-[See](https://luals.github.io/wiki/build/)
-
-```bash
-sudo apt-get install -y ninja-build
-mkdir /var/www/html/LuaLS
-cd /var/www/html/LuaLS
-git clone --depth=1 https://github.com/LuaLS/lua-language-server
-cd lua-language-server
-git pull origin master
-./make.sh
-
-# Update
-cd /var/www/html/LuaLS/lua-language-server && git pull origin master && ./make.sh
-
-# Enable globally
-sudo ln -s /var/www/html/LuaLS/lua-language-server/bin/lua-language-server /usr/local/bin/lua-language-server
-```
-
-#### Rust
-
-```bash
-# curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
-rustup component add rust-analyzer
-```
-> rustup update
-> rustup self uninstall
-
-```bash
-grep -F "Enable rust" ~/.profile
-
-echo '
-# Enable rust
-[ -d ~/.cargo/bin ] && \. "$HOME/.cargo/env"' >> ~/.profile
-```
-
-#### Go
-
-[See](https://go.dev/doc/install)
-[See 2](https://go.dev/doc/install/source)
-[See 3](https://github.com/golang/wiki/blob/master/Ubuntu.md#using-ppa)
-[See 4](https://thenewstack.io/golang-how-to-use-the-go-install-command/)
-
-```bash
-curl -L https://go.dev/dl/go1.23.4.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go-linux-amd64.tar.gz && rm go-linux-amd64.tar.gz
-go version
-
-sudo apt-get install -y gopls
-```
-> sudo apt-get remove gopls
-
-```bash
-grep -F "Enable go" ~/.profile
-
-echo '
-# Enable go
-[ -d /usr/local/go/bin ] && export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
-```
-
-#### Ruby
-
-[See](https://solargraph.org/guides/getting-started)
-
-```bash
-sudo apt-get install -y ruby-dev
-sudo gem install solargraph
-```
-
-### C Tags
-
-[See](https://docs.ctags.io/en/latest/autotools.html#gnu-linux-distributions)
-
-```bash
-# After Ubuntu 23.04+
-sudo apt-get -y install \
-    gcc make \
-    pkg-config autoconf automake \
-    python3-docutils \
-    libseccomp-dev \
-    libjansson-dev \
-    libyaml-dev \
-    libxml2-dev
-
-mkdir /var/www/html/universal-ctags
-cd /var/www/html/universal-ctags
-git clone --depth=1 https://github.com/universal-ctags/ctags.git
-cd ctags
-./autogen.sh
-./configure
-make
-sudo make install
-
-## sudo rm /usr/local/bin/ctags
-```
-> /usr/local/bin/ctags
-> man ctags
-> ctags --list-languages
-> ctags --list-kinds
-
-```bash
-# Need: Plug 'vim-scripts/autotags'
-```
-
-### PHP Tags
-
-```bash
-cd ~
-sudo curl -L https://github.com/vim-php/phpctags/raw/gh-pages/install/phpctags.phar -o /usr/local/bin/phpctags
-sudo chmod +x /usr/local/bin/phpctags
-## Command:
-## phpctags
-## sudo rm /usr/local/bin/phpctags
-```
-
-## Vim Snippets
-
-```bash
-ln -s `pwd`/editor/vim/UltiSnips ~/.vim/
-```
-
-## Vim in PHPStorm
-
-```bash
-ln -s `pwd`/editor/phpstorm/.ideavimrc ~/.ideavimrc
-```
-
-# GIT
-
-```bash
-sudo apt-get install -y git-lfs
-## sudo apt-get remove git-lfs && sudo apt-get autoremove
-```
-> https://www.howtogeek.com/devops/how-to-completely-reset-a-git-repository-including-untracked-files/
-
-## GIT Configuration
-
-[See](http://git-scm.com/docs/git-mergetool)
-
-```bash
-ln -s `pwd`/git/.gitconfig ~/.gitconfig
-ln -s `pwd`/git/.gitignore ~/.gitignore
-```
-
-### GIT Flow
-
-```bash
-sudo apt-get install git-flow
-## sudo apt-get remove git-flow && sudo apt-get autoremove
-```
-
-### GIT Summary
-
-```bash
-cd ~
-sudo apt-get install -y gawk
-sudo curl -L https://raw.githubusercontent.com/albenik/git-summary/master/git-summary -o /usr/local/bin/git-summary
-sudo chmod +x /usr/local/bin/git-summary
-## sudo apt-get remove gawk && sudo rm /usr/local/bin/git-summary && sudo apt-get autoremove
-```
-
-## GIT Large File Storage - LFS (in GIT repository)
-
-[See](https://git-lfs.com/)
-
-```bash
-## Enable in repository
-git lfs install
-
-## On working repository
-git lfs track "*.sql.gz"
-git add .gitattributes
-## Add other files *.sql.gz
-git commit -m "Added lfs support"
-
-## Undo LFS behaviour
-git lfs migrate export --include="*.sql.gz" --everything
-```
-
-### LFS Delete Files in Server
-
-[See](https://www.atlassian.com/git/tutorials/git-lfs#deleting-remote-files)
-[GitHub](https://docs.github.com/en/repositories/working-with-files/managing-large-files/removing-files-from-git-large-file-storage)
-
-```bash
-git log -p <commit-lfs-file>
-git log -p d67e6a7
-git log --all -p -S <oid>
-git log --all -p -S d67e6a7
-```
-
-## GIT Stats
-
-[See](https://github.com/arzzen/git-quick-stats)
-
-```bash
-sudo apt-get install -y git-quick-stats
-```
-
-## GIT CLI
-
-[See](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
-
-```bash
-# Install
-curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-sudo apt-get update
-sudo apt-get install -y gh
-
-# Auth (need token from: https://github.com/settings/tokens)
-gh config set -h github.com git_protocol ssh
-## or Interactive
-gh auth login
-```
-
-## Wallpapers in i3
-
-```bash
-git clone --depth=1 git@github.com:freddiegar/wallpapers.git
-
-ln -s /var/www/html/freddiegar/wallpapers ~/BG
+sudo apt-get remove -y --purge plymouth-* plymouth && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
 
 # ZSH
@@ -738,6 +268,16 @@ gnome-session-quit
 # In Lubuntu
 lxqt-leave
 ## sudo apt-get remove zsh && sudo apt-get autoremove
+```
+
+# Font Fira Code
+
+[See](https://dev.to/josuerodriguez98/installing-firacode-on-windows-and-ubuntu-1fn1)
+
+```bash
+# [L|X]Ubuntu
+sudo apt-get install -y fonts-firacode
+## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
 ```
 
 ## Profile Environment
@@ -815,7 +355,7 @@ echo "
 # @see https://unix.stackexchange.com/a/6104
 # @thanks https://github.com/ohmyzsh/ohmyzsh/blob/6a65ac90259d87f7549c581372403405ef01b7d2/lib/history.zsh#L35
 setopt HIST_REDUCE_BLANKS
-HISTORY_IGNORE='..|__|___|a|a *|alias|alias *|v|v[vlnd]|x|reset|htop|[rv][azh3]|f|f[adfjmnotug|ls|ls *|cd ..|cd *|cd[eatx]|g[sfvVMN]|gst|ga .|gd|gdc|glo[gpf]|rm *|cd[etxf]|vd[etxf]|k[dl]|pkill *|startx|reboot|sa[irsy]|s[uc] *|h[ht]|fo *' >> ~/.zshrc
+HISTORY_IGNORE='..|__|___|a|a *|alias|alias *|v|v[vlnd]|x|reset|htop|[rv][azh3]|f|f[adfjmnotug|ls|ls *|cd ..|cd *|cd[eatx]|g[sfvVMN]|gst|ga .|gd|gdc|glo[gpf]|rm *|cd[etxf]|vd[etxf]|k[dl]|pkill *|startx|reboot|sa[irsy]|s[uc] *|h[ht]|fo *'" >> ~/.zshrc
 
 # Aliases
 
@@ -834,13 +374,497 @@ echo '
 [ -f ~/.bash_aliases ] && \. ~/.bash_aliases' >> ~/.zshenv
 ```
 
+# Main and extra utils
+
+```bash
+sudo apt-get install -y unzip curl tree nmap htop i3 xsel xcompmgr feh pavucontrol pulseaudio-utils maim xclip ncal make build-essential
+## sudo apt-get remove unzip curl tree nmap htop i3 xsel xcompmgr feh pavucontrol pulseaudio-utils maim xclip ncal make build-essential && sudo apt-get autoremove
+```
+
+## i3
+
+```bash
+mkdir -p ~/.config/i3
+ln -s `pwd`/i3/config ~/.config/i3/config
+ln -s `pwd`/i3/status.conf ~/.config/i3/status.conf
+ln -s `pwd`/i3/battery ~/.config/i3/battery-popup
+ln -s `pwd`/i3/workspace ~/.config/i3/workspace
+```
+> On VM:
+> cp -p /var/www/html/freddiegar/services/i3/config ~/.config/i3/config
+> Change $mod Mod4 -> Mod1
+> sed -i 's/$mod Mod4/$mod Mod1/g' ~/.config/i3/config
+> Change $meta Mod1 -> Mod4
+> sed -i 's/$meta Mod1/$meta Mod4/g' ~/.config/i3/config
+
+### Set i3 as WM
+
+```bash
+sudo update-alternatives --config x-session-manager
+# if not is available i3:
+# sudo update-alternatives --install /usr/bin/x-session-manager x-session-manager /usr/bin/i3 60
+```
+
+### Start i3 after StartX
+
+[See](https://www.reddit.com/r/i3wm/comments/72oiwl/how_do_i_set_environment_variables_so_that_they/)
+
+```bash
+cat ~/.xinitrc
+# Hack: '<,'>w !bash
+echo 'dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
+xrdb -I$HOME ~/.Xresources
+exec i3' >> ~/.xinitrc
+```
+
+## Terminal Emulator
+
+```bash
+sudo apt-get install -y rxvt-unicode
+
+sudo ln -s `pwd`/emulator/urxvt/resize-font /usr/lib/x86_64-linux-gnu/urxvt/perl/resize-font
+sudo ln -s `pwd`/emulator/urxvt/config-reload /usr/lib/x86_64-linux-gnu/urxvt/perl/config-reload
+
+ln -s `pwd`/emulator/urxvt/Dark.Xresources ~/.Xdefaults
+ln -s `pwd`/emulator/urxvt/Dark.Xresources ~/.Xresources
+
+xrdb ~/.Xresources
+```
+
+## Vim Configuration
+
+```bash
+sudo apt-get install -y vim
+## sudo apt-get remove vim && sudo apt-get autoremove
+
+# Set as default editor
+sudo update-alternatives --config editor
+
+rm -f ~/.viminfo
+ln -s `pwd`/editor/vim/.vimrc ~/.vimrc
+
+## CoC Settings
+mkdir ~/.vim
+ln -s `pwd`/editor/vim/coc-settings.json ~/.vim/coc-settings.json
+
+## PHPActor Settings
+mkdir -p ~/.config/phpactor
+ln -s `pwd`/editor/vim/phpactor.json ~/.config/phpactor/phpactor.json
+sudo ln -s ~/.vim/plugged/phpactor/bin/phpactor /usr/local/bin/phpactor
+```
+
+## Vim Copy/Paste (Share SO)
+
+```bash
+# Check: +xterm_clipboard
+vim --version | grep xterm_clipboard
+# if -xterm_clipboard then
+# sudo apt-get install -y vim-gtk3
+## In olders versions use: vim-gnome
+# Check again ;)
+```
+
+## Vim JSON Development (and Git Hooks)
+
+[See](https://jqlang.github.io/jq/)
+
+```bash
+sudo apt-get install -y jq
+# sudo apt remove jq && sudo apt-get autoremove
+```
+
+## Vim SQL Development
+
+```bash
+sudo apt-get install -y sqlformat
+# sudo apt remove sqlformat && sudo apt-get autoremove
+```
+
+## Vim XML Development
+
+```bash
+sudo apt-get install -y libxml2-utils
+# sudo apt remove libxml2-utils && sudo apt-get autoremove
+```
+
+## Vim CSV to JSON
+
+```bash
+sudo apt-get install -y miller
+```
+
+### LSP
+
+#### C
+
+[See](https://llvm.org/docs/GettingStarted.html#overview)
+[See 2](https://www.jianshu.com/p/3c7eae5c0c68)
+[See 3](https://github.com/llvm/llvm-project/releases)
+[See 4](https://apt.llvm.org/)
+
+```bash
+cd ~
+# sudo apt-get install libncurses5
+sudo apt-get install -y clang-17 clangd-17 lldb-17 lld-17
+sudo ln -s /usr/bin/clang-17 /usr/bin/clang
+sudo ln -s /usr/bin/clang++-17 /usr/bin/clang++
+sudo ln -s /usr/bin/clang-cpp-17 /usr/bin/clang-cpp
+sudo ln -s /usr/bin/clangd-17 /usr/bin/clangd
+# clangd --version
+```
+
+#### Node (require in Vim LSP)
+
+```bash
+cd ~
+# Slower!
+# @see https://blog.mattclemente.com/2020/06/26/oh-my-zsh-slow-to-load/
+# sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
+# # @see https://github.com/nvm-sh/nvm/releases
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+#
+# # Only oldest Ubuntu
+# echo '
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
+#
+# # Close Terminal to load changes
+# # Show version available
+nvm ls-remote
+# # Ubuntu 18
+# # @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
+# # ldd --version
+nvm install v21.7.3
+# nvm alias default v21.7.3
+# nvm current
+# ## Enabled to all users in [L|X]Ubuntu
+# # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
+#
+# ## Install package: npm install express
+# ## nvm deactivate && nvm uninstall v18.16.0
+
+echo '
+# Enable node|npm
+[ -d "$HOME/.nvm/versions/node/`command cat $HOME/.nvm/alias/default`/bin/" ] && export PATH=$PATH:$HOME/.nvm/versions/node/`command cat $HOME/.nvm/alias/default | tr -d "\\n"`/bin' >> ~/.profile
+
+## Install npm
+npm install -g npm@latest
+## npm --version
+## npm uninstall -g npm@latest
+```
+
+
+#### Vim
+
+[See](https://github.com/iamcco/vim-language-server)
+
+```bash
+npm install -g vim-language-server
+```
+
+#### Sh
+
+[See](https://github.com/iamcco/vim-language-server)
+
+```bash
+npm install -g bash-language-server
+```
+
+#### Javascript|Typescript (js, jsx, ts)
+
+[See](https://github.com/typescript-language-server/typescript-language-server)
+
+```bash
+npm install -g typescript-language-server typescript
+```
+
+#### Tailwindcss
+
+[See](https://github.com/tailwindlabs/tailwindcss-intellisense)
+
+```bash
+npm install -g @tailwindcss/language-server
+```
+
+#### JSON
+
+[See](https://github.com/hrsh7th/vscode-langservers-extracted)
+
+```bash
+npm install -g vscode-langservers-extracted
+```
+
+#### YAML
+
+[See](https://github.com/redhat-developer/yaml-language-server)
+
+```bash
+npm install -g yaml-language-server
+```
+
+#### SQL
+
+[See](https://github.com/joe-re/sql-language-server)
+
+```bash
+# npm install -g sql-language-server
+#
+# mkdir -p ~/.config/sql-language-server/
+#
+# echo '{
+#     "name": "db80",
+#     "adapter": "mysql",
+#     "host": "db80",
+#     "port": 3306,
+#     "user": "root",
+#     "password": "N3uroSiS",
+#     "database": "microsites"
+# }' > /var/www/html/path/project/.sqllsrc.json
+#
+# echo '{
+#     "connections": [
+#         {
+#             "name": "db80",
+#             "adapter": "mysql",
+#             "host": "db80",
+#             "port": 3306,
+#             "user": "root",
+#             "password": "N3uroSiS",
+#             "projectPaths": [
+#                 "/var/www/html/freddiegar/working/path/CODE/microsites"
+#             ]
+#         }
+#     ]
+# }' > ~/.config/sql-language-server/.sqllsrc.json
+```
+
+#### Lua
+
+[See](https://luals.github.io/wiki/build/)
+
+```bash
+sudo apt-get install -y ninja-build
+mkdir /var/www/html/LuaLS
+cd /var/www/html/LuaLS
+git clone --depth=1 https://github.com/LuaLS/lua-language-server
+cd lua-language-server
+git pull origin master
+./make.sh
+
+# Update
+cd /var/www/html/LuaLS/lua-language-server && git pull origin master && ./make.sh
+
+# Enable globally
+sudo ln -s /var/www/html/LuaLS/lua-language-server/bin/lua-language-server /usr/local/bin/lua-language-server
+```
+
+#### Rust
+
+```bash
+curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
+rustup component add rust-analyzer
+```
+> rustup update
+> rustup self uninstall
+
+```bash
+grep -F "Enable rust" ~/.profile
+
+echo '
+# Enable rust
+[ -d ~/.cargo/bin ] && \. "$HOME/.cargo/env"' >> ~/.profile
+
+grep -F "Enable rust" ~/.profile
+```
+
+#### Go
+
+[See](https://go.dev/doc/install)
+[See 2](https://go.dev/doc/install/source)
+[See 3](https://github.com/golang/wiki/blob/master/Ubuntu.md#using-ppa)
+[See 4](https://thenewstack.io/golang-how-to-use-the-go-install-command/)
+
+```bash
+curl -L https://go.dev/dl/go1.24.2.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go-linux-amd64.tar.gz && rm go-linux-amd64.tar.gz
+
+grep -F "Enable go" ~/.profile
+
+echo '
+# Enable go
+[ -d /usr/local/go/bin ] && export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
+
+grep -F "Enable go" ~/.profile
+
+go version
+
+sudo apt-get install -y gopls
+```
+> sudo apt-get remove gopls
+
+##### Vim Slides (require go)
+
+[See](https://github.com/maaslalani/slides)
+[Manual](http://bloodgate.com/perl/graph/manual/syntax.html)
+[Demo](https://youtu.be/wIyz7UQPL70)
+[AscciArt](https://www.asciiart.eu/text-to-ascii-art)
+
+```go
+sudo apt-get install -y make
+go install github.com/maaslalani/slides@latest
+sudo ln -s /home/$USER/go/bin/slides /usr/bin/slides
+
+# Dependency for graphs
+# @see https://metacpan.org/pod/Graph::Easy
+echo 'yes' | perl -MCPAN -e shell
+
+# After installation open shell
+perl -MCPAN -e shell
+install Graph::Easy
+# Check graph-easy path, check in PATH
+ls -la $HOME/perl5/bin
+```
+
+#### Ruby
+
+[See](https://solargraph.org/guides/getting-started)
+
+```bash
+sudo apt-get install -y make build-essential ruby-dev
+sudo gem install solargraph
+```
+
+### C Tags
+
+[See](https://docs.ctags.io/en/latest/autotools.html#gnu-linux-distributions)
+
+```bash
+# After Ubuntu 23.04+
+sudo apt-get -y install \
+    gcc make \
+    pkg-config autoconf automake \
+    python3-docutils \
+    libseccomp-dev \
+    libjansson-dev \
+    libyaml-dev \
+    libxml2-dev
+
+mkdir /var/www/html/universal-ctags
+cd /var/www/html/universal-ctags
+git clone --depth=1 https://github.com/universal-ctags/ctags.git
+cd ctags
+./autogen.sh
+./configure
+make
+sudo make install
+
+## sudo rm /usr/local/bin/ctags
+```
+> /usr/local/bin/ctags
+> man ctags
+> ctags --list-languages
+> ctags --list-kinds
+
+```bash
+# Need: Plug 'vim-scripts/autotags'
+```
+
+### PHP Tags
+
+```bash
+cd ~
+sudo curl -L https://github.com/vim-php/phpctags/raw/gh-pages/install/phpctags.phar -o /usr/local/bin/phpctags
+sudo chmod +x /usr/local/bin/phpctags
+## Command:
+## phpctags
+## sudo rm /usr/local/bin/phpctags
+```
+
+## Vim Snippets
+
+```bash
+ln -s `pwd`/editor/vim/UltiSnips ~/.vim/
+```
+
+## Vim in PHPStorm
+
+```bash
+ln -s `pwd`/editor/phpstorm/.ideavimrc ~/.ideavimrc
+```
+
+# GIT
+
+```bash
+sudo apt-get install -y git-lfs
+## sudo apt-get remove git-lfs && sudo apt-get autoremove
+```
+> https://www.howtogeek.com/devops/how-to-completely-reset-a-git-repository-including-untracked-files/
+
+### GIT Flow
+
+```bash
+sudo apt-get install git-flow
+## sudo apt-get remove git-flow && sudo apt-get autoremove
+```
+
+### GIT Summary
+
+[See](https://github.com/albenik/git-summary)
+
+```bash
+cd ~
+sudo apt-get install -y gawk
+sudo curl -L https://raw.githubusercontent.com/albenik/git-summary/master/git-summary -o /usr/local/bin/git-summary
+sudo chmod +x /usr/local/bin/git-summary
+## sudo apt-get remove gawk && sudo rm /usr/local/bin/git-summary && sudo apt-get autoremove
+```
+
+## GIT Stats
+
+[See](https://github.com/arzzen/git-quick-stats)
+
+```bash
+sudo apt-get install -y git-quick-stats
+```
+
+## GIT CLI
+
+[See](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+
+```bash
+# Install
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y gh
+
+# Auth (need token from: https://github.com/settings/tokens)
+gh config set -h github.com git_protocol ssh
+## or Interactive
+gh auth login
+```
+
+## Wallpapers in i3
+
+```bash
+cd /var/www/html/freddiegar
+git clone --depth=1 git@github.com:freddiegar/wallpapers.git
+
+ln -s /var/www/html/freddiegar/wallpapers ~/BG
+```
+
 # PHP
 
 ```bash
-echo "\n" | sudo add-apt-repository ppa:ondrej/php # Only oldest Ubuntu or with oldest version's PHP (Tune ubuntu version is required :|)
+# Only oldest Ubuntu or with oldest/newest version's PHP (Tune ubuntu version is required :|)
+echo "\n" | sudo add-apt-repository ppa:ondrej/php
 # @see https://devtutorial.io/how-to-install-php-8-3-on-ubuntu-23-10-p3206.html
 # @see https://ppa.launchpadcontent.net/ondrej/php/ubuntu/dists/
-# @see /etc/apt/sources.list.d/ondrej-ubuntu-php-oracular.sources
+# @see /etc/apt/sources.list.d/ondrej-ubuntu-php-oracular.sources :: oracular -> noble
+sudo sed -i 's/^Suites: ocular/Suites: noble/g' /etc/apt/sources.list.d/ondrej-ubuntu-php-oracular.sources
+
 sudo apt-get install -y php8.4-cli
 sudo apt-get install -y php8.4-dev
 sudo apt-get install -y php8.4-mbstring
@@ -860,6 +884,8 @@ sudo apt-get install -y php8.4-zip
 ## sudo apt-get remove php8.4\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
 ```
+> Disable to use saU alias
+> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/ondrej*.sources
 
 ## PHP Xdebug (I'm not god)
 
@@ -978,6 +1004,8 @@ gnome-session-quit
 lxqt-leave
 ## sudo apt-get remove docker-ce && sudo apt-get autoremove
 ```
+> Disable to use saU alias
+> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*docker*.list
 
 ## Docker Compose
 
@@ -985,7 +1013,7 @@ lxqt-leave
 
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/v2.32.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -1209,57 +1237,6 @@ sudo ln -s ~/.local/share/applications/firefox.desktop /usr/share/applications/f
 
 # xdg-mime query default x-scheme-handler/https
 # CAUTION: xdg-mime default firefox.desktop text/xml text/html application/xhtml+xml x-scheme-handler/http x-scheme-handler/https
-```
-
-# Node (and Vim LSP)
-
-```bash
-cd ~
-# Slower!
-# @see https://blog.mattclemente.com/2020/06/26/oh-my-zsh-slow-to-load/
-# sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
-# # @see https://github.com/nvm-sh/nvm/releases
-# curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-#
-# # Only oldest Ubuntu
-# echo '
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
-#
-# # Close Terminal to load changes
-# # Show version available
-# nvm ls-remote
-# # Ubuntu 18
-# # @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
-# # ldd --version
-# nvm install v20.17.0
-# # nvm alias default v20.17.0
-# # nvm current
-# ## Enabled to all users in [L|X]Ubuntu
-# # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
-#
-# ## Install package: npm install express
-# ## nvm deactivate && nvm uninstall v18.16.0
-
-echo '
-# Enable node|npm
-[ -d "$HOME/.nvm/versions/node/`command cat $HOME/.nvm/alias/default`/bin/" ] && export PATH=$PATH:$HOME/.nvm/versions/node/`command cat $HOME/.nvm/alias/default | tr -d "\\n"`/bin' >> ~/.profile
-
-## Install npm
-npm install -g npm@latest
-## npm --version
-## npm uninstall -g npm@latest
-```
-
-# Font Fira Code
-
-[See](https://dev.to/josuerodriguez98/installing-firacode-on-windows-and-ubuntu-1fn1)
-
-```bash
-# [L|X]Ubuntu
-sudo apt-get install -y fonts-firacode
-## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
 ```
 
 # JetBrains Mono
@@ -2037,7 +2014,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.23.4
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(ee714a41)
+# 6.1.0(c3b5484)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'

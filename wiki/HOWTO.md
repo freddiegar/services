@@ -542,3 +542,64 @@ Android File Transfer (photos from phone)
 ```bash
 sudo apt-get install -y android-file-transfer
 ```
+
+Update from LTS to last release Ubuntu
+
+[See]()
+
+```bash
+update-manager -c
+
+cat /etc/update-manager/release-upgrades
+
+sudo sed -i 's/Prompt=lts/Prompt=normal/g' /etc/update-manager/release-upgrades
+
+cat /etc/update-manager/release-upgrades
+
+# Check
+do-release-upgrade -c
+
+# Upgrade
+do-release-upgrade
+```
+
+How create slides using Slides (go)
+
+```bash
+# Create slides
+touch slides.md
+# Enable executions <C-e>
+chmod +x slides.md
+# Presentation mode
+slides slides.md
+```
+
+GIT Large File Storage - LFS (in GIT repository)
+
+[See](https://git-lfs.com/)
+
+```bash
+## Enable in repository
+git lfs install
+
+## On working repository
+git lfs track "*.sql.gz"
+git add .gitattributes
+## Add other files *.sql.gz
+git commit -m "Added lfs support"
+
+## Undo LFS behaviour
+git lfs migrate export --include="*.sql.gz" --everything
+```
+
+LFS Delete Files in Server
+
+[See](https://www.atlassian.com/git/tutorials/git-lfs#deleting-remote-files)
+[GitHub](https://docs.github.com/en/repositories/working-with-files/managing-large-files/removing-files-from-git-large-file-storage)
+
+```bash
+git log -p <commit-lfs-file>
+git log -p d67e6a7
+git log --all -p -S <oid>
+git log --all -p -S d67e6a7
+```

@@ -1904,6 +1904,20 @@ sudo ln -s /opt/d2-v0.6.3/bin/d2 /usr/bin/d2
 ## rm -Rf /usr/bin/d2 /tmp/d2
 ```
 
+Install Konsole (Terminal Emulator)
+
+```bash
+sudo apt-get install -y konsole
+## sudo apt-get remove konsole && sudo apt-get autoremove
+
+rm -f ~/.local/share/konsole/*.profile
+rm -f ~/.local/share/konsole/*.colorscheme
+
+ln -s `pwd`/emulator/konsole/konsole.profile ~/.local/share/konsole/konsole.profile
+ln -s `pwd`/emulator/konsole/Dark.colorscheme ~/.local/share/konsole/Dark.colorscheme
+ln -s `pwd`/emulator/konsole/Light.colorscheme ~/.local/share/konsole/Light.colorscheme
+```
+
 Install Rxvt-Unicode (Terminal Emulator)
 
 ```bash

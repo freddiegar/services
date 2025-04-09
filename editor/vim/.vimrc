@@ -291,7 +291,8 @@ if g:initialization
         let g:undodir = expand('~/.vim/undodirs/' . (g:isneovim ? 'nvim' : 'vim')) . '//'
 
         " Save|Load sessions
-        let g:session_file = expand('~/.vim/sessions/' . join(g:working, '@') . (g:isneovim ? '.nvim' : '.vim'))
+        let g:sessiondir = expand('~/.vim/sessions/')
+        let g:session_file = expand(g:sessiondir . join(g:working, '@') . (g:isneovim ? '.nvim' : '.vim'))
 
         " Plugins
         " @see https://github.com/junegunn/vim-plug
@@ -6222,6 +6223,10 @@ EOF
 
             call <SID>sessionsavepre()
 
+            if !isdirectory(expand(g:sessiondir))
+                call mkdir(expand(g:sessiondir), 'p', 0700)
+            endif
+
             silent execute 'mksession! ' . g:session_file
 
             " call <SID>sessionsetqf(l:qflist, l:qfinfo)
@@ -6639,7 +6644,7 @@ EOF
 
     autocmd VimLeavePre * call <SID>sessionsave()
     " Not flushed X clipboard when Vim exits
-    autocmd VimLeave * call <SID>settitle('$USER@$HOST') | call system("echo -n $'" - escape(getreg(),"'") . " ' | xsel --input --clipboard")
+    autocmd VimLeave * call <SID>settitle('$USER@$HOST') | if !g:istty | call system("echo -n $'" - escape(getreg(),"'") . " ' | xsel --input --clipboard") | endif
     " Auto-source syntax in *.vpm
     autocmd BufReadPost,BufNewFile *.vpm
         \ if filereadable(expand('syntax.vim')) |
