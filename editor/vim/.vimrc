@@ -2494,7 +2494,7 @@ if g:isneovim
     " Plug 'https://codeberg.org/FelipeLema/cmp-async-path', {'as': 'cmp-path'} " Integrate for path (beta mode)
 
     Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
-    " Plug 'j-hui/fidget.nvim'                                  " LSP -> Progress ... distracting
+    Plug 'j-hui/fidget.nvim'                                  " LSP -> Progress ... distracting
     " endif
 else
     Plug 'airblade/vim-gitgutter'                             " Show signs changes if cwd is a git repository (using VimL)
@@ -4636,7 +4636,7 @@ lua <<EOF
                     local clients = {}
 
                     for bufnr, _ in pairs(client.attached_buffers) do
-                        if bufnr == event.buf then
+                        if bufnr == event.buf and client.name ~= 'copilot' then
                             table.insert(clients, client.name)
 
                             vim.b[bufnr].clients= table.concat(clients, '|')
@@ -4714,13 +4714,18 @@ lua <<EOF
     -- require("mason").setup()
     -- require("mason-lspconfig").setup()
 
-    -- require('fidget').setup({
-    --     progress = {
-    --         suppress_on_insert = true,
-    --         ignore_done_already = true,
-    --         ignore_empty_message = true,
-    --     },
-    -- })
+    require('fidget').setup({
+        progress = {
+            suppress_on_insert = true,
+            ignore_done_already = true,
+            ignore_empty_message = true,
+        },
+        notification = {
+            window = {
+                winblend = 0, -- Trasparency
+            }
+        },
+    })
 
     require('lspconfig.ui.windows').default_options.border = 'single'
 
@@ -5185,7 +5190,7 @@ EOF
     " Esc: Escape from Terminal Mode to Normal Mode (No applied fzf buffers)
     if g:isneovim
         " Tab Ter[M]inal
-        command! -nargs=? S cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> 5split <Bar> setlocal winfixheight <Bar> terminal <args>
+        command! -nargs=? S cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> 10split <Bar> setlocal winfixheight <Bar> terminal <args>
         command! -nargs=? M tabnew <Bar> terminal <args>
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
@@ -5237,7 +5242,7 @@ EOF
             silent! execute printf("cnoreabbrev <expr> %s (getcmdtype() ==# ':' && getcmdline() =~# '^%s') ? 'split <Bar> terminal' : '%s'", option, option, option)
         endfor
     else
-        command! -nargs=? S cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> terminal ++rows=5 ++kill=term <args>
+        command! -nargs=? S cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> windo if &filetype ==# 'help' <Bar> bd! <Bar> endif <Bar> terminal ++rows=10 ++kill=term <args>
         command! -nargs=? M tab terminal <args>
 
         autocmd TerminalWinOpen * if &buftype ==# 'terminal'
