@@ -365,6 +365,15 @@ ln -s `pwd`/shell/bash/bash_aliases ~/.bash_aliases
 ## Enable alias in Zsh
 echo '
 [ -f ~/.bash_aliases ] && \. ~/.bash_aliases' >> ~/.zshrc
+
+echo $(command cat <<EOF
+\n
+# @thanks https://unix.stackexchange.com/a/595281\n
+bindkey -s '\\ew' "^u\`alias W | sed "s/'//g" | awk -F= '{print \$2}'\`^M"\n
+bindkey -s '\\ee' "^uvde^M"\n
+bindkey -s '\\ef' "^uvdf^M"
+EOF
+) >> ~/.zshrc
 ```
 
 ## Enable alias in Vim
@@ -522,13 +531,13 @@ cd ~
 # sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
 # # @see https://github.com/nvm-sh/nvm/releases
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
-#
-# # Only oldest Ubuntu
-# echo '
+
+echo '
+# Uncomment to update node
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | sudo tee -a ~/.zshrc
-#
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | tee -a ~/.zshrc
+
 # # Close Terminal to load changes
 # # Show version available
 nvm ls-remote
@@ -550,10 +559,10 @@ echo '
 
 ## Install npm
 npm install -g npm@latest
+## npm install -g npm@10.9.2
 ## npm --version
 ## npm uninstall -g npm@latest
 ```
-
 
 #### Vim
 
