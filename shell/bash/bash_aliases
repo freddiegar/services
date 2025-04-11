@@ -149,6 +149,12 @@ nn() {
     message=`echo "$message" | sed -r 's/,/┌/g'`
     message=`echo "$message" | sed -r 's/;/¦/g'`
 
+    if [ "$DISPLAY" = "" ]; then
+        echo $message
+
+        return
+    fi
+
     i3-msg --quiet "exec i3-nagbar --type warning --font 'pango:fira code retina' --message '$message'"
 }
 
