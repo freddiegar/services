@@ -134,12 +134,31 @@ grep -F "vm.swappiness=" /etc/sysctl.d/99-sysctl.conf
 # 0 - disable
 # 1 - global enable
 # 2 - enable for loopback traffic only (default)
-sudo sysctl -w net.ipv4.tcp_tw_reuse=1
+sysctl -a | grep 'net.ipv4.tcp_tw_reuse'
+echo '# Better Network
+net.ipv4.tcp_tw_reuse=1' | sudo tee -a /etc/sysctl.conf
 
 # Default: 60 (in seconds)
-sudo sysctl -w net.ipv4.tcp_fin_timeout=15
 
-sudo sysctl -p
+sysctl -a | grep 'net.ipv4.tcp_fin_timeout'
+echo 'net.ipv4.tcp_fin_timeout=15' | sudo tee -a /etc/sysctl.conf
+
+# @see https://www.golinuxcloud.com/how-to-improve-disk-io-performance-in-linux/
+# @see https://www.kernel.org/doc/html/latest/admin-guide/sysctl/vm.html
+# @see https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/
+
+# Default: 20 (percentage)
+sysctl -a | grep 'vm.dirty_ratio'
+
+echo '# Better I/O
+vm.dirty_ratio=60' | sudo tee -a /etc/sysctl.conf
+
+# Default: 10 (percentage)
+sysctl -a | grep 'vm.dirty_background_ratio'
+
+echo 'vm.dirty_background_ratio=20' | sudo tee -a /etc/sysctl.conf
+
+sudo sysctl --system
 ```
 
 # Change default User Max Watches
@@ -152,7 +171,7 @@ fs.inotify.max_user_watches=524288' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 
 grep -F "fs.inotify.max_user_watches=" /etc/sysctl.d/99-sysctl.conf
 
-sudo sysctl -p
+sudo sysctl --system
 ```
 
 # Change default time GRUB to 2
