@@ -3299,8 +3299,8 @@ endfunction
 "   https://www.vim.org;
 "   editor/vim/.vimrc
 "   /etc/hosts
-" url (string), [string repeatable]: void
-function! s:get_url(url, ...) abort
+" url (string): void
+function! s:get_url(url) abort
     " URL or [relative] path
     let l:uri = a:url
 
@@ -3376,8 +3376,6 @@ function! s:go_url(url, ...) abort
     let l:repeatable = a:0 > 0 ? a:1 : 'GoUrlRepeatable'
 
     if l:uri ==# ''
-        echo 'Nothing to do.'
-
         return
     endif
 
