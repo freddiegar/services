@@ -1936,15 +1936,15 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 138.0b5
+# 138.0b6
 zen --version | awk '{print $3}'
 # 1.11.2t
 dpkg --list | wc --lines
-# 2124
+# 2123
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
 # 108
 apt list --installed | wc --lines
-# 2117
+# 2115
 apt-mark showmanual | wc --lines
-# 244
+# 243
 ```

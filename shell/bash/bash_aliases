@@ -522,6 +522,7 @@ D() {
 # alias C='XDG_CURRENT_DESKTOP=GNOME gnome-control-center'
 alias O="xargs -r -I {}"
 alias P="[ \$0 = 'zsh' ] && export PS1=\"%1~> \" || export PS1=\"\\W> \""
+alias S="startx"
 # @thanks https://stackoverflow.com/a/4509648
 alias W="find /var/www/html/{evertec,freddiegar} -mindepth 1 -maxdepth 1 -type d | fzf | O -- sh ~/.config/i3/workspace {} 2>&1 > /dev/null"
 
@@ -545,6 +546,7 @@ alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f package.json ] && [ -f package-lock.json ] ; then npm ci; fi && cd .."
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f artisan ] && [ -f .env ] && [ -d vendor ]; then phpx artisan migrate --force; fi && cd .."
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f yii ] && [ -f .env ] && [ -d vendor ] ; then export APPLICATION_ENV=dev && phpx yii migrate/up; fi && cd .."
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f .git/.shada ] || [ -f .git/.viminfo ] ; then rm .git/{.shada,.viminfo} ; fi"
 alias lsd="command ls -lA | grepx '^d'"
 alias lsn="command ls -L1"
 alias __="ssh-add"

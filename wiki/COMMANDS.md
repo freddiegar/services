@@ -1557,7 +1557,7 @@ sudo apt-get install -y neovim
 # sudo apt-get remove -y neovim && sudo apt-get autoremove
 # echo "\n" | sudo add-apt-repository --remove ppa:neovim-ppa/stable
 
-# sudo apt-get remove -y neovim libpython3-dev python3-pip && sudo apt-get autoremove
+# sudo apt-get remove -y neovim neovim-runtime libpython3-dev python3-pip python3-pynvim && sudo apt-get autoremove
 # echo "\n" | sudo add-apt-repository --remove ppa:neovim-ppa/unstable
 
 ## CoC Settings

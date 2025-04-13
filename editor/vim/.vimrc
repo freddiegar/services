@@ -234,7 +234,7 @@
 " THROBLESHOOTING
 " 1. Update system
 " 2. Delete viminfo file!: rm .git/{.shada,.viminfo}
-" 3. Delete session file!
+" 3. Delete session file!: rm -Rf ~/.vim/sessions/*
 " 4. Delete fugitive folder: rm -Rf fugitive:
 
 " Registers and marks special used here
