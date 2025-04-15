@@ -1281,6 +1281,7 @@ sudo dpkg -i opera.deb && rm -f opera.deb
 sudo journalctl --rotate
 sudo journalctl --vacuum-time=30days
 sudo journalctl --vacuum-size=50M
+
 # journalctl --disk-usage
 ```
 
@@ -1295,6 +1296,7 @@ echo $(command cat <<EOF
 export PATH=\$(perl -e 'print join(":", grep { not \$seen{\$_}++ } split(/:/, \$ENV{PATH}))')
 EOF
 ) >> ~/.profile
+
 ```
 
 # Clean installation
@@ -1325,7 +1327,7 @@ sudo ln -s ~/.vim/plugged/fzf/bin/fzf /usr/bin/fzf
 
 # or Debian 9+/Ubuntu 19.10+
 # 2025-01-20: Debian APT keeps v0.46.0 (2024-01-23), older!
-sudo apt-get install -y fzf
+# sudo apt-get install -y fzf
 ```
 
 # RigGrep for Vim search (Performance FZF and Terminal)
@@ -1493,6 +1495,7 @@ sudo pecl install -f xdebug
 # Xdebug 3
 ## Backup v2
 sudo cp -p /etc/php/7.4/mods-available/xdebug.ini /etc/php/7.4/mods-available/xdebug.ini.v2
+
 echo 'xdebug.idekey=PHPSTORM
 xdebug.mode=debug
 xdebug.start_with_request=trigger
@@ -1570,13 +1573,12 @@ sudo apt-get install -y filezilla
 ## OBS - Open Broadcasting Software
 
 ```bash
-# Oldest
-sudo add-apt-repository ppa:obsproject/obs-studio
-##
-
 sudo apt-get install -y ffmpeg obs-studio
 mkdir $HOME/obs
 ## sudo apt-get remove obs-studio ffmpeg && sudo apt-get autoremove && echo "\n" | sudo add-apt-repository --remove ppa:obsproject/obs-studio
+
+# Oldest
+sudo add-apt-repository ppa:obsproject/obs-studio
 ```
 
 [See](https://www.thregr.org/wavexx/software/screenkey/)
@@ -1651,7 +1653,7 @@ Not snap please
 ```bash
 echo "\n" | sudo add-apt-repository ppa:o2sh/onefetch
 # @see /etc/apt/sources.list.d/o2sh-ubuntu-onefetch-oracular.sources :: oracular -> noble
-sudo sed -i 's/^Suites: ocular/Suites: noble/g' /etc/apt/sources.list.d/*onefetch*.sources
+sudo sed -i 's/^Suites: oracular/Suites: noble/g' /etc/apt/sources.list.d/*onefetch*.sources
 
 sudo apt-get update
 sudo apt-get install onefetch
@@ -1797,19 +1799,17 @@ In olders Ubuntu versions <= 24.10
 ```bash
 sudo snap list
 
-sudo snap remove firefox
-sudo snap remove gnome-42-2204
-sudo snap remove gnome-3-28-1804
-sudo snap remove desktop-security-center
-sudo snap remove gtk-common-themes
-sudo snap remove snap-store
-sudo snap remove snapd-desktop-integration
-sudo snap remove bare
-sudo snap remove firmware-updater
-sudo snap remove prompting-client
-sudo snap remove core22
-sudo snap remove teams-for-linux
-sudo snap remove snapd
+for pkg in $(snap list | awk '{print $1}'); do
+    sudo snap remove "$pkg"
+done
+
+sudo apt-get remove snapd
+```
+
+## Remove Gnome
+
+```bash
+sudo apt-get remove -y --purge gnome\* && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
 
 ## Remove LibreOffice
@@ -1845,7 +1845,7 @@ uname -r
 cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
 cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31825796 kB
+# 31825800 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -1905,7 +1905,7 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.4.5
+# 8.4.6
 # nvm --version
 # # 0.39.3
 npm --version
@@ -1925,7 +1925,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.24.2
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(c3b5484)
+# 6.1.0(00ae476)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -1939,15 +1939,17 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 138.0b6
+# 138.0b7
 zen --version | awk '{print $3}'
-# 1.11.2t
-dpkg --list | wc --lines
-# 2123
+# 1.11.3t
+# Unstable CLI: apt-get list --installed | wc --lines
+# apt show gnome
+# dpkg --list | wc --lines
+# dpkg --get-selections | grep -v deinstall > ~/packages.log
+dpkg --get-selections | grep -v deinstall | wc --lines
+# 1886
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 108
-apt list --installed | wc --lines
-# 2115
+# 42
 apt-mark showmanual | wc --lines
-# 243
+# 316
 ```

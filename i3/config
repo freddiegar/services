@@ -404,16 +404,16 @@ default_floating_border pixel 3
 # @see https://www.youtube.com/watch?v=8-S0cWnLBKg&list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf&index=2
 bindsym $mod+Shift+a exec --no-startup-id /opt/awsvpnclient/AWS\ VPN\ Client
 bindsym $mod+Shift+b exec --no-startup-id brave-browser
-bindsym $mod+Shift+d exec --no-startup-id freecad
-bindsym $mod+Shift+e exec --no-startup-id nautilus --no-desktop
+# bindsym $mod+Shift+d exec --no-startup-id freecad
+# bindsym $mod+Shift+e exec --no-startup-id nautilus --no-desktop
 bindsym $mod+Shift+f exec --no-startup-id firefox
 bindsym $mod+Shift+g exec --no-startup-id google-chrome
-bindsym $mod+Shift+m exec --no-startup-id mysql-workbench
+# bindsym $mod+Shift+m exec --no-startup-id mysql-workbench
 bindsym $mod+Shift+n exec --no-startup-id neovide
 bindsym $mod+Shift+o exec --no-startup-id opera
 bindsym $mod+Shift+p exec --no-startup-id postman
 bindsym $mod+Shift+t exec --no-startup-id microsoft-edge
-bindsym $mod+Shift+v exec --no-startup-id virt-manager
+# bindsym $mod+Shift+v exec --no-startup-id virt-manager
 bindsym $mod+Shift+u exec --no-startup-id filezilla
 bindsym $mod+Shift+y exec --no-startup-id flameshot gui
 bindsym $mod+Shift+z exec --no-startup-id zen

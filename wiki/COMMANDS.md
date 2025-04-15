@@ -1548,11 +1548,10 @@ ln -s `pwd`/editor/neovim/init.vim ~/.config/nvim/init.vim
 # echo "\n" | sudo add-apt-repository ppa:neovim-ppa/stable
 echo "\n" | sudo add-apt-repository ppa:neovim-ppa/unstable
 
-sudo apt-get install -y neovim
-
 # On unstable (>= 0.10.0), it requires and neovim module for Snippets!
 # Works WITHOUT install: sudo apt-get install -y python3-pip libpython3-dev
-# sudo apt-get install -y python3-pynvim
+
+sudo apt-get install -y neovim python3-pynvim
 
 # sudo apt-get remove -y neovim && sudo apt-get autoremove
 # echo "\n" | sudo add-apt-repository --remove ppa:neovim-ppa/stable
