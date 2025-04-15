@@ -37,7 +37,7 @@ sudo swapon -a
 
 ```bash
 sudo cp /etc/fstab /etc/fstab.bak
-sudo vim /etc/fstab
+sudo vi /etc/fstab
 # Adding: discard,noatime,nodiratime
 # / ext4 defaults,commit=60 0 1
 # / ext4 defaults,discard,noatime,nodiratime,commit=60 0 1
@@ -62,8 +62,8 @@ echo 'Acquire::Languages "none";' | sudo tee -a /etc/apt/apt.conf.d/00aptitude
 # Utils
 
 ```bash
-sudo apt-get install -y software-properties-common git-core
-## sudo apt-get remove software-properties-common git-core && sudo apt-get autoremove
+sudo apt-get install -y software-properties-common git-core curl
+## sudo apt-get remove software-properties-common git-core curl && sudo apt-get autoremove
 ```
 > By example: add-apt-repository
 
@@ -72,6 +72,7 @@ sudo apt-get install -y software-properties-common git-core
 [See](http://git-scm.com/docs/git-mergetool)
 
 ```bash
+# Hack: .w !bash
 ln -s `pwd`/git/.gitconfig ~/.gitconfig
 ln -s `pwd`/git/.gitignore ~/.gitignore
 ```
@@ -104,7 +105,7 @@ cd /var/www/html/freddiegar/services
 ## Vim Latest :D, of course! (Non necessary in current LTS)
 
 ```bash
-echo "\n" | sudo add-apt-repository ppa:jonathonf/vim
+# echo "\n" | sudo add-apt-repository ppa:jonathonf/vim
 ## echo "\n" | sudo add-apt-repository --remove ppa:jonathonf/vim
 ```
 
@@ -136,12 +137,12 @@ grep -F "vm.swappiness=" /etc/sysctl.d/99-sysctl.conf
 # 2 - enable for loopback traffic only (default)
 sysctl -a | grep 'net.ipv4.tcp_tw_reuse'
 echo '# Better Network
-net.ipv4.tcp_tw_reuse=1' | sudo tee -a /etc/sysctl.conf
+net.ipv4.tcp_tw_reuse=1' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 
 # Default: 60 (in seconds)
 
 sysctl -a | grep 'net.ipv4.tcp_fin_timeout'
-echo 'net.ipv4.tcp_fin_timeout=15' | sudo tee -a /etc/sysctl.conf
+echo 'net.ipv4.tcp_fin_timeout=15' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 
 # @see https://www.golinuxcloud.com/how-to-improve-disk-io-performance-in-linux/
 # @see https://www.kernel.org/doc/html/latest/admin-guide/sysctl/vm.html
@@ -151,12 +152,12 @@ echo 'net.ipv4.tcp_fin_timeout=15' | sudo tee -a /etc/sysctl.conf
 sysctl -a | grep 'vm.dirty_ratio'
 
 echo '# Better I/O
-vm.dirty_ratio=60' | sudo tee -a /etc/sysctl.conf
+vm.dirty_ratio=60' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 
 # Default: 10 (percentage)
 sysctl -a | grep 'vm.dirty_background_ratio'
 
-echo 'vm.dirty_background_ratio=20' | sudo tee -a /etc/sysctl.conf
+echo 'vm.dirty_background_ratio=20' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 
 sudo sysctl --system
 ```
@@ -478,7 +479,7 @@ sudo ln -s ~/.vim/plugged/phpactor/bin/phpactor /usr/local/bin/phpactor
 # Check: +xterm_clipboard
 vim --version | grep xterm_clipboard
 # if -xterm_clipboard then
-# sudo apt-get install -y vim-gtk3
+sudo apt-get install -y vim-gtk3
 ## In olders versions use: vim-gnome
 # Check again ;)
 ```
@@ -524,12 +525,12 @@ sudo apt-get install -y miller
 ```bash
 cd ~
 # sudo apt-get install libncurses5
-sudo apt-get install -y clang-17 clangd-17 lldb-17 lld-17
-sudo ln -s /usr/bin/clang-17 /usr/bin/clang
-sudo ln -s /usr/bin/clang++-17 /usr/bin/clang++
-sudo ln -s /usr/bin/clang-cpp-17 /usr/bin/clang-cpp
-sudo ln -s /usr/bin/clangd-17 /usr/bin/clangd
-# clangd --version
+sudo apt-get install -y clang-19 clangd-19 lldb-19 lld-19
+sudo ln -s /usr/bin/clang-19 /usr/bin/clang
+sudo ln -s /usr/bin/clang++-19 /usr/bin/clang++
+sudo ln -s /usr/bin/clang-cpp-19 /usr/bin/clang-cpp
+sudo ln -s /usr/bin/clangd-19 /usr/bin/clangd
+clangd --version
 ```
 
 #### Node (require in Vim LSP)
@@ -541,6 +542,7 @@ cd ~
 # sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
 # # @see https://github.com/nvm-sh/nvm/releases
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+
 #
 # # Only oldest Ubuntu
 # echo '
@@ -551,10 +553,12 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
 # # Close Terminal to load changes
 # # Show version available
 nvm ls-remote
+
 # # Ubuntu 18
 # # @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
 # # ldd --version
 nvm install v21.7.3
+
 # nvm alias default v21.7.3
 # nvm current
 # ## Enabled to all users in [L|X]Ubuntu
@@ -569,6 +573,7 @@ echo '
 
 ## Install npm
 npm install -g npm@latest
+npm install -g npm@10.9.2
 ## npm --version
 ## npm uninstall -g npm@latest
 ```
@@ -736,8 +741,6 @@ sudo ln -s /home/$USER/go/bin/slides /usr/bin/slides
 
 # Dependency for graphs
 # @see https://metacpan.org/pod/Graph::Easy
-echo 'yes' | perl -MCPAN -e shell
-
 # After installation open shell
 perl -MCPAN -e shell
 install Graph::Easy
@@ -882,7 +885,7 @@ echo "\n" | sudo add-apt-repository ppa:ondrej/php
 # @see https://devtutorial.io/how-to-install-php-8-3-on-ubuntu-23-10-p3206.html
 # @see https://ppa.launchpadcontent.net/ondrej/php/ubuntu/dists/
 # @see /etc/apt/sources.list.d/ondrej-ubuntu-php-oracular.sources :: oracular -> noble
-sudo sed -i 's/^Suites: ocular/Suites: noble/g' /etc/apt/sources.list.d/ondrej-ubuntu-php-oracular.sources
+sudo sed -i 's/^Suites: oracular/Suites: noble/g' /etc/apt/sources.list.d/ondrej*.sources
 
 sudo apt-get install -y php8.4-cli
 sudo apt-get install -y php8.4-dev
@@ -900,6 +903,7 @@ sudo apt-get install -y php8.4-bcmath
 sudo apt-get install -y php8.4-gmp
 sudo apt-get install -y php8.4-xml
 sudo apt-get install -y php8.4-zip
+
 ## sudo apt-get remove php8.4\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
 ```
@@ -1097,11 +1101,12 @@ if [ -f ~/.ssh/agent.env ]; then
     . ~/.ssh/agent.env > /dev/null
 
     if ! kill -0 $SSH_AGENT_PID > /dev/null 2>&1; then
-        eval `ssh-agent | tee ~/.ssh/agent.env`
+        eval `ssh-agent -s | tee ~/.ssh/agent.env`
     fi
 else
-    eval `ssh-agent | tee ~/.ssh/agent.env`
+    eval `ssh-agent -s | tee ~/.ssh/agent.env`
 fi' >> ~/.zshrc
+
 ```
 > Don't use: ssh-agent zsh
 
@@ -2055,7 +2060,7 @@ dpkg --list | wc --lines
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
 # 95
 apt list --installed | wc --lines
-2388
+# 2388
 apt-mark showmanual | wc --lines
 # 442
 ```
