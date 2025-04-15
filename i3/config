@@ -441,6 +441,8 @@ exec --no-startup-id ~/.config/i3/battery-popup -L 20 -l 10 -t 2m -m "Battery is
 exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-`ls ~/BG/*.jpeg | wc --lines` -n1).jpeg
 # Init IP public
 exec --no-startup-id curl icanhazip.com > /tmp/i3_public_ip
+# Init DPMS
+exec --no-startup-id echo "$((`xset q | grep "Standby:" | cut -d ':' -f 2 | cut -d ' ' -f 2` / 60))m" > /tmp/i3_dpms
 
 # Reload wallpaper
 bindsym $mod+Shift+w exec --no-startup-id feh --bg-scale ~/BG/background-$(shuf -i 0-`ls ~/BG/*.jpeg | wc --lines` -n1).jpeg

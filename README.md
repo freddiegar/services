@@ -55,8 +55,8 @@ Allow access from another networks segment to containers development network
 
 ```bash
 # Connect another network in each container and use name over ip
-docker network connect <network-name> db
-docker network connect <network-name> cache
+docker network connect <network-name> db80
+docker network connect development db80
 ```
 ### Hosts
 
@@ -79,10 +79,7 @@ Create folders data and log and set defaults
 ```bash
 sudo mkdir -p /var/lib/mysql && sudo chown $(whoami):systemd-journal /var/lib/mysql
 sudo mkdir -p /var/log/mysql && sudo chown $(whoami):systemd-journal /var/log/mysql
-touch /var/log/mysql/error.log
-touch /var/log/mysql/mysql.log
-touch /var/log/mysql/slow.log
-sudo chmod 666 /var/log/mysql/*.log
+sudo chmod 666 /var/log/mysql/*/*.log
 ```
 > Check Migration from 5.7. to 8.0
 > mysqlcheck -uroot -p --all-databases --check-upgrade

@@ -53,3 +53,5 @@
 [advice]
 	mergeConflict = false
 	addEmptyPathspec = false
+; [includeIf "gitdir:/var/www/html/context/project"]
+;     path = .gitconfig.project

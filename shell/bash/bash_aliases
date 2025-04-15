@@ -499,10 +499,32 @@ alias x="exit"
 alias y="sh ~/working/syntaxer.sh"
 alias z="sh ~/working/sprinter.sh"
 
-alias P="[ \$0 = 'zsh' ] && export PS1=\"%1~> \" || export PS1=\"\\W> \""
+# @see https://wiki.archlinux.org/title/Display_Power_Management_Signaling
+# D (toggle between 10m and 2h)
+# D 3600 (set to 1h)
+D() {
+    SECONDS=600
+
+    if [ "`xset q | grep "Standby: $SECONDS"`" != "" ] || [ "$#" -ge 1 ]; then
+        SECONDS=${1-3600}
+    fi
+
+    xset s $SECONDS $SECONDS
+    xset dpms $SECONDS $SECONDS $SECONDS
+
+    # i3 status
+    echo "$((`xset q | grep "Standby:" | cut -d ':' -f 2 | cut -d ' ' -f 2` / 60))m" > /tmp/i3_dpms
+
+    echo "DPMS after $(($SECONDS / 60))m or $((($SECONDS / 60) / 60))h without interaction."
+}
+
+# @thanks https://joaocarlos.dev/posts/gnome-control-center-on-i3wm/
+# alias C='XDG_CURRENT_DESKTOP=GNOME gnome-control-center'
 alias O="xargs -r -I {}"
+alias P="[ \$0 = 'zsh' ] && export PS1=\"%1~> \" || export PS1=\"\\W> \""
+alias S="startx"
 # @thanks https://stackoverflow.com/a/4509648
-alias W="find /var/www/html/{evertec,flexphp,freddiegar} -mindepth 1 -maxdepth 1 -type d | fzf | O -- sh ~/.config/i3/workspace {} 2>&1 > /dev/null"
+alias W="find /var/www/html/{evertec,freddiegar} -mindepth 1 -maxdepth 1 -type d | fzf | O -- sh ~/.config/i3/workspace {} 2>&1 > /dev/null"
 
 # SPA
 alias ww="[ \"\`pgrep --full 'npm run dev --host'\`\" = \"\" ] && sh -c 'cd /var/www/html/evertec/webcheckout-spa && npm run dev -- --host > /dev/null 2>&1 &' && echo '\e[32mStarted\e[0m SPA'"
@@ -524,6 +546,7 @@ alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f package.json ] && [ -f package-lock.json ] ; then npm ci; fi && cd .."
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f artisan ] && [ -f .env ] && [ -d vendor ]; then phpx artisan migrate --force; fi && cd .."
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f yii ] && [ -f .env ] && [ -d vendor ] ; then export APPLICATION_ENV=dev && phpx yii migrate/up; fi && cd .."
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f .git/.shada ] || [ -f .git/.viminfo ] ; then rm .git/{.shada,.viminfo} ; fi"
 alias lsd="command ls -lA | grepx '^d'"
 alias lsn="command ls -L1"
 alias __="ssh-add"
