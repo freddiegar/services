@@ -4044,9 +4044,11 @@ function! s:run(range, interactive, ...) abort
         let l:ignorechars = ["'"]
 
         if l:guessed ==# v:true
-            execute '!' . l:command
+            " execute '!' . l:command
 
-            return
+            " return
+            let l:execute = '%s'
+            let l:ignorechars = ["'", '\', '$', '"']
         elseif filereadable('artisan')
             " dump() doesn't allow multiple sentences split by semicolon (;) :(
             let l:execute = 'echo "%s" | phpx artisan tinker --no-interaction'
