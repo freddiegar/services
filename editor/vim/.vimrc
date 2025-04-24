@@ -15,6 +15,7 @@
 " @see https://rwx.gg/tools/editors/vi/how/magic/
 " @see https://whyisitsogood.wiki/Vim
 " @see https://fernandocejas.com/blog/engineering/2021-08-04-cooking-effective-code-reviews/
+" @see https://endler.dev/2025/best-programmers/
 
 " HUMOR?
 " @see https://www.monkeyuser.com/2016/bugfixing-for-developers/
@@ -80,6 +81,7 @@
 " QUICKREF
 " @see https://quickref.me/vim
 " @see https://vim.rtorr.com/
+" @see https://thomer.com/vi/vi.html
 " @see http://www.rayninfo.co.uk/vimtips.html
 " @see http://www.angelwatt.com/coding/notes/vim-commands.html
 " @see https://blog.sanctum.geek.nz/vim-annoyances/
@@ -661,8 +663,8 @@ let g:loaded_matchparen = 1
 " p     Preview file without (moving the cursor from netrw)
 
 " -     Go up one directory
-" u     Go back to previously visited directory (like <C-o> in Vim)
-" U     Go forward to subsequently visited directory (like <C-i> in Vim)
+" u     Go back to previously visited directory (like <C-o> in a buffer)
+" U     Go forward to subsequently visited directory (like <C-i> in a buffer)
 
 " %     Create a new file
 " d     Create a new directory

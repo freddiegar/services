@@ -22,11 +22,12 @@ su - freddie
 # Swap unlock
 
 [See](https://www.youtube.com/watch?v=mp7xNTLFE38)
+[See](https://linuxblog.io/linux-performance-almost-always-add-swap-space/)
 
 ```bash
 free -h
 sudo swapoff -a
-cat /etc/fstab | grep swap
+command cat /etc/fstab | grep swap
 sudo fallocate -l 8G /swap.img
 sudo mkswap /swap.img
 sudo chown 0600 /swap.img
@@ -35,19 +36,54 @@ sudo swapon -a
 
 # Better SSD I/O
 
+[See](https://wiki.debian.org/SSDOptimization)
+
+Increase commit 5s to 10m (600s), it uses RAM over I/O operations
+
 ```bash
-sudo cp /etc/fstab /etc/fstab.bak
+sudo cp /etc/fstab /etc/fstab.original
+
 sudo vi /etc/fstab
-# Adding: discard,noatime,nodiratime
-# / ext4 defaults,commit=60 0 1
-# / ext4 defaults,discard,noatime,nodiratime,commit=60 0 1
+# Adding: discard,noatime,nodiratime,nobarrier,commit=600
+# / ext4 defaults,discard,noatime,nodiratime,nobarrier,commit=600 0 1
+
+# Not use: data=writeback, use next command:
+## To revert, try
+## ls -la /dev/mapper
+## mount -n ubuntu--vg-ubuntu--lv / -w -o remount,rw
+## vi /etc/fstab
+## reboot
+
+sudo tune2fs -o journal_data_writeback ubuntu--vg-ubuntu--lv
+
+# Not use:
+#   nobh:       not valid option in SSD drives, depends of date=writeback
+#   relatime:   default in newer versions of kernel (>= 2.3)
+
 reboot
+```
+> man mount
+
+# Better TMP/Logs I/O
+
+[See](https://itbeginner.net/tweak-optimize-ssd-ubuntu-linux-mint/)
+
+```bash
+echo '# /tmp is better as RAM info
+tmpfs /tmp tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=1024M 0 0' | sudo tee -a /etc/fstab
+
+echo '# /var/cache is faster and temporal, then: use in RAM
+tmpfs /var/cache tmpfs defaults,noatime,mode=1777 0 0' | sudo tee -a /etc/fstab
+
+echo '# /var/log is faster and temporal, then: use in RAM
+tmpfs /var/log tmpfs defaults,noatime,mode=0755 0 0' | sudo tee -a /etc/fstab
 ```
 
 # English Language for All
 
 ```bash
-cat /etc/default/locale
+command cat /etc/default/locale
+
 echo "\n" | sudo update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en
 # On error, generate locale, uncomment in this file en_US.UTF-8 (and comment current)
 # sudo vi /etc/locale.gen
@@ -159,6 +195,13 @@ sysctl -a | grep 'vm.dirty_background_ratio'
 
 echo 'vm.dirty_background_ratio=20' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
 
+# @see https://www.kernel.org/doc/html/latest/admin-guide/sysctl/vm.html#vfs-cache-pressure
+
+# Default: 100 (percentage)
+sysctl -a | grep 'vm.vfs_cache_pressure'
+
+echo 'vm.vfs_cache_pressure=50' | sudo tee -a /etc/sysctl.d/99-sysctl.conf
+
 sudo sysctl --system
 ```
 
@@ -182,28 +225,35 @@ sudo cp -p /etc/default/grub /etc/default/grub.backup
 ```
 
 ```bash
-grep -F "GRUB_TIMEOUT=" /etc/default/grub
+grep "GRUB_TIMEOUT=\|GRUB_TIMEOUT_STYLE=" /etc/default/grub
 
 sudo sed -i 's/GRUB_TIMEOUT=[0-9]*/GRUB_TIMEOUT=0/g' /etc/default/grub
+sudo sed -i 's/GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=hidden/g' /etc/default/grub
 
-grep -F "GRUB_TIMEOUT=" /etc/default/grub
+grep "GRUB_TIMEOUT=\|GRUB_TIMEOUT_STYLE=" /etc/default/grub
 
 sudo update-grub
 ```
+> @see https://askubuntu.com/a/150377
+> 1. Hold Shift or Esc key to show GRUB menu (after POST screen)
+> 2. Recovery as root user
+>   Advance Options -> Recovery Mode -> Drop to root shell prompt
 
 # Change graphical to text GRUB
 
 ```bash
 grep "GRUB_CMDLINE_LINUX_DEFAULT=\|GRUB_CMDLINE_LINUX=\|GRUB_TERMINAL=" /etc/default/grub
 
-sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT/#GRUB_CMDLINE_LINUX_DEFAULT/g' /etc/default/grub
+# Not comment to avoid showing each step in GRUB: quiet splash
+# sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT/#GRUB_CMDLINE_LINUX_DEFAULT/g' /etc/default/grub
 
 # @see https://www.baeldung.com/linux/solid-state-drive-optimization#optimize-io-scheduler (slower: 3.15 vs 2.45m)
 # @see https://yarondar.wordpress.com/2018/07/29/have-you-tried-blk-mq/
-# cat /sys/block/loop*/queue/scheduler
-# cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_governors
+# command cat /sys/block/loop*/queue/scheduler
+# command cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_available_governors
 # echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+# command cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+
 sudo sed -i 's/GRUB_CMDLINE_LINUX=".*"/GRUB_CMDLINE_LINUX="text scsi_mod.use_blk_mq=1 dm_mod.use_blk_mq=y"/g' /etc/default/grub
 # sudo sed -i 's/GRUB_CMDLINE_LINUX=".*"/GRUB_CMDLINE_LINUX="text"/g' /etc/default/grub
 
@@ -315,6 +365,19 @@ export WWW_HOME="https://www.duckduckgo.com"' >> ~/.profile
 > export BROWSER=/opt/brave.com/brave/brave-browser
 > export BROWSER=/opt/google/chrome/google-chrome
 > export BROWSER=/opt/microsoft/msedge/microsoft-edge
+
+## Setup ulimit
+
+```bash
+grep -F "Improve Disk IO Performance" ~/.zshrc
+
+# Defaults 1024
+ulimit -n
+
+echo '
+# Improve Disk IO Performance
+ulimit -n 4096' >> ~/.zshrc
+```
 
 ## Setup in Zsh
 
@@ -439,7 +502,8 @@ sudo update-alternatives --config x-session-manager
 [See](https://www.reddit.com/r/i3wm/comments/72oiwl/how_do_i_set_environment_variables_so_that_they/)
 
 ```bash
-cat ~/.xinitrc
+command cat ~/.xinitrc
+
 # Hack: '<,'>w !bash
 echo 'dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
 xrdb -I$HOME ~/.Xresources
@@ -1096,7 +1160,7 @@ Clone SSH keys from Secrets or
 ```bash
 ssh-keygen                 # Insert passphrase (Algo ...)
 ls ~/.ssh
-cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
+command cat ~/.ssh/id_rsa.pub      # Setup SSH Keys in Apps or VPS
 ```
 ## Enable SSH Agent
 
@@ -1658,7 +1722,8 @@ sudo sed -i 's/^Suites: oracular/Suites: noble/g' /etc/apt/sources.list.d/*onefe
 sudo apt-get update
 sudo apt-get install onefetch
 # onefetch /path/git
-# echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
+## sudo apt-get remove onefetch
+## echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
 ```
 > Disable to use saU alias
 > sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*onefetch*.sources
@@ -1835,17 +1900,18 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 [Versus](https://www.cpu-monkey.com/en/compare_cpu-intel_core_i7_1260p-vs-intel_core_ultra_7_155u)
 
 ## Commands
+
 :Rj_wv$P/\v^\w+
 
 ```bash
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 24.10
 uname -r
-# 6.11.0-21-generic
-cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
+# 6.11.0-24-generic
+command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
-cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31825800 kB
+command cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
+# 31825796 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -1925,7 +1991,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.24.2
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(00ae476)
+# 6.1.0(45426f5)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -1939,15 +2005,15 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 138.0b7
+# 138.0b9
 zen --version | awk '{print $3}'
-# 1.11.3t
+# 1.11.5t
 # Unstable CLI: apt-get list --installed | wc --lines
 # apt show gnome
 # dpkg --list | wc --lines
 # dpkg --get-selections | grep -v deinstall > ~/packages.log
 dpkg --get-selections | grep -v deinstall | wc --lines
-# 1886
+# 1894
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
 # 42
 apt-mark showmanual | wc --lines

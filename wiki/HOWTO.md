@@ -578,6 +578,7 @@ Update from LTS to last release Ubuntu
 [See]()
 
 ```bash
+# Needs GTK!
 update-manager -c
 
 cat /etc/update-manager/release-upgrades
