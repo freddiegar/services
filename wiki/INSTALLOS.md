@@ -510,6 +510,21 @@ xrdb -I$HOME ~/.Xresources
 exec i3' >> ~/.xinitrc
 ```
 
+### Clipboard history in i3
+
+[See](https://github.com/erebe/greenclip?tab=readme-ov-file#installation)
+[Battery?](https://andreafortuna.org/2024/08/04/a-minimalist-approach-to-clipboard-management-in-linux-crafting-a-custom-solution)
+
+```bash
+ln -s `pwd`/greenclip/greenclip.toml ~/.config/greenclip.toml
+
+# v4.3 is broken
+
+sudo curl -L https://github.com/erebe/greenclip/releases/download/v4.2/greenclip -o /usr/local/bin/greenclip
+sudo chmod +x /usr/local/bin/greenclip
+## sudo rm /usr/local/bin/greenclip
+```
+
 ## Terminal Emulator
 
 ```bash
@@ -1923,6 +1938,8 @@ i3 --version | awk '{print $3}'
 # 4.23
 i3status --version | grep -e "i3status" | awk '{print $2}'
 # 2.14-non-git
+greenclip --version | head -n 1 | awk '{print $2}'
+# v4.2
 # konsole --version | awk '{print $2}'
 # # 23.08.1
 urxvt -help 2>&1 | head -n 1 | awk '{print $3}'
