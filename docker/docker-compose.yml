@@ -132,6 +132,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -163,6 +164,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -194,6 +196,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -225,6 +228,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -256,6 +260,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -287,6 +292,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -318,6 +324,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -348,6 +355,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -378,6 +386,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -408,6 +417,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql
@@ -438,6 +448,7 @@ services:
         - PDFTK_ENABLE=${PDFTK_ENABLE:-off}
         - GNUPG_ENABLE=${GNUPG_ENABLE:-off}
         - OPJDK_ENABLE=${OPJDK_ENABLE:-off}
+        - SQLCLI_ENABLE=${SQLCLI_ENABLE:-off}
     volumes:
       - $WEB_DOCROOT:/var/www/html
       - $DB_PATH_LOG/db80:/var/log/mysql

@@ -144,16 +144,17 @@ nn() {
         message="Ran"
     fi
 
+    if [ "$DISPLAY" = "" ]; then
+        # We are in a TTY, then: nothing fancy please
+        echo $message
+
+        return 0
+    fi
+
     # @see https://i3wm.org/docs/userguide.html#exec_quoting
     # Escape comma (,) and semicolon (;)
     message=`echo "$message" | sed -r 's/,/┌/g'`
     message=`echo "$message" | sed -r 's/;/¦/g'`
-
-    if [ "$DISPLAY" = "" ]; then
-        echo $message
-
-        return
-    fi
 
     i3-msg --quiet "exec i3-nagbar --type warning --font 'pango:fira code retina' --message '$message'"
 }
@@ -184,6 +185,51 @@ drun() {
     docker exec -w `pwd` -it "$@"
 
     return $?
+}
+
+# Dynamic Docker PHP (based in current path):
+#   - dphp -a
+#   - dphp --version
+#   - dphp vendor/bin/phpunit
+dphp() {
+    CONTAINER=`cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "apache"$1$2}'`
+
+    if [ "$CONTAINER" = "apache" ]; then
+        echo "\e[90mEmpty PHP version, abort!.\e[0m"
+
+        return 1
+    fi
+
+    if [ "`docker inspect $CONTAINER | grep -F '"Running":' | awk '{print $2}'`" != "true," ]; then
+        docker-compose -f /var/www/html/freddiegar/services/docker/docker-compose.yml -f /var/www/html/freddiegar/services/docker/docker-compose.override.yml up -d --build $CONTAINER 2>&1 > /dev/null
+
+        echo "Initializing container $CONTAINER"
+
+        sleep 5
+    fi
+
+    docker exec -w `pwd` -it $CONTAINER php -d memory_limit=-1 "$@"
+
+    return $?
+}
+
+# Dynamic Docker Test (based in current path):
+#   - dtest
+#   - dtest tests/Feature/MyTest.php
+dtest() {
+    dphp vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage "$@"
+
+    STATUS="$?"
+
+    if [ $STATUS -ne 0 ]; then
+        nn 'Tests fails!'
+
+        return $STATUS
+    fi
+
+    nn 'Tests successfully!'
+
+    return $STATUS
 }
 
 # OpenSSL PEM:
@@ -538,14 +584,14 @@ alias di="diff -rq --suppress-common-lines"
 # alias ll="command ls -lh"
 # alias lg="exa --git"
 alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
-# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git fetch --all --prune; fi && cd .."
-# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git gc --prune=now; fi && cd .."
-# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git checkout master || git checkout main; fi && cd .."
-# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git pull origin master || git pull origin main; fi && cd .."
-# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f composer.json ] && [ -f composer.lock ] ; then phpx `which composer` install -vvv; fi && cd .."
-# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f package.json ] && [ -f package-lock.json ] ; then npm ci; fi && cd .."
-# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f artisan ] && [ -f .env ] && [ -d vendor ]; then phpx artisan migrate --force; fi && cd .."
-# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f yii ] && [ -f .env ] && [ -d vendor ] ; then export APPLICATION_ENV=dev && phpx yii migrate/up; fi && cd .."
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git fetch --all --prune; fi"
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git gc --prune=now; fi"
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git checkout master || git checkout main; fi"
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git pull origin master || git pull origin main; fi"
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f composer.json ] && [ -f composer.lock ] ; then phpx `which composer` install -vvv; fi"
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f package.json ] && [ -f package-lock.json ] ; then npm ci; fi"
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f artisan ] && [ -f .env ] && [ -d vendor ]; then phpx artisan migrate --force; fi"
+# lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f yii ] && [ -f .env ] && [ -d vendor ] ; then export APPLICATION_ENV=dev && phpx yii migrate/up; fi"
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -f .git/.shada ] || [ -f .git/.viminfo ] ; then rm .git/{.shada,.viminfo} ; fi"
 alias lsd="command ls -lA | grepx '^d'"
 alias lsn="command ls -L1"
