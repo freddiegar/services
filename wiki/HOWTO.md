@@ -610,7 +610,7 @@ GIT Large File Storage - LFS (in GIT repository)
 [See](https://git-lfs.com/)
 
 ```bash
-## Enable in repository
+## Enable in repository (max filesize in GitHub is: 100M)
 git lfs install
 
 ## On working repository
@@ -627,10 +627,51 @@ LFS Delete Files in Server
 
 [See](https://www.atlassian.com/git/tutorials/git-lfs#deleting-remote-files)
 [GitHub](https://docs.github.com/en/repositories/working-with-files/managing-large-files/removing-files-from-git-large-file-storage)
+[Thanks](https://www.youtube.com/watch?v=NmiLVk23B9c)
 
 ```bash
-git log -p <commit-lfs-file>
-git log -p d67e6a7
-git log --all -p -S <oid>
-git log --all -p -S d67e6a7
+# see quota
+go to https://github.com/settings/billing/summary
+# show ALL files tracking in repository
+git lfs ls-files --all --long
+# show stats about usage by extension file
+git lfs migrate info --everything
+# sync all files locally (must be show same counter as command before)
+git lfs fetch --all
+# confirmation
+git lfs checkout
+# needs description?
+git lfs uninstall
+# remove tracking files (or manual in .gitattributes files: grep "filter=lfs" .gitattributes)
+git lfs untrack "*.sql.gz"
+# applies filters again, to reflect changes in .gitattributes file
+git add --renormalize .
+# push to origin IMPORTANT command
+git push --verbose origin
+# convert pointer in blob files DANGEROUS command
+git lfs migrate export --everything --include="*.sql.gz"
+# sync remote
+git push --verbose origin --force
+```
+
+Keep open SSH session
+
+```bash
+while true; do sleep 1; done
+```
+
+Convert MySQL DUMP to SQLite
+
+[See](https://dev.to/damms005/laravel-migration-squashing-and-use-of-sqlite-in-automated-testing-2d5k)
+
+```bash
+sudo apt-get install sqlite3 --no-install-recommends -y
+
+mkdir /var/www/html/mysql2sqlite
+cd /var/www/html/mysql2sqlite
+git clone --depth=1 git@github.com:mysql2sqlite/mysql2sqlite.git
+cd mysql2sqlite
+
+# In Laravel project
+# /var/www/html/mysql2sqlite/mysql2sqlite/mysql2sqlite database/schema/mysql-schema.sql > database/schema/sqlite-schema.sql
 ```
