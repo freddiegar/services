@@ -605,16 +605,19 @@ exec --no-startup-id xrandr --newmode  "1440x900_60.00" 106.50  1440 1528 1672 1
 
 # @see https://faq.i3wm.org/question/239/how-do-i-suspendlockscreen-and-logout.1.html
 # @see https://wiki.archlinux.org/title/I3#Shutdown.2C_reboot.2C_lock_screen
-set $locker i3lock --color 000000 && sleep 1
+set $lock sh ~/.config/i3/lock && sleep 1
 set $mode_system System (l)ocked, (e)xit, (s)uspend, (h)ibernate, (R)eboot, (S)hutdown
 
+# Auto lock on inactivity
+exec --no-startup-id xss-lock --transfer-sleep-lock ~/.config/i3/lock
+
 mode "$mode_system" {
-    bindsym l exec          --no-startup-id $locker,                              mode "default"
-    bindsym e exec          --no-startup-id i3-msg exit,                          mode "default"
-    bindsym s exec          --no-startup-id $locker && systemctl suspend -i,      mode "default"
-    bindsym h exec          --no-startup-id $locker && systemctl hibernate -i,    mode "default"
-    bindsym Shift+r exec    --no-startup-id systemctl reboot,                     mode "default"
-    bindsym Shift+s exec    --no-startup-id systemctl poweroff -i,                mode "default"
+    bindsym l exec          --no-startup-id $lock,                              mode "default"
+    bindsym e exec          --no-startup-id i3-msg exit,                        mode "default"
+    bindsym s exec          --no-startup-id $lock && systemctl suspend -i,      mode "default"
+    bindsym h exec          --no-startup-id $lock && systemctl hibernate -i,    mode "default"
+    bindsym Shift+r exec    --no-startup-id systemctl reboot,                   mode "default"
+    bindsym Shift+s exec    --no-startup-id systemctl poweroff -i,              mode "default"
 
     # back to normal
     bindsym Return      mode "default"

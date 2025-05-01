@@ -525,6 +525,17 @@ sudo chmod +x /usr/local/bin/greenclip
 ## sudo rm /usr/local/bin/greenclip
 ```
 
+### Background Lock Image
+
+```bash
+sudo apt-get install --no-install-recommends -y imagemagick
+# Allows use
+#      import
+#      convert
+## sudo apt-get remove imagemagick && sudo apt-get autoremove
+```
+> Used in aliases wh and wr and i3 lock script
+
 ## Terminal Emulator
 
 ```bash
