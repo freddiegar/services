@@ -61,7 +61,7 @@ services:
       resources:
         limits:
           cpus: $DB_CORE
-          memory: $DB_MEMORY
+          memory: $DBRD_MEMORY
 
   dbrx:
     container_name: dbrx

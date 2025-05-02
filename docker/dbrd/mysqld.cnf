@@ -64,8 +64,10 @@ innodb_buffer_pool_size                 = 1433M                             # 50
 innodb_log_file_size                    = 614M                              # 25% of innodb_buffer_pool_size
 # innodb_redo_log_capacity                = 614M                              # 25% of innodb_buffer_pool_size (only 8.0.30+)
 innodb_flush_method                     = O_DIRECT                          # Avoid double buffering
-innodb_file_per_table                   = 1
+innodb_file_per_table                   = 0                                 # Avoid this in testing
 innodb_stats_on_metadata                = 0
+
+# @see https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool-resize.html
 innodb_buffer_pool_instances            = 8                                 # 1 or 8 if innodb_buffer_pool_size >= 1GB
 innodb_buffer_pool_chunk_size           = 128M                              # Default: 128M, but, better explicit
 innodb_log_buffer_size                  = 48M                               # Default: 16M, more is less I/O
@@ -81,6 +83,8 @@ innodb_autoinc_lock_mode                = 2                                 # De
 innodb_io_capacity                      = 2000                              # Default: 20
 innodb_io_capacity_max                  = 4000                              # Default: 2000
 innodb_thread_concurrency               = 16                                # Default: 0
+innodb_doublewrite                      = 0                                 # Default: 1, Avoid this in testing
+# skip_ssl                                                                    # Avoid this in testing, fails!
 
 host_cache_size                         = 0
 skip_name_resolve                       = 1
@@ -99,11 +103,11 @@ table_definition_cache                  = 5000                              # > 
 
 # https://dev.mysql.com/doc/mysql/en/replication-options-replica.html
 # server-id                               = 18                                  # Turn-off is dummy testing server
-# log_bin                                 = /var/log/mysql/replication.log
+skip-log-bin                                                                    # Turn-off is dummy testing server
 # binlog_do_db                            = microsites_co
 
 # https://stackoverflow.com/questions/56389698/why-super-privileges-are-disabled-when-binary-logging-option-is-on#56390000
-log_bin_trust_function_creators         = 1
+# log_bin_trust_function_creators         = 1                                   # Turn-off is dummy testing server
 
 [mysqld_safe]
 default-character-set                   = utf8
