@@ -1946,3 +1946,12 @@ ln -s `pwd`/emulator/alacritty/Dark.alacritty.toml ~/.config/alacritty/alacritty
 
 ## cargo uninstall alacritty
 ```
+
+Install DBeaver
+
+[See](https://dbeaver.io/download/)
+
+```bash
+curl -L https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb -o dbeaver.deb && sudo apt install ./dbeaver.deb && rm dbeaver.deb
+# sudo apt remove dbeaver-ce
+```

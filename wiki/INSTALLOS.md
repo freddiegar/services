@@ -67,10 +67,11 @@ reboot
 # Better TMP/Logs I/O
 
 [See](https://itbeginner.net/tweak-optimize-ssd-ubuntu-linux-mint/)
+[For /tmp not use noexec flag](https://github.com/dbeaver/dbeaver/issues/5939#issuecomment-506719658) error with SQLite
 
 ```bash
 echo '# /tmp is better as RAM info
-tmpfs /tmp tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=1024M 0 0' | sudo tee -a /etc/fstab
+tmpfs /tmp tmpfs defaults,noatime,nosuid,nodev,mode=1777,size=2048M 0 0' | sudo tee -a /etc/fstab
 
 echo '# /var/cache is faster and temporal, then: use in RAM
 tmpfs /var/cache tmpfs defaults,noatime,mode=1777 0 0' | sudo tee -a /etc/fstab
@@ -98,7 +99,7 @@ echo 'Acquire::Languages "none";' | sudo tee -a /etc/apt/apt.conf.d/00aptitude
 # Utils
 
 ```bash
-sudo apt-get install -y software-properties-common git-core curl
+sudo apt-get install --no-install-recommends -y software-properties-common git-core curl
 ## sudo apt-get remove software-properties-common git-core curl && sudo apt-get autoremove
 ```
 > By example: add-apt-repository
@@ -282,7 +283,7 @@ sudo systemctl restart systemd-logind
 # Auto-update (ONLY on servers!)
 
 ```bash
-sudo apt-get install -y unattended-upgrades update-notifier-common
+sudo apt-get install --no-install-recommends -y unattended-upgrades update-notifier-common
 
 grep 'Remove-Unused-Kernel-Packages\|Remove-Unused-Dependencies\|Automatic-Reboot-Time' /etc/apt/apt.conf.d/50unattended-upgrades
 
@@ -315,7 +316,7 @@ sudo apt-get remove -y --purge plymouth-* plymouth && sudo apt-get clean -y && s
 [See 2](https://google.github.io/styleguide/shellguide.html)
 
 ```bash
-sudo apt-get install -y zsh
+sudo apt-get install --no-install-recommends -y zsh
 # As User NOT root
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 echo $SHELL
@@ -346,7 +347,7 @@ lxqt-leave
 
 ```bash
 # [L|X]Ubuntu
-sudo apt-get install -y fonts-firacode
+sudo apt-get install --no-install-recommends -y fonts-firacode
 ## sudo apt-get remove fonts-firacode && sudo apt-get autoremove
 ```
 
@@ -469,7 +470,7 @@ echo '
 # Main and extra utils
 
 ```bash
-sudo apt-get install -y unzip curl tree nmap htop i3 xsel xcompmgr feh pavucontrol pulseaudio-utils maim xclip ncal make build-essential
+sudo apt-get install --no-install-recommends -y unzip curl tree nmap htop i3 xsel xcompmgr feh pavucontrol pulseaudio-utils maim xclip ncal make build-essential
 ## sudo apt-get remove unzip curl tree nmap htop i3 xsel xcompmgr feh pavucontrol pulseaudio-utils maim xclip ncal make build-essential && sudo apt-get autoremove
 ```
 
@@ -481,6 +482,7 @@ ln -s `pwd`/i3/config ~/.config/i3/config
 ln -s `pwd`/i3/status.conf ~/.config/i3/status.conf
 ln -s `pwd`/i3/battery ~/.config/i3/battery-popup
 ln -s `pwd`/i3/workspace ~/.config/i3/workspace
+ln -s `pwd`/i3/lock ~/.config/i3/lock
 ```
 > On VM:
 > cp -p /var/www/html/freddiegar/services/i3/config ~/.config/i3/config
@@ -539,7 +541,7 @@ sudo apt-get install --no-install-recommends -y imagemagick
 ## Terminal Emulator
 
 ```bash
-sudo apt-get install -y rxvt-unicode
+sudo apt-get install --no-install-recommends -y rxvt-unicode
 
 sudo ln -s `pwd`/emulator/urxvt/resize-font /usr/lib/x86_64-linux-gnu/urxvt/perl/resize-font
 sudo ln -s `pwd`/emulator/urxvt/config-reload /usr/lib/x86_64-linux-gnu/urxvt/perl/config-reload
@@ -553,7 +555,7 @@ xrdb ~/.Xresources
 ## Vim Configuration
 
 ```bash
-sudo apt-get install -y vim
+sudo apt-get install --no-install-recommends -y vim
 ## sudo apt-get remove vim && sudo apt-get autoremove
 
 # Set as default editor
@@ -578,7 +580,7 @@ sudo ln -s ~/.vim/plugged/phpactor/bin/phpactor /usr/local/bin/phpactor
 # Check: +xterm_clipboard
 vim --version | grep xterm_clipboard
 # if -xterm_clipboard then
-sudo apt-get install -y vim-gtk3
+sudo apt-get install --no-install-recommends -y vim-gtk3
 ## In olders versions use: vim-gnome
 # Check again ;)
 ```
@@ -588,28 +590,28 @@ sudo apt-get install -y vim-gtk3
 [See](https://jqlang.github.io/jq/)
 
 ```bash
-sudo apt-get install -y jq
+sudo apt-get install --no-install-recommends -y jq
 # sudo apt remove jq && sudo apt-get autoremove
 ```
 
 ## Vim SQL Development
 
 ```bash
-sudo apt-get install -y sqlformat
+sudo apt-get install --no-install-recommends -y sqlformat
 # sudo apt remove sqlformat && sudo apt-get autoremove
 ```
 
 ## Vim XML Development
 
 ```bash
-sudo apt-get install -y libxml2-utils
+sudo apt-get install --no-install-recommends -y libxml2-utils
 # sudo apt remove libxml2-utils && sudo apt-get autoremove
 ```
 
 ## Vim CSV to JSON
 
 ```bash
-sudo apt-get install -y miller
+sudo apt-get install --no-install-recommends -y miller
 ```
 
 ### LSP
@@ -623,8 +625,8 @@ sudo apt-get install -y miller
 
 ```bash
 cd ~
-# sudo apt-get install libncurses5
-sudo apt-get install -y clang-19 clangd-19 lldb-19 lld-19
+# sudo apt-get install --no-install-recommends -y libncurses5
+sudo apt-get install --no-install-recommends -y clang-19 clangd-19 lldb-19 lld-19
 sudo ln -s /usr/bin/clang-19 /usr/bin/clang
 sudo ln -s /usr/bin/clang++-19 /usr/bin/clang++
 sudo ln -s /usr/bin/clang-cpp-19 /usr/bin/clang-cpp
@@ -638,7 +640,7 @@ clangd --version
 cd ~
 # Slower!
 # @see https://blog.mattclemente.com/2020/06/26/oh-my-zsh-slow-to-load/
-# sudo apt-get install -y build-essential libssl-dev # Only oldest Ubuntu
+# sudo apt-get install --no-install-recommends -y build-essential libssl-dev # Only oldest Ubuntu
 # # @see https://github.com/nvm-sh/nvm/releases
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
 
@@ -765,7 +767,7 @@ npm install -g yaml-language-server
 [See](https://luals.github.io/wiki/build/)
 
 ```bash
-sudo apt-get install -y ninja-build
+sudo apt-get install --no-install-recommends -y ninja-build
 mkdir /var/www/html/LuaLS
 cd /var/www/html/LuaLS
 git clone --depth=1 https://github.com/LuaLS/lua-language-server
@@ -820,7 +822,7 @@ grep -F "Enable go" ~/.profile
 
 go version
 
-sudo apt-get install -y gopls
+sudo apt-get install --no-install-recommends -y gopls
 ```
 > sudo apt-get remove gopls
 
@@ -832,7 +834,7 @@ sudo apt-get install -y gopls
 [AscciArt](https://www.asciiart.eu/text-to-ascii-art)
 
 ```go
-sudo apt-get install -y make
+sudo apt-get install --no-install-recommends -y make
 go install github.com/maaslalani/slides@latest
 sudo ln -s /home/$USER/go/bin/slides /usr/bin/slides
 
@@ -850,7 +852,7 @@ ls -la $HOME/perl5/bin
 [See](https://solargraph.org/guides/getting-started)
 
 ```bash
-sudo apt-get install -y make build-essential ruby-dev
+sudo apt-get install --no-install-recommends -y make build-essential ruby-dev
 sudo gem install solargraph
 ```
 
@@ -915,7 +917,7 @@ ln -s `pwd`/editor/phpstorm/.ideavimrc ~/.ideavimrc
 # GIT
 
 ```bash
-sudo apt-get install -y git-lfs
+sudo apt-get install --no-install-recommends -y git-lfs
 ## sudo apt-get remove git-lfs && sudo apt-get autoremove
 ```
 > https://www.howtogeek.com/devops/how-to-completely-reset-a-git-repository-including-untracked-files/
@@ -923,17 +925,18 @@ sudo apt-get install -y git-lfs
 ### GIT Flow
 
 ```bash
-sudo apt-get install git-flow
+sudo apt-get install --no-install-recommends -y git-flow
 ## sudo apt-get remove git-flow && sudo apt-get autoremove
 ```
 
 ### GIT Summary
 
 [See](https://github.com/albenik/git-summary)
+[AWK Intro](https://www.youtube.com/watch?v=Dr0zFRswrwk)
 
 ```bash
 cd ~
-sudo apt-get install -y gawk
+sudo apt-get install --no-install-recommends -y gawk
 sudo curl -L https://raw.githubusercontent.com/albenik/git-summary/master/git-summary -o /usr/local/bin/git-summary
 sudo chmod +x /usr/local/bin/git-summary
 ## sudo apt-get remove gawk && sudo rm /usr/local/bin/git-summary && sudo apt-get autoremove
@@ -944,7 +947,7 @@ sudo chmod +x /usr/local/bin/git-summary
 [See](https://github.com/arzzen/git-quick-stats)
 
 ```bash
-sudo apt-get install -y git-quick-stats
+sudo apt-get install --no-install-recommends -y git-quick-stats
 ```
 
 ## GIT CLI
@@ -957,7 +960,7 @@ curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo 
 sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
 sudo apt-get update
-sudo apt-get install -y gh
+sudo apt-get install --no-install-recommends -y gh
 
 # Auth (need token from: https://github.com/settings/tokens)
 gh config set -h github.com git_protocol ssh
@@ -986,22 +989,22 @@ echo "\n" | sudo add-apt-repository ppa:ondrej/php
 # @see /etc/apt/sources.list.d/ondrej-ubuntu-php-oracular.sources :: oracular -> noble
 sudo sed -i 's/^Suites: oracular/Suites: noble/g' /etc/apt/sources.list.d/ondrej*.sources
 
-sudo apt-get install -y php8.4-cli
-sudo apt-get install -y php8.4-dev
-sudo apt-get install -y php8.4-mbstring
-sudo apt-get install -y php8.4-mysql
-sudo apt-get install -y php8.4-curl
-sudo apt-get install -y php8.4-zip
-sudo apt-get install -y php8.4-soap
-sudo apt-get install -y php8.4-gd
-sudo apt-get install -y php8.4-sqlite3
-sudo apt-get install -y php8.4-intl
-sudo apt-get install -y php8.4-memcached
-sudo apt-get install -y php8.4-redis
-sudo apt-get install -y php8.4-bcmath
-sudo apt-get install -y php8.4-gmp
-sudo apt-get install -y php8.4-xml
-sudo apt-get install -y php8.4-zip
+sudo apt-get install --no-install-recommends -y php8.4-cli
+sudo apt-get install --no-install-recommends -y php8.4-dev
+sudo apt-get install --no-install-recommends -y php8.4-mbstring
+sudo apt-get install --no-install-recommends -y php8.4-mysql
+sudo apt-get install --no-install-recommends -y php8.4-curl
+sudo apt-get install --no-install-recommends -y php8.4-zip
+sudo apt-get install --no-install-recommends -y php8.4-soap
+sudo apt-get install --no-install-recommends -y php8.4-gd
+sudo apt-get install --no-install-recommends -y php8.4-sqlite3
+sudo apt-get install --no-install-recommends -y php8.4-intl
+sudo apt-get install --no-install-recommends -y php8.4-memcached
+sudo apt-get install --no-install-recommends -y php8.4-redis
+sudo apt-get install --no-install-recommends -y php8.4-bcmath
+sudo apt-get install --no-install-recommends -y php8.4-gmp
+sudo apt-get install --no-install-recommends -y php8.4-xml
+sudo apt-get install --no-install-recommends -y php8.4-zip
 
 ## sudo apt-get remove php8.4\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
@@ -1012,11 +1015,11 @@ sudo apt-get install -y php8.4-zip
 ## PHP Xdebug (I'm not god)
 
 ```bash
-sudo apt-get install -y php7.4-xdebug
-sudo apt-get install -y php8.1-xdebug
-sudo apt-get install -y php8.2-xdebug
-sudo apt-get install -y php8.3-xdebug
-sudo apt-get install -y php8.4-xdebug
+sudo apt-get install --no-install-recommends -y php7.4-xdebug
+sudo apt-get install --no-install-recommends -y php8.1-xdebug
+sudo apt-get install --no-install-recommends -y php8.2-xdebug
+sudo apt-get install --no-install-recommends -y php8.3-xdebug
+sudo apt-get install --no-install-recommends -y php8.4-xdebug
 ```
 
 ## Composer for PHP
@@ -1111,11 +1114,11 @@ sudo ln -s `pwd`/php/phplint /usr/local/bin/phplint
 ## [L|X]Ubuntu 18.*, 19.*, 20.* Debian 10
 
 ```bash
-sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common
+sudo apt-get install --no-install-recommends -y apt-transport-https ca-certificates curl gnupg software-properties-common
 curl -L https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/docker.gpg > /dev/null
 echo "\n" | sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/`lsb_release -is | awk '{print tolower($0)}'` `lsb_release -cs` stable"
 
-sudo apt-get install -y docker-ce
+sudo apt-get install --no-install-recommends -y docker-ce
 sudo usermod -aG docker $(whoami)
 
 # In i3
@@ -1170,11 +1173,11 @@ sudo systemctl restart docker
 
 ```bash
 # [L|X]Ubuntu
-sudo apt-get install -y mysql-client
+sudo apt-get install --no-install-recommends -y mysql-client
 ## sudo apt-get remove mysql-client && sudo apt-get autoremove
 
 # Debian
-sudo apt-get install -y mariadb-client
+sudo apt-get install --no-install-recommends -y mariadb-client
 ## sudo apt-get remove mariadb-client && sudo apt-get autoremove
 ```
 > Auth Secure: mysql_config_editor set --login-path=development --host=db --user=root --password
@@ -1417,7 +1420,7 @@ sudo ln -s ~/.vim/plugged/fzf/bin/fzf /usr/bin/fzf
 
 # or Debian 9+/Ubuntu 19.10+
 # 2025-01-20: Debian APT keeps v0.46.0 (2024-01-23), older!
-# sudo apt-get install -y fzf
+# sudo apt-get install --no-install-recommends -y fzf
 ```
 
 # RigGrep for Vim search (Performance FZF and Terminal)
@@ -1426,12 +1429,12 @@ sudo ln -s ~/.vim/plugged/fzf/bin/fzf /usr/bin/fzf
 
 ```bash
 # [L|X]Ubuntu 18.10+ | Rg v11.0.2+
-sudo apt-get install -y ripgrep
+sudo apt-get install --no-install-recommends -y ripgrep
 ## sudo apt-get remove ripgrep && sudo apt-get autoremove
 
 # [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
 echo "\n" | sudo add-apt-repository ppa:x4121/ripgrep
-sudo apt-get install -y ripgrep
+sudo apt-get install --no-install-recommends -y ripgrep
 ## sudo apt-get remove ripgrep && echo "\n" | sudo add-apt-repository --remove ppa:x4121/ripgrep
 ```
 
@@ -1441,7 +1444,7 @@ sudo apt-get install -y ripgrep
 
 ```bash
 # [L|X]Ubuntu 18.10+ | Rg v0.22.1
-sudo apt-get install -y bat
+sudo apt-get install --no-install-recommends -y bat
 sudo ln -s `which batcat` /usr/bin/bat
 
 # [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
@@ -1488,7 +1491,7 @@ grep "LESSOPEN=" ~/.profile
 [See](https://wiki.vifm.info/index.php?title=Manual)
 
 ```bash
-sudo apt-get install -y vifm
+sudo apt-get install --no-install-recommends -y vifm
 ## sudo apt-get remove vifm && sudo apt-get autoremove
 ```
 
@@ -1577,8 +1580,8 @@ sudo chmod +x /usr/local/bin/phpmetrics
 # Xdebug (PHP Debugger)
 
 ```bash
-sudo apt-get install -y php-xdebug
-# sudo apt-get install -y php7.4-xdebug
+sudo apt-get install --no-install-recommends -y php-xdebug
+# sudo apt-get install --no-install-recommends -y php7.4-xdebug
 # or
 sudo pecl install -f xdebug
 
@@ -1657,13 +1660,13 @@ phpize && ./configure && make && sudo make install && cd /var/www/html
 ## Filezilla
 
 ```bash
-sudo apt-get install -y filezilla
+sudo apt-get install --no-install-recommends -y filezilla
 ```
 
 ## OBS - Open Broadcasting Software
 
 ```bash
-sudo apt-get install -y ffmpeg obs-studio
+sudo apt-get install --no-install-recommends -y ffmpeg obs-studio
 mkdir $HOME/obs
 ## sudo apt-get remove obs-studio ffmpeg && sudo apt-get autoremove && echo "\n" | sudo add-apt-repository --remove ppa:obsproject/obs-studio
 
@@ -1674,7 +1677,7 @@ sudo add-apt-repository ppa:obsproject/obs-studio
 [See](https://www.thregr.org/wavexx/software/screenkey/)
 
 ```bash
-sudo apt-get install -y screenkey
+sudo apt-get install --no-install-recommends -y screenkey
 ## sudo apt-get remove screenkey && sudo apt-get autoremove
 ```
 
@@ -1683,7 +1686,7 @@ sudo apt-get install -y screenkey
 [See](https://flameshot.org/#features)
 
 ```bash
-sudo apt-get install -y flameshot
+sudo apt-get install --no-install-recommends -y flameshot
 ```
 
 ## Google Chrome
@@ -1693,7 +1696,7 @@ echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sud
 curl -L https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/google-chrome.gpg > /dev/null
 
 sudo apt-get update
-sudo apt-get install -y google-chrome-stable
+sudo apt-get install --no-install-recommends -y google-chrome-stable
 ## sudo apt-get remove google-chrome-stable && sudo apt-get autoremove
 ```
 > Disable to use saU alias
@@ -1732,7 +1735,7 @@ sudo apt install microsoft-edge-stable
 ## GNUPG (Legacy)
 
 ```bash
-sudo apt-get install -y gnupg1
+sudo apt-get install --no-install-recommends -y gnupg1
 ```
 
 ## Onefetch
@@ -1746,7 +1749,7 @@ echo "\n" | sudo add-apt-repository ppa:o2sh/onefetch
 sudo sed -i 's/^Suites: oracular/Suites: noble/g' /etc/apt/sources.list.d/*onefetch*.sources
 
 sudo apt-get update
-sudo apt-get install onefetch
+sudo apt-get install --no-install-recommends -y onefetch
 # onefetch /path/git
 ## sudo apt-get remove onefetch
 ## echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
@@ -1759,7 +1762,7 @@ sudo apt-get install onefetch
 # [See](https://github.com/jonls/redshift)
 #
 # ```bash
-# sudo apt-get install redshift
+# sudo apt-get install --no-install-recommends -y redshift
 # mkdir -p ~/.config/redshift
 # ln -s `pwd`/redshift/redshift.conf ~/.config/redshift/redshift.conf
 # # sudo apt-get remove redshift && sudo apt-get autoremove
@@ -1770,7 +1773,7 @@ sudo apt-get install onefetch
 # [See](https://github.com/yshui/picom)
 #
 # ```bash
-# sudo apt-get install picom
+# sudo apt-get install --no-install-recommends -y picom
 # mkdir -p ~/.config/picom
 # ln -s `pwd`/picom/picom.conf ~/.config/picom/picom.conf
 # # sudo apt-get remove picom && sudo apt-get autoremove
@@ -1804,13 +1807,13 @@ sudo apt-get install onefetch
 
 ```bash
 sudo apt-get update
-sudo apt-get install qemu qemu-kvm libvirt-bin bridge-utils virt-manager
+sudo apt-get install --no-install-recommends -y qemu qemu-kvm libvirt-bin bridge-utils virt-manager
 sudo systemctl enable libvirtd
 sudo systemctl start libvirtd
 # Enable user to use libvirt
 sudo usermod -G libvirt -a $USER
 # Enable UEFI feature
-sudo apt-get install -y ovmf
+sudo apt-get install --no-install-recommends -y ovmf
 ## Return to Host: Ctrl + Alt keys
 ## -format
 ## -Output
@@ -1824,12 +1827,12 @@ sudo qemu-img convert -f vdi -O qcow2 Ubuntu\ 20.04.vdi /var/lib/libvirt/images/
 ```bash
 # v5.2
 sudo apt-get update
-sudo apt-get install virtualbox
+sudo apt-get install --no-install-recommends -y virtualbox
 ## sudo apt-get remove virtualbox && sudo apt-get autoremove
 
 # v6.1
 sudo apt-get update
-sudo apt-get install -y libqt5opengl5
+sudo apt-get install --no-install-recommends -y libqt5opengl5
 sudo curl -L https://download.virtualbox.org/virtualbox/6.1.32/virtualbox-6.1_6.1.32-149290~Ubuntu~bionic_amd64.deb -o virtualbox.deb
 sudo dpkg -i virtualbox.deb
 reboot
