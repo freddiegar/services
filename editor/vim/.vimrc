@@ -2137,6 +2137,7 @@ function s:go_docs(word) abort
 
         if filereadable('composer.lock')
             let l:docsurl = system('composer show ' . l:word . ' 2> /dev/null | ' . g:filterprg . ' "^source.*\[git\]" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
+            let l:docsurl = substitute(l:docsurl, '\.git$', '', 'g')
             let l:word = ''
         endif
     elseif expand('%:t') ==# 'package.json'
@@ -2332,8 +2333,9 @@ function! s:cycling_buffers(incr) abort
 
     if a:incr == 1
                 \ && l:cbuffer != l:abuffer
-                \ && buflisted(l:abuffer) == 1
+                \ && buflisted(l:abuffer) ==# 1
                 \ && getbufvar(l:abuffer, '&filetype') !=# 'help'
+                \ && getbufvar(l:abuffer, '&buftype') !=# 'terminal'
         try
             silent execute "normal! \<C-^>g`\""
         catch /^Vim\%((\a\+)\)\=:E19/
@@ -2351,8 +2353,9 @@ function! s:cycling_buffers(incr) abort
 
     while 1
         if l:nbuffer != 0
-                    \ && buflisted(l:nbuffer) == 1
+                    \ && buflisted(l:nbuffer) ==# 1
                     \ && getbufvar(l:nbuffer, '&filetype') !=# 'help'
+                    \ && getbufvar(l:abuffer, '&buftype') !=# 'terminal'
             silent execute 'buffer ' . l:nbuffer
 
             break
@@ -3839,7 +3842,8 @@ lua << EOF
         },
     })
 
-    vim.keymap.set('n', '<C-h>', cloak.toggle, options)
+    -- Conflict with colder custom mapping
+    -- vim.keymap.set('n', '<C-h>', cloak.toggle, options)
     vim.keymap.set('n', '<C-s>', cloak.uncloak_line, options)
 EOF
 
@@ -6211,10 +6215,12 @@ EOF
     function! s:sessionremoveitem(item) abort
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
                     \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive', 'GV', 'git', 'dirvish', 'checkhealth', 'copilot-chat'], getbufvar(a:item, '&filetype')) >= 0
+                    \ || index(['quickfix', 'terminal', 'help', 'man', 'copilot-chat'], getbufvar(a:item, '&buftype')) >= 0
                     \ || buflisted(a:item) == 0
                     \ || (match(a:item, '.') >= 0 && split(a:item, '\.')[-1] ==# 'dbout')
                     \ || isdirectory(a:item)
                     \ || match(a:item, 'Debugger*') >= 0
+                    \ || match(a:item, 'term://*') >= 0
                     \ || (g:working[1] !=# 'working' && a:item =~? '\/notes\/' && getbufvar(a:item, '&filetype') ==# 'markdown')
                     \ || (g:working[1] !=# 'services' && a:item !~? 'editor/' && a:item =~? '.vimrc*' && getbufvar(a:item, '&filetype') ==# 'vim')
     endfunction
