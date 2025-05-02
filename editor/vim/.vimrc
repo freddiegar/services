@@ -487,6 +487,8 @@ set completeopt=                                                " Show preview i
 set completeopt+=menuone                                        " Use the popup menu also when there is only one match.
 set completeopt+=noinsert                                       " Do not insert any text for a match until the user selects a match from the menu
 set completeopt+=noselect                                       " Do not select any option for a match until the user selects a match from the menu
+" set completeopt+=popup                                          " Show extra information about the currently selected completion in a popup window. (depends of menu or menuone flag).
+"                                                                 " CopilotChat suggest this setup, then ...
 set pumheight=10                                                " Maximum options showed in popup menu (default: 0=all)
 
 " Custom Interface
@@ -654,13 +656,17 @@ let g:loaded_zipPlugin = 1
 let g:loaded_matchparen = 1
 
 " Netrw (require by :GBrowse command) allow edit remote files: <C-w>f, :edit, etc
-" Key   Action
-" enter Open files/directories
-" o     Open file/directory in new horizontal split
-" v     Open file/directory in new vertical split
-" t     Open file/directory in new tab
-" x     Open the file/directory with the default system app
-" p     Preview file without (moving the cursor from netrw)
+" Key       Action
+" enter     Open files | Expand directories
+" o         Open file/directory in new horizontal split (disabled)
+" v         Open file/directory in new vertical split (disabled)
+" O         Obtein file/directory in remote ftp/scp (disabled)
+" t         Open file/directory in new tab (disabled)
+" x         Open the file/directory with the default system app
+" p         Preview file without (moving the cursor from netrw)
+" <C-w>+z   Close preview file, I remap as P (custom)
+" .         Preload command-line with filepath (custom)
+" yy        Copy filename or dirname (custom)
 
 " -     Go up one directory
 " u     Go back to previously visited directory (like <C-o> in a buffer)
@@ -670,9 +676,18 @@ let g:loaded_matchparen = 1
 " d     Create a new directory
 " D     Delete the file/directory under the cursor (or marked files/dirs)
 " R     Rename/move file/directory
+" gh    Toggle hidden files
+
+" mf    Marks a file or directory. Any action (aka: mx) that can be performed on multiple files
+" mF    Undo all marks (mf)
+" mu    Undo all marks (temporary)
+" mt    Assign the "target directory" used by the move and copy commands.
+" mc    Copy the marked files in the target directory.
+" mm    Move the marked files to the target directory.
+" mx    Runs an external command on the marked files.
 
 let g:netrw_banner = 0                                          " Hide help banner. Toggle: I
-let g:netrw_keepdir = 1                                         " Keep current directory on preview files (p) (default: 1)
+let g:netrw_keepdir = 0                                         " Keep current directory on preview files (p) (default: 1)
 let g:netrw_preview = 1                                         " Preview in vertical mode (default: horizontal)
 let g:netrw_alto = 1                                            " Change from above to below splitting (default: depends)
 let g:netrw_altv = 1                                            " Change from left to right splitting (default: depends)
@@ -2379,7 +2394,7 @@ augroup END
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc, 9.1 has built-in (:packadd comment) same for nvim but... this respect empty lines
+Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc, 9.1 has built-in (:packadd comment) same for nvim but... tpope respect empty lines
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
 Plug 'tpope/vim-abolish'                                        " [c]oe[r]cion: s: snake_case, m MixedCase, c camelCase, p PascalCase, u UPPER_CASE, - dash-case, . dot.case
@@ -2516,8 +2531,11 @@ if g:hasaia && g:hasgit && !<SID>mustbeignore()
     if g:isneovim
         Plug 'zbirenbaum/copilot.lua'                           " Zen mode +++++: Copilot auth
 
-        Plug 'nvim-lua/plenary.nvim'                            " cURL wrapper required
+        Plug 'nvim-lua/plenary.nvim'                            " cURL wrapper required by CopilotChat
         Plug 'CopilotC-Nvim/CopilotChat.nvim'                   " Explain, Review, Fix, Optimize, Docs, Tests using Copilot
+        " rxvt not supports glyphs fancy icons
+        " Plug 'MeanderingProgrammer/render-markdown.nvim'        " Render (and other markdown files inline without extra dependencies)
+        " Plug 'echasnovski/mini.icons'                           " Render fancy icons in markdown and CopilotChat panel, see up :|
     else
         Plug 'github/copilot.vim'                               " Zen mode +++++: Copilot setup
     endif
@@ -4494,12 +4512,14 @@ augroup AutoCommands
     autocmd FileType netrw autocmd BufDelete <buffer> let g:netrwopen = 0
 
     " Weird behaviour using this mapping
-    autocmd FileType netrw map <silent> <buffer> p <Nop>
-    autocmd FileType netrw map <silent> <buffer> P <Nop>
+    " autocmd FileType netrw map <silent> <buffer> p <Nop>
+    " autocmd FileType netrw map <silent> <buffer> P <Nop>
+    autocmd FileType netrw map <silent> <buffer> P <C-w>z
     autocmd FileType netrw map <silent> <buffer> o <Nop>
     autocmd FileType netrw map <silent> <buffer> O <Nop>
     autocmd FileType netrw map <silent> <buffer> v <Nop>
-    autocmd FileType netrw map <silent> <buffer> - <Nop>
+    autocmd FileType netrw map <silent> <buffer> t <Nop>
+    " autocmd FileType netrw map <silent> <buffer> - <Nop>
     autocmd FileType netrw,fugitive map <silent> <buffer> <C-l> <Nop>
 
     " Manipulate current directory or file using dot (.) and [y]ank
@@ -5065,8 +5085,15 @@ EOF
 
 " Don't indent!
 lua <<EOF
-    -- 3 "S" Principles: Simple -> Specific -> Short
+    -- 3 "S" Principles: Simple -> Specific -> Short : Not success? Iterate!
     require('copilot').setup {
+        server_opts_overrides = {
+            settings = {
+                telemetry = {
+                    telemetryLevel = 'off',
+                },
+            },
+        },
         suggestion = {
             auto_trigger = true, -- Starts suggestions in Insert Mode
             keymap = {
@@ -5097,14 +5124,14 @@ lua << EOF
             Noob = {
                 prompt = '> /COPILOT_EXPLAIN\n\nPlease, write an explanation for the selected code for a non-IT audience as paragraphs of text. Avoid complex words and terms.',
             },
-            -- Defaults
+            -- Defaults: :CopilotChatPrompts
             -- Explain:  '> /COPILOT_EXPLAIN\n\nWrite an explanation for the selected code as paragraphs of text.'
             -- Review:   '> /COPILOT_REVIEW\n\nReview the selected code.'
-            -- Fix:      '> /COPILOT_GENERATE\n\nThere is a problem in this code. Rewrite the code to show it with the bug fixed.'
-            -- Optimize: '> /COPILOT_GENERATE\n\nOptimize the selected code to improve performance and readability.'
+            -- Fix:      '> /COPILOT_GENERATE\n\nThere is a problem in this code. Identify the issues and rewrite the code with fixes. Explain what was wrong and how your changes address the problems.'
+            -- Optimize: '> /COPILOT_GENERATE\n\nOptimize the selected code to improve performance and readability. Explain your optimization strategy and the benefits of your changes.'
             -- Docs:     '> /COPILOT_GENERATE\n\nPlease add documentation comments to the selected code.'
             -- Tests:    '> /COPILOT_GENERATE\n\nPlease generate tests for my code.'
-            -- Commit:   '> #git:staged\n\nWrite commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.'
+            -- Commit:   '> #git:staged\n\nWrite commit message for the change with commitizen convention. Keep the title under 50 characters and wrap message at 72 characters. Format as a gitcommit code block.'
         }
     }
 EOF
