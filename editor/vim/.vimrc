@@ -4028,7 +4028,7 @@ function! s:run(range, interactive, ...) abort
     let l:execute = ''
     let l:ignorechars = []
     let l:runner = &filetype
-    let l:runners = ['&bash', '&php', '&sql', '&d2']
+    let l:runners = ['&bash', '&php', '&sql', '&d2', '&vim']
     let l:guessed = v:false
 
     if index(l:runners, '&' . l:runner) < 0 && index(['markdown', 'sh'], l:runner) < 0
@@ -4036,11 +4036,14 @@ function! s:run(range, interactive, ...) abort
     endif
 
     " Guessing...
-    let l:suffix = trim(split(l:command, ' ')[0])
+    let l:suffix = l:command !=# '' ? trim(split(l:command, ' ')[0]) : ''
 
     if index(['php', 'phpx', 'artisan', 'tinker'], l:suffix) >= 0
         let l:guessed = v:true
         let l:runner = 'php'
+    elseif index(['let', 'unlet'], l:suffix) >= 0
+        let l:guessed = v:true
+        let l:runner = 'vim'
     endif
 
     if l:runner ==# ''
@@ -4114,6 +4117,11 @@ function! s:run(range, interactive, ...) abort
         if !<SID>isrunning(' d2 ')
             execute ':AsyncRun d2 --sketch --theme=1 --layout=elk --watch ' . expand('%:p') . ' /tmp/d2/' . expand('%:t')
         endif
+
+        return
+    elseif (l:runner ==# 5 || index(['vim'], l:runner) >= 0)
+        execute l:command
+        echo l:command
 
         return
     else
