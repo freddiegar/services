@@ -70,3 +70,7 @@ URxvt.color14:      #427B58
 ! white
 URxvt.color7:       #A89984
 URxvt.color15:      #3C3836
+
+! Colors for sxiv
+Sxiv.background:    #F9F5D7
+Sxiv.foreground:    #3C3836

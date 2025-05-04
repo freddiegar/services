@@ -564,6 +564,8 @@ D() {
     echo "DPMS after $(($SECONDS / 60))m or $((($SECONDS / 60) / 60))h without interaction."
 }
 
+alias I="sxiv -f -b -t ."
+alias II="sxiv -f -b -r -S 2 ."
 # @thanks https://joaocarlos.dev/posts/gnome-control-center-on-i3wm/
 # alias C='XDG_CURRENT_DESKTOP=GNOME gnome-control-center'
 alias O="xargs -r -I {}"

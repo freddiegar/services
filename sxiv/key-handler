@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# @thanks https://gitlab.com/dwt1/dotfiles/-/blob/master/.config/sxiv/exec/key-handler
+
+rotate() {
+    degree="$1"
+    file="$2"
+
+	case "$(file -b -i "$file")" in
+	    image/jpeg*)
+            jpegtran -rotate "$degree" -copy all -outfile "$file" "$file"
+	    ;;
+	    *)
+            mogrify  -rotate "$degree" "$file"
+        ;;
+    esac
+}
+
+while read file
+do
+    file=$(realpath $file)
+
+    case "$1" in
+        "c")
+            echo -n "$file" | xclip -selection clipboard &&
+                notify-send "$file copied to clipboard." &&
+                exit 0
+        ;;
+        "d")
+            [ "$(printf "No\\nYes" | dmenu -i -p "Really delete $file?" -fn "fira code retina:size:12" -nb "#000000" -nf "#F3F4F5" -sb "#000000" -sf "#D65D0E")" = "Yes" ] &&
+                rm "$file" &&
+                notify-send "$file deleted." &&
+                exit 0
+        ;;
+        "i")
+                notify-send "$file" &&
+                exit 0
+        ;;
+        "w")
+            feh --bg-scale "$file" &&
+                notify-send "$file set as wallpaper." &&
+                exit 0
+        ;;
+        "7")
+            rotate 270 "$file"
+        ;;
+        "8")
+            rotate 180 "$file"
+        ;;
+        "9")
+            rotate 90 "$file"
+        ;;
+        esac
+done

@@ -1495,6 +1495,19 @@ sudo apt-get install --no-install-recommends -y vifm
 ## sudo apt-get remove vifm && sudo apt-get autoremove
 ```
 
+# Sxiv (See Images with Vim Style)
+
+[Viewer](https://github.com/xyb3rt/sxiv)
+
+```bash
+sudo apt-get install --no-install-recommends -y sxiv
+## sudo apt-get remove sxiv && sudo apt-get autoremove
+
+mkdir -p ~/.config/sxiv
+mkdir -p ~/.config/sxiv/exec
+ln -s `pwd`/sxiv/key-handler ~/.config/sxiv/exec/key-handler
+```
+
 # Coding (Optionals)
 
 # Rector

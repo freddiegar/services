@@ -714,6 +714,26 @@ vim /etc/fstab
 /path/disk /folder/mount ext4 defaults 1 2
 ```
 
+Mount external HD
+```bash
+# Not show HD, maybe is 2
+echo -1 | sudo tee /sys/module/usbcore/parameters/autosuspend
+# "Auto" unmounted HD, maybe it needs more POWER
+# Use another USB connector
+
+# Show disk available
+sudo fdisk -l
+
+## mkdir ~/external
+sudo mount -t ntfs /dev/sda2 ~/external
+# sudo mount -t ntfs /dev/sdb2 ~/external
+# sudo mount -t ntfs /dev/sdc2 ~/external
+# sudo mount -t ntfs /dev/sdd2 ~/external
+
+udisksctl unmount -b /dev/sda
+udisksctl power-off -b /dev/sda
+```
+
 Update packages in Linux
 ```bash
 sudo apt-get update

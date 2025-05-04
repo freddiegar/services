@@ -687,7 +687,8 @@ let g:loaded_matchparen = 1
 " mx    Runs an external command on the marked files.
 
 let g:netrw_banner = 0                                          " Hide help banner. Toggle: I
-let g:netrw_keepdir = 0                                         " Keep current directory on preview files (p) (default: 1)
+let g:netrw_keepdir = 1                                         " Keep current directory on preview files (p) (default: 1)
+                                                                " Important! use 1, used in cd o Enter in netrw
 let g:netrw_preview = 1                                         " Preview in vertical mode (default: horizontal)
 let g:netrw_alto = 1                                            " Change from above to below splitting (default: depends)
 let g:netrw_altv = 1                                            " Change from left to right splitting (default: depends)
@@ -704,8 +705,11 @@ let g:filterprg = split(&grepprg)[0] ==# 'rg'
             \ : split(&grepprg)[0] . ' -E'
 
 function! GetNameCurrentPath() abort
+    let l:cwd = split(g:cwd, '/')
+    let l:dir = len(l:cwd) > 0 ? l:cwd[-1] : ''
+
     return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish', 'copilot-chat'], &filetype) < 0
-                \ ? split(g:cwd, '/')[-1] . (expand('%:t') !=# '' ? ' ' : '')
+                \ ? l:dir . (expand('%:t') !=# '' ? ' ' : '')
                 \ : ''
 endfunction
 
