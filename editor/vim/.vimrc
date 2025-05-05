@@ -3380,7 +3380,7 @@ function! s:get_url(url) abort
     endif
 
     if l:uri ==# ''
-        echo 'Nothing to do.'
+        echo 'Nothing to do with: ' . l:uri
 
         return ''
     endif

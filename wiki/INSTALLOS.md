@@ -1489,10 +1489,20 @@ grep "LESSOPEN=" ~/.profile
 # Vifm (Terminal File Manager with Vim Style)
 
 [See](https://wiki.vifm.info/index.php?title=Manual)
+[Previewer](https://github.com/ueber-devel/ueberzug/)
 
 ```bash
 sudo apt-get install --no-install-recommends -y vifm
 ## sudo apt-get remove vifm && sudo apt-get autoremove
+
+mkdir -p ~/.config/vifm
+mkdir -p ~/.config/vifm/scripts
+ln -s `pwd`/vifm/vifmrc ~/.config/vifm/vifmrc
+
+# NOT works in rxvt: ueberzug
+# ln -s `pwd`/vifm/previewx ~/.config/vifm/scripts/previewx
+# sudo ln -s `pwd`/vifm/vifmrun /usr/bin/vifmrun
+# sudo ln -s `pwd`/vifm/previewx /usr/local/bin/previewx
 ```
 
 # Sxiv (See Images with Vim Style)
@@ -1984,6 +1994,8 @@ neovide --version | awk '{print $2}'
 # 0.15.0
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.12
+sxiv -v | awk '{print $2}'
+# 26
 curl --version | grep -e "^curl " | awk '{print $2}'
 # 8.9.1
 git --version | awk '{print $3}'

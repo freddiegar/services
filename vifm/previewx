@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+# Cache directory
+CACHE_DIR="$HOME/.cache/vifm"
+mkdir -p "$CACHE_DIR"
+
+# Get a unique cache filename for the current file
+PCACHE="$CACHE_DIR/thumbnail.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$PWD/$6")" | sha256sum)"
+export PCACHE="${PCACHE%% *}"
+
+# Clear ueberzug preview and optionally remove cache
+pclear() {
+    printf '{"action": "remove", "identifier": "vifm-preview"}\n' > "$FIFO_UEBERZUG"
+
+    # Only remove cache if explicitly requested
+    if [ "$1" = "cache" ]; then
+        rm -f "$PCACHE"*
+    fi
+}
+
+# Display image using ueberzug
+image() {
+    # Always clear the previous preview first
+    pclear
+    # Small delay to ensure previous preview is cleared
+    sleep 0.1
+
+    printf '{"action": "add", "identifier": "vifm-preview", "x": "%s", "y": "%s", "width": "%s", "height": "%s", "scaler": "contain", "path": "%s"}\n' \
+        "$2" "$3" "$4" "$5" "$6" > "$FIFO_UEBERZUG"
+}
+
+main() {
+    case "$1" in
+        "clear")
+            pclear "cache"
+            ;;
+        "draw")
+            FILE="$PWD/$6"
+            # For direct image viewing, we don't cache
+            image "$1" "$2" "$3" "$4" "$5" "$FILE"
+            ;;
+        "video")
+            FILE="$PWD/$6"
+            pclear
+
+            [ ! -f "${PCACHE}.jpg" ] && \
+                ffmpegthumbnailer -i "$FILE" -o "${PCACHE}.jpg" -s 0 -q 5
+
+            image "$1" "$2" "$3" "$4" "$5" "${PCACHE}.jpg"
+            ;;
+        "epub")
+            FILE="$PWD/$6"
+            pclear
+
+            [ ! -f "$PCACHE" ] && \
+                epub-thumbnailer "$FILE" "$PCACHE" 1024
+
+            image "$1" "$2" "$3" "$4" "$5" "$PCACHE"
+            ;;
+        # "pdf")
+        #     FILE="$PWD/$6"
+        #     pclear
+
+        #     [ ! -f "${PCACHE}.jpg" ] && \
+        #         pdftoppm -jpeg -f 1 -singlefile "$FILE" "$PCACHE"
+
+        #     image "$1" "$2" "$3" "$4" "$5" "${PCACHE}.jpg"
+        #     ;;
+        # "djvu")
+        #     FILE="$PWD/$6"
+        #     pclear
+        #     [ ! -f "${PCACHE}.jpg" ] && \
+        #         ddjvu -format=tiff -quality=90 -page=1 "$FILE" "${PCACHE}.jpg"
+        #     image "$1" "$2" "$3" "$4" "$5" "${PCACHE}.jpg"
+        #     ;;
+        "audio")
+            FILE="$PWD/$6"
+            pclear
+
+            [ ! -f "${PCACHE}.jpg" ] && \
+                ffmpeg -hide_banner -i "$FILE" "${PCACHE}.jpg" -y >/dev/null
+
+            image "$1" "$2" "$3" "$4" "$5" "${PCACHE}.jpg"
+            ;;
+        "font")
+            FILE="$PWD/$6"
+            pclear
+
+            [ ! -f "${PCACHE}.jpg" ] && \
+                fontpreview -i "$FILE" -o "${PCACHE}.jpg"
+
+            image "$1" "$2" "$3" "$4" "$5" "${PCACHE}.jpg"
+            ;;
+        *)
+            # Clear preview for any unhandled file types
+            pclear "cache"
+            ;;
+    esac
+}
+
+main "$@"

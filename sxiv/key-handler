@@ -23,7 +23,7 @@ do
     case "$1" in
         "c")
             echo -n "$file" | xclip -selection clipboard &&
-                notify-send "$file copied to clipboard." &&
+                notify-send "$file copied." &&
                 exit 0
         ;;
         "d")
@@ -38,7 +38,7 @@ do
         ;;
         "w")
             feh --bg-scale "$file" &&
-                notify-send "$file set as wallpaper." &&
+                notify-send "$file wallpaper." &&
                 exit 0
         ;;
         "7")
