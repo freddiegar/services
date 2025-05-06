@@ -657,7 +657,11 @@ git push --verbose origin --force
 Keep open SSH session
 
 ```bash
+# sh
 while true; do sleep 1; done
+
+# bash | zsh
+while :; do sleep 1; done
 ```
 
 Convert MySQL DUMP to SQLite

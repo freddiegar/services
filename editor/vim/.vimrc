@@ -1305,6 +1305,9 @@ command! -nargs=? -complete=file B call <SID>backup(<f-args>)
 " Explorer (why nvim why!)
 command! -nargs=1 -complete=dir E execute "normal! :!vifm <f-args><CR>"
 
+" Tailing
+command! -nargs=0 L !tail -f %
+
 " Universal Tags
 command! -nargs=0 -bang U GutentagsUpdate<bang>
 
@@ -3974,6 +3977,14 @@ endfunction
 " DadBod
 " @see https://github.com/tpope/vim-dadbod
 function! s:db() abort
+    " First! You can define connection by: [g]lobal, [t]ab, [w]indow, [b]uffer
+    " Examples:
+    "   let g:db = 'postgresql://user:pass@localhost:5432/db_name'
+    "   let b:db = 'sqlite:path/to/database'
+    if get(b:, 'db', get(g:, 'db')) !=# ''
+        return get(b:, 'db', get(g:, 'db'))
+    endif
+
     let l:url = <SID>env('DATABASE_URL')
 
     if l:url ==# '' || match(l:url, 'serverVersion') > 0
@@ -4443,6 +4454,8 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile /tmp/ctags/*tags* setfiletype tags noundofile
     autocmd BufReadPost,BufNewFile *.Xresources setfiletype xdefaults
     autocmd BufReadPost,BufNewFile *.d2 setfiletype d2
+    autocmd BufReadPost,BufNewFile *.sqlite setfiletype sql
+    autocmd BufReadPost,BufNewFile vifmrc setfiletype vim
     autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
 
     autocmd FileType markdown setlocal syntax=OFF
