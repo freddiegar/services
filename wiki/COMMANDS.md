@@ -1909,8 +1909,14 @@ openssl list -providers
 # Only show default?
 sudo cp -p /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.backup
 
-sudo sed -i '/default = default_sect/a legacy = legacy_sect' /etc/ssl/openssl.cnf
-sudo sed -i '/^\[default_sect\]/a activate = 1\n\[legacy_sect\]\nactivate = 1' /etc/ssl/openssl.cnf
+sudo sed -i '/^# default = default_sect/a legacy = legacy_sect' /etc/ssl/openssl.cnf
+sudo sed -i 's/^# default = default_sect/default = default_sect/g' /etc/ssl/openssl.cnf
+sudo sed -i '/^# \[default_sect\]/a activate = 1\n\[legacy_sect\]\nactivate = 1' /etc/ssl/openssl.cnf
+sudo sed -i 's/^# \[default_sect\]/\[default_sect\]/g' /etc/ssl/openssl.cnf
+sudo sed -i 's/^# \[provider_sect\]/\[provider_sect\]/g' /etc/ssl/openssl.cnf
+sudo sed -i 's/^# providers =/providers =/g' /etc/ssl/openssl.cnf
+
+diff -u /etc/ssl/openssl.cnf.backup /etc/ssl/openssl.cnf
 ```
 
 Diagrams from CLI (D2)

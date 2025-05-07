@@ -824,6 +824,7 @@ rm -Rf /var/www/ssl-backup
 
 [See](https://askubuntu.com/questions/1102803/how-to-upgrade-openssl-1-1-0-to-1-1-1-in-ubuntu-18-04)
 [Vulnerabilities](https://www.openssl.org/news/vulnerabilities-1.1.1.html)
+[Releases](https://openssl-library.org/source/)
 
 ```bash
 # Current version
@@ -844,7 +845,7 @@ sudo ldconfig
 # Check version
 openssl version
 # Clean house
-cd ..
+cd ~
 rm -Rf openssl*
 ```
 > Dependencies require: sudo apt-get install make gcc

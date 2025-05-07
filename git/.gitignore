@@ -19,6 +19,7 @@ testx.sh
 # Logs to ignore
 *.log
 *.diff
+*.patch
 *.json5
 # Ignores backup
 storage/oauth-public.key.*

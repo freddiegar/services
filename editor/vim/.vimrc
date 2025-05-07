@@ -2134,6 +2134,7 @@ function s:go_docs(word) abort
         let l:word = ''
     elseif &filetype ==# 'php'
         let l:docsurl = 'https://www.php.net/'
+        " let l:docsurl = 'https://www.better-php.net/'
     elseif &filetype ==# 'vim-plug'
         let l:docsurl = substitute(g:plugs[l:word].uri, 'git::@', '', 'g')
         let l:word = ''
@@ -2153,7 +2154,7 @@ function s:go_docs(word) abort
         let l:docsurl = 'https://hub.docker.com/r/'
         let l:saved_unnamed_register = @@
 
-        silent execute "normal! 0wviW\"zy"
+        silent execute "normal! $viW\"zy"
 
         let l:word = split(trim(@z), ':')[0]
 
@@ -4554,7 +4555,9 @@ augroup AutoCommands
     " Manipulate current directory or file using dot (.) and [y]ank
     " @thanks https://vi.stackexchange.com/a/39410
     autocmd FileType netrw nmap <nowait> <buffer> . :<C-u>! =netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))<CR><Home><C-Right>
+    autocmd FileType netrw nmap <silent> <buffer> yd :let @+=="netrw#Call('NetrwGetCurdir', 1)"<CR><CR>
     autocmd FileType netrw nmap <silent> <buffer> yy :let @+=="netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))"<CR><CR>
+    autocmd FileType netrw nmap <silent> <buffer> yf :let @+=="netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))"<CR><CR>
 
     " Like many others (vim-plug, GV, undotree) q is [q]uit. So sorry Tim!
     autocmd FileType qf map <silent> <nowait> <buffer> q <Cmd>bdelete!<CR>
@@ -6303,7 +6306,7 @@ EOF
     "     call writefile(['call setqflist(' . a:qflist . ')', 'call setqflist([], "a", ' . a:qfinfo . ')'], g:session_file, 'a')
     " endfunction
 
-    " nnoremap <Leader>w <Cmd>call <SID>sessionsave() <Bar> echo 'Session saved.'<CR>
+    nnoremap <Leader>w <Cmd>call <SID>sessionsave() <Bar> echo 'Session saved.'<CR>
 
     function! s:sessionsave() abort
         if <SID>mustbeignore()
