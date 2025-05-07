@@ -72,5 +72,5 @@ URxvt.color7:       #A89984
 URxvt.color15:      #EBDBB2
 
 ! Colors for sxiv
-Sxiv.background:    [95]#1D2021
+Sxiv.background:    #1D2021
 Sxiv.foreground:    #FBF1C7

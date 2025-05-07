@@ -1406,6 +1406,29 @@ sudo apt-get autoremove
 sudo mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d
 ```
 
+# Set defaults for ... browser
+
+[See](https://unix.stackexchange.com/questions/584478/how-to-add-browser-to-update-alternatives#584506)
+
+```bash
+sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/firefox 210
+sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/zen 210
+
+sudo update-alternatives --set x-www-browser /usr/bin/zen
+
+sudo update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/firefox 210
+sudo update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/zen 210
+
+sudo update-alternatives --set gnome-www-browser /usr/bin/zen
+
+# sudo update-alternatives --config x-www-browser
+## sudo update-alternatives --remove x-www-browser /usr/bin/zen
+## sudo update-alternatives --remove x-www-browser /usr/bin/firefox
+```
+> update-alternatives --display x-www-browser
+> update-alternatives --get-selections
+> update-alternatives --get-selections | grep browser
+
 ## That is ALL :D !
 
 # Performance (Optionals)
@@ -1959,11 +1982,11 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 24.10
 uname -r
-# 6.11.0-24-generic
+# 6.11.0-25-generic
 command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
 command cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31825796 kB
+# 31825784 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -2061,17 +2084,17 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 138.0b9
+# 139.0b3
 zen --version | awk '{print $3}'
-# 1.11.5t
+# 1.12.1t
 # Unstable CLI: apt-get list --installed | wc --lines
 # apt show gnome
 # dpkg --list | wc --lines
 # dpkg --get-selections | grep -v deinstall > ~/packages.log
 dpkg --get-selections | grep -v deinstall | wc --lines
-# 1894
+# 1906
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 42
+# 44
 apt-mark showmanual | wc --lines
-# 316
+# 319
 ```
