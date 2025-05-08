@@ -826,6 +826,15 @@ sudo apt-get install --no-install-recommends -y gopls
 ```
 > sudo apt-get remove gopls
 
+##### Laravel LSP
+
+[See](https://github.com/laravel-ls/laravel-ls)
+
+```bash
+go install github.com/laravel-ls/laravel-ls/cmd/laravel-ls@latest
+sudo ln -s /home/$USER/go/bin/laravel-ls /usr/bin/laravel-ls
+```
+
 ##### Vim Slides (require go)
 
 [See](https://github.com/maaslalani/slides)
@@ -1992,8 +2001,8 @@ ldd --version | grep -e "^ldd" | awk '{print $5}'
 gcc --version | grep -e "^gcc" | awk '{print $4}'
 # 14.2.0
 openssl version | awk '{print $2}'
-# 3.3.1
 # 1.1.1w
+# 3.3.1
 i3 --version | awk '{print $3}'
 # 4.23
 i3status --version | grep -e "i3status" | awk '{print $2}'

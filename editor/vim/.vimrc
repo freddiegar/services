@@ -5041,6 +5041,7 @@ lua <<EOF
         -- https://github.com/elixir-lsp/elixir-ls
         solargraph = {},
         gopls = {},
+        laravel_ls = {},
         rust_analyzer = {},
         clangd = {
             -- cmd = {
