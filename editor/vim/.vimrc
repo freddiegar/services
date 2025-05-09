@@ -2292,7 +2292,7 @@ cnoremap <C-f> <C-Right>
 " Replace because annoyoning wait after typing % in [s]ubstitution command
 cnoreabbrev <expr> %% (getcmdtype() ==# ':' && getcmdline() !~# '^%%' && getcmdline() =~# '%%') ? fnameescape(expand('%')) : '%%'
 
-" Available: <C-x><C-cjpv>
+" Available: <C-x><C-cjp>
 " Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-x>)
 " @see https://stackoverflow.com/questions/3155461/how-to-delete-multiple-buffers-in-vim
 cnoremap <C-x><C-x> <C-a>
@@ -3976,6 +3976,24 @@ function! s:datafugitive(...) abort
     return [0, 0]
 endfunction
 
+function! s:preload(name) abort
+    let l:value = ''
+    let l:context = 'g'
+
+    if get(b:, a:name, '') !=# ''
+        let l:value = get(b:, a:name, '')
+        let l:context = 'b'
+    elseif get(g:, a:name, '') !=# ''
+        let l:value = get(g:, a:name, '')
+        let l:context = 'g'
+    endif
+
+    return printf('let %s:%s = "%s"', l:context, a:name, l:value)
+endfunction
+
+cnoremap <C-x>d <C-u><C-r>=<SID>preload('db')<CR>
+cnoremap <C-x>r <C-u><C-r>=<SID>preload('run')<CR>
+
 " DadBod
 " @see https://github.com/tpope/vim-dadbod
 function! s:db() abort
@@ -4031,11 +4049,10 @@ command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
 " range (0,1,2), interactive (0/1), [command (string)]: void
 function! s:run(range, interactive, ...) abort
     " Examples:
-    "   let g:make = '!phpx --file 2022/day/6/code > 2022/day/6/output'
-    "   let b:make = "redir! > 2022/day/6/output | execute '!phpx --file %' | redir END"
-    "   let g:make = "redir! > 2022/day/6/output | execute '!phpx --file 2022/day/6/code' | redir END"
-    if get(b:, 'make', get(g:, 'make')) !=# ''
-        execute get(b:, 'make', get(g:, 'make'))
+    "   let g:run = '!phpx --file 2022/day/6/code > 2022/day/6/output'
+    "   let b:run = "redir! > 2022/day/6/output | execute '!phpx --file %' | redir END"
+    if get(b:, 'run', get(g:, 'run')) !=# ''
+        execute get(b:, 'run', get(g:, 'run'))
 
         return
     endif
