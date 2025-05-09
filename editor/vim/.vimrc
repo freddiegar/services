@@ -3802,6 +3802,7 @@ lua << EOF
                     { '(TOKEN=).+', replace = '%1'},
                     { '(USER=).+', replace = '%1'},
                     { '(USERNAME=).+', replace = '%1'},
+                    { '(_authToken=).+', replace = '%1'},
                 },
             },
             {
@@ -4425,7 +4426,7 @@ augroup AutoCommands
     autocmd BufWritePost .vimrc,.vimrc.local,.vimrc.setup nested if get(g:, 'asyncrun_status', '') !=# 'running' | source $MYVIMRC | endif
                 \ | let g:reinitialization = v:true
                 \ | if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-                \ |     PlugInstall
+                \ |     PlugInstall!
                 \ | endif
 
     " Reload Xresources
@@ -4749,7 +4750,7 @@ EOF
         autocmd BufReadPost * ++once silent call <SID>nautocomplete()
 
         " So slower!(?)
-        autocmd FileType sql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion' } } }
+        autocmd FileType sql lua require('cmp').setup.buffer({ sources = { { name = 'vim-dadbod-completion' } } })
 
         " @see https://github.com/hrsh7th/nvim-cmp
         " @see https://vonheikemen.github.io/devlog/tools/neovim-lsp-client-guide/
@@ -5428,6 +5429,18 @@ EOF
                 \ | endif
     autocmd FileType php let g:test#php#phpunit#options = {
         \ 'all': '--no-coverage --stop-on-defect',
+    \}
+
+    " @see https://github.com/vim-test/vim-test/blob/master/autoload/test/php/phpunit.vim#L10
+    " 4: Look for an attribute "#[Test]" or "#[Test," (on a line by itself) or "#[\PHPUnit\Framework\Attributes\Test] full namespace"
+    autocmd FileType php let g:test#php#phpunit#test_patterns = {
+        \ 'test': [
+        \ '\v^\s*public function (test\w+)\(',
+        \ '\v^\s*\*\s*(\@test)',
+        \ '\v^\s*\/\*\*\s*(\@test)\s*\*\/',
+        \ '\v^\s*(#\[(\\)?.*\s*Test\s*[,\]])',
+        \],
+        \ 'namespace': [],
     \}
 
     autocmd FileType php nnoremap <silent> <buffer> <Leader>tT :cclose <Bar> silent! bd! fugitive//* <Bar> silent! bd! term://* <Bar> silent! bd! phpx* <Bar> execute ':TestNearest --testdox -vvv ' . (g:test_strategy ==# 'background' ? '-sound ' : '') . '-strategy=' . g:test_strategy<CR>
@@ -6722,7 +6735,7 @@ EOF
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c,*Xresources :call <SID>cleanup('te')
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c,*Xresources,vifmrc :call <SID>cleanup('te')
     autocmd BufWritePre * if expand('%:e') ==# '' && index(['sh'], &filetype) >= 0 | call <SID>cleanup('te') | endif
 
     " One <C-x><C-f> to auto-complete files
