@@ -582,7 +582,7 @@ if has('gui_running')
                         \ | let g:neovide_hide_mouse_when_typing = v:true
                         \ | let g:neovide_remember_window_size = v:true
                         \ | let g:neovide_theme = 'auto'
-                        \ | if &background ==# 'dark' | let g:neovide_transparency = 0.95 | endif
+                        \ | if &background ==# 'dark' | let g:neovide_opacity = 0.95 | endif
         else
             " @see :h 'guioptions'
             set guioptions=                                     " Reset option (default: aegimrLrT)
@@ -2326,13 +2326,13 @@ cnoremap <C-x><C-r> <C-u>keepalt saveas =join(['~/working', g:working[0], 'CODE
 cnoremap <C-x><C-i> <C-u>='!ln '<CR>=expand('%:p')<CR> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<CR>
 cnoremap <C-x><C-s> <C-u>='!ln -s '<CR>=expand('%:p')<CR> /var/www/html/=join([g:working[0], expand('%:p')[match(expand('%:p'), g:working[1]):-1]], '/')<CR>
 
-" Get and Upload files
-cnoremap <C-x><C-g> <C-u>='!curl -L '<CR>=getreg('+')<CR>=' > '<CR>=split(getreg('+'), '/')[-1]<CR>
-cnoremap <C-x><C-u> <C-u>='!curl --upload-file '<CR>=expand('%:p')<CR> https://free.keep.sh
+" " Get and Upload files
+" cnoremap <C-x><C-g> <C-u>='!curl -L '<CR>=getreg('+')<CR>=' > '<CR>=split(getreg('+'), '/')[-1]<CR>
+" cnoremap <C-x><C-u> <C-u>='!curl --upload-file '<CR>=expand('%:p')<CR> https://free.keep.sh
 
 " gZip (and show dotfiles)
-cnoremap <C-x><C-o> <C-u>!gzip -d *.gz
-cnoremap <C-x><C-z> <C-u>='!gzip -k -c '<CR>=expand('%:p')<CR>=' > ~/Downloads/'<CR>=substitute(split(expand('%:p'), '/')[-1], '^\.', '', 'g') . '.gz'<CR>
+cnoremap <C-x><C-o> <C-u>!gzip --decompress *.gz
+cnoremap <C-x><C-z> <C-u>='!gzip --keep --stdout '<CR>=expand('%:p')<CR>=' > ~/Downloads/'<CR>=substitute(split(expand('%:p'), '/')[-1], '^\.', '', 'g') . '.gz'<CR>
 
 " incr (int)
 function! s:cycling_buffers(incr) abort
@@ -5182,7 +5182,9 @@ lua << EOF
             -- Optimize: '> /COPILOT_GENERATE\n\nOptimize the selected code to improve performance and readability. Explain your optimization strategy and the benefits of your changes.'
             -- Docs:     '> /COPILOT_GENERATE\n\nPlease add documentation comments to the selected code.'
             -- Tests:    '> /COPILOT_GENERATE\n\nPlease generate tests for my code.'
-            -- Commit:   '> #git:staged\n\nWrite commit message for the change with commitizen convention. Keep the title under 50 characters and wrap message at 72 characters. Format as a gitcommit code block.'
+            Commit = {
+                prompt = '> #git:staged\n\nWrite commit message to use as command in urxvt terminal for the change with commitizen convention. Keep the title under 50 characters and wrap message at 72 characters. Format as a gitcommit code block.',
+            },
         }
     }
 EOF
