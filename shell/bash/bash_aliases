@@ -555,7 +555,17 @@ D() {
         SECONDS=${1-3600}
     fi
 
-    xset s $SECONDS $SECONDS
+    #    ╭─ screensaver
+    #    │     ╭─ lenght idle time
+    #    │     │        ╭─ period to change pattern
+    #    │     │        │
+    xset s    $SECONDS $SECONDS
+
+    #    ╭─ display power management signal
+    #    │     ╭─ standby
+    #    │     │        ╭─ suspend
+    #    │     │        │        ╭─ off
+    #    │     │        │        │
     xset dpms $SECONDS $SECONDS $SECONDS
 
     # i3 status

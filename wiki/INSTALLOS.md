@@ -645,7 +645,7 @@ cd ~
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
 
 echo '
-# Uncomment to update node
+# # Uncomment to update node
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' | tee -a ~/.zshrc
@@ -657,9 +657,11 @@ nvm ls-remote
 # # Ubuntu 18
 # # @requirements https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions
 # # ldd --version
-nvm install v21.7.3
+nvm install v24.0.1
+# Latest version of node (and npm)
+## nvm install node
 
-# nvm alias default v21.7.3
+# nvm alias default v24.0.1
 # nvm current
 # ## Enabled to all users in [L|X]Ubuntu
 # # n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
@@ -673,7 +675,7 @@ echo '
 
 ## Install npm
 npm install -g npm@latest
-## npm install -g npm@10.9.2
+## npm install -g npm@11.3.0
 ## npm --version
 ## npm uninstall -g npm@latest
 ```
@@ -1358,6 +1360,14 @@ flags=(unconfined) {
 
 sudo systemctl restart apparmor.service
 ```
+> about:config
+> setting                                   -> default  -> custom
+> gfx.webrender.all                         -> false    -> true
+> gfx.x11-egl.force-enabled                 -> false    -> true
+> layers.acceleration.force-enabled         -> false    -> true
+> security.dialog_enable_delay              -> 1000     -> 0
+> zen.downloads.download-animation          -> true     -> false
+> zen.downloads.download-animation-duration -> 1000     -> 0
 
 # Opera
 
@@ -1995,7 +2005,7 @@ uname -r
 command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
 command cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31825784 kB
+# 31825796 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -2063,11 +2073,11 @@ php --version | grep -e "^PHP" | awk '{print $2}'
 # nvm --version
 # # 0.39.3
 npm --version
-# 10.9.2
+# 11.3.0
 node --version
-# v21.7.3
+# v24.0.1
 mysql --version | awk '{print $3}'
-# 8.0.41-0ubuntu0.24.10.1
+# 8.0.42-0ubuntu0.24.10.1
 # stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
@@ -2093,9 +2103,9 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 139.0b3
+# 139.0b5
 zen --version | awk '{print $3}'
-# 1.12.1t
+# 1.12.3t
 # Unstable CLI: apt-get list --installed | wc --lines
 # apt show gnome
 # dpkg --list | wc --lines

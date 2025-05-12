@@ -39,11 +39,12 @@ snippet rr "Reference Redirection"
 #	& -> all (standard and error) output
 #
 # Pipes
-#	echo "standard output" >&1
-#	echo "error output" >&2
-#	echo "ignore output and send error to rabbit hole" 2>&1 > /dev/null
-#	echo "all (standard and error) output" 1>&2
-#	echo "no errors" 2>&-
+#	echo "(keyboard) standard input - stdin"			0
+#	echo "(screen) standard output - stdout"			>&1
+#	echo "(screen) error output - stderr"				>&2
+#	echo "ignore output and send error to rabbit hole"	2>&1 > /dev/null
+#	echo "all (standard and error) output"				1>&2
+#	echo "no errors"									2>&-
 #
 # Redirection with >
 #     command > file:				Sends standard output to <file>

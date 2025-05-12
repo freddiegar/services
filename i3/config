@@ -612,7 +612,7 @@ set $mode_system System (l)ocked, (e)xit, (s)uspend, (h)ibernate, (R)eboot, (S)h
 exec --no-startup-id xss-lock --transfer-sleep-lock ~/.config/i3/lock
 
 mode "$mode_system" {
-    bindsym l exec          --no-startup-id $lock,                              mode "default"
+    bindsym l exec          --no-startup-id $lock && xset dpms force standby,   mode "default"
     bindsym e exec          --no-startup-id i3-msg exit,                        mode "default"
     bindsym s exec          --no-startup-id $lock && systemctl suspend -i,      mode "default"
     bindsym h exec          --no-startup-id $lock && systemctl hibernate -i,    mode "default"
