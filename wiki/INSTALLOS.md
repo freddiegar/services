@@ -354,12 +354,13 @@ sudo apt-get install --no-install-recommends -y fonts-firacode
 ## Profile Environment
 
 ```bash
-grep "EDITOR=\|VISUAL=\|BROWSER=\|WWW_HOME=" ~/.profile
+grep "EDITOR=\|VISUAL=\|VIEWER=\|BROWSER=\|WWW_HOME=" ~/.profile
 
 echo '
 export EDITOR=vim
 export VISUAL=vim
-export BROWSER=/usr/bin/firefox
+export VIEWER=nsxiv
+export BROWSER=/usr/bin/zen
 export WWW_HOME="https://www.duckduckgo.com"' >> ~/.profile
 ```
 > export BROWSER=/usr/lib/x86_64-linux-gnu/opera/opera
@@ -1540,6 +1541,8 @@ sudo apt-get install --no-install-recommends -y vifm
 mkdir -p ~/.config/vifm
 mkdir -p ~/.config/vifm/scripts
 ln -s `pwd`/vifm/vifmrc ~/.config/vifm/vifmrc
+ln -s `pwd`/vifm/gruvbox-dark ~/.config/vifm/colors/gruvbox-dark
+ln -s `pwd`/vifm/gruvbox-light ~/.config/vifm/colors/gruvbox-light
 
 # NOT works in rxvt: ueberzug
 # ln -s `pwd`/vifm/previewx ~/.config/vifm/scripts/previewx
@@ -1547,17 +1550,18 @@ ln -s `pwd`/vifm/vifmrc ~/.config/vifm/vifmrc
 # sudo ln -s `pwd`/vifm/previewx /usr/local/bin/previewx
 ```
 
-# Sxiv (See Images with Vim Style)
+# Nsxiv (See Images with Vim Style)
 
-[Viewer](https://github.com/xyb3rt/sxiv)
+[Viewer](https://github.com/nsxiv/nsxiv)
+[Configuration](https://nsxiv.codeberg.page/man/#CONFIGURATION)
 
 ```bash
-sudo apt-get install --no-install-recommends -y sxiv
-## sudo apt-get remove sxiv && sudo apt-get autoremove
+sudo apt-get install --no-install-recommends -y nsxiv
+## sudo apt-get remove nsxiv && sudo apt-get autoremove
 
-mkdir -p ~/.config/sxiv
-mkdir -p ~/.config/sxiv/exec
-ln -s `pwd`/sxiv/key-handler ~/.config/sxiv/exec/key-handler
+mkdir -p ~/.config/nsxiv
+mkdir -p ~/.config/nsxiv/exec
+ln -s `pwd`/nsxiv/key-handler ~/.config/nsxiv/exec/key-handler
 ```
 
 # Coding (Optionals)
@@ -2036,8 +2040,8 @@ neovide --version | awk '{print $2}'
 # 0.15.0
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.12
-sxiv -v | awk '{print $2}'
-# 26
+$VIEWER -v | head -n 1 | awk '{print $2}'
+# 32
 curl --version | grep -e "^curl " | awk '{print $2}'
 # 8.9.1
 git --version | awk '{print $3}'

@@ -666,7 +666,8 @@ let g:loaded_matchparen = 1
 " p         Preview file without (moving the cursor from netrw)
 " <C-w>+z   Close preview file, I remap as P (custom)
 " .         Preload command-line with filepath (custom)
-" yy        Copy filename or dirname (custom)
+" yd        Copy dirname (custom)
+" yf        Copy filename dirname (custom)
 
 " -     Go up one directory
 " u     Go back to previously visited directory (like <C-o> in a buffer)
@@ -821,7 +822,7 @@ function! ClientsStatusline() abort
         return l:cache
     endif
 
-    let l:clients = substitute(l:clients, '_ls$\|ls$\|actor$', '', 'g')
+    let l:clients = substitute(l:clients, '_ls$\|ls$\|actor\|langd$', '', 'g')
 
     if l:clients !=# l:filetype
         let l:extension = expand('%:e')
@@ -3848,6 +3849,14 @@ lua << EOF
                     { '(api_key=).+', replace = '%1' },
                 },
             },
+            {
+                file_pattern = {
+                    '*.md', -- notes
+                },
+                cloak_pattern = {
+                    { '(Hook:).+', replace = '%1' },
+                },
+            },
         },
     })
 
@@ -4574,7 +4583,6 @@ augroup AutoCommands
     " @thanks https://vi.stackexchange.com/a/39410
     autocmd FileType netrw nmap <nowait> <buffer> . :<C-u>! =netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))<CR><Home><C-Right>
     autocmd FileType netrw nmap <silent> <buffer> yd :let @+=="netrw#Call('NetrwGetCurdir', 1)"<CR><CR>
-    autocmd FileType netrw nmap <silent> <buffer> yy :let @+=="netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))"<CR><CR>
     autocmd FileType netrw nmap <silent> <buffer> yf :let @+=="netrw#Call('NetrwFile', netrw#Call('NetrwGetWord'))"<CR><CR>
 
     " Like many others (vim-plug, GV, undotree) q is [q]uit. So sorry Tim!

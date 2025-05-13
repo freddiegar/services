@@ -71,6 +71,6 @@ URxvt.color14:      #8EC07C
 URxvt.color7:       #A89984
 URxvt.color15:      #EBDBB2
 
-! Colors for sxiv
-Sxiv.background:    #1D2021
-Sxiv.foreground:    #FBF1C7
+! Colors for Nsxiv
+Nsxiv.*.background: #1D2021
+Nsxiv.*.foreground: #FBF1C7

@@ -574,8 +574,8 @@ D() {
     echo "DPMS after $(($SECONDS / 60))m or $((($SECONDS / 60) / 60))h without interaction."
 }
 
-alias I="sxiv -f -b -t -r ."
-alias II="sxiv -f -b -r -S 2 ."
+alias I="$VIEWER -f -b -t -r ."
+alias II="$VIEWER -f -b -r -S 2 ."
 # @thanks https://joaocarlos.dev/posts/gnome-control-center-on-i3wm/
 # alias C='XDG_CURRENT_DESKTOP=GNOME gnome-control-center'
 alias O="xargs -r -I {}"
@@ -900,6 +900,7 @@ alias cdd="cd /home/$USER/Downloads"
 alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
 alias wh="convert -resize 1920x1080"
 alias yy="xclip -selection clipboard"
+alias yf="f | tr -d '\n' | yy"
 alias pp="xclip -selection clipboard -o"
 alias nw="nmcli device wifi show-password"
 
