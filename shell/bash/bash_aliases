@@ -1,3 +1,64 @@
+# @thanks https://gitlab.com/dwt1/dotfiles/-/blob/master/.bashrc?ref_type=heads#L117
+fo() {
+    # Avoid use quotes in call
+    NAME="$*"
+
+    if [ "$NAME" = "" ]; then
+        NAME=`f | tr -d '\n'`
+    fi
+
+    if [ "$NAME" = "" ]; then
+        echo "\e[31mURL or Path is required!\e[0m"
+
+        return 1
+    fi
+
+    # To lowercase
+    # case "${NAME,,}" in <- bash
+    case "${NAME:l}" in
+        # As vim
+        *.gif|*.jpeg|*.jpg|*.png|*.ico|*.svg|*.webp)
+            $VIEWER -b -f "$NAME" ;;
+        *.mp3|*.mp4)
+            $BROWSER --new-tab "$NAME" ;;
+        *.pdf)
+            $BROWSER --new-tab "$NAME" ;;
+        # Custom
+        *.avi)
+            cvlc --no-video-title-show --fullscreen --play-and-exit "$NAME"    ;;
+        *.opus)
+            ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- "$NAME"  ;;
+        # Compressed
+        *.cbt|*.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
+            tar xvf "$NAME"        ;;
+        *.lzma)
+            unlzma ./"$NAME"       ;;
+        *.bz2)
+            bunzip2 ./"$NAME"      ;;
+        *.cbr|*.rar)
+            unrar x -ad ./"$NAME"  ;;
+        *.gz)
+            gunzip ./"$NAME"       ;;
+        *.cbz|*.epub|*.zip)
+            unzip ./"$NAME"        ;;
+        *.z)
+            uncompress ./"$NAME"   ;;
+        *.7z|*.arj|*.cab|*.cb7|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.pkg|*.rpm|*.udf|*.wim|*.xar)
+            7z x ./"$NAME"         ;;
+        *.xz)
+            unxz ./"$NAME"         ;;
+        *.exe)
+            cabextract ./"$NAME"   ;;
+        *.cpio)
+            cpio -id < ./"$NAME"   ;;
+        *.cba|*.ace)
+            unace x ./"$NAME"      ;;
+        *)
+            # open use gnome... :|
+            $BROWSER --new-tab "$NAME" ;;
+    esac
+}
+
 # dd 2024-11-02
 # dd 2024-11-02 2024-11-20
 dd() {
@@ -147,6 +208,12 @@ nn() {
     if [ "$DISPLAY" = "" ]; then
         # We are in a TTY, then: nothing fancy please
         echo $message
+
+        return 0
+    fi
+
+    if [ -z $I3SOCK ]; then
+        notify-send "$message"
 
         return 0
     fi
@@ -699,7 +766,6 @@ alias stS="phpx bin/phpunit --testdox --testsuite"
 alias stf="phpx bin/phpunit --stop-on-failure --stop-on-error --no-coverage --filter"
 
 alias ducks="du -cks * | sort -rn | head"
-alias fo="/opt/zen/zen --new-tab"
 
 alias dexec="docker exec -it"
 alias dlogs="docker logs --tail 50 -f"
