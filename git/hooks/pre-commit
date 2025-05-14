@@ -28,7 +28,7 @@ FPHP=$(($FSTAGING + $FMODIFING + $FCOMPOSER))
 
 phpx /usr/local/bin/composer validate --no-check-all --strict || exit $?
 
-if [ "$REPO" != "rest-services" ] && [ "$REPO" != "microsites" ]; then
+if [ "$REPO" != "rest-services" ] && [ "$REPO" != "app-version" ]; then
 COMPOSER_AUDIT_ABANDONED=ignore phpx /usr/local/bin/composer audit || exit $?
 fi
 
@@ -37,6 +37,8 @@ PHPCS=""
 
 if [ $FPHP = 0 ]; then
     echo -n ""
+elif [ "`phpx /usr/local/bin/composer list | grepx -F '  format  '`" != "" ] && [ "`jq '.scripts."format"' composer.json`" != "" ]; then
+    PHPCS="$(jq '.scripts."format"' composer.json | sed 's/\"//g')"
 elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpcs  '`" != "" ] && [ "`jq '.scripts."phpcs"' composer.json`" != "" ]; then
     PHPCS="$(jq '.scripts."phpcs"' composer.json | sed 's/\"//g')"
 elif [ "`phpx /usr/local/bin/composer list | grepx -F '  php-cs  '`" != "" ] && [ "`jq '.scripts."php-cs"' composer.json`" != "" ]; then
