@@ -35,6 +35,7 @@ $config = RectorConfig::configure()
         \Rector\CodingStyle\Rector\Encapsed\WrapEncapsedVariableInCurlyBracesRector::class,
         \Rector\CodingStyle\Rector\PostInc\PostIncDecToPreIncDecRector::class,
         \Rector\CodingStyle\Rector\String_\UseClassKeywordForClassNameResolutionRector::class,
+        \Rector\CodingStyle\Rector\Use_\SeparateMultiUseImportsRector::class, // Sometimes break my test (ACS)
         \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedConstructorParamRector::class,
         \Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector::class,
         \Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector::class,
@@ -55,7 +56,7 @@ $extraSkips = [];
 $phpVersion = PHP_VERSION;
 
 if (isset($vendor['php'])) {
-    $phpVersion = str_replace(['^', '~'], '', $vendor['php']);
+    [$phpVersion] = explode(' ', str_replace(['^', '~', '>', '='], '', $vendor['php']));
 
     if (strlen($phpVersion) === 3 ) {
         $phpVersion .= '.0';
@@ -117,6 +118,9 @@ if (isset($vendor['phpunit/phpunit'])) {
             break;
         case $version < 11:
             $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_100;
+            $extraSkips = array_merge($extraSkips, [
+                \Rector\PHPUnit\PHPUnit100\Rector\Class_\ParentTestClassConstructorRector::class, // Break Unit test files in ACS
+            ]);
 
             break;
         case $version < 12:
