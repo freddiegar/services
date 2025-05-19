@@ -2009,7 +2009,7 @@ uname -r
 command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
 command cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31825796 kB
+# 31825792 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.40
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -2073,7 +2073,7 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.0
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.4.6
+# 8.4.7
 # nvm --version
 # # 0.39.3
 npm --version
@@ -2093,7 +2093,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.24.2
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(45426f5)
+# 6.1.0(fc82393)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -2107,17 +2107,17 @@ NetworkManager --version
 bluemoon --version
 # 5.77
 firefox --version | awk '{print $3}'
-# 139.0b5
+# 139.0b10
 zen --version | awk '{print $3}'
-# 1.12.3t
+# 1.13t
 # Unstable CLI: apt-get list --installed | wc --lines
 # apt show gnome
 # dpkg --list | wc --lines
 # dpkg --get-selections | grep -v deinstall > ~/packages.log
 dpkg --get-selections | grep -v deinstall | wc --lines
-# 1906
+# 1910
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
 # 44
 apt-mark showmanual | wc --lines
-# 319
+# 321
 ```
