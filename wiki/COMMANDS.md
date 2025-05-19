@@ -1981,3 +1981,12 @@ Install DBeaver
 curl -L https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb -o dbeaver.deb && sudo apt install ./dbeaver.deb && rm dbeaver.deb
 # sudo apt remove dbeaver-ce
 ```
+
+Install Gtypist
+
+[See](https://www.gnu.org/software/gtypist/)
+
+```bash
+sudo apt-get install --no-install-recommends gtypist
+## sudo apt-get remove gtypist && sudo apt-get autoremove
+```

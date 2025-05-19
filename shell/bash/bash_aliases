@@ -648,6 +648,7 @@ alias II="$VIEWER -f -b -r -S 2 ."
 alias O="xargs -r -I {}"
 alias P="[ \$0 = 'zsh' ] && export PS1=\"%1~> \" || export PS1=\"\\W> \""
 alias S="startx"
+alias T="gtypist --quiet --personal-best --show-errors"
 # @thanks https://stackoverflow.com/a/4509648
 alias W="find /var/www/html/{evertec,freddiegar} -mindepth 1 -maxdepth 1 -type d | fzf | O -- sh ~/.config/i3/workspace {} 2>&1 > /dev/null"
 
