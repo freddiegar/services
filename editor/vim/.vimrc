@@ -5855,6 +5855,7 @@ EOF
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<CR>
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gi :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<CR>
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gI :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'), v:true)<CR>
+    autocmd FileType json nnoremap <silent> <buffer> <Leader>gl :echo <SID>get_info('pull', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<CR>
 
     function! s:jsonfixer() abort
         if bufname('%') !=# ''
@@ -5869,18 +5870,26 @@ EOF
         let l:version = 'Invalid'
         let l:bname = expand('%:t')
 
-        if l:bname ==# 'composer.json'
-            let l:version = system('composer ' . a:command . ' "' . a:1 . '" 2> /dev/null | ' . g:filterprg . ' "^versions" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
+        if a:command ==# 'info'
+            if l:bname ==# 'composer.json'
+                let l:version = system('composer ' . a:command . ' "' . a:1 . '" 2> /dev/null | ' . g:filterprg . ' "^versions" | sed "s#\s\+# #g" | cut -d " " -f 4 | tr -d "\n"')
 
-            if (l:version[0] != 'v' &&  match(split(l:version, '-'), '[master|main|hotfix|release|develop|feature|bugfix]') >= 0) || (a:0 > 1 && a:2)
-                let l:commit = system('composer ' . a:command . ' "' . a:1 . '" 2> /dev/null | ' . g:filterprg . ' "^source.*\.git" | sed "s#\s\+# #g" | cut -d " " -f 5 | tr -d "\n"')
-                let l:version = printf('%s (%s)', l:version, l:commit[0 : 10])
+                if (l:version[0] != 'v' &&  match(split(l:version, '-'), '[master|main|hotfix|release|develop|feature|bugfix]') >= 0) || (a:0 > 1 && a:2)
+                    let l:commit = system('composer ' . a:command . ' "' . a:1 . '" 2> /dev/null | ' . g:filterprg . ' "^source.*\.git" | sed "s#\s\+# #g" | cut -d " " -f 5 | tr -d "\n"')
+                    let l:version = printf('%s (%s)', l:version, l:commit[0 : 10])
+                endif
+            elseif l:bname ==# 'package.json'
+                let l:version = system('npm list --depth=0 2> /dev/null | ' . g:filterprg . ' "\s' . a:1 . '@" | rev | cut -d "@" -f 1 | rev | tr -d "\n"')
             endif
-        elseif l:bname ==# 'package.json'
-            let l:version = system('npm list --depth=0 2> /dev/null | ' . g:filterprg . ' "\s' . a:1 . '@" | rev | cut -d "@" -f 1 | rev | tr -d "\n"')
-        endif
 
-        return len(l:version) > 0 ? l:version : 'None'
+            return len(l:version) > 0 ? l:version : 'None'
+        elseif a:command ==# 'pull'
+            if l:bname ==# 'composer.json'
+                let l:version = system('composer require "' . a:1 . '" 2>&1 | ' . g:filterprg . ' "^Using "')
+            endif
+
+            return len(l:version) > 0 ? l:version : 'None'
+        endif
     endfunction
 
     " Custom register by filetype
