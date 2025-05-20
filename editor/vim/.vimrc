@@ -1603,7 +1603,7 @@ nnoremap <silent> yob :<C-u>set <C-r>=(&background ==# 'light')
             \ : 'background=light' <Bar> doautocmd <nomodeline> User UpdateStatusline<CR><CR>
 nnoremap <silent> yow :<C-u>setlocal wrap!<CR>
 nnoremap <silent> yom :<C-u>setlocal modifiable!<CR>
-nnoremap <silent> yod :<C-u>setlocal scrollbind!<CR>
+nnoremap <silent> yoo :<C-u>setlocal scrollbind!<CR>
 nnoremap <silent> yox :<C-u>setlocal expandtab!<CR>
 nnoremap <silent> yov :<C-u>setlocal <C-r>=(&virtualedit =~# 'all')
             \ ? 'virtualedit-=all'
@@ -2418,7 +2418,6 @@ Plug 'machakann/vim-swap'                                       " Swap args: g>,
 " Plug 'cohama/lexima.vim'                                        " Append close: ', ", ), ], etc
 
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP), it needs npm...
-Plug 'dense-analysis/ale', {'for': 'php'}                       " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', {'do': { -> fzf#install() }}               " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
@@ -2526,6 +2525,7 @@ if g:isneovim
     Plug 'j-hui/fidget.nvim'                                  " LSP -> Progress ... distracting
     " endif
 else
+    Plug 'dense-analysis/ale', {'for': 'php'}                 " Diagnostic code on-the-fly
     Plug 'airblade/vim-gitgutter'                             " Show signs changes if cwd is a git repository (using VimL)
     Plug 'markonm/traces.vim'                                 " See range, substitution and global preview
     Plug 'machakann/vim-highlightedyank'                      " See yank preview
@@ -4130,7 +4130,7 @@ function! s:run(range, interactive, ...) abort
     elseif (l:runner ==# 3 || index(['sql'], l:runner) >= 0) && <SID>db() !=# ''
         " Ignores timestamp connection information in debug logs for queries
         if l:command =~? '\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z'
-            let l:command = substitute(getline('.'), '^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\s\d\{4,6}\sQuery\s', '', 'g')
+            let l:command = substitute(getline('.'), '^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\s\d\{2,7}\s\(Query\|Execute\)\s', '', 'g')
         endif
 
         " Avoid a lot results in SELECT without LIMIT (freezing)
@@ -4767,6 +4767,8 @@ lua <<EOF
                 vim.keymap.set('n', 'yoh', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, options)
             end
 
+            vim.keymap.set('n', 'yod', function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end, options)
+
             vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
         end
     })
@@ -5126,6 +5128,11 @@ lua <<EOF
             capabilities = capabilities,
         }, config))
     end
+
+    vim.diagnostic.config {
+        virtual_text = true,
+        severity_sort = true,
+    }
 
     vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
 EOF
