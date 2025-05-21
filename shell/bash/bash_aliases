@@ -531,7 +531,7 @@ extended() {
 downloadble() {
     curl -s -L -I $1 | tail -n15 | grep -i -e "^content-length: " | awk '{print $2}' > /tmp/currentsize
 
-    if [ "`downloadsize $1 $2`" = "`command cat /tmp/currentsize | tr -d "\n" || echo 1`" ]; then
+    if [ "`downloadsize $1 $2`" = "`command cat /tmp/currentsize | tr -d '\n' || echo 1`" ]; then
         echo 0
 
         return 0
@@ -544,12 +544,12 @@ downloadble() {
 
 downloadsize() {
     if [ -f $2 ]; then
-        command cat $2 | tr -d "\n"
+        command cat $2 | tr -d '\n'
 
         return 0
     fi
 
-    curl -s -L -I $1 > $2 && tail -n15 $2 | grep -i -e "^content-length: " | awk '{print $2}' > $2 | command cat $2 | tr -d "\n" || echo 0
+    curl -s -L -I $1 > $2 && tail -n15 $2 | grep -i -e "^content-length: " | awk '{print $2}' > $2 | command cat $2 | tr -d '\n' || echo 0
 
     return 0
 }
@@ -657,7 +657,7 @@ alias ww="[ \"\`pgrep --full 'npm run dev --host'\`\" = \"\" ] && sh -c 'cd /var
 alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA' &&  PIDTOKILL=\`sudo lsof -i :3000 | grepx 3000 | awk '{print \$2}'\` && if [ \"\$PIDTOKILL\" != \"\" ]; then kill -9 \$PIDTOKILL; echo \"\e[31mKilled \$PIDTOKILL\e[0m\"; fi"
 
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
-alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
+alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | yy"
 alias ht="history | grepx -v '  (_|sudo|echo|php|ls) ' | awk '{print \$4}' | sort | uniq -c | sort -nr | head -10"
 # di dir1 dir2 > dirs.diff
 alias di="diff -rq --suppress-common-lines"
@@ -790,8 +790,8 @@ alias gM="gs | grepx -v '/ro-|/_' | grepx 'M'"
 alias gN="gs | grepx -v '/ro-|/_' | grepx '\?'"
 alias gi="git init"
 alias gt="git tag"
-alias gtc="git tag --contains"
-alias gth="git rev-list -n 1"
+alias gtc="extended \"git tag --contains @@==@@ | head -1\""
+alias gtt="git describe --tags \$(git rev-list --tags --max-count=1) | tr -d '\n'"
 alias gst="git status"
 alias gsts="git status --short"
 alias gls="git ls-files"
@@ -855,6 +855,7 @@ alias gpw="git reset --soft HEAD^"
 # alias gpa="git push --all"
 # List branch local
 alias gb="git branch"
+alias gby="git branch | fzf --tac | tr -d '\n' | awk '{print \$NF}' | yy"
 # Branch local [c]leanup
 alias gbc="git branch --merged | grepx -i -v '(^\*|master|main|develop)' | xargs -r git branch -d"
 # List branch [r]emote
@@ -864,7 +865,7 @@ alias gbcr="git branch -r --merged | grepx -v '(^\*|master|main|develop|release)
 # Branch [n]ew
 alias gbn="git checkout master && git branch -M master && git push -u origin master"
 # Branch copy name
-alias gbb="git rev-parse --abbrev-ref HEAD | tr -d '\n' | yy"
+alias gbb="git rev-parse --abbrev-ref HEAD | yy"
 # Run [g]arbage [c]ollector
 alias ggc="git gc --prune=now"
 # Database [f]ile[s] check
@@ -925,7 +926,7 @@ alias gra="git rebase --abort"
 alias glog="git log --graph --abbrev-commit --pretty=format:'%C(red)%h%C(reset)%C(yellow)%d%C(reset) %s %C(green)(%ar) %C(bold blue)<%aN>%C(reset)'"
 alias glop="glog -p"
 alias glom="glog | head -10"
-alias gloz="git log --reverse --pretty=format:'%s' | fzf --tac | tr -d \"\n\" | xclip -selection clipboard"
+alias gloz="git log --reverse --pretty=format:'%s' | fzf --tac | yy"
 # export _GIT_SINCE="2024-01-01"
 # export _GIT_UNTIL="2024-01-31"
 # export _GIT_AUTHOR="Freddie Gar"
@@ -967,8 +968,8 @@ alias cdd="cd /home/$USER/Downloads"
 # wr source dest
 alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
 alias wh="convert -resize 1920x1080"
-alias yy="xclip -selection clipboard"
-alias yf="f | tr -d '\n' | yy"
+alias yy="tr -d '\n' | xclip -selection clipboard"
+alias yf="f | yy"
 alias pp="xclip -selection clipboard -o"
 alias nw="nmcli device wifi show-password"
 
