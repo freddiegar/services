@@ -6408,10 +6408,11 @@ EOF
     "     [d]uplicate blank lines
     "     [e]nd of file lines
     "     [f]orce
-    "    t[i]mes
     "     [h]unks
+    "    t[i]mes
     "     [k]eys
     "     [m]arks
+    "    i[n]stitute questions
     "     [p]rofile log
     "     [q]uery log
     "     [r]egistes
@@ -6481,6 +6482,15 @@ EOF
             silent! keeppatterns %s/\n\+\%$//e
 
             silent call add(l:cleanup, 'end of file lines')
+        endif
+
+        if index(l:options, 'n') >= 0
+            silent! keeppatterns g!/^\t*<td> /d_
+            silent! keeppatterns %s/^\t*<td> //g
+            silent! keeppatterns %s/<\/td>//g
+            silent! keeppatterns normal! gg0GI0. gg0yG
+
+            silent call add(l:cleanup, 'questions')
         endif
 
         if index(l:options, 'q') >= 0 && getline(1) !=# '' " Ignores clean-up files
@@ -6623,17 +6633,19 @@ EOF
 
     command! -nargs=0 CB call <SID>cleanup('vfb')
     command! -nargs=0 CC call <SID>cleanup('vfced')
-    command! -nargs=0 CH call <SID>cleanup('vfh')
     command! -nargs=0 CE call <SID>cleanup('vftey')
     command! -nargs=0 CG call <SID>cleanup('vfg')
+    command! -nargs=0 CH call <SID>cleanup('vfh')
     command! -nargs=0 CK call <SID>cleanup('vfk')
     command! -nargs=0 CL call <SID>cleanup('vfted')
     command! -nargs=0 CM call <SID>cleanup('vfm')
+    command! -nargs=0 CN call <SID>cleanup('vfn')
     command! -nargs=0 CP call <SID>cleanup('vfp')
     command! -nargs=0 CQ call <SID>cleanup('vfq')
     command! -nargs=0 CR call <SID>cleanup('vfr')
     command! -nargs=0 CS call <SID>cleanup('vfte')
     command! -nargs=0 CT call <SID>cleanup('vfi')
+    command! -nargs=0 CU if get(b:, 'cleanup') | unlet b:cleanup | e! | endif
     command! -nargs=0 EP call <SID>cleanup('vfI')
 
     " title (string)
