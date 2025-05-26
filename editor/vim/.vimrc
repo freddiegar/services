@@ -2418,6 +2418,7 @@ Plug 'machakann/vim-swap'                                       " Swap args: g>,
 " Plug 'cohama/lexima.vim'                                        " Append close: ', ", ), ], etc
 
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " Autocomplete (LSP), it needs npm...
+Plug 'dense-analysis/ale', {'for': 'php'}                       " Diagnostic code on-the-fly
 Plug 'junegunn/fzf', {'do': { -> fzf#install() }}               " Open and find files
 Plug 'junegunn/fzf.vim'                                         " Using a fuzzy finder
 Plug 'SirVer/ultisnips'                                         " Performance using shortcuts
@@ -2525,7 +2526,6 @@ if g:isneovim
     Plug 'j-hui/fidget.nvim'                                  " LSP -> Progress ... distracting
     " endif
 else
-    Plug 'dense-analysis/ale', {'for': 'php'}                 " Diagnostic code on-the-fly
     Plug 'airblade/vim-gitgutter'                             " Show signs changes if cwd is a git repository (using VimL)
     Plug 'markonm/traces.vim'                                 " See range, substitution and global preview
     Plug 'machakann/vim-highlightedyank'                      " See yank preview
@@ -3831,6 +3831,7 @@ lua << EOF
                 },
                 cloak_pattern = {
                     { '(Pass:).+', replace = '%1' },
+                    { '(:db = ).+', replace = '%1' },
                 },
             },
             {
@@ -4264,8 +4265,8 @@ function! s:get_selection(range, interactive, args, ...) abort
                     continue
                 endif
 
-                " In middle
-                if l:comment !=# '' && l:line =~# l:comment
+                " In middle, keep empty space to preserve --name syntax
+                if l:comment !=# '' && l:line =~# l:comment .. ' '
                     let l:line = substitute(l:line, l:comment . '.*$', '', 'g')
                 endif
 
