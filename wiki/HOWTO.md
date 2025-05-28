@@ -344,15 +344,21 @@ rfkill unblock bluetooth
 [See](https://github.com/ytdl-org/youtube-dl)
 
 ```bash
-# Install
-sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
-sudo chmod a+rx /usr/local/bin/youtube-dl
+# Banned!
+# sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+cd /var/www/html
+mkdir ytdl-org
+git clone --depth=1 https://github.com/ytdl-org/youtube-dl.git
+make youtube-dl
+sudo chmod a+rx /var/www/html/ytdl-org/youtube-dl/youtube-dl
+sudo ln -s /var/www/html/ytdl-org/youtube-dl/youtube-dl /usr/local/bin/youtube-dl
 
 # Pre-requisites (convert to only audio)
 sudo apt-get install -y ffmpeg
 
 # Download
-python3 /usr/local/bin/youtube-dl --ignore-errors --yes-playlist --yes-playlist --extract-audio -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' https://music.youtube.com/watch?v=jiP2uZu5fBY&list=RDAOy1jlKyX_GYhAAPvBR43tFQ
+# python3 /usr/local/bin/youtube-dl --ignore-errors --yes-playlist --yes-playlist --extract-audio -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' https://music.youtube.com/watch?v=jiP2uZu5fBY&list=RDAOy1jlKyX_GYhAAPvBR43tFQ
+fd https://music.youtube.com/watch?v=jiP2uZu5fBY&list=RDAOy1jlKyX_GYhAAPvBR43tFQ
 ```
 
 Speed-up load GTK applications
