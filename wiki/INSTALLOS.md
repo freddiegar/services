@@ -1601,6 +1601,14 @@ composer global require fakerphp/faker --dev
 ## composer global remove fakerphp/faker --dev
 ```
 
+# PHPUnit Failed
+
+```bash
+sudo apt-get install --no-install-recommends -y xmlstarlet
+composer global require chrisdicarlo/phpunit-failed-runner --dev
+## composer global remove chrisdicarlo/phpunit-failed-runner --dev
+```
+
 # Infection AST
 
 [See](https://github.com/infection/infection/releases)

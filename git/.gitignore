@@ -16,6 +16,7 @@ node_modules
 .phpactor.json
 # Testing all-in-one
 testx.sh
+junit.xml
 # Logs to ignore
 *.log
 *.diff
