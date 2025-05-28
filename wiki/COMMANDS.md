@@ -1990,3 +1990,33 @@ Install Gtypist
 sudo apt-get install --no-install-recommends gtypist
 ## sudo apt-get remove gtypist && sudo apt-get autoremove
 ```
+
+Remote Forwarding (as ngrok) in Docker
+
+```bash
+vim /etc/ssh/sshd_config
+GatewayPorts yes
+service sshd restart
+
+# Not use ufw!
+# ufw allow 8888/tcp
+## ufw delete allow 8888/tcp
+
+<VirtualHost *:80>
+    ServerName <ip|domain>
+
+    <IfModule mod_proxy.c>
+        ProxyPreserveHost On
+
+        ProxyPass / http://host.docker.internal:8888/ retry=0
+        ProxyPassReverse / http://host.docker.internal:8888/
+    </IfModule>
+
+    # RequestHeader set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME}
+    # RequestHeader set "X-Forwarded-SSL" expr=%{HTTPS}
+</VirtualHost>
+
+ssh -R 8888:localhost:80 -N my-server-ssh.com
+# In background
+# ssh -f -R 8888:localhost:80 -N my-server-ssh.com
+```
