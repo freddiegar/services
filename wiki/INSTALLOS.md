@@ -812,7 +812,7 @@ grep -F "Enable rust" ~/.profile
 [See 4](https://thenewstack.io/golang-how-to-use-the-go-install-command/)
 
 ```bash
-curl -L https://go.dev/dl/go1.24.2.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
+curl -L https://go.dev/dl/go1.24.3.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go-linux-amd64.tar.gz && rm go-linux-amd64.tar.gz
 
 grep -F "Enable go" ~/.profile
@@ -998,8 +998,8 @@ ln -s /var/www/html/freddiegar/wallpapers ~/BG
 echo "\n" | sudo add-apt-repository ppa:ondrej/php
 # @see https://devtutorial.io/how-to-install-php-8-3-on-ubuntu-23-10-p3206.html
 # @see https://ppa.launchpadcontent.net/ondrej/php/ubuntu/dists/
-# @see /etc/apt/sources.list.d/ondrej-ubuntu-php-oracular.sources :: oracular -> noble
-sudo sed -i 's/^Suites: oracular/Suites: noble/g' /etc/apt/sources.list.d/ondrej*.sources
+# @see /etc/apt/sources.list.d/ondrej-ubuntu-php-plucky.sources :: plucky -> noble
+sudo sed -i 's/^Suites: plucky/Suites: noble/g' /etc/apt/sources.list.d/ondrej*.sources
 
 sudo apt-get install --no-install-recommends -y php8.4-cli
 sudo apt-get install --no-install-recommends -y php8.4-dev
@@ -1150,7 +1150,7 @@ lxqt-leave
 
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/v2.34.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.36.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -1373,7 +1373,7 @@ sudo systemctl restart apparmor.service
 # Opera
 
 ```bash
-curl -L https://download3.operacdn.com/ftp/pub/opera/desktop/117.0.5408.197/linux/opera-stable_117.0.5408.197_amd64.deb -o opera.deb
+curl -L https://download3.operacdn.com/ftp/pub/opera/desktop/119.0.5497.56/linux/opera-stable_119.0.5497.56_amd64.deb -o opera.deb
 sudo dpkg -i opera.deb && rm -f opera.deb
 ```
 > Disable to use saU alias
@@ -1403,6 +1403,8 @@ sudo journalctl --vacuum-size=50M
 [See](https://unix.stackexchange.com/a/149054)
 
 ```bash
+grep "\s?export PATH" ~/.profile
+
 echo $(command cat <<EOF
 \n
 # Avoid duplicates in PATH env\n
@@ -1777,7 +1779,7 @@ sudo apt-get install --no-install-recommends -y google-chrome-stable
 ## sudo apt-get remove google-chrome-stable && sudo apt-get autoremove
 ```
 > Disable to use saU alias
-> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*chrome*.list
+> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*chrome*.sources
 
 ## Brave (Anime ;P)
 
@@ -1786,13 +1788,13 @@ curl -fsS https://dl.brave.com/install.sh | sh
 ## sudo apt-get remove brave-browser && sudo apt-get autoremove
 ```
 > Disable to use saU alias
-> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*brave*.list
+> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*brave*.sources
 
 ## Microsoft Edge (for Teams :()
 
 ```bash
 curl -L https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft-edge.gpg > /dev/null
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
+sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list'
 
 sudo apt-get update
 sudo apt install microsoft-edge-stable
@@ -1822,8 +1824,8 @@ Not snap please
 
 ```bash
 echo "\n" | sudo add-apt-repository ppa:o2sh/onefetch
-# @see /etc/apt/sources.list.d/o2sh-ubuntu-onefetch-oracular.sources :: oracular -> noble
-sudo sed -i 's/^Suites: oracular/Suites: noble/g' /etc/apt/sources.list.d/*onefetch*.sources
+# @see /etc/apt/sources.list.d/o2sh-ubuntu-onefetch-plucky.sources :: plucky -> noble
+sudo sed -i 's/^Suites: plucky/Suites: noble/g' /etc/apt/sources.list.d/*onefetch*.sources
 
 sudo apt-get update
 sudo apt-get install --no-install-recommends -y onefetch
@@ -2011,24 +2013,26 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 
 ```bash
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
-# Ubuntu 24.10
+# Ubuntu 25.04
 uname -r
-# 6.11.0-25-generic
+# 6.14.0-15-generic
 command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
+nproc --all
+# 14
 command cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31825792 kB
+# 31825732 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
-# 2.40
+# 2.41
 gcc --version | grep -e "^gcc" | awk '{print $4}'
 # 14.2.0
 openssl version | awk '{print $2}'
 # 1.1.1w
 # 3.3.1
 i3 --version | awk '{print $3}'
-# 4.23
+# 4.24
 i3status --version | grep -e "i3status" | awk '{print $2}'
-# 2.14-non-git
+# 2.15-non-git
 greenclip --version | head -n 1 | awk '{print $2}'
 # v4.2
 # konsole --version | awk '{print $2}'
@@ -2036,14 +2040,14 @@ greenclip --version | head -n 1 | awk '{print $2}'
 urxvt -help 2>&1 | head -n 1 | awk '{print $3}'
 # v9.31
 bash --version | grep -e "bash" | awk '{print $4}'
-# 5.2.32(1)-release
+# 5.2.37(1)-release
 zsh --version | awk '{print $2}'
 # 5.9
 # https://github.com/vim/vim/releases/tag/v9.1.#
 echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep -e "^Included "`
-# 9.1.Included patches: 1-16, 647-648, 678, 697, 689, 17-496, 707
+# 9.1.Included patches: 1-948, 950-967
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1"-"$2}'`
-# v0.12.0-dev-LuaJIT-2.1.1719379426
+# v0.12.0-dev-LuaJIT-2.1.1737090214
 neovide --version | awk '{print $2}'
 # 0.15.0
 vifm --version | grep -e "^Version" | awk '{print $2}'
@@ -2051,17 +2055,17 @@ vifm --version | grep -e "^Version" | awk '{print $2}'
 $VIEWER -v | head -n 1 | awk '{print $2}'
 # 32
 curl --version | grep -e "^curl " | awk '{print $2}'
-# 8.9.1
+# 8.12.1
 git --version | awk '{print $3}'
-# 2.45.2
+# 2.48.1
 git lfs version
-# git-lfs/3.5.0 (GitHub; linux amd64; go 1.22.2)
+# git-lfs/3.6.1 (GitHub; linux amd64; go 1.23.5)
 docker --version | awk '{print $3}' | sed 's/,//g'
-# 28.0.4
+# 28.2.1
 docker-compose --version | awk '{print $4}'
-# v2.34.0
+# v2.36.2
 feh --version | grep version | awk '{print $3}'
-# 3.10.2
+# 3.10.3
 maim --version | awk '{print $1}'
 # v5.7.4
 unzip -v | grep "^UnZip.*\.$" | awk '{print $2}'
@@ -2071,37 +2075,37 @@ jq --version | sed 's/jq-//g'
 tree --version | awk '{print $2}'
 # v2.1.1
 nmap --version | grep "^Nmap" | awk '{print $3}'
-# 7.94SVN
+# 7.95
 htop --version | grep "^htop" | awk '{print $2}'
-# 3.3.0
+# 3.4.0
 man xcompmgr | grep "^X Version" | awk '{print $5}'
 # 1.1.8
 batcat --version | awk '{print $2}'
-# 0.24.0
+# 0.25.0
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
-# 14.1.0
+# 14.1.1
 php --version | grep -e "^PHP" | awk '{print $2}'
 # 8.4.7
 # nvm --version
 # # 0.39.3
 npm --version
-# 11.3.0
+# 11.4.1
 node --version
 # v24.0.1
 mysql --version | awk '{print $3}'
-# 8.0.42-0ubuntu0.24.10.1
+# 8.4.5-0ubuntu0.1
 # stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
-# 3.12.7
+# 3.13.3
 ruby --version | awk '{print $2}'
-# 3.3.4
+# 3.3.7
 rustc --version | awk '{print $2}'
-# 1.86.0
+# 1.87.0
 go version | awk '{print $3}' | sed 's/go//g'
-# 1.24.2
+# 1.24.3
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(fc82393)
+# 6.1.0(e371a35)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -2109,23 +2113,31 @@ ftp about:version | head -1 | awk '{print $3}'
 # ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 pipewire --version | head -2 | awk '{print $4}'
-# 1.2.4
+# 1.2.7
 NetworkManager --version
-# 1.48.8
+# 1.52.0
 bluemoon --version
-# 5.77
+# 5.79
 firefox --version | awk '{print $3}'
-# 139.0b10
+# 140.0b2
 zen --version | awk '{print $3}'
 # 1.13t
+filezilla --version | tail -1 | awk '{print $2}' | sed 's/,//g'
+# 3.68.1
+obs --version |  awk '{print $4}'
+# 30.2.3.1-2build2
+screenkey --version
+# 1.5
+flameshot --version | head -1 | awk '{print $2}'
+# v12.1.0
 # Unstable CLI: apt-get list --installed | wc --lines
 # apt show gnome
 # dpkg --list | wc --lines
 # dpkg --get-selections | grep -v deinstall > ~/packages.log
 dpkg --get-selections | grep -v deinstall | wc --lines
-# 1910
+# 1947
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 44
+# 49
 apt-mark showmanual | wc --lines
-# 321
+# 355
 ```

@@ -376,10 +376,10 @@ ctt() {
         sed -i 's/BAT_THEME="gruvbox-dark"/BAT_THEME="gruvbox-light"/g' ~/.profile
     fi
 
-    # Konsole
-    sed -i "s/ColorScheme=.*/ColorScheme=${1}/g" /var/www/html/freddiegar/services/emulator/konsole/konsole.profile
-
     if [ "`command -v konsoleprofile`" != "" ]; then
+        # Konsole
+        sed -i "s/ColorScheme=.*/ColorScheme=${1}/g" /var/www/html/freddiegar/services/emulator/konsole/konsole.profile
+
         konsoleprofile colors=$1
     fi
 
