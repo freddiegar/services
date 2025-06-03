@@ -319,7 +319,7 @@ osb() {
         return $STATUS
     fi
 
-    cat body.txt | yy | rm body.txt
+    cat body.txt | YY | rm body.txt
 
     return $?
 }
@@ -336,7 +336,7 @@ osi() {
         return $STATUS
     fi
 
-    cat pkey.txt | yy | rm pkey.txt
+    cat pkey.txt | YY | rm pkey.txt
 
     return $?
 }
@@ -604,7 +604,7 @@ alias p="ps -fea -U \$USER -u \$USER --forest"
 alias q="bash ~/working/evertec/queues.sh"
 alias r="sh ~/working/mysqlget.sh"
 alias s="bash ~/working/mysqlog.sh"
-alias t="bash testx.sh"
+alias t="[ -f testx.sh ] && bash testx.sh || vt"
 alias u="cd /var/www/html/universal-ctags/ctags && git clean -f -d && git pull origin master && ./autogen.sh && ./configure && make && sudo make install && cd -1"
 alias v=$EDITOR
 alias w="watch -n0.5 -t --color"
@@ -971,6 +971,7 @@ alias cdd="cd /home/$USER/Downloads"
 alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
 alias wh="convert -resize 1920x1080"
 alias yy="tr -d '\n' | xclip -selection clipboard"
+alias YY="xclip -selection clipboard"
 alias yf="f | yy"
 alias pp="xclip -selection clipboard -o"
 alias nw="nmcli device wifi show-password"

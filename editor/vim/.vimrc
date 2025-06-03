@@ -1428,7 +1428,7 @@ endfunction
 
 " [F]ilter data in files easily
 " @see https://vimways.org/2019/vim-and-the-shell/
-command! -nargs=+ -bang F call <SID>file_filter(<bang>0, expand('%'), <f-args>)
+command! -nargs=+ -bang F call <SID>file_filter(<bang>0, expand('%'), <q-args>)
 
 " Sorry but :help is better
 nmap <silent> <F1> mzgg=G`z
