@@ -106,24 +106,24 @@ if (version_compare($phpVersion, '8.3.0', '>=')) {
     ]);
 }
 
+// @see https://phpunit.de/supported-versions.html
 if (isset($vendor['phpunit/phpunit'])) {
-    $version = (string)preg_replace('/[^0-9.]/', '', $vendor['phpunit/phpunit']);
-    $version = (float)$version;
-    // echo 'PHPUnit version detected: ' .  $vendor['phpunit/phpunit'] . ' -> ' . $version . PHP_EOL;
+    [$phpunitVersion] = explode(' ', str_replace(['^', '~', '>', '='], '', $vendor['phpunit/phpunit']));
+    // echo 'PHPUnit version detected: ' .  $vendor['phpunit/phpunit'] . ' -> ' . $phpunitVersion . PHP_EOL;
 
     switch (true) {
-        case $version < 10:
+        case $phpunitVersion < 10:
             $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_90;
 
             break;
-        case $version < 11:
+        case $phpunitVersion < 11:
             $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_100;
             $extraSkips = array_merge($extraSkips, [
                 \Rector\PHPUnit\PHPUnit100\Rector\Class_\ParentTestClassConstructorRector::class, // Break Unit test files in ACS
             ]);
 
             break;
-        case $version < 12:
+        case $phpunitVersion < 12:
         default:
             $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_110;
 
@@ -135,25 +135,28 @@ if (isset($vendor['phpunit/phpunit'])) {
     ]);
 }
 
+// @see https://laravelversions.com/en
 if (isset($vendor['laravel/framework'])) {
-    $version = (string)preg_replace('/[^0-9.]/', '', $vendor['laravel/framework']);
-    $version = (float)$version;
-    // echo 'Laravel version detected: ' .  $vendor['laravel/framework'] . ' -> ' . $version . PHP_EOL;
+    [$laravelVersion] = explode(' ', str_replace(['^', '~', '>', '='], '', $vendor['laravel/framework']));
+    // echo 'Laravel version detected: ' .  $vendor['laravel/framework'] . ' -> ' . $laravelVersion . PHP_EOL;
 
     switch (true) {
-        case $version < 9:
+        case $laravelVersion < 9:
             $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_80;
 
             break;
-        case $version < 10:
+        case $laravelVersion < 10:
             $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_90;
+            $extraSkips = array_merge($extraSkips, [
+                \RectorLaravel\Rector\Class_\AddExtendsAnnotationToModelFactoriesRector::class, // Keep clean phpdocs please
+            ]);
 
             break;
-        case $version < 11:
+        case $laravelVersion < 11:
             $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_100;
 
             break;
-        case $version < 12:
+        case $laravelVersion < 12:
         default:
             $laravelSetList = \RectorLaravel\Set\LaravelSetList::LARAVEL_110;
             $extraSkips = array_merge($extraSkips, [
