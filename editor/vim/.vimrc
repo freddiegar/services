@@ -716,14 +716,15 @@ endfunction
 
 function! GetNameCurrentFile() abort
     " /var/www/html/repo/services
-    "   :terminal                                               -> (empty)
-    "   [No Name]                                               -> (empty)
-    "   /var/www/html/repo/services/.gitignore                  -> .gitignore
-    "   /var/www/html/repo/services/docker/.gitignore           -> docker/.gitignore
-    "   /var/www/html/repo/services/docker/conf/.gitignore      -> docker/conf/.gitignore
-    "   /var/www/html/repo/services/docker/conf/.gitignore > 50 -> d/c/.gitignore
-    "   /home/user/.vimrc                                       -> ~/.vimrc
-    "   /etc/hosts                                              -> /e/hosts
+    "   :terminal                                                   -> (empty)
+    "   [No Name]                                                   -> (empty)
+    "   /var/www/html/repo/services/.gitignore                      -> .gitignore
+    "   /var/www/html/repo/services/docker/.gitignore               -> docker/.gitignore
+    "   /var/www/html/repo/services/docker/conf/.gitignore          -> docker/conf/.gitignore
+    "   /var/www/html/repo/services/docker/conf/.gitignore > 50     -> d/c/.gitignore
+    "   /var/www/html/repo/services/docker/php83/.gitignore > 50    -> d/p83/.gitignore
+    "   /home/user/.vimrc                                           -> ~/.vimrc
+    "   /etc/hosts                                                  -> /e/hosts
     if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'checkhealth'], &filetype) >= 0 || expand('%') ==# ''
         return ''
     elseif get(b:, 'isversus', v:false)
@@ -731,9 +732,9 @@ function! GetNameCurrentFile() abort
     elseif match(expand('%:p:h'), g:cwd) >= 0 && len(expand('%:~')) <= 50
         return expand('%:~')
     elseif match(expand('%:p:h'), g:cwd) >= 0
-        let l:bpath = expand('%:.:h:gs@\v(/?\w{1})(\w+)@\1@g')
+        let l:bpath = expand('%:.:h:gs@\v(/?[a-zA-Z]{1})([a-zA-Z]+)@\1@g')
     else
-        let l:bpath = expand('%:~:h:gs@\v(/?\w{1})(\w+)@\1@g')
+        let l:bpath = expand('%:~:h:gs@\v(/?[a-zA-Z]{1})([a-zA-Z]+)@\1@g')
     endif
 
     return l:bpath ==# '.' ?  expand('%:t') : l:bpath . '/' . expand('%:t')
@@ -6364,7 +6365,7 @@ EOF
     "     call writefile(['call setqflist(' . a:qflist . ')', 'call setqflist([], "a", ' . a:qfinfo . ')'], g:session_file, 'a')
     " endfunction
 
-    nnoremap <Leader>w <Cmd>call <SID>sessionsave() <Bar> echo 'Session saved.'<CR>
+    " nnoremap <Leader>w <Cmd>call <SID>sessionsave() <Bar> echo 'Session saved.'<CR>
 
     function! s:sessionsave() abort
         if <SID>mustbeignore()
