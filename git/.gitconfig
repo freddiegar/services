@@ -10,6 +10,8 @@
 	fsmonitor = true
 	commitgraph = true
 	; hooksPath = /var/www/html/freddiegar/services/git/hooks
+    ; @see https://git-scm.com/docs/git-config#Documentation/git-config.txt-corecompression
+    compression = 9
 [commit]
 	gpgsign = true
 [mergetool]
@@ -28,7 +30,11 @@
 [diff]
 	algorithm = histogram
 	trustExitCode = true
+    ; @see https://git-scm.com/docs/git-config#Documentation/git-config.txt-codediffrenamescode
+    renames = copies
+    interHunkContext = 10
 [pull]
+	default = current
 	rebase = false
 [rerere]
 	enabled = true
@@ -41,6 +47,9 @@
 [push]
 	default = current
 	autoSetupRemote = true
+[rebase]
+    ; @see https://git-scm.com/docs/git-config#Documentation/git-config.txt-rebasemissingCommitsCheck
+    missingCommitsCheck = error
 [color]
 	ui = auto
 [color "diff"]
@@ -50,5 +59,12 @@
 	addEmptyPathspec = false
 ; [includeIf "gitdir:/var/www/html/context/project"]
 ;     path = .gitconfig.project
+[tag]
+    ; @see https://git-scm.com/docs/git-config#Documentation/git-config.txt-tagsort
+    sort = -taggerdate
+[interactive]
+    ; Any Enter please
+    ; @see https://git-scm.com/docs/git-config#Documentation/git-config.txt-interactivesingleKey
+    singlekey = true
 [init]
 	defaultBranch = master
