@@ -1,3 +1,27 @@
+# lll ../repository
+lll() {
+    if [ ! -f composer.json ]; then
+        echo "\e[31mFile composer.json not found!\e[0m"
+
+        return 1
+    fi
+
+    if [ "$#" -eq 0 ]; then
+        echo "\e[31mRepository folder is required!\e[0m"
+
+        return 1
+    fi
+
+    if [ ! -d $1 ]; then
+        echo "\e[31mRepository folder not found!\e[0m"
+
+        return 1
+    fi
+
+    c config repositories.local '{"type": "path", "url": "'$1'"}' --file composer.json
+    c config minimum-stability dev
+}
+
 # @thanks https://gitlab.com/dwt1/dotfiles/-/blob/master/.bashrc?ref_type=heads#L117
 fo() {
     # Avoid use quotes in call

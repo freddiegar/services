@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [ -f composer.json ] && [ "$(grep '"type": "path"' composer.json)" != "" ]; then
+    echo "\e[31mABORT\e[0m: Local path repository detected in composer.json"
+
+    exit 1
+fi
+
 # Run checker user before continue
 # @thanks https://victoria.dev/blog/an-automatic-interactive-pre-commit-checklist-in-the-style-of-infomercials/
 echo -n "Do you want commit on [\e[90m${PWD##*/}\e[0m] as \e[1;32m`git config --get user.name`\e[0m? (s/y/N): "
