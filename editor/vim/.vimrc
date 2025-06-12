@@ -2502,14 +2502,14 @@ endif
 " Plug 'terrastruct/d2-vim', {'for': 'd2'}                        " Better highlight d2 syntax
 
 if g:isneovim
-    Plug 'laytan/cloak.nvim'                                  " Secrets always are secret!
-    Plug 'lewis6991/gitsigns.nvim'                            " Show signs changes if cwd is a git repository (using Lua)
+    Plug 'laytan/cloak.nvim'                                    " Secrets always are secret!
+    Plug 'lewis6991/gitsigns.nvim'                              " Show signs changes if cwd is a git repository (using Lua)
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
 
     " if has('gui_running')
-    " Plug 'williamboman/mason.nvim'                            " Install LSP from Editor
-    " Plug 'williamboman/mason-lspconfig.nvim'                  " Integrate LSP & Autocompletion
-    Plug 'neovim/nvim-lspconfig'                              " LSP -> Neovim looks pretty bad
+    " Plug 'mason-org/mason.nvim'                                 " Install LSP from Editor
+    " Plug 'mason-org/mason-lspconfig.nvim'                       " Integrate LSP & Autocompletion
+    Plug 'neovim/nvim-lspconfig'                                " LSP -> Neovim looks pretty bad
 
     " Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
     " Plug 'hrsh7th/cmp-nvim-lsp'                               " Integrate for built-in LSP
@@ -2517,22 +2517,22 @@ if g:isneovim
     " " Plug 'hrsh7th/cmp-cmdline'                                " Integrate for command line
     " " Plug 'hrsh7th/cmp-path'                                   " Integrate for path
 
-    Plug 'iguanacucumber/magazine.nvim', {'as': 'nvim-cmp'}   " Integrate autocomplete (beta mode)
-    Plug 'iguanacucumber/mag-nvim-lsp', {'as': 'cmp-nvim-lsp'}" Integrate for built-in LSP (beta mode)
-    Plug 'iguanacucumber/mag-buffer', {'as': 'cmp-buffer'}    " Integrate for buffer (beta mode)
-    " Plug 'iguanacucumber/mag-cmdline', {'as': 'cmp-cmdline'}" Integrate for command line (beta mode)
+    Plug 'iguanacucumber/magazine.nvim', {'as': 'nvim-cmp'}     " Integrate autocomplete (beta mode)
+    Plug 'iguanacucumber/mag-nvim-lsp', {'as': 'cmp-nvim-lsp'}  " Integrate for built-in LSP (beta mode)
+    Plug 'iguanacucumber/mag-buffer', {'as': 'cmp-buffer'}      " Integrate for buffer (beta mode)
+    " Plug 'iguanacucumber/mag-cmdline', {'as': 'cmp-cmdline'}    " Integrate for command line (beta mode)
     " Plug 'https://codeberg.org/FelipeLema/cmp-async-path', {'as': 'cmp-path'} " Integrate for path (beta mode)
 
-    Plug 'quangnguyen30192/cmp-nvim-ultisnips'                " Integrate for UltiSnips
-    Plug 'j-hui/fidget.nvim'                                  " LSP -> Progress ... distracting
+    Plug 'quangnguyen30192/cmp-nvim-ultisnips'                  " Integrate for UltiSnips
+    Plug 'j-hui/fidget.nvim'                                    " LSP -> Progress ... distracting
     " endif
 else
-    Plug 'airblade/vim-gitgutter'                             " Show signs changes if cwd is a git repository (using VimL)
-    Plug 'markonm/traces.vim'                                 " See range, substitution and global preview
-    Plug 'machakann/vim-highlightedyank'                      " See yank preview
-    Plug 'ludovicchabant/vim-gutentags'                       " Auto generate tags (not allowed 'for' option)
+    Plug 'airblade/vim-gitgutter'                               " Show signs changes if cwd is a git repository (using VimL)
+    Plug 'markonm/traces.vim'                                   " See range, substitution and global preview
+    Plug 'machakann/vim-highlightedyank'                        " See yank preview
+    Plug 'ludovicchabant/vim-gutentags'                         " Auto generate tags (not allowed 'for' option)
 
-    " Plug 'yegappan/lsp'                                       " LSP -> Not integrate mappings from UltiSnips easly..
+    " Plug 'yegappan/lsp'                                         " LSP -> Not integrate mappings from UltiSnips easly..
 endif
 
 if g:hasts && !<SID>mustbeignore()
@@ -4795,6 +4795,7 @@ EOF
 lua <<EOF
     local cmp = require'cmp'
 
+    -- :Mason
     -- require("mason").setup()
     -- require("mason-lspconfig").setup()
 

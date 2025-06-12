@@ -350,6 +350,31 @@ pcs() {
     return $?
 }
 
+# Change Node Version
+#   - cnv
+alias nv="node --version"
+cnv() {
+    VERSION=$(command ls -L1 ~/.nvm/versions/node | fzf)
+
+    if [ "$VERSION" = "" ]; then
+        # Nothing selected, canceled!
+        return 0
+    fi
+
+    CVERSION=`command cat $HOME/.nvm/alias/default`
+
+    echo "Using node \e[32m$VERSION\e[0m \e[90mover $CVERSION\e[0m"
+
+    NVMPATH="$(echo ":$HOME/.nvm/versions/node/.*/bin" | sed 's#/#\\/#g')"
+    CLNPATH=$(echo $PATH | sed "s/${NVMPATH}//g")
+
+    echo $VERSION > ~/.nvm/alias/default
+
+    export PATH=$CLNPATH:"$HOME/.nvm/versions/node/`command cat $HOME/.nvm/alias/default`/bin"
+
+    return $?
+}
+
 # Change Dir Project
 #   - cdp /var/www/html/flexphp
 cdp() {
@@ -604,7 +629,7 @@ alias p="ps -fea -U \$USER -u \$USER --forest"
 alias q="bash ~/working/evertec/queues.sh"
 alias r="sh ~/working/mysqlget.sh"
 alias s="bash ~/working/mysqlog.sh"
-alias t="[ -f testx.sh ] && bash testx.sh || vt"
+alias t="bash testx.sh"
 alias u="cd /var/www/html/universal-ctags/ctags && git clean -f -d && git pull origin master && ./autogen.sh && ./configure && make && sudo make install && cd -1"
 alias v=$EDITOR
 alias w="watch -n0.5 -t --color"
