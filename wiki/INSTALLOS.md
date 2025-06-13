@@ -292,6 +292,8 @@ sudo sed -i 's/\/\/Unattended-Upgrade::Remove-Unused-Dependencies "[true|false]*
 sudo sed -i 's/\/\/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/Unattended-Upgrade::Automatic-Reboot-Time "02:00";/g' /etc/apt/apt.conf.d/50unattended-upgrades
 
 grep 'Remove-Unused-Kernel-Packages\|Remove-Unused-Dependencies\|Automatic-Reboot-Time' /etc/apt/apt.conf.d/50unattended-upgrades
+
+dpkg-reconfigure --priority=low unattended-upgrades
 ```
 
 # Disabled IPP Service: 631 (Internet Printer Protocol)
@@ -1032,6 +1034,15 @@ sudo apt-get install --no-install-recommends -y php8.1-xdebug
 sudo apt-get install --no-install-recommends -y php8.2-xdebug
 sudo apt-get install --no-install-recommends -y php8.3-xdebug
 sudo apt-get install --no-install-recommends -y php8.4-xdebug
+```
+
+## PHP Coverage (I'm desesperate)
+
+```bash
+sudo apt-get install --no-install-recommends -y php8.1-pcov
+sudo apt-get install --no-install-recommends -y php8.2-pcov
+sudo apt-get install --no-install-recommends -y php8.3-pcov
+sudo apt-get install --no-install-recommends -y php8.4-pcov
 ```
 
 ## Composer for PHP

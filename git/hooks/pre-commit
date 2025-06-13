@@ -84,12 +84,14 @@ if [ $FPHP = 0 ]; then
     echo -n ""
 elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpstan  '`" != "" ] && [ "`jq '.scripts."phpstan"' composer.json`" != "" ]; then
     PHPSTAN="$(jq '.scripts."phpstan"' composer.json | sed 's/\"//g')"
+elif [ "`phpx /usr/local/bin/composer list | grepx -F '  analyse  '`" != "" ] && [ "`jq '.scripts."analyse"' composer.json`" != "" ]; then
+    PHPSTAN="$(jq '.scripts."analyse"' composer.json | sed 's/\"//g')"
 elif [ -f phpstan.neon.dist ] && [ -f vendor/bin/phpstan ]; then
-    PHPSTAN="phpx vendor/bin/phpstan analyse --config=phpstan.neon.dist --level=1"
+    PHPSTAN="phpx vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --level=1"
 elif [ -f phpstan.neon ] && [ -f vendor/bin/phpstan ]; then
-    PHPSTAN="phpx vendor/bin/phpstan analyse --config=phpstan.neon --level=1"
+    PHPSTAN="phpx vendor/bin/phpstan analyse --configuration=phpstan.neon --level=1"
 # else
-#     echo "\e[31mLarastan not found.\e[0m"
+#     echo "\e[31mPHPStan not found.\e[0m"
 fi
 
 if [ "$PHPSTAN" != "" ]; then
@@ -97,13 +99,13 @@ if [ "$PHPSTAN" != "" ]; then
         PHPSTAN=""
     elif [ "`echo "$PHPSTAN" | grepx "^phpstan "`" != "" ]; then
         PHPSTAN="phpx vendor/bin/$PHPSTAN"
-    # elif [ "`echo "$PHPSTAN" | grepx "^@php "`" != "" ]; then
-    #     PHPSTAN="phpx $PHPSTAN"
+    elif [ "`echo "$PHPSTAN" | grepx "^@php "`" != "" ]; then
+        PHPSTAN="phpx $PHPSTAN"
     # elif [ "`echo "$PHPSTAN" | grepx "^XDEBUG_"`" != "" ]; then
     #     # XDEBUG_MODE=coverage vendor/bin/phpunit
     #     # XDEBUG_MODE=coverage phpx vendor/bin/phpunit
     #     PHPSTAN=`echo "$PHPSTAN" | sed -E 's/(\w*)\s+(.*)/\1 phpx \2/g'`
-    else
+    elif [ "`echo "$PHPSTAN" | grepx "^phpx"`" = "" ]; then
         PHPSTAN="phpx $PHPSTAN"
     fi
 fi

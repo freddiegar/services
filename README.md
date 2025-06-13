@@ -460,6 +460,7 @@ zend_extension=/usr/lib/php/20210902/xdebug.so
 ```bash
 sudo pecl install -f pcov
 
+echo 'extension=/usr/lib/php/20220829/pcov.so' | sudo tee /etc/php/8.2/mods-available/pcov.ini
 echo 'extension=/usr/lib/php/20240924/pcov.so' | sudo tee /etc/php/8.4/mods-available/pcov.ini
 
 sudo phpenmod pcov
