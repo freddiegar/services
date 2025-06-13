@@ -4059,15 +4059,6 @@ command! -nargs=? -range -bang Q call <SID>query(<range>, <bang>0, <f-args>)
 
 " range (0,1,2), interactive (0/1), [command (string)]: void
 function! s:run(range, interactive, ...) abort
-    " Examples:
-    "   let g:run = '!phpx --file 2022/day/6/code > 2022/day/6/output'
-    "   let b:run = "redir! > 2022/day/6/output | execute '!phpx --file %' | redir END"
-    if get(b:, 'run', get(g:, 'run')) !=# ''
-        execute get(b:, 'run', get(g:, 'run'))
-
-        return
-    endif
-
     let l:command = <SID>get_selection(a:range, a:interactive, a:000)
 
     let l:execute = ''
@@ -4089,6 +4080,15 @@ function! s:run(range, interactive, ...) abort
     elseif index(['let', 'unlet'], l:suffix) >= 0
         let l:guessed = v:true
         let l:runner = 'vim'
+    endif
+
+    " Examples:
+    "   let g:run = '!phpx --file 2022/day/6/code > 2022/day/6/output'
+    "   let b:run = "redir! > 2022/day/6/output | execute '!phpx --file %' | redir END"
+    if l:guessed ==# v:false && get(b:, 'run', get(g:, 'run')) !=# ''
+        execute get(b:, 'run', get(g:, 'run'))
+
+        return
     endif
 
     if l:runner ==# ''
@@ -6539,9 +6539,9 @@ EOF
         if index(l:options, 'i') >= 0
             let l:regq = getreg('q')
 
-            silent execute "keeppatterns keepjumps g!/^[=-]/d_"
+            silent execute "keeppatterns keepjumps g!/^[+=-]/d_"
             silent execute "keeppatterns keepjumps g/^== /normal! ddp"
-            silent! execute "keeppatterns keepjumps %s/^- \\(\\w\\+\\).*/\\1/g"
+            silent! execute "keeppatterns keepjumps %s/^[+-] \\(\\w\\+\\).*/\\1/g"
             silent! execute "keeppatterns keepjumps %s/[ =]//g"
             silent! execute "keeppatterns keepjumps %s/:/./g"
             silent execute "keeppatterns keepjumps g/[A-Z]/normal! J"
