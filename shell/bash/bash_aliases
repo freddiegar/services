@@ -792,6 +792,9 @@ alias pdx="sudo phpdismod xdebug"
 alias prx='export XDEBUG_SESSION=1 && export XDEBUG_CONFIG="idekey=PHPSTORM" && phpx'
 alias psw="sudo update-alternatives --config php"
 
+# ls -la /usr/lib/jvm | grep "java"
+alias jsw="sudo update-alternatives --config java"
+
 # @see https://make.wordpress.org/cli/handbook/guides/installing/
 alias wpx="phpx `which wp`"
 

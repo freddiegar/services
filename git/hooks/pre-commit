@@ -24,6 +24,12 @@ elif [ "$RESPONSE" != "y" ]; then
     exit 1
 fi
 
+if [ -f pom.xml ]; then
+    mvn test
+
+    exit $?
+fi
+
 exec <&-
 
 REPO=${PWD##*/}

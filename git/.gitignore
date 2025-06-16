@@ -30,3 +30,7 @@ storage/oauth-private.key.*
 *.bkp
 *.backup
 *.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]
+# Java LSP files :(
+.classpath
+.project
+.settings/

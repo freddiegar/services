@@ -85,7 +85,7 @@ udisksctl unmount -b /dev/sda
 ## of: Output File
 ## status: Verbose option
 ## sync command: send all from cache
-sudo dd bs=4M if=/home/freddie/Downloads/ubuntu-24.10-desktop-amd64.iso of=/dev/sda conv=fsync oflag=direct status=progress && sycn
+sudo dd bs=4M if=/home/freddie/Downloads/archlinux-x86_64.iso of=/dev/sda conv=fsync oflag=direct status=progress && sync
 
 # or
 

@@ -2442,7 +2442,7 @@ Plug 'kristijanhusak/vim-dadbod-completion', {'for': 'sql'}     " DB autocomplet
 " Plug 'preservim/tagbar', {'on': 'TagbarToggle'}                 " Navigate: methods, vars, etc
 " Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 
-Plug 'vim-test/vim-test', {'for': ['php', 'vader']}             " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
+Plug 'vim-test/vim-test', {'for': ['php', 'vader', 'java']}     " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
 Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
 Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
 " Plug 'romainl/vim-qf'                                           " Run Cfilter using wrapper: Keep|Filter, Reject|Filter!, Restore
@@ -2510,6 +2510,8 @@ if g:isneovim
     " Plug 'mason-org/mason.nvim'                                 " Install LSP from Editor
     " Plug 'mason-org/mason-lspconfig.nvim'                       " Integrate LSP & Autocompletion
     Plug 'neovim/nvim-lspconfig'                                " LSP -> Neovim looks pretty bad
+
+    " Plug 'mfussenegger/nvim-jdtls', {'for': 'java'}             " LSP helper for Java
 
     " Plug 'hrsh7th/nvim-cmp'                                   " Integrate autocomplete
     " Plug 'hrsh7th/cmp-nvim-lsp'                               " Integrate for built-in LSP
@@ -2802,6 +2804,7 @@ let g:copilot_filetypes = {
             \ '*': v:false,
             \ 'php': v:true,
             \ 'vue': v:true,
+            \ 'java': v:true,
             \ 'javascript': v:true,
             \ }
 
@@ -5056,6 +5059,11 @@ lua <<EOF
     local lspconfig = require('lspconfig')
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
+    -- @see https://github.com/eclipse-jdtls/eclipse.jdt.ls
+    -- @run lua=os.getenv('HOME')
+    -- local home = os.getenv('HOME')
+    vim.fn.setenv('JAVA_HOME', '/usr/lib/jvm/java-21-openjdk-amd64')
+
     -- @see https://www.youtube.com/watch?v=LaS32vctfOY
     local lspservers = {
         vimls = {},
@@ -5074,6 +5082,13 @@ lua <<EOF
         gopls = {},
         laravel_ls = {},
         rust_analyzer = {},
+        jdtls = {
+            cmd = {
+                -- @thanks https://eruizc.dev/blog/en/java-with-neovim/
+                vim.fn.expand('$HOME/.local/share/nvim/mason/bin/jdtls'),
+                ('--jvm-arg=-javaagent:%s'):format(vim.fn.expand'$HOME/.local/share/nvim/mason/share/jdtls/lombok.jar'),
+            },
+        },
         clangd = {
             -- cmd = {
             --     'clangd',
@@ -5181,6 +5196,7 @@ lua <<EOF
             ['*'] = false,
             php = true,
             vue = true,
+            java = true,
             javascript = true,
         },
     }
