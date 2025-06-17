@@ -64,6 +64,7 @@ ls /sys/firmware/efi/efivars/
 Mount ISO image in USB
 
 !!!Disable Secure Boot in BIOS!!!
+!!!Format USB BEFORE!!!
 
 [See](https://wiki.archlinux.org/title/USB_flash_installation_medium)
 
@@ -112,10 +113,14 @@ sudo dd if=/dev/zero of=/dev/sda bs=4k status=progress
 sudo fdisk /dev/sda
 # After o -> Create DOS partition
 # After n -> Create new partition
+        p -> primary (default)
+        1 -> first (default)
+        2048 -> start (default)
+        2048 -> finish (default)
 # After w -> Write changes
 
-sudo umount /dev/sdb1
-sudo reject /dev/sdb
+udisksctl unmount -b /dev/sda
+udisksctl power-off -b /dev/sda
 ```
 > [SO](https://askubuntu.com/questions/198065/how-to-format-a-usb-drive)
 
