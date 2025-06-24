@@ -323,6 +323,16 @@ dtest() {
     return $STATUS
 }
 
+# SubResource Integrity Hash
+#   - sri path
+#   - sri path [sha256] default
+#   - sri path sha384
+sri() {
+    # openssl dgst -${2:-sha256} -binary $1 | openssl base64 -A
+    # EQUEALS but Kiss
+    shasum -b -a ${2:-256} $1 | awk '{ print $1 }' | xxd -r -p | base64
+}
+
 # OpenSSL PEM:
 #   - osp duckduck.com:443
 osp() {
@@ -895,6 +905,7 @@ alias glo="git pull --verbose origin"
 # On conflicts with rebase is hard mode!
 alias glr="git pull --verbose --rebase origin"
 alias gm="git merge"
+alias gms="git merge --squash"
 # alias gmu="git merge upstream/master"
 # alias gma="git merge --abort"
 # alias gmc="git merge --continue"
