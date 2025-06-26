@@ -6,9 +6,9 @@ set -o nounset
 
 PHPBIN=
 
-# if [ -f vendor/composer/platform_check.php ]; then
-#     PHPBIN=`command cat vendor/composer/platform_check.php | grepx -F 'PHP_VERSION_ID' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{split($0,v,""); print v[2],v[4]}' | sed -r "s/ /./g" | awk '{print "/usr/bin/php"$1""}'`
-# fi
+if [ -f vendor/composer/platform_check.php ]; then
+    PHPBIN=`command cat vendor/composer/platform_check.php | grepx -F 'PHP_VERSION_ID' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{split($0,v,""); print v[2],v[4]}' | sed -r "s/ /./g" | awk '{print "/usr/bin/php"$1""}'`
+fi
 
 if [ -z $PHPBIN ] && [ -f composer.json ]; then
     PHPBIN=`command cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}'`
