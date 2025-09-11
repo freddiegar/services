@@ -51,6 +51,7 @@ RUN set -eux \
     libjpeg-dev \
     libfreetype6-dev \
     libmpc-dev \
+    libicu-dev \
     # Permissions
     && chown root:www-data -Rf /etc/apache2/sites-available/ \
     && chown root:crontab /var/spool/cron/crontabs/root \
