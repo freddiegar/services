@@ -42,7 +42,7 @@ snippet rr "Reference Redirection"
 #	echo "(keyboard) standard input - stdin"			0
 #	echo "(screen) standard output - stdout"			>&1
 #	echo "(screen) error output - stderr"				>&2
-#	echo "ignore output and send error to rabbit hole"	2>&1 > /dev/null
+#	echo "ignore output and send error to rabbit hole"	> /dev/null > 2>&1
 #	echo "all (standard and error) output"				1>&2
 #	echo "no errors at all"								2>&-
 #

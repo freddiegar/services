@@ -188,6 +188,33 @@
 "   {#,#}   ->  Range of numbers {min,max}
 " @regex https://www.youtube.com/watch?v=sa-TUpSx1JA
 
+" Replace chars only inside the curly braces with a other character:
+"
+" %s/{\zs[^}]*\ze}/\=substitute(submatch(0), ',', ' |', 'g')/
+" From: 14543322,"00:01:13",NULL,NULL,0,NULL,"{"key": "value", "errorCode": "301"}"
+" To  : 14543322,"00:01:13",NULL,NULL,0,NULL,"{"key": "value" | "errorCode": "301"}"
+"
+" Nested curly braces
+" %s/{\zs.*\ze}/\=substitute(submatch(0), ',', ' |', 'g')/g
+"
+" Nested quotes braces
+" %s/{\zs[^}]*\ze}/\=substitute(submatch(0), '"', "'", 'g')/
+" From: 14543322,"00:01:13",NULL,NULL,0,NULL,"{"key": "value", "errorCode": "301"}"
+" To  : 14543322,"00:01:13",NULL,NULL,0,NULL,"{'key': 'value', 'errorCode': '301'}"
+
+" Nested curly all
+" %s/{\zs[^}]*\ze}/\=substitute(submatch(0), ',', ' |', 'g')/g
+" From: "{"key": "value", "one": 2}","00:01:13",NULL,NULL,0,NULL,"{"key": "value", "errorCode": "301"}"
+" To:   "{"key": "value", "one": 2}","00:01:13",NULL,NULL,0,NULL,"{"key": "value", "errorCode": "301"}"
+
+" Empty curly braces
+" %s/{\zs[^}]*\ze}//g
+" From: "{"key": "value", "one": 2}","00:01:13",NULL,NULL,0,NULL,"{"key": "value", "errorCode": "301"}"
+" To:   "{}","00:01:13",NULL,NULL,0,NULL,"{}"
+
+" Split columns to insert chars and fix csv files
+" %!column -t -s , -o ,
+
 " SIMPLE 3 STEPS (@thanks Bram)
 " 1. Problem:  While you are editing, keep an eye out for actions you repeat and/or spend quite a bit of time on.
 " 2. Solution: Find out if there is an editor command that will do this action quicker. Read the documentation, ask a friend, or look at how others do this.
@@ -1517,6 +1544,10 @@ nnoremap <silent> <Leader>N :let @+=expand('%:t')
 nnoremap <silent> <Leader>P :let @+=expand('%') . ':' . line('.')
             \ <Bar> echo 'Copied:   ' . @+<CR>
 
+" Copied current position (using relative path) to edit in Vim
+nnoremap <silent> <Leader>Y :let @+='+' . line('.') . ' ' . expand('%')
+            \ <Bar> echo 'Copied:   ' . @+<CR>
+
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
             \ &filetype ==# 'netrw'
@@ -2410,7 +2441,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc, 9.1 has built-in (:packadd comment) same for nvim but... tpope respect empty lines
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete)
 Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
-Plug 'tpope/vim-abolish'                                        " [c]oe[r]cion: s: snake_case, m MixedCase, c camelCase, p PascalCase, u UPPER_CASE, - dash-case, . dot.case
+Plug 'tpope/vim-abolish'                                        " [c]oe[r]cion: s snake_case, m MixedCase, c camelCase, p PascalCase, u UPPER_CASE, - dash-case, . dot.case
                                                                 " :%S/square/rectangle/g -> replace Square -> Rectangle | square -> rectangle | SQUARE -> RECTANGLE
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
 Plug 'machakann/vim-swap'                                       " Swap args: g>, g<, gs (interactive)
@@ -2539,12 +2570,13 @@ endif
 
 if g:hasts && !<SID>mustbeignore()
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Highligth ++
-    " Plug 'nvim-treesitter/nvim-treesitter-context'            " Highligth +++
+    " Plug 'nvim-treesitter/nvim-treesitter-context'            " Highligth +++ (slower!?)
 endif
 
 if g:hasaia && g:hasgit && !<SID>mustbeignore()
     if g:isneovim
-        Plug 'zbirenbaum/copilot.lua'                           " Zen mode +++++: Copilot auth
+        Plug 'zbirenbaum/copilot.lua'                           " Zen mode +++++: Copilot auth | status
+        " Plug 'zbirenbaum/copilot-cmp'                           " Zen mode ++++++
 
         Plug 'nvim-lua/plenary.nvim'                            " cURL wrapper required by CopilotChat
         Plug 'CopilotC-Nvim/CopilotChat.nvim'                   " Explain, Review, Fix, Optimize, Docs, Tests using Copilot
@@ -4135,7 +4167,7 @@ function! s:run(range, interactive, ...) abort
     elseif (l:runner ==# 3 || index(['sql'], l:runner) >= 0) && <SID>db() !=# ''
         " Ignores timestamp connection information in debug logs for queries
         if l:command =~? '\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z'
-            let l:command = substitute(getline('.'), '^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\s\d\{2,7}\s\(Query\|Execute\)\s', '', 'g')
+            let l:command = substitute(getline('.'), '\c^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\s\d\{2,7}\s\(Query\|Execute\)\s', '', 'g')
         endif
 
         " Avoid a lot results in SELECT without LIMIT (freezing)
@@ -4669,6 +4701,10 @@ require 'nvim-treesitter.configs'.setup({
         enable = false,
     },
 })
+
+-- vim.keymap.set('n', '[c', function()
+--     require('treesitter-context').go_to_context(vim.v.count1)
+-- end, { silent = true })
 EOF
 
             TSEnable highlight
@@ -5221,6 +5257,10 @@ lua << EOF
             },
         }
     }
+
+    -- require('render-markdown').setup({
+    --     file_types = { 'copilot-chat' },
+    -- })
 EOF
     endfunction
 
@@ -5310,7 +5350,7 @@ EOF
         command! -nargs=? M tabnew <Bar> terminal <args>
 
         " @ https://neovim.io/doc/user/lua.html#lua-highlight
-        autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup='IncSearch', timeout=200}
+        autocmd TextYankPost * silent! lua vim.hl.on_yank {higroup='IncSearch', timeout=200}
 
         " Starts :terminal in Insert Mode (Same to Vim behaviour)
         " Enter: Close output view from vim-test (Same to Vim behaviour)
@@ -5925,12 +5965,12 @@ EOF
     autocmd FileType sql call setreg('s', "mz\"zyip}o\e\"zPvip:s/\"/\\\\\"/ge\rvip:s/--.*$/@@==@@/ge\rvip:join\rvip:s/@@==@@/ /ge\rIDB::statement(\"\eA\")\eyip:s/\\s\\+/ /ge\rdd\"_dd'zmz") | set nohlsearch
     " e[x]ecute as tinker
     autocmd FileType sql call setreg('x', "mx@to\eItinker --execute=\"dump(\epkgJA)\"\e0vi(:s/\\%V\"/\\\\\"/ge\rdd'xmx")
-    " [e]xplain sql
-    autocmd FileType sql call setreg('e', "IEXPLAIN \eEa SQL_NO_CACHE\e")
-    " [j]son explain sql
-    autocmd FileType sql call setreg('j', "IEXPLAIN FORMAT=json \eEa SQL_NO_CACHE\e")
-    " [a]nalize sql > MySQL 8.0
-    autocmd FileType sql call setreg('a', "IEXPLAIN ANALYZE \eEa SQL_NO_CACHE\e")
+    " [e]xplain sql (in select/update word)
+    autocmd FileType sql call setreg('e', "iEXPLAIN \eEa SQL_NO_CACHE\e")
+    " [j]son explain sql (in select/update word)
+    autocmd FileType sql call setreg('j', "iEXPLAIN FORMAT=json \eEa SQL_NO_CACHE\e")
+    " [a]nalize sql > MySQL 8.0 (in select/update word)
+    autocmd FileType sql call setreg('a', "iEXPLAIN ANALYZE \eEa SQL_NO_CACHE\e")
     " [u]ndo explain sql
     autocmd FileType sql call setreg('u', "vip:s/\\cEXPLAIN \\|ANALYZE \\|FORMAT=json \\|SQL_NO_CACHE //ge\r:\e") | set nohlsearch
     " [d]esribe sql
