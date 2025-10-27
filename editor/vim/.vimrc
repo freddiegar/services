@@ -2474,7 +2474,7 @@ Plug 'kristijanhusak/vim-dadbod-completion', {'for': 'sql'}     " DB autocomplet
 " Plug 'vim-php/tagbar-phpctags.vim', {'for': 'php'}              " Tagbar addon for PHP in on-the-fly
 
 Plug 'vim-test/vim-test', {'for': ['php', 'vader', 'java']}     " Run test: <Leader>{tt|tf|ts|tl|tg|tq}
-Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
+" Plug 'vim-vdebug/vdebug', {'on': 'VdebugStart'}                 " Run debugger
 Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
 " Plug 'romainl/vim-qf'                                           " Run Cfilter using wrapper: Keep|Filter, Reject|Filter!, Restore
 Plug 'mbbill/undotree'                                          " Run undo world: g-, g+ . Not use 'on' option.
@@ -2557,7 +2557,7 @@ if g:isneovim
     " Plug 'https://codeberg.org/FelipeLema/cmp-async-path', {'as': 'cmp-path'} " Integrate for path (beta mode)
 
     Plug 'quangnguyen30192/cmp-nvim-ultisnips'                  " Integrate for UltiSnips
-    Plug 'j-hui/fidget.nvim'                                    " LSP -> Progress ... distracting
+    " Plug 'j-hui/fidget.nvim'                                    " LSP -> Progress ... distracting?
     " endif
 else
     Plug 'airblade/vim-gitgutter'                               " Show signs changes if cwd is a git repository (using VimL)
@@ -4292,6 +4292,17 @@ endfunction
 
 command! -nargs=* -range -bang RR call <SID>runterm(<range>, <bang>0, <f-args>)
 
+" range (0,1,2), interactive (0/1): void
+function! s:preview(range, interactive) abort
+    let l:content = <SID>get_selection(a:range, a:interactive, [])
+
+    call writefile([l:content], '/tmp/preview.html')
+
+    silent call <SID>go_url('/tmp/preview.html')
+endfunction
+
+command! -nargs=0 -range -bang P call <SID>preview(<range>, <bang>0)
+
 " range (0,1,2), interactive (0/1), [args (string), trim (bool), join (bool), joinchar (string)]: string|List
 function! s:get_selection(range, interactive, args, ...) abort
     let l:selection = ''
@@ -4654,7 +4665,8 @@ augroup AutoCommands
     autocmd FileType checkhealth map <silent> <nowait> <buffer> q <Cmd>bdelete!<CR>
     autocmd FileType fugitive map <silent> <nowait> <buffer> q gq
     autocmd FileType fugitiveblame map <silent> <nowait> <buffer> q gq
-    autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq | map <silent> <nowait> <buffer> <CR> gq
+    autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq
+    " autocmd BufEnter,BufNewFile *.dbout map <silent> <nowait> <buffer> q gq | map <silent> <nowait> <buffer> <CR> gq
 
     " Not append last space before close if, its append a <Space>
     autocmd BufEnter,BufReadPost,BufNewFile * if (!&modifiable || &readonly) && empty(maparg('q', 'n')) | map <silent> <nowait> <buffer> q <Cmd>bdelete!<CR>| endif
@@ -4861,18 +4873,18 @@ lua <<EOF
     -- require("mason").setup()
     -- require("mason-lspconfig").setup()
 
-    require('fidget').setup({
-        progress = {
-            suppress_on_insert = true,
-            ignore_done_already = true,
-            ignore_empty_message = true,
-        },
-        notification = {
-            window = {
-                winblend = 0, -- Trasparency
-            }
-        },
-    })
+    -- require('fidget').setup({
+    --     progress = {
+    --         suppress_on_insert = true,
+    --         ignore_done_already = true,
+    --         ignore_empty_message = true,
+    --     },
+    --     notification = {
+    --         window = {
+    --             winblend = 100, -- Transparency, using 0 fails after commit https://github.com/j-hui/fidget.nvim/commit/46cb5c1cac5c25ac255a335755551a8b476fa63f
+    --         }
+    --     },
+    -- })
 
     require('lspconfig.ui.windows').default_options.border = 'single'
 
