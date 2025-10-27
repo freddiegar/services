@@ -2838,6 +2838,8 @@ let g:copilot_filetypes = {
             \ 'vue': v:true,
             \ 'java': v:true,
             \ 'javascript': v:true,
+            \ 'typescript': v:true,
+            \ 'yaml': v:true,
             \ }
 
 if g:hasaia && !<SID>mustbeignore()
@@ -3839,7 +3841,17 @@ lua << EOF
                     { '(TOKEN=).+', replace = '%1' },
                     { '(USER=).+', replace = '%1' },
                     { '(USERNAME=).+', replace = '%1' },
+                    { '(DATABASE_URL=).+', replace = '%1' },
                     { '(_authToken=).+', replace = '%1' },
+                },
+            },
+            {
+                file_pattern = {
+                    '*.key', -- Private/Public keys
+                    '*.key.*', -- Private/Public keys (backups)
+                },
+                cloak_pattern = {
+                    { '^(........)........................................................$', replace = '%1' }, -- Private/Plublic Keys
                 },
             },
             {
@@ -3891,7 +3903,18 @@ lua << EOF
                     '*.md', -- notes
                 },
                 cloak_pattern = {
+                    { '(User:).+', replace = '%1' },
+                    { '(Pass:).+', replace = '%1' },
                     { '(Hook:).+', replace = '%1' },
+                },
+            },
+            {
+                file_pattern = {
+                    'ipsec.secrets', -- IPSec
+                },
+                cloak_pattern = {
+                    { '(PSK ).+', replace = '%1' },
+                    { '(XAUTH ).+', replace = '%1' },
                 },
             },
         },
@@ -5234,6 +5257,8 @@ lua <<EOF
             vue = true,
             java = true,
             javascript = true,
+            typescript = true,
+            yaml = true,
         },
     }
 EOF
