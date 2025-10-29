@@ -34,3 +34,8 @@ storage/oauth-private.key.*
 .classpath
 .project
 .settings/
+# Temporary files used in Vapor
+dev.Dockerfile
+# NPM magic
+buildx.sh
+public/build-v2/

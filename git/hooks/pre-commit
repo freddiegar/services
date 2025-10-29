@@ -68,6 +68,8 @@ fi
 if [ "$PHPCS" != "" ]; then
     if [ "$PHPCS" = "null" ]; then
         PHPCS=""
+    elif [ "`echo "$PHPCS" | grepx "^php-cs-fixer "`" != "" ]; then
+        PHPCS="phpx vendor/bin/$PHPCS"
     elif [ "`echo "$PHPCS" | grepx "^phpcs "`" != "" ]; then
         PHPCS="phpx vendor/bin/$PHPCS"
     elif [ "`echo "$PHPCS" | grepx "^@php "`" != "" ]; then
@@ -166,12 +168,17 @@ if [ "$COMMAND" != "" ]; then
     fi
 fi
 
-if [ "$COMMAND" = "" ] && [ -f "testx.sh" ]; then
+THREADS=0
+if [ -f "testx.sh" ] && ( [ "$REPO" = "microsites" ] || [ "$REPO" = "threedsecure-acs" ] || [ "$REPO" = "threedsecure-merchant-plugin" ] ); then
+    THREADS=1
+    COMMAND="sh testx.sh"
+elif [ "$COMMAND" = "" ] && [ -f "testx.sh" ]; then
     COMMAND="sh testx.sh"
 elif [ "$COMMAND" = "" ]; then
     COMMAND="phpx vendor/bin/phpunit"
 fi
 
+if [ $THREADS -eq 0 ]; then
 if [ "`echo "$COMMAND" | grepx -F "memory_limit"`" != "" ]; then
     # Break your limits!
     COMMAND=$(echo "$COMMAND" | sed 's/-d memory_limit=[0-9]*[M|G][[:space:]]\?//')
@@ -201,6 +208,7 @@ if [ "`echo "$COMMAND" | grepx -F -- "--no-coverage"`" = "" ]; then
     # In PHPUnit 10+ avoid WARNING (finish with status code: 1)
     #   No code coverage driver is available
     COMMAND="$COMMAND --no-coverage"
+fi
 fi
 
 # Debugging command
