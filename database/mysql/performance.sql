@@ -3,7 +3,12 @@
 -- https://www.forknerds.com/reduce-the-size-of-mysql/
 
 -- Alters and operations
+-- https://dev.mysql.com/doc/refman/8.0/en/innodb-online-ddl-operations.html
 -- https://dev.mysql.com/doc/refman/8.4/en/innodb-online-ddl-operations.html
+
+-- Indexes
+-- https://www.slideshare.net/slideshow/how-to-design-indexes-really/14886467
+-- https://www.youtube.com/watch?v=ELR7-RdU9XU (presentation in context)
 
 -- @see https://www.atlassian.com/data/databases/understanding-strorage-sizes-for-mysql-text-data-types
 -- TEXT:        65,535 characters           64 KB
@@ -242,11 +247,44 @@ Indexes ONLY applies if: Are same type and same size
 Indexes must be explicit, then, use USE|FORCE INDEX (name_index)
 @see https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-join-types
 type: ALL   -> cartesian from ALL rows in each table, then: 3961 * 4 = 15844 rows
-      index -> === ALL (except that the index tree is scanned). Shows "Using index" in Extra column
+      index -> === ALL (except that the index tree is scanned) and is ideal showing "Covering index". Shows "Using index" in Extra column
 @see https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain_ref
 ref:  NULL  -> There aren't join or there are a range condition (in, between, etc)
       const -> There are matching column AND is INDEXED. Very fast because they are read only once.
       eq_ref -> There are matching ALL index columns in query. 2nd faster.
+
+In MySQL EXPLAIN, "Using index condition" The Extra column flags "Using filesort" and "Using temporary", which can cause disk I/O overhead.
+    Using filesort: MySQL must sort the results, usually because of ORDER BY.
+    Using temporary: A temporary table is used, often for GROUP BY or sorting.
+    Investigate if:
+        An index can support ORDER BY or GROUP BY clauses to avoid filesorts.
+        Query structure leads MySQL to create temporary tables—often caused by complex GROUP BY, DISTINCT, or UNION operations.
+In MySQL EXPLAIN, "Using index condition" means the query uses Index Condition Pushdown (ICP). MySQL applies part of the WHERE clause directly
+    to the index entries during the index scan, filtering rows before reading full table rows. This reduces the number of row lookups and
+    improves query performance, especially for large tables with selective conditions.
+In MySQL, a "Backward index scan" means the database is reading the index entries in reverse order (from the highest value to the lowest).
+    This typically happens when you use an `ORDER BY ... DESC` clause on a column that has an index. MySQL can efficiently scan the index
+    backwards to return results in descending order without sorting the data after retrieval. This improves performance for queries needing
+    descending order on indexed columns.
+
+- **Using where**: A WHERE clause is used to filter rows after reading them.
+- **Using index**: The query is covered by the index; no table row lookups are needed.
+- **Using join buffer**: A join buffer is used for the join (not an indexed join).
+
+In MySQL, I have this index definition in transactions table:
+KEY `transactions_created_at_merchant_id_index` (`created_at`,`merchant_id`)
+There is diffs between this statements?
+    Option A: select * from transactions where created_at >= '2025-07-30 09:08:01' and merchant_id in (1, 2)
+    Option B: select * from transactions where merchant_id in (1, 2) and created_at >= '2025-07-30 09:08:01'
+No, there is no difference in execution or performance between Option A and Option B in MySQL.
+    SQL's WHERE clause is order-independent: the optimizer parses all conditions and uses indexes as appropriate, regardless of the order you write them.
+    With your index (`created_at`, `merchant_id`), both queries can use the index efficiently, as both filter on `created_at` (the leading column) and `merchant_id` (the second column). The order of conditions in the WHERE clause does not affect index usage or query results.
+@see https://stackoverflow.com/a/78714239
+
+Ways:
+    EXPLAIN FORMAT=json
+    EXPLAIN FORMAT=tree
+    EXPLAIN ANALIZE
 
 +----+-------------+------------------------------+------------+-------+---------------------------------------------+---------------------------------------------+---------+---------------------+------+----------+------------------------------------+
 | id | select_type | table                        | partitions | type  | possible_keys                               | key                                         | key_len | ref                 | rows | filtered | Extra                              |
@@ -254,6 +292,45 @@ ref:  NULL  -> There aren't join or there are a range condition (in, between, et
 |  1 | SIMPLE      | transactions (3977)          | NULL       | range | transactions_created_at_merchant_id_index   | transactions_created_at_merchant_id_index   | 5       | NULL                | 3961 |     3.00 | Using index condition; Using where |
 |  1 | SIMPLE      | transaction_messages (15935) | NULL       | ref   | transaction_messages_transaction_id_foreign | transaction_messages_transaction_id_foreign | 4       | mpi.transactions.id |    4 |    20.00 | Using where                        |
 +----+-------------+------------------------------+------------+-------+---------------------------------------------+---------------------------------------------+---------+---------------------+------+----------+------------------------------------+
+
++----+----------------------+-------------------+-------------+--------+--------------------------------------------+----------------------------------------------+---------+--------------------------------------+-----------+-----------+---------------------------------------------------------------------------+
+| id | select_type          | table             | partitions  | type   | possible_keys                              | key                                          | key_len | ref                                  | rows      | filtered  | Extra                                                                     |
++----+----------------------+-------------------+-------------+--------+--------------------------------------------+----------------------------------------------+---------+--------------------------------------+-----------+-----------+---------------------------------------------------------------------------+
+| 1  | PRIMARY              | transactions      | NULL        | range  | "transactions_acquirer_id_index,           | transactions_created_at_merchant_id_index    | 5       | NULL                                 | 3955320   | 51.39     | "Using index condition; Using where; Using temporary; Using filesort"     |
+                                                                          transactions_created_at_merchant_id_index,
+                                                                          transactions_franchise_id_foreign,
+                                                                          transactions_merchant_id_foreign,
+                                                                          transactions_card_id_foreign"
+| 1  | PRIMARY              | franchises        | NULL        | ALL    | PRIMARY                                    | NULL                                         | NULL    | NULL                                 | 5         | 20.00     | "Using where; Using join buffer (hash join)"                              |
+| 1  | PRIMARY              | acquirers         | NULL        | eq_ref | PRIMARY,acquirers_country_id_foreign       | PRIMARY                                      | 4       | 3ds_mpi.transactions.acquirer_id     | 1         | 100.00    | NULL                                                                      |
+| 1  | PRIMARY              | acquirer_country  | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.acquirers.country_id         | 1         | 100.00    | NULL                                                                      |
+| 1  | PRIMARY              | currencies        | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.transactions.currency_id     | 1         | 100.00    | NULL                                                                      |
+| 1  | PRIMARY              | merchants         | NULL        | eq_ref | PRIMARY,merchants_country_id_foreign       | PRIMARY                                      | 4       | 3ds_mpi.transactions.merchant_id     | 1         | 100.00    | "Using where"                                                             |
+| 1  | PRIMARY              | merchant_country  | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.merchants.country_id         | 1         | 100.00    | NULL                                                                      |
+| 1  | PRIMARY              | cards             | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 8       | 3ds_mpi.transactions.card_id         | 1         | 100.00    | NULL                                                                      |
+| 1  | PRIMARY              | payments          | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | func                                 | 1         | 100.00    | "Using where"                                                             |
+| 1  | PRIMARY              | merchant_branches | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.transactions.branch_id       | 1         | 100.00    | NULL                                                                      |
+| 1  | PRIMARY              | branch_country    | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.merchant_branches.country_id | 1         | 100.00    | NULL                                                                      |
+| 2  | "DEPENDENT SUBQUERY" | payments          | NULL        | ref    | payments_transaction_id_foreign            | payments_transaction_id_foreign              | 4       | 3ds_mpi.transactions.id              | 1         | 100.00    | "Using index"                                                             |
++----+----------------------+-------------------+-------------+--------+--------------------------------------------+----------------------------------------------+---------+--------------------------------------+-----------+-----------+-------------------------------------------------------+
+
+-- Using index with: force index (transactions_created_at_merchant_id_index)
++----+----------------------+-------------------+-------------+--------+--------------------------------------------+----------------------------------------------+---------+--------------------------------------+-----------+-----------+-------------------------------------------------------+
+| id | select_type          | table             | partitions  | type   | possible_keys                              | key                                          | key_len | ref                                  | rows      | filtered  | Extra                                                 |
++----+----------------------+-------------------+-------------+--------+--------------------------------------------+----------------------------------------------+---------+--------------------------------------+-----------+-----------+-------------------------------------------------------+
+| 1  | PRIMARY              | transactions      | NULL        | range  | transactions_created_at_merchant_id_index  | transactions_created_at_merchant_id_index    | 5       | NULL                                 | 3955320   | 51.39     | "Using index condition; Using where; Using filesort"  |
+| 1  | PRIMARY              | franchises        | NULL        | ALL    | PRIMARY                                    | NULL                                         | NULL    | NULL                                 | 5         | 20.00     | "Using where"                                         |
+| 1  | PRIMARY              | acquirers         | NULL        | eq_ref | PRIMARY,acquirers_country_id_foreign       | PRIMARY                                      | 4       | 3ds_mpi.transactions.acquirer_id     | 1         | 100.00    | NULL                                                  |
+| 1  | PRIMARY              | acquirer_country  | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.acquirers.country_id         | 1         | 100.00    | NULL                                                  |
+| 1  | PRIMARY              | currencies        | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.transactions.currency_id     | 1         | 100.00    | NULL                                                  |
+| 1  | PRIMARY              | merchants         | NULL        | eq_ref | PRIMARY,merchants_country_id_foreign       | PRIMARY                                      | 4       | 3ds_mpi.transactions.merchant_id     | 1         | 100.00    | "Using where"                                         |
+| 1  | PRIMARY              | merchant_country  | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.merchants.country_id         | 1         | 100.00    | NULL                                                  |
+| 1  | PRIMARY              | cards             | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 8       | 3ds_mpi.transactions.card_id         | 1         | 100.00    | NULL                                                  |
+| 1  | PRIMARY              | payments          | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | func                                 | 1         | 100.00    | "Using where"                                         |
+| 1  | PRIMARY              | merchant_branches | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.transactions.branch_id       | 1         | 100.00    | NULL                                                  |
+| 1  | PRIMARY              | branch_country    | NULL        | eq_ref | PRIMARY                                    | PRIMARY                                      | 4       | 3ds_mpi.merchant_branches.country_id | 1         | 100.00    | NULL                                                  |
+| 2  | "DEPENDENT SUBQUERY" | payments          | NULL        | ref    | payments_transaction_id_foreign            | payments_transaction_id_foreign              | 4       | 3ds_mpi.transactions.id              | 1         | 100.00    | "Using index"                                         |
++----+----------------------+-------------------+-------------+--------+--------------------------------------------+----------------------------------------------+---------+--------------------------------------+-----------+-----------+-------------------------------------------------------+
 
 Because type is ALL for each table, this output indicates that MySQL is generating a Cartesian product of all the tables;
 that is, every combination of rows. This takes quite a long time, because the product of the number of rows in each table

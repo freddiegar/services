@@ -25,7 +25,7 @@ $options = [];
 $showServerName = false;
 
 // Optional: mysql performance test
-$options['db.host'] = 'db';
+$options['db.host'] = 'db80';
 $options['db.name'] = 'prestashop';
 $options['db.user'] = 'prestashop';
 $options['db.pass'] = '';
@@ -155,6 +155,7 @@ if (!\file_exists($log) || \file_get_contents($log) === '') {
     $benchmarkResult['benchmark']['loops'],
     $benchmarkResult['benchmark']['ifelse'],
     $benchmarkResult['benchmark']['array'],
+    $benchmarkResult['benchmark']['count'],
     $benchmarkResult['benchmark']['calculation_total'],
     $benchmarkResult['benchmark']['mysql_total'] ?? 0,
     $benchmarkResult['benchmark']['total']
@@ -187,6 +188,7 @@ function test_benchmark($settings)
     test_loops($result);
     test_ifelse($result);
     test_array($result);
+    test_count($result);
 
     $result['benchmark']['calculation_total'] = timer_diff($timeStart);
 
@@ -383,6 +385,46 @@ function test_array_detail(): void
     test_resume($result, $count);
 }
 
+function test_count(&$result, $count = 999999): void
+{
+    $timeStart = \microtime(true);
+    $functions = ['test_count_preg_match_all', 'test_count_substr_count'];
+
+    foreach ($functions as $function) {
+        \call_user_func_array($function, [$count]);
+    }
+
+    $result['benchmark']['count'] = timer_diff($timeStart);
+}
+
+function test_count_preg_match_all($count = 999999): void
+{
+    $counter = 0;
+    $string = '{"stringCountable":"This is a example test string"}';
+
+    for ($i = 0; $i < $count; $i++) {
+        if (preg_match_all('/"stringCountable"\s*:/', $string)) {
+            $counter++;
+        }
+    }
+
+    unset($counter);
+    unset($string);
+}
+
+function test_count_substr_count($count = 999999): void
+{
+    $counter = 0;
+    $string = '{"stringCountable":"This is a example test string", "stringNoCountable":"","stringCountable":"Other"}';
+
+    for ($i = 0; $i < $count; $i++) {
+        $counter = substr_count($string, '"stringCountable":');
+    }
+
+    unset($counter);
+    unset($string);
+}
+
 function test_resume(array $result, int $count): void
 {
     \asort($result, \SORT_NUMERIC);
@@ -479,6 +521,7 @@ function print_benchmark_result($data, $showServerName = true)
     $result .= '<tr><td>Loops</td><td>' . h($data['benchmark']['loops']) . '</td></tr>';
     $result .= '<tr><td>If Else</td><td>' . h($data['benchmark']['ifelse']) . '</td></tr>';
     $result .= '<tr><td>Array</td><td>' . h($data['benchmark']['array']) . '</td></tr>';
+    $result .= '<tr><td>Count</td><td>' . h($data['benchmark']['count']) . '</td></tr>';
     $result .= '<tr class="even"><td>Calculation Total</td><td>' . h($data['benchmark']['calculation_total']) . '</td></tr>';
     $result .= '</tbody>';
 

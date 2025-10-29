@@ -690,3 +690,11 @@ cd mysql2sqlite
 # In Laravel project
 # /var/www/html/mysql2sqlite/mysql2sqlite/mysql2sqlite database/schema/mysql-schema.sql > database/schema/sqlite-schema.sql
 ```
+
+Use current path to create Git Hooks
+
+```bash
+ln -s /var/www/html/freddiegar/services/git/hooks/pre-commit $PWD/.git/hooks/pre-commit
+ln -s /var/www/html/freddiegar/services/git/hooks/post-checkout $PWD/.git/hooks/post-checkout
+ln -s /var/www/html/freddiegar/services/git/hooks/post-merge $PWD/.git/hooks/post-merge
+```

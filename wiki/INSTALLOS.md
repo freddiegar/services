@@ -1635,7 +1635,7 @@ sudo chmod +x /usr/local/bin/infection
 ## sudo rm /usr/local/bin/infection
 ```
 
-# PHPLOC (Lines Of Code)
+# PHPLOC (Lines Of Code - lines-of-code)
 
 ```bash
 sudo curl -L https://phar.phpunit.de/phploc.phar -o /usr/local/bin/phploc
@@ -2026,7 +2026,7 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 25.04
 uname -r
-# 6.14.0-15-generic
+# 6.14.0-29-generic
 command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
 nproc --all
@@ -2060,7 +2060,7 @@ echo `vim --version | grep -e "^VIM " | awk '{print $5}'`.`vim --version | grep 
 echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | grep -e "^LuaJIT " | awk '{print $1"-"$2}'`
 # v0.12.0-dev-LuaJIT-2.1.1737090214
 neovide --version | awk '{print $2}'
-# 0.15.0
+# 0.15.2
 vifm --version | grep -e "^Version" | awk '{print $2}'
 # 0.12
 $VIEWER -v | head -n 1 | awk '{print $2}'
@@ -2096,15 +2096,15 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.1
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.4.7
+# 8.4.12
 # nvm --version
 # # 0.39.3
 npm --version
-# 11.4.1
+# 10.9.2
 node --version
-# v24.0.1
+# v22.16.0
 mysql --version | awk '{print $3}'
-# 8.4.5-0ubuntu0.1
+# 8.4.6-0ubuntu0.25.04.3
 # stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
@@ -2130,9 +2130,9 @@ NetworkManager --version
 bluemoon --version
 # 5.79
 firefox --version | awk '{print $3}'
-# 140.0b2
+# 144.0b3
 zen --version | awk '{print $3}'
-# 1.13t
+# 1.16t
 filezilla --version | tail -1 | awk '{print $2}' | sed 's/,//g'
 # 3.68.1
 obs --version |  awk '{print $4}'
@@ -2146,9 +2146,9 @@ flameshot --version | head -1 | awk '{print $2}'
 # dpkg --list | wc --lines
 # dpkg --get-selections | grep -v deinstall > ~/packages.log
 dpkg --get-selections | grep -v deinstall | wc --lines
-# 1947
+# 2018
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 49
+# 51
 apt-mark showmanual | wc --lines
-# 355
+# 368
 ```
