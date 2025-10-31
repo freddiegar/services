@@ -632,7 +632,7 @@ bindsym $mod+Escape mode "$mode_system"
 # URxvt
 for_window [instance="^__[a-z]*$"] fullscreen enable
 
-set $mode_control Control (k)eys, (n)etwork, (s)ound, (r)esources, (d)ocker
+set $mode_control Control (k)eys, (n)etwork, (s)ound, (r)esources, (d)ocker, (t)ickets
 
 mode "$mode_control" {
     # Control Keys
@@ -648,6 +648,8 @@ mode "$mode_control" {
     # Docker Stats
     # bindsym d exec          konsole --nofork --fullscreen -e 'docker stats', mode "default"
     bindsym d exec          urxvt -name __dockerstats -e sh -c 'docker stats', mode "default"
+    # Tickets Stats
+    bindsym t exec          urxvt -name __tickrsstats -e sh -c 'tickrs', mode "default"
 
     # back to normal
     bindsym Return          mode "default"

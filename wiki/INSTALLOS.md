@@ -2026,7 +2026,7 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 25.04
 uname -r
-# 6.14.0-29-generic
+# 6.14.0-34-generic
 command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
 nproc --all
@@ -2096,13 +2096,13 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.1
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.4.12
+# 8.4.14
 # nvm --version
 # # 0.39.3
 npm --version
-# 10.9.2
+# 11.4.1
 node --version
-# v22.16.0
+# v24.0.1
 mysql --version | awk '{print $3}'
 # 8.4.6-0ubuntu0.25.04.3
 # stoken --version | head -1 | awk '{print $2}'
@@ -2116,7 +2116,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.24.3
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.1.0(e371a35)
+# 6.2.0(7d47730)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -2130,9 +2130,9 @@ NetworkManager --version
 bluemoon --version
 # 5.79
 firefox --version | awk '{print $3}'
-# 144.0b3
+# 144.0b7
 zen --version | awk '{print $3}'
-# 1.16t
+# 1.18t
 filezilla --version | tail -1 | awk '{print $2}' | sed 's/,//g'
 # 3.68.1
 obs --version |  awk '{print $4}'

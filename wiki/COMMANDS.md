@@ -2020,3 +2020,39 @@ ssh -R 8888:localhost:80 -N my-server-ssh.com
 # In background
 # ssh -f -R 8888:localhost:80 -N my-server-ssh.com
 ```
+
+Install Tickrs (Stock Viewer)
+
+[See](https://github.com/tarkah/tickrs?tab=readme-ov-file#cargo)
+
+```bash
+cargo install tickrs
+mkdir -p ~/.config/tickrs
+ln -s `pwd`/tickrs/config.yml ~/.config/tickrs/config.yml
+> tickrs
+
+## cargo uninstall tickrs
+```
+
+Install Strongswan (VPN Client)
+
+```bash
+sudo apt-get update
+sudo apt-get -y install strongswan libstrongswan-extra-plugins
+
+sudo cp -p /etc/ipsec.conf /etc/ipsec.conf.backup
+sudo vim /etc/ipsec.conf
+
+sudo cp -p /etc/ipsec.secrets /etc/ipsec.secrets.backup
+sudo vim /etc/ipsec.secrets
+
+sudo systemctl status ipsec
+sudo systemctl restart ipsec
+sudo systemctl stop ipsec
+sudo systemctl start ipsec
+
+sudo ipsec rereadsecrets
+
+sudo ipsec up [config]
+sudo ipsec down [config]
+```
