@@ -142,15 +142,15 @@ saU() {
 sAU() {
     saU --ignore
 
-    URL="https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US"
-    TMP=~/.mozilla/.lastsize
+    # URL="https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US"
+    # TMP=~/.mozilla/.lastsize
 
-    if [ "`downloadble $URL $TMP`" = "1" ]; then
-        echo "\e[34mUpdating firefox...\e[0m"
-        curl -L $URL -o firefox.tar.xz && sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
+    # if [ "`downloadble $URL $TMP`" = "1" ]; then
+    #     echo "\e[34mUpdating firefox...\e[0m"
+    #     curl -L $URL -o firefox.tar.xz && sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
 
-        checkcode $?
-    fi
+    #     checkcode $?
+    # fi
 
     URL="https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz"
     TMP=~/.zen/.lastsize
@@ -170,15 +170,15 @@ sAU() {
 SAU() {
     sAU --ignore
 
-    echo "\e[34mPulling docker images...\e[0m"
-    sh ~/working/dockerpull.sh
+    # echo "\e[34mPulling docker images...\e[0m"
+    # sh ~/working/dockerpull.sh
 
-    checkcode $?
+    # checkcode $?
 
-    echo "\e[34mBuiding containers...\e[0m"
-    sh ~/working/dockerbuild.sh
+    # echo "\e[34mBuiding containers...\e[0m"
+    # sh ~/working/dockerbuild.sh
 
-    checkcode $?
+    # checkcode $?
 
     echo "\e[34mDocker cleanup...\e[0m"
     dclean
@@ -899,6 +899,11 @@ alias gcmsg="git commit -S -m"
 alias gcmsgn="git commit --no-verify -S -m"
 alias gcmsga="git commit --amend -S -m"
 alias gcmsgan="git commit --no-verify --amend -S -m"
+# @see https://www.geeksforgeeks.org/git/how-to-search-all-of-git-history-for-a-string/
+# Search by content, filetype and all commits
+#   git grep 'pattern'
+#   git grep "table('table_name'" -- '*.php'
+#   git grep "table('table_name'" -- '*.php' $(git rev-list --all)
 # # Redo last commit after changes, using same message
 # alias gcmsgo="git commit --no-edit -C ORIG_HEAD"
 alias gl="git pull --verbose"
