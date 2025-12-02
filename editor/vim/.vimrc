@@ -962,10 +962,8 @@ function! s:statusline(lastmode) abort
         return
     endif
 
-    set statusline=                                             " Start from scratch (default: empty)
-
     if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'checkhealth'], &filetype) >= 0
-        setlocal statusline+=\                                  " Extra space
+        setlocal statusline=\                                   " Extra space
 
         return
     endif
@@ -1004,13 +1002,13 @@ function! s:statusline(lastmode) abort
     endif
 
     if index(['popup', 'help', 'man', 'copilot-chat'], &buftype) >= 0
-        setlocal statusline+=\                                  " Extra space
+        setlocal statusline=\                                   " Extra space
         setlocal statusline+=%{GetNameCurrentFile()}            " Relative filename
 
         return
     endif
 
-    setlocal statusline+=\                                      " Extra space
+    setlocal statusline=\                                       " Extra space
 
     " This expressions redraw statusline after save file always (slower)
     setlocal statusline+=%{GetNameCurrentPath()}                " Relative folder
