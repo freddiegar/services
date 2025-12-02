@@ -6347,9 +6347,9 @@ EOF
         if !argc() && g:hasgit && empty(v:this_session) && filereadable(g:session_file) && !&modified
             silent! execute 'source ' . g:session_file
 
-            let l:message = 'Loaded ' . l:session . '##ENV####INF####IAA####HTS##.'
+            let l:message = 'Loaded ' . l:session . '##ENV####INF####IAA####HTS####TTY##.'
         elseif !argc() && g:hasgit
-            let l:message = 'Created ' . l:session . '##ENV####INF####IAA####HTS##.'
+            let l:message = 'Created ' . l:session . '##ENV####INF####IAA####HTS####TTY##.'
         endif
 
         if l:envfile !=# ''
@@ -6371,6 +6371,10 @@ EOF
             let l:message = l:message ==# '' ? '' : substitute(l:message, '##HTS##', ' (and TS)', '')
         endif
 
+        if $TERM !=# ''
+            let l:message = l:message ==# '' ? '' : substitute(l:message, '##TTY##', ' on ' . $TERM, '')
+        endif
+
         set undofile                                            " Enable undo world (default: off)
         let &undodir = g:undodir
 
@@ -6383,6 +6387,7 @@ EOF
             let l:message = substitute(l:message, '##INF##', '', '')
             let l:message = substitute(l:message, '##IAA##', '', '')
             let l:message = substitute(l:message, '##HTS##', '', '')
+            let l:message = substitute(l:message, '##TTY##', '', '')
 
             call Message(l:message)
         endif
@@ -6904,7 +6909,7 @@ EOF
 
     autocmd VimLeavePre * call <SID>sessionsave()
     " Not flushed X clipboard when Vim exits
-    autocmd VimLeave * call <SID>settitle('$USER@$HOST') | if !g:istty | call system("echo -n $'" - escape(getreg(),"'") . " ' | xsel --input --clipboard") | endif
+    autocmd VimLeave * call <SID>settitle('$USER@$HOST') | if !g:istty | call system("echo -n $'" - escape(getreg(), "'") . " ' | xsel --input --clipboard") | endif
     " Auto-source syntax in *.vpm
     autocmd BufReadPost,BufNewFile *.vpm
         \ if filereadable(expand('syntax.vim')) |
@@ -6987,7 +6992,9 @@ if g:isneovim && !has('gui_running')
 endif
 
 " @thanks https://vi.stackexchange.com/questions/17225/some-function-keys-switch-cases-of-letters-under-and-after-the-cursor
-if g:isneovim && $TERM =~# 'rxvt'
+" @see https://neovim.io/doc/user/tui.html#%24TERM
+" @see emulator/urxvt/Dark.Xresources -> URxvt*termName
+if g:isneovim && $TERM =~# 'rxvt-256color'
     " Same to ... (:|)
     imap <silent> <F16> <S-F6>
     nmap <silent> <F16> <S-F6>
@@ -6996,7 +7003,7 @@ if g:isneovim && $TERM =~# 'rxvt'
     imap <silent> <F17> <S-F7>
     nmap <silent> <F17> <S-F7>
     cmap <F17> <S-F7>
-" elseif $TERM =~# 'rxvt'
+" elseif $TERM =~# 'rxvt-256color'
     " Breaks Esc key
 "     imap <silent> [29~ <S-F6>
 "     nmap <silent> [29~ <S-F6>

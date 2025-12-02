@@ -14,7 +14,9 @@ URxvt.perl-ext-common: default,resize-font,selection-to-clipboard,config-reload,
 URxvt*buffered: false
 URxvt*depth: 32
 URxvt*imLocale: en_US.UTF-8
-URxvt*termName: rxvt-unicode-256color
+! Must be has 256 to works correctly in nvim
+! @see https://neovim.io/doc/user/tui.html#%24TERM
+URxvt*termName: rxvt-256color
 URxvt*skipBuiltinGlyphs: true
 
 ! Paste using Shift-Insert

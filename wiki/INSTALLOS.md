@@ -430,7 +430,12 @@ bindkey -M vicmd 'vv' edit-command-line
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
-bindkey -M menuselect 'j' vi-down-line-or-history" >> ~/.zshrc
+bindkey -M menuselect 'j' vi-down-line-or-history
+
+function precmd() {
+    # Keep block cursor shape after close nvim (after v0.12 fails)
+    echo -e -n "\e[2 q"
+}" >> ~/.zshrc
 ```
 > @see ~/.oh-my-zsh/plugins/
 > man zshzle
