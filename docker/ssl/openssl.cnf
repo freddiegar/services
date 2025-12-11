@@ -234,7 +234,6 @@ subjectAltName = @alt_names
 DNS.1 = development.local
 DNS.2 = localhost
 DNS.3 = *.development.local
-DNS.4 = spa.checkout.development.local
 
 [ v3_ca ]
 

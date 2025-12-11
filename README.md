@@ -692,28 +692,6 @@ curl -I https://development.local
 
 > It must be return: 302 | 200 HTTP Code
 
-### Throuble
-
-```firefox
-Check this error in browser: spa.checkout.development.local has a security policy called HTTP Strict Transport Security (HSTS), which means that Twilight can only connect to it securely. You can’t add an exception to visit this site.
-```
-
-- The browser previously received an HSTS header from `spa.checkout.development.local` (or another `*.development.local` site).
-- HSTS forces the browser to only allow secure (HTTPS) connections with valid certificates.
-- Self-signed certificates are not trusted, so you cannot bypass the warning or add an exception.
-
-How to fix for local development:
-
-1. Clear HSTS settings for the domain:
-   - In Chrome: Go to `chrome://net-internals/#hsts`, enter `spa.checkout.development.local` under "Delete domain security policies", and click "Delete".
-   - In Firefox: Go to `about:config`, search for `hsts`, and clear site-specific settings, or remove the domain from the browser’s HSTS cache.
-
-2. Use a trusted certificate:
-   - Consider using [mkcert](https://github.com/FiloSottile/mkcert) to generate a locally trusted certificate for `*.development.local`. Browsers will trust mkcert certificates without warnings.
-
-3. Avoid sending HSTS headers in your local Apache config:
-   - Remove or comment out any `Strict-Transport-Security` headers in your Apache config for local development.
-
 ### Generate
 
 [See](https://lawebdefreddie.blogspot.com/2017/05/crear-certificados-ssl-autofirmados.html)
