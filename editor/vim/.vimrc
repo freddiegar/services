@@ -838,6 +838,7 @@ endfunction
 function! ClientsStatusline() abort
     let l:clients = get(b:, 'clients', '')
     let l:filetype = &filetype !=# '' ? &filetype : &buftype
+    let l:filetype = l:filetype ==# 'typescript' ? 'ts' : l:filetype
 
     if !g:isneovim || strlen(l:clients) <= 0
         return l:filetype
@@ -3840,6 +3841,7 @@ lua << EOF
                     { '(USER=).+', replace = '%1' },
                     { '(USERNAME=).+', replace = '%1' },
                     { '(DATABASE_URL=).+', replace = '%1' },
+                    -- { '^(........)........................................................$', replace = '%1' }, -- Private/Plublic Keys
                     { '(_authToken=).+', replace = '%1' },
                 },
             },
@@ -5269,6 +5271,13 @@ lua <<EOF
             javascript = true,
             typescript = true,
             yaml = true,
+            markdown = function ()
+                if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0):lower()), 'changelog.md') then
+                    return true
+                end
+
+                return false
+            end,
         },
     }
 EOF
