@@ -5279,6 +5279,7 @@ lua <<EOF
                 return false
             end,
         },
+        copilot_node_command = vim.fn.expand("$HOME") .. '/.nvm/versions/node/v24.0.1/bin/node',
     }
 EOF
 
