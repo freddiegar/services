@@ -97,12 +97,19 @@ if (version_compare($phpVersion, '8.1.0', '>=')) {
         \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read, avoid (string) casting convert
         \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
         \Rector\Php81\Rector\MethodCall\MyCLabsMethodCallToEnumConstRector::class, // MPI fails
+        \Rector\CodingStyle\Rector\FunctionLike\FunctionLikeToFirstClassCallableRector::class, // MS fails
     ]);
 }
 
 if (version_compare($phpVersion, '8.3.0', '>=')) {
     $extraSkips = array_merge($extraSkips, [
         \Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class, // For now ignores
+    ]);
+}
+
+if (version_compare($phpVersion, '8.4.0', '>=')) {
+    $extraSkips = array_merge($extraSkips, [
+        \Rector\Php84\Rector\MethodCall\NewMethodCallWithoutParenthesesRector::class, // For now ignores
     ]);
 }
 
