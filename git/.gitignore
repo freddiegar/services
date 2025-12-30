@@ -14,6 +14,8 @@ vendor
 node_modules
 # aka: PHP LSP custom config
 .phpactor.json
+# aka: fixer
+.php-cs-fixer.cache
 # Testing all-in-one
 testx.sh
 junit*.xml

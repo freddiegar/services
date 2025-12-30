@@ -40,7 +40,7 @@ FPHP=$(($FSTAGING + $FMODIFING + $FCOMPOSER))
 
 phpx /usr/local/bin/composer validate --no-check-all --strict || exit $?
 
-if [ "$REPO" != "rest-services" ] && [ "$REPO" != "app-version" ] && [ "$REPO" != "hsm" ] && [ "$REPO" != "pinpad" ] && [ "$REPO" != "massive_recurring" ]; then
+if [ "$REPO" != "rest-services" ] && [ "$REPO" != "app-version" ] && [ "$REPO" != "hsm" ] && [ "$REPO" != "pinpad" ]; then
 COMPOSER_AUDIT_ABANDONED=ignore phpx /usr/local/bin/composer audit || exit $?
 fi
 
@@ -85,7 +85,7 @@ if [ "$PHPCS" != "" ]; then
     $PHPCS || exit $?
 fi
 
-if [ "$REPO" != "microsites" ] && [ "$REPO" != "threedsecure-merchant-plugin" ] && [ "$REPO" != "activity-client" ]; then
+if [ "$REPO" != "microsites" ] && [ "$REPO" != "threedsecure-merchant-plugin" ] && [ "$REPO" != "activity-client" ] && [ "$REPO" != "pinpad" ]; then
 PHPSTAN=""
 
 if [ $FPHP = 0 ]; then
@@ -169,10 +169,11 @@ if [ "$COMMAND" != "" ]; then
 fi
 
 THREADS=0
-if [ -f "testx.sh" ] && ( [ "$REPO" = "microsites" ] || [ "$REPO" = "threedsecure-acs" ] || [ "$REPO" = "threedsecure-merchant-plugin" ] ); then
+if [ -f "testx.sh" ] && ( [ "$REPO" = "microsites" ] || [ "$REPO" = "threedsecure-acs" ] || [ "$REPO" = "threedsecure-merchant-plugin" ] || [ "$REPO" = "vtex-placetopay-latam" ] ); then
     THREADS=1
     COMMAND="sh testx.sh"
 elif [ "$COMMAND" = "" ] && [ -f "testx.sh" ]; then
+    THREADS=1
     COMMAND="sh testx.sh"
 elif [ "$COMMAND" = "" ]; then
     COMMAND="phpx vendor/bin/phpunit"
