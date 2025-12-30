@@ -298,8 +298,8 @@ if g:initialization
         let g:istty = $TERM ==# 'linux' && !has('gui_running')
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
-        let g:hasaia = filereadable(g:cwd . '/.hasaia') || filereadable(g:cwd . '/../.hasaia')
-        let g:hasts = g:isneovim && (exists('g:neovide') || filereadable(g:cwd . '/.hasts') || filereadable(g:cwd . '/../.hasts'))
+        let g:hasaia = filereadable(g:cwd . '/.hasaia')
+        let g:hasts = g:isneovim && (exists('g:neovide') || filereadable(g:cwd . '/.hasts'))
         let g:qfcommand = get(g:, 'qfcommand', '')
         let g:gitcommand = 'git --no-pager --no-optional-locks --literal-pathspecs -c gc.auto=0'
 
@@ -2568,8 +2568,11 @@ else
 endif
 
 if g:hasts && !<SID>mustbeignore()
-    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Highligth ++
-    " Plug 'nvim-treesitter/nvim-treesitter-context'            " Highligth +++ (slower!?)
+    Plug 'nvim-treesitter/nvim-treesitter', {
+                \ 'do': ':TSUpdate',
+                \ 'branch': 'master'
+                \ }                                             " Highligth ++ @see https://github.com/nvim-treesitter/nvim-treesitter/pull/8344
+    " Plug 'nvim-treesitter/nvim-treesitter-context'              " Highligth +++ (slower!?)
 endif
 
 if g:hasaia && g:hasgit && !<SID>mustbeignore()
@@ -2839,6 +2842,7 @@ let g:copilot_filetypes = {
             \ 'javascript': v:true,
             \ 'typescript': v:true,
             \ 'yaml': v:true,
+            \ 'sql': v:true,
             \ }
 
 if g:hasaia && !<SID>mustbeignore()
@@ -4013,7 +4017,7 @@ else
     let g:gitgutter_preview_win_floating = 1
     let g:gitgutter_close_preview_on_escape = 1
     let g:gitgutter_show_msg_on_hunk_jumping = 0
-    let g:gitgutter_grep = g:filterprg
+    " let g:gitgutter_grep = g:filterprg @deprecated https://github.com/airblade/vim-gitgutter/commit/0acb772e76064cc406664ab595b58b3fac76488a
 
     nmap <silent> <expr> <Leader>k &diff ? "[czzzv" : ":GitGutterPrevHunk<CR>zzzv"
     nmap <silent> <expr> <Leader>j &diff ? "]czzzv" : ":GitGutterNextHunk<CR>zzzv"
@@ -4681,7 +4685,7 @@ augroup AutoCommands
     autocmd BufReadPre package-lock.json setlocal nomodifiable
     autocmd BufReadPre public/*/*.{js,css} setlocal nomodifiable
     autocmd BufReadPre */public/*/*.{js,css} setlocal nomodifiable
-    autocmd BufReadPre * if &readonly | setlocal nomodifiable | endif
+    " autocmd BufReadPre * if &readonly | setlocal nomodifiable | endif -- A lot keys in vendor files...
 
     " Some files are untouchable
     " Not use BufReadPre or BufReadPost events, use BufWinEnter. We need to check filetype!
@@ -4716,7 +4720,9 @@ require 'nvim-treesitter.configs'.setup({
         enable = true,
         additional_vim_regex_highlighting = false,
         disable = function(lang, buf)
-            if lang == 'html' then
+            if lang == 'markdown' or lang == 'diff' or lang == 'html' then
+                -- print('Disabled HL: ' .. lang .. ' in buffer: ' .. buf)
+
                 return true
             end
 
@@ -5265,14 +5271,20 @@ lua <<EOF
         },
         filetypes = {
             ['*'] = false,
-            php = true,
+            php = function ()
+                return not vim.api.nvim_buf_get_option(0, 'readonly')
+            end,
             vue = true,
             java = true,
             javascript = true,
             typescript = true,
             yaml = true,
+            sql = true,
             markdown = function ()
-                if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0):lower()), 'changelog.md') then
+                filename = vim.fs.basename(vim.api.nvim_buf_get_name(0):lower())
+
+                -- @see https://www.luadocs.com/docs/functions/string/match
+                if string.match(filename, 'changelog.md') or string.match(filename, 'notes_%d*.md') then
                     return true
                 end
 
@@ -5315,6 +5327,14 @@ EOF
     " @thanks https://jsuarez.dev/blog/copilot_chat_neovim/
     " @see https://github.com/CopilotC-Nvim/CopilotChat.nvim
     function! s:iaa_features() abort
+        if !g:hasaia || <SID>mustbeignore()
+            echohl WarningMsg
+            echo 'Ey! Impossible.'
+            echohl None
+
+            return
+        endif
+
         let l:mode = confirm('Go to:', "e&xplain\nrevie&w\n&fix\noptimi&ze\n&docs\n&tests\n&noob\nco&mmit\n&ask", 1, 'Q')
 
         if l:mode ==# 0
@@ -6372,11 +6392,11 @@ EOF
         endif
 
         if g:hasaia
-            let l:message = l:message ==# '' ? 'Support AI Assistant.' : substitute(l:message, '##IAA##', ' (using IA)', '')
+            let l:message = l:message ==# '' ? 'Support AI Assistant.' : substitute(l:message, '##IAA##', ' using IA', '')
         endif
 
         if g:hasts
-            let l:message = l:message ==# '' ? '' : substitute(l:message, '##HTS##', ' (and TS)', '')
+            let l:message = l:message ==# '' ? '' : substitute(l:message, '##HTS##', ' and TS', '')
         endif
 
         if $TERM !=# ''
