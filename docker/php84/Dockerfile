@@ -89,6 +89,7 @@ RUN set -eux \
     # Extra dependencies: magento
     && docker-php-ext-install -j$(nproc) xsl \
     && docker-php-ext-install -j$(nproc) sockets \
+    && docker-php-ext-install -j$(nproc) ftp \
     # Cache
     && printf "no\n" | pecl install -o -f apcu \
     && docker-php-ext-enable apcu \
