@@ -53,12 +53,12 @@ $vendor = $data['require'] ?? [];
 $vendor += $data['require-dev'] ?? [];
 
 $extraSkips = [];
-$phpVersion = PHP_VERSION;
+$phpVersion = \PHP_VERSION;
 
 if (isset($vendor['php'])) {
     [$phpVersion] = explode(' ', str_replace(['^', '~', '>', '='], '', $vendor['php']));
 
-    if (strlen($phpVersion) === 3 ) {
+    if (\strlen($phpVersion) === 3 ) {
         $phpVersion .= '.0';
     }
 }
@@ -80,7 +80,7 @@ if (version_compare($phpVersion, '5.5.0', '>=')) {
 if (version_compare($phpVersion, '7.4.0', '>=')) {
     $extraSkips = array_merge($extraSkips, [
         \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
-        \Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class,
+        // \Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector::class, @deprecated
     ]);
 }
 
@@ -93,11 +93,12 @@ if (version_compare($phpVersion, '8.0.0', '>=')) {
 
 if (version_compare($phpVersion, '8.1.0', '>=')) {
     $extraSkips = array_merge($extraSkips, [
-        \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
+        // \Rector\Php81\Rector\Array_\FirstClassCallableRector::class, @deprecated
+        \Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector::class, // Routes in Laravel are weirds to read, avoid (['method', 'params']) -> method(params)
         \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read, avoid (string) casting convert
         \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
         \Rector\Php81\Rector\MethodCall\MyCLabsMethodCallToEnumConstRector::class, // MPI fails
-        \Rector\CodingStyle\Rector\FunctionLike\FunctionLikeToFirstClassCallableRector::class, // MS fails
+        // \Rector\CodingStyle\Rector\FunctionLike\FunctionLikeToFirstClassCallableRector::class, // MS fails -> @deprecated
     ]);
 }
 
