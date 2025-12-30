@@ -634,15 +634,18 @@ sudo apt-get install --no-install-recommends -y miller
 ```bash
 cd ~
 # sudo apt-get install --no-install-recommends -y libncurses5
-sudo apt-get install --no-install-recommends -y clang-19 clangd-19 lldb-19 lld-19
-sudo ln -s /usr/bin/clang-19 /usr/bin/clang
-sudo ln -s /usr/bin/clang++-19 /usr/bin/clang++
-sudo ln -s /usr/bin/clang-cpp-19 /usr/bin/clang-cpp
-sudo ln -s /usr/bin/clangd-19 /usr/bin/clangd
+sudo apt-get install --no-install-recommends -y clang-20 clangd-20 lldb-20 lld-20
+sudo rm /usr/bin/clang /usr/bin/clang++ /usr/bin/clang-cpp /usr/bin/clangd
+sudo ln -s /usr/bin/clang-20 /usr/bin/clang
+sudo ln -s /usr/bin/clang++-20 /usr/bin/clang++
+sudo ln -s /usr/bin/clang-cpp-20 /usr/bin/clang-cpp
+sudo ln -s /usr/bin/clangd-20 /usr/bin/clangd
 clangd --version
 ```
 
 #### Node (require in Vim LSP)
+
+[Versions](https://nodejs.org/en/about/previous-releases)
 
 ```bash
 cd ~
@@ -650,7 +653,7 @@ cd ~
 # @see https://blog.mattclemente.com/2020/06/26/oh-my-zsh-slow-to-load/
 # sudo apt-get install --no-install-recommends -y build-essential libssl-dev # Only oldest Ubuntu
 # # @see https://github.com/nvm-sh/nvm/releases
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
 echo '
 # # Uncomment to update node
@@ -794,7 +797,12 @@ sudo ln -s /var/www/html/LuaLS/lua-language-server/bin/lua-language-server /usr/
 
 #### Rust
 
+[Versions](https://releases.rs/)
+
 ```bash
+# Check version
+rustc --version
+
 curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
 rustup component add rust-analyzer
 ```
@@ -819,7 +827,10 @@ grep -F "Enable rust" ~/.profile
 [See 4](https://thenewstack.io/golang-how-to-use-the-go-install-command/)
 
 ```bash
-curl -L https://go.dev/dl/go1.24.3.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
+# Check version
+go version
+
+curl -L https://go.dev/dl/go1.25.5.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go-linux-amd64.tar.gz && rm go-linux-amd64.tar.gz
 
 grep -F "Enable go" ~/.profile
@@ -1059,6 +1070,8 @@ sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 rm -Rf composer-setup.php
 ## Update
 ## sudo composer self-update
+## Rollback
+## sudo composer self-update --rollback
 ## rm -Rf /usr/local/bin/composer
 ```
 
@@ -1076,6 +1089,9 @@ sudo mv composer-1.phar /usr/local/bin/composer_v1
 [See](https://github.com/shipmonk-rnd/composer-dependency-analyser)
 
 ```bash
+# Check version
+/usr/local/bin/dependency --version
+
 composer global require --dev shipmonk/composer-dependency-analyser
 sudo ln -s `pwd`/.config/composer/vendor/bin/composer-dependency-analyser /usr/local/bin/dependency
 ## dependency
@@ -1085,7 +1101,12 @@ sudo ln -s `pwd`/.config/composer/vendor/bin/composer-dependency-analyser /usr/l
 
 ## Code Sniffer Fixer for PHP (and Vim)
 
+[Versions](https://cs.symfony.com/)
+
 ```bash
+# Check version
+/usr/local/bin/php-cs-fixer --version
+
 cd ~
 sudo curl -L https://cs.symfony.com/download/php-cs-fixer-v3.phar -o /usr/local/bin/php-cs-fixer
 sudo chmod +x /usr/local/bin/php-cs-fixer
@@ -1099,6 +1120,9 @@ sudo chmod +x /usr/local/bin/php-cs-fixer
 [See](https://github.com/phpmd/phpmd/releases)
 
 ```bash
+# Check version
+/usr/local/bin/phpmd --version
+
 cd ~
 sudo curl -L https://github.com/phpmd/phpmd/releases/download/2.15.0/phpmd.phar -o /usr/local/bin/phpmd
 sudo chmod +x /usr/local/bin/phpmd
@@ -1166,7 +1190,7 @@ lxqt-leave
 
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/v2.36.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v2.40.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -1389,7 +1413,7 @@ sudo systemctl restart apparmor.service
 # Opera
 
 ```bash
-curl -L https://download3.operacdn.com/ftp/pub/opera/desktop/119.0.5497.56/linux/opera-stable_119.0.5497.56_amd64.deb -o opera.deb
+curl -L https://download3.operacdn.com/ftp/pub/opera/desktop/125.0.5729.49/linux/opera-stable_125.0.5729.49_amd64.deb -o opera.deb
 sudo dpkg -i opera.deb && rm -f opera.deb
 ```
 > Disable to use saU alias
@@ -1632,7 +1656,7 @@ composer global require chrisdicarlo/phpunit-failed-runner --dev
 [See](https://github.com/infection/infection/releases)
 
 ```bash
-sudo curl -L https://github.com/infection/infection/releases/download/0.29.14/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.32.0/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command:
 ## infection -j$(nproc)
@@ -2031,13 +2055,13 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 25.04
 uname -r
-# 6.14.0-34-generic
+# 6.14.0-37-generic
 command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
 nproc --all
 # 14
 command cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31825732 kB
+# 31825724 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.41
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -2079,7 +2103,7 @@ git lfs version
 docker --version | awk '{print $3}' | sed 's/,//g'
 # 28.2.1
 docker-compose --version | awk '{print $4}'
-# v2.36.2
+# v2.40.3
 feh --version | grep version | awk '{print $3}'
 # 3.10.3
 maim --version | awk '{print $1}'
@@ -2101,7 +2125,7 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.1
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.4.14
+# 8.4.16
 # nvm --version
 # # 0.39.3
 npm --version
@@ -2109,7 +2133,7 @@ npm --version
 node --version
 # v24.0.1
 mysql --version | awk '{print $3}'
-# 8.4.6-0ubuntu0.25.04.3
+# 8.4.7-0ubuntu0.25.04.2
 # stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
@@ -2117,11 +2141,11 @@ python3 --version | awk '{print $2}'
 ruby --version | awk '{print $2}'
 # 3.3.7
 rustc --version | awk '{print $2}'
-# 1.87.0
+# 1.92.0
 go version | awk '{print $3}' | sed 's/go//g'
-# 1.24.3
+# 1.25.5
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.2.0(7d47730)
+# 6.2.0(e23bae9)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -2134,7 +2158,7 @@ NetworkManager --version
 # 1.52.0
 bluemoon --version
 # 5.79
-firefox --version | awk '{print $3}'
+# firefox --version | awk '{print $3}'
 # 144.0b7
 zen --version | awk '{print $3}'
 # 1.18t
@@ -2151,9 +2175,9 @@ flameshot --version | head -1 | awk '{print $2}'
 # dpkg --list | wc --lines
 # dpkg --get-selections | grep -v deinstall > ~/packages.log
 dpkg --get-selections | grep -v deinstall | wc --lines
-# 2018
+# 2027
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
 # 51
 apt-mark showmanual | wc --lines
-# 368
+# 371
 ```
