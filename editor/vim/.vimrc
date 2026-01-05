@@ -6174,7 +6174,7 @@ EOF
         let l:filter_type = a:0 > 0 && a:1 ==# 1 ? '--no-fixed-strings' : '--fixed-strings'
         let l:filter_ignore = a:0 > 1 && a:2 ==# 1 ? ' --no-ignore --hidden' : ' --ignore'
 
-        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,.idea/*,.vscode/*.var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*,*.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
+        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,.idea/*,.vscode/*.var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*,coverage/*,*.diff,public/build,*.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
 
         let l:initial_command = printf(l:finder_command, fzf#shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
