@@ -66,6 +66,8 @@ done
 
 IFS=$SAVEIFS
 
+$PHPX --version | grep "^PHP "
+
 if [ "$ERROR" = true ] ; then
     exit 1
 fi

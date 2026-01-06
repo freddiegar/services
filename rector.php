@@ -94,6 +94,8 @@ if (version_compare($phpVersion, '8.0.0', '>=')) {
 if (version_compare($phpVersion, '8.1.0', '>=')) {
     $extraSkips = array_merge($extraSkips, [
         // \Rector\Php81\Rector\Array_\FirstClassCallableRector::class, @deprecated
+        \Rector\CodingStyle\Rector\FuncCall\FunctionFirstClassCallableRector::class, // MPI fails
+        \Rector\Php81\Rector\ClassMethod\NewInInitializerRector::class, // MPI fails
         \Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector::class, // Routes in Laravel are weirds to read, avoid (['method', 'params']) -> method(params)
         \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read, avoid (string) casting convert
         \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
