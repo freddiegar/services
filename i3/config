@@ -240,6 +240,7 @@ for_window [class="Gcr-prompter"]                                           floa
 
 # Utilities
 for_window [title="^Event Tester$"]                                         floating enable
+for_window [title="^Volume Control$"]                                       floating enable, focus floating, resize set 1026 770, move position center
 
 # Virtual Machines
 for_window [instance="^VirtualBox$" class="^VirtualBox$"]                   floating enable, move position center
