@@ -299,7 +299,7 @@ if g:initialization
         let g:isneovim = has('nvim')
         let g:hasgit = isdirectory('.git')
         let g:hasaia = filereadable(g:cwd . '/.hasaia')
-        let g:hasts = g:isneovim && (exists('g:neovide') || filereadable(g:cwd . '/.hasts'))
+        let g:hasts = g:isneovim
         let g:qfcommand = get(g:, 'qfcommand', '')
         let g:gitcommand = 'git --no-pager --no-optional-locks --literal-pathspecs -c gc.auto=0'
 
@@ -851,7 +851,7 @@ function! ClientsStatusline() abort
         return l:cache
     endif
 
-    let l:clients = substitute(l:clients, '_ls$\|ls$\|actor\|langd$', '', 'g')
+    let l:clients = substitute(l:clients, '_ls$\|ls$\|^ba\|actor\|langd$', '', 'g')
 
     if l:clients !=# l:filetype
         let l:extension = expand('%:e')
@@ -1261,6 +1261,7 @@ function! s:get_reverse(type) abort
                 \ 'yes': 'no',
                 \ 'YES': 'NO',
                 \ '&&': '||',
+                \ 'enable': 'disable',
                 \ }
 
     " @thanks https://developer.ibm.com/tutorials/l-vim-script-4/
@@ -3837,9 +3838,11 @@ lua << EOF
                 cloak_pattern = {
                     { '(DSN=).+', replace = '%1' },
                     { '(KEY=).+', replace = '%1' },
+                    { '(IV=).+', replace = '%1' },
                     { '(LOGIN=).+', replace = '%1' },
                     { '(PASS=).+', replace = '%1' },
                     { '(PASSWORD=).+', replace = '%1' },
+                    { '(PASSPHRASE=).+', replace = '%1' },
                     { '(SECRET=).+', replace = '%1' },
                     { '(TOKEN=).+', replace = '%1' },
                     { '(USER=).+', replace = '%1' },
@@ -3914,9 +3917,13 @@ lua << EOF
             },
             {
                 file_pattern = {
+                    'ipsec.conf', -- IPSec
                     'ipsec.secrets', -- IPSec
                 },
                 cloak_pattern = {
+                    { '(right=).+', replace = '%1' },
+                    { '(rightsubnet=).+', replace = '%1' },
+                    { '(xauth_identity=).+', replace = '%1' },
                     { '(PSK ).+', replace = '%1' },
                     { '(XAUTH ).+', replace = '%1' },
                 },
