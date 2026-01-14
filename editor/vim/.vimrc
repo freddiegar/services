@@ -1550,9 +1550,13 @@ nnoremap <silent> <Leader>Y :let @+='+' . line('.') . ' ' . expand('%')
 
 " Close current buffer (saving changes and buffer space)
 nnoremap <silent> <expr> <Leader>z
-            \ &filetype ==# 'netrw'
+            \ get(b:, 'isversus', v:false) ==# v:true
+            \ ? ":bdelete!<CR>"
+            \ : &filetype ==# 'netrw'
             \ ? ":let g:netrwopen = 0 <Bar> bwipeout<CR>"
-            \ : index(['', 'diff', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+            \ : index(['copilot-chat'], &filetype) >= 0
+            \ ? ":close<CR>"
+            \ : index(['', 'diff', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
             \ ? ":bdelete!<CR>"
             \ : ":update
             \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
@@ -2844,6 +2848,7 @@ let g:copilot_filetypes = {
             \ 'typescript': v:true,
             \ 'yaml': v:true,
             \ 'sql': v:true,
+            \ 'mdx': v:true,
             \ }
 
 if g:hasaia && !<SID>mustbeignore()
@@ -5287,6 +5292,7 @@ lua <<EOF
             typescript = true,
             yaml = true,
             sql = true,
+            mdx = true,
             markdown = function ()
                 filename = vim.fs.basename(vim.api.nvim_buf_get_name(0):lower())
 
