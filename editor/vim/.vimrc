@@ -1805,6 +1805,8 @@ function! s:find_filter(type, path) abort
 
     if a:type =~? 'v\?file'
         silent call fzf#vim#files(l:path, fzf#vim#with_preview({'options': ['--query', l:filter]}))
+    elseif a:type =~# 'hfind'
+        silent call <SID>rgfzf('HFind', l:filter, 0, l:path, 0, 2)
     elseif a:type =~# 'afind'
         silent call <SID>rgfzf('AFind', l:filter, 0, l:path, 0, 1)
     elseif a:type =~# 'ifind'
@@ -2910,6 +2912,10 @@ xnoremap <silent> <Leader>I :<C-u>call <SID>find_filter(visualmode() . 'ifind', 
 " String [A]ll files in current work directory
 nnoremap <silent> <Leader>A <Cmd>call <SID>find_filter('afind', g:cwd)<CR>
 xnoremap <silent> <Leader>A :<C-u>call <SID>find_filter(visualmode() . 'afind', g:cwd)<CR>
+
+" String [H]idden files in current work directory (include node_modules folder)
+nnoremap <silent> <Leader>H <Cmd>call <SID>find_filter('hfind', g:cwd)<CR>
+xnoremap <silent> <Leader>H :<C-u>call <SID>find_filter(visualmode() . 'hfind', g:cwd)<CR>
 
 " String re[G]ex in current work directory
 nnoremap <silent> <Leader>G <Cmd>call <SID>find_filter('regex', g:cwd)<CR>
@@ -6187,14 +6193,15 @@ EOF
     " @see :help :function
     " @see :help function-argument
     " @see http://www.adp-gmbh.ch/vim/user_commands.html
-    " prompt (string), query (string), fullscreen (0/1), directory (string), [fixed (0/1), ignore (0/1)] : void
+    " prompt (string), query (string), fullscreen (0/1), directory (string), [fixed (0/1), ignore (0/1/2)] : void
     function! s:rgfzf(prompt, query, fullscreen, directory, ...) abort
         let l:prompt = a:prompt . '> '
         let l:directory = a:directory ==# g:cwd ? '' : a:directory
         let l:filter_type = a:0 > 0 && a:1 ==# 1 ? '--no-fixed-strings' : '--fixed-strings'
-        let l:filter_ignore = a:0 > 1 && a:2 ==# 1 ? ' --no-ignore --hidden' : ' --ignore'
+        let l:filter_ignore = a:0 > 1 && index([1, 2], a:2) >= 0 ? ' --no-ignore --hidden' : ' --ignore'
+        let l:node_modules = a:0 > 1 && a:2 ==# 1 ? 'node_modules/*,*/node_modules/*,' : ''
 
-        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,.idea/*,.vscode/*.var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*,*/coverage/*,coverage/*,*.diff,public/build,*.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
+        let l:finder_command = "rg --glob '!{.git,*.log,*-lock.json,*.lock,.idea/*,.vscode/*.var/*," . l:node_modules . "storage/*,*/var/*,*/storage/*,*/coverage/*,coverage/*,*.diff,public/build,*.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9],junit*.xml}' --column --line-number --no-heading --color=always " . l:filter_type . l:filter_ignore . ' -- %s ' . l:directory . ' || true'
 
         let l:initial_command = printf(l:finder_command, fzf#shellescape(a:query))
         let l:reload_command = printf(l:finder_command, '{q}')
