@@ -4810,7 +4810,7 @@ lua <<EOF
                     local clients = {}
 
                     for bufnr, _ in pairs(client.attached_buffers) do
-                        if bufnr == event.buf and client.name ~= 'copilot' then
+                        if bufnr == event.buf and client.name ~= 'copilot' and client.name ~= 'laravel_ls' then
                             table.insert(clients, client.name)
 
                             vim.b[bufnr].clients= table.concat(clients, '|')
@@ -5992,7 +5992,8 @@ EOF
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gd <Cmd>call <SID>go_docs(substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<CR>
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gi :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<CR>
     autocmd FileType json nnoremap <silent> <buffer> <Leader>gI :echo 'Version:  ' . <SID>get_info('info', substitute(expand('<cWORD>'), '["\|:]', '', 'g'), v:true)<CR>
-    autocmd FileType json nnoremap <silent> <buffer> <Leader>gl :echo <SID>get_info('pull', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<CR>
+    autocmd FileType json nnoremap <silent> <buffer> <Leader>gl :echo <SID>get_info('pull', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Bar> edit!<CR>
+    autocmd FileType json nnoremap <silent> <buffer> <Leader>gL :echo <SID>get_info('pull-dev', substitute(expand('<cWORD>'), '["\|:]', '', 'g'))<Bar> edit!<CR>
 
     function! s:jsonfixer() abort
         if bufname('%') !=# ''
@@ -6023,6 +6024,12 @@ EOF
         elseif a:command ==# 'pull'
             if l:bname ==# 'composer.json'
                 let l:version = system('composer require "' . a:1 . '" 2>&1 | ' . g:filterprg . ' "^Using "')
+            endif
+
+            return len(l:version) > 0 ? l:version : 'None'
+        elseif a:command ==# 'pull-dev'
+            if l:bname ==# 'composer.json'
+                let l:version = system('composer require --dev "' . a:1 . '" 2>&1 | ' . g:filterprg . ' "^Using "')
             endif
 
             return len(l:version) > 0 ? l:version : 'None'
