@@ -713,7 +713,7 @@ alias W="find /var/www/html/{evertec,freddiegar} -mindepth 1 -maxdepth 1 -type d
 
 # SPA
 alias ww="[ \"\`pgrep --full 'npm run dev --host'\`\" = \"\" ] && sh -c 'cd /var/www/html/evertec/webcheckout-spa && npm run dev -- --host > /dev/null 2>&1 &' && echo '\e[32mStarted\e[0m SPA'"
-alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA' &&  PIDTOKILL=\`sudo lsof -i :3000 | grepx 3000 | awk '{print \$2}'\` && if [ \"\$PIDTOKILL\" != \"\" ]; then kill -9 \$PIDTOKILL; echo \"\e[31mKilled \$PIDTOKILL\e[0m\"; fi"
+alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA' &&  PIDTOKILL=\`sudo lsof -i :3030 | grepx 3030 | awk '{print \$2}'\` && if [ \"\$PIDTOKILL\" != \"\" ]; then kill -9 \$PIDTOKILL; echo \"\e[31mKilled \$PIDTOKILL\e[0m\"; fi"
 
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | yy"
@@ -738,7 +738,7 @@ alias __="ssh-add"
 # @thanks https://unix.stackexchange.com/a/90869
 # ssh-add -l: List identities register
 alias ___="trap '(test -z "\$SSH_AUTH_SOCK" -o ! -e "\$SSH_AUTH_SOCK") && eval \`/usr/bin/ssh-agent -k\`' 0"
-alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/var/*,*/storage/*,*/node_modules/*}'"
+alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/node_modules/*,*/var/*,*/storage/*}'"
 alias npkg="dpkg --list | wc --lines"
 
 alias kd="ctt Dark"
@@ -1001,7 +1001,7 @@ alias gloz="git log --reverse --pretty=format:'%s' | fzf --tac | yy"
 # export _GIT_SINCE="2024-01-01"
 # export _GIT_UNTIL="2024-01-31"
 # export _GIT_AUTHOR="Freddie Gar"
-# -Y: ear, -m:onths, -W: eekdays -d: ays, -a: uthors, -C: ontributors, -A: hours
+# -Y: ear, -m: onths, -W: eekdays -d: ays, -a: uthors, -C: ontributors, -A: hours
 alias gloq="git-quick-stats"
 alias glod="git log --graph --abbrev-commit --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%as: %ar) %C(bold blue)<%aN>%C(reset)' --no-merges --since=\"\$_GIT_SINCE\" --until=\"\$_GIT_UNTIL\""
 alias gloa="glod --author=\"\$_GIT_AUTHOR\""
@@ -1010,6 +1010,8 @@ alias gloo="git --no-pager log --pretty=format:'%aN <%ae>' --since=`date -d \"$(
 alias glol="git show --name-only"
 alias glof="git log --decorate=full --pretty=full --graph -b --stat"
 alias glos="git log --show-signature"
+# NOTE: reflog is cleared with: git gc
+alias gflo="git reflog | fzf | tr -d '\n' | awk '{print \$1}' | yy"
 
 alias gconf="git config --list"
 

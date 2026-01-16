@@ -753,8 +753,8 @@ npm install -g yaml-language-server
 #     "adapter": "mysql",
 #     "host": "db80",
 #     "port": 3306,
-#     "user": "root",
-#     "password": "N3uroSiS",
+#     "user": "user",
+#     "password": "password",
 #     "database": "microsites"
 # }' > /var/www/html/path/project/.sqllsrc.json
 #
@@ -765,8 +765,8 @@ npm install -g yaml-language-server
 #             "adapter": "mysql",
 #             "host": "db80",
 #             "port": 3306,
-#             "user": "root",
-#             "password": "N3uroSiS",
+#             "user": "user",
+#             "password": "password",
 #             "projectPaths": [
 #                 "/var/www/html/freddiegar/working/path/CODE/microsites"
 #             ]
@@ -998,7 +998,10 @@ gh config set -h github.com git_protocol ssh
 gh auth login
 ```
 > Disable to use saU alias
-> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*github-cli*.list
+>   sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*github-cli*.list
+> Update or Install new versions
+>   sudo sed -i 's/^###Disabled deb /   deb /g' /etc/apt/sources.list.d/*github-cli*.list
+>   sudo sed -i 's/^   deb /###Disabled deb /g' /etc/apt/sources.list.d/*github-cli*.list
 
 ## Wallpapers in i3
 
@@ -1019,28 +1022,33 @@ echo "\n" | sudo add-apt-repository ppa:ondrej/php
 # @see /etc/apt/sources.list.d/ondrej-ubuntu-php-plucky.sources :: plucky -> noble
 sudo sed -i 's/^Suites: plucky/Suites: noble/g' /etc/apt/sources.list.d/ondrej*.sources
 
-sudo apt-get install --no-install-recommends -y php8.4-cli
-sudo apt-get install --no-install-recommends -y php8.4-dev
-sudo apt-get install --no-install-recommends -y php8.4-mbstring
-sudo apt-get install --no-install-recommends -y php8.4-mysql
-sudo apt-get install --no-install-recommends -y php8.4-curl
-sudo apt-get install --no-install-recommends -y php8.4-zip
-sudo apt-get install --no-install-recommends -y php8.4-soap
-sudo apt-get install --no-install-recommends -y php8.4-gd
-sudo apt-get install --no-install-recommends -y php8.4-sqlite3
-sudo apt-get install --no-install-recommends -y php8.4-intl
-sudo apt-get install --no-install-recommends -y php8.4-memcached
-sudo apt-get install --no-install-recommends -y php8.4-redis
-sudo apt-get install --no-install-recommends -y php8.4-bcmath
-sudo apt-get install --no-install-recommends -y php8.4-gmp
-sudo apt-get install --no-install-recommends -y php8.4-xml
-sudo apt-get install --no-install-recommends -y php8.4-zip
+sudo apt-get install --no-install-recommends -y php8.5-cli
+sudo apt-get install --no-install-recommends -y php8.5-dev
+sudo apt-get install --no-install-recommends -y php8.5-mbstring
+sudo apt-get install --no-install-recommends -y php8.5-mysql
+sudo apt-get install --no-install-recommends -y php8.5-curl
+sudo apt-get install --no-install-recommends -y php8.5-zip
+sudo apt-get install --no-install-recommends -y php8.5-soap
+sudo apt-get install --no-install-recommends -y php8.5-gd
+sudo apt-get install --no-install-recommends -y php8.5-sqlite3
+sudo apt-get install --no-install-recommends -y php8.5-intl
+sudo apt-get install --no-install-recommends -y php8.5-memcached
+sudo apt-get install --no-install-recommends -y php8.5-redis
+sudo apt-get install --no-install-recommends -y php8.5-bcmath
+sudo apt-get install --no-install-recommends -y php8.5-gmp
+sudo apt-get install --no-install-recommends -y php8.5-xml
 
-## sudo apt-get remove php8.4\* && sudo apt-get autoremove
+sudo apt-get install --no-install-recommends -y php8.5-ast
+sudo apt-get install --no-install-recommends -y php8.5-pcov
+
+## sudo apt-get remove php8.5\* && sudo apt-get autoremove
 ## echo "\n" | sudo add-apt-repository --remove ppa:ondrej/php
 ```
 > Disable to use saU alias
-> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*ondrej*.sources
+>   sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*ondrej*.sources
+> Update or Install new versions
+>   sudo sed -i 's/^Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*ondrej*.sources
+>   sudo sed -i 's/^Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*ondrej*.sources
 
 ## PHP Xdebug (I'm not god)
 
@@ -1182,7 +1190,10 @@ lxqt-leave
 ## sudo apt-get remove docker-ce && sudo apt-get autoremove
 ```
 > Disable to use saU alias
-> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*docker*.list
+>   sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*docker*.list
+> Update or Install new versions
+>   sudo sed -i 's/^###Disabled deb /   deb /g' /etc/apt/sources.list.d/*docker*.list
+>   sudo sed -i 's/^   deb /###Disabled deb /g' /etc/apt/sources.list.d/*docker*.list
 
 ## Docker Compose
 
@@ -1417,7 +1428,10 @@ curl -L https://download3.operacdn.com/ftp/pub/opera/desktop/125.0.5729.49/linux
 sudo dpkg -i opera.deb && rm -f opera.deb
 ```
 > Disable to use saU alias
-> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*opera*.list
+>   sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*opera*.list
+> Update or Install new versions
+>   sudo sed -i 's/^###Disabled deb /   deb /g' /etc/apt/sources.list.d/*opera*.list
+>   sudo sed -i 's/^   deb /###Disabled deb /g' /etc/apt/sources.list.d/*opera*.list
 
 # JetBrains Mono
 
@@ -1819,7 +1833,10 @@ sudo apt-get install --no-install-recommends -y google-chrome-stable
 ## sudo apt-get remove google-chrome-stable && sudo apt-get autoremove
 ```
 > Disable to use saU alias
-> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*chrome*.sources
+>   sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*chrome*.sources
+> Update or Install new versions
+>   sudo sed -i 's/^Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*chrome*.sources
+>   sudo sed -i 's/^Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*chrome*.sources
 
 ## Brave (Anime ;P)
 
@@ -1828,7 +1845,10 @@ curl -fsS https://dl.brave.com/install.sh | sh
 ## sudo apt-get remove brave-browser && sudo apt-get autoremove
 ```
 > Disable to use saU alias
-> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*brave*.sources
+>   sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*brave*.sources
+> Update or Install new versions
+>   sudo sed -i 's/^Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*brave*.sources
+>   sudo sed -i 's/^Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*brave*.sources
 
 ## Microsoft Edge (for Teams :()
 
@@ -1849,7 +1869,10 @@ sudo apt install microsoft-edge-stable
 > -rw-r--r-- 1 root root 1733 Mar 26  2021 ubuntu-keyring-2018-archive.gpg
 
 > Disable to use saU alias
-> sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*microsoft-edge*.list
+>   sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*microsoft-edge*.list
+> Update or Install new versions
+>   sudo sed -i 's/^###Disabled deb /   deb /g' /etc/apt/sources.list.d/*microsoft-edge*.list
+>   sudo sed -i 's/^   deb /###Disabled deb /g' /etc/apt/sources.list.d/*microsoft-edge*.list
 
 ## GNUPG (Legacy)
 
@@ -1874,7 +1897,10 @@ sudo apt-get install --no-install-recommends -y onefetch
 ## echo "\n" | sudo add-apt-repository --remove ppa:o2sh/onefetch
 ```
 > Disable to use saU alias
-> sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*onefetch*.sources
+>   sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*onefetch*.sources
+> Update or Install new versions
+>   sudo sed -i 's/^Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*onefetch*.sources
+>   sudo sed -i 's/^Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*onefetch*.sources
 
 # # Redshif (for my eyes please)
 #
@@ -2061,7 +2087,7 @@ command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 nproc --all
 # 14
 command cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31825724 kB
+# 31825720 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.41
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -2145,7 +2171,7 @@ rustc --version | awk '{print $2}'
 go version | awk '{print $3}' | sed 's/go//g'
 # 1.25.5
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.2.0(e23bae9)
+# 6.2.0(b11e39a)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -2175,9 +2201,9 @@ flameshot --version | head -1 | awk '{print $2}'
 # dpkg --list | wc --lines
 # dpkg --get-selections | grep -v deinstall > ~/packages.log
 dpkg --get-selections | grep -v deinstall | wc --lines
-# 2027
+# 2070
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
 # 51
 apt-mark showmanual | wc --lines
-# 371
+# 405
 ```

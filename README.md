@@ -458,9 +458,12 @@ zend_extension=/usr/lib/php/20210902/xdebug.so
 [See](https://github.com/krakjoe/pcov)
 
 ```bash
+sudo apt-get install --no-install-recommends php8.4-pcov
+
+# or
+
 sudo pecl install -f pcov
 
-echo 'extension=/usr/lib/php/20220829/pcov.so' | sudo tee /etc/php/8.2/mods-available/pcov.ini
 echo 'extension=/usr/lib/php/20240924/pcov.so' | sudo tee /etc/php/8.4/mods-available/pcov.ini
 
 sudo phpenmod pcov
@@ -468,18 +471,23 @@ sudo phpdismod pcov
 ```
 > PHP 8.4: sudo pecl install -f pcov-1.0.12
 
-## AST
+## AST (Used in Phan)
 
 [See](https://github.com/nikic/php-ast)
 
 ```bash
+sudo apt-get install --no-install-recommends php8.5-ast
+
+# or
+
 sudo pecl install -f ast
 
-echo 'extension=/usr/lib/php/20210902/ast.so' | sudo tee /etc/php/8.1/mods-available/ast.ini
+echo 'extension=/usr/lib/php/20250925/ast.so' | sudo tee /etc/php/8.5/mods-available/ast.ini
 
 sudo phpenmod ast
 sudo phpdismod ast
 ```
+> PHP 8.5: sudo pecl install -f ast-1.1.3
 
 ### Troubles
 

@@ -485,10 +485,15 @@ displayDetailsOnTestsThatTriggerWarnings="true"
 or
 
 ```bash
-
-php8.4 vendor/bin/phpunit --configuration phpunit-pipelines.xml --no-coverage --display-deprecations --testsuite Acl > Acl.log
-
+php8.4 vendor/bin/phpunit --no-coverage --display-deprecations
 ```
+
+Show deprecations details in PHPUnit 11
+
+```bash
+php8.4 vendor/bin/phpunit --no-coverage --display-deprecations -display-phpunit-deprecations
+```
+> phpx vendor/bin/phpunit --migrate-configuration
 
 Enable autosuggestions in oh-my-zsh
 

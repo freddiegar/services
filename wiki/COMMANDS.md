@@ -2056,3 +2056,13 @@ sudo ipsec rereadsecrets
 sudo ipsec up [config]
 sudo ipsec down [config]
 ```
+
+Find files to operate
+
+```bash
+find . -type f -name ".hasts" -exec rm {} \;
+find . -type f -name ".hasts" -print
+find . -type f -name ".hasts" -maxdepth 1 -print
+```
+> -print: to dry-run
+> -maxdepth: current and 1 subdir

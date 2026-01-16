@@ -246,7 +246,7 @@ endsnippet
 
 snippet [] "Array" i
 [
-    $1 => $0,
+    '$1' => $0,
 ]
 endsnippet
 
@@ -350,7 +350,7 @@ endsnippet
 snippet try "Try/catch" b
 try {
     ${1:${VISUAL}}
-} catch (${1:Exception} $e) {
+} catch (${1:Throwable} $e) {
     $0
 }
 endsnippet
