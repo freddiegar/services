@@ -2484,10 +2484,7 @@ Plug 'vim-test/vim-test', {'for': ['php', 'vader', 'java']}     " Run test: <Lea
 Plug 'skywind3000/asyncrun.vim'                                 " Run async tasks: tests, commits, etc in background
 " Plug 'romainl/vim-qf'                                           " Run Cfilter using wrapper: Keep|Filter, Reject|Filter!, Restore
 Plug 'mbbill/undotree'                                          " Run undo world: g-, g+ . Not use 'on' option.
-Plug 'phpactor/phpactor', {
-            \ 'for': 'php',
-            \ 'do': 'composer install --no-dev --optimize-autoloader'
-            \ }                                                 " LSP tool for PHP (and refactor)
+
 " Plug 'prabirshrestha/vim-lsp', {
 "             \ 'for': 'vim',
 "             \ }                                                 " LSP tool for Vim
@@ -2544,8 +2541,8 @@ if g:isneovim
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
 
     " if has('gui_running')
-    " Plug 'mason-org/mason.nvim'                                 " Install LSP from Editor
-    " Plug 'mason-org/mason-lspconfig.nvim'                       " Integrate LSP & Autocompletion
+    Plug 'mason-org/mason.nvim'                                 " Install LSP from Editor
+    Plug 'mason-org/mason-lspconfig.nvim'                       " Integrate LSP & Autocompletion
     Plug 'neovim/nvim-lspconfig'                                " LSP -> Neovim looks pretty bad
 
     " Plug 'mfussenegger/nvim-jdtls', {'for': 'java'}             " LSP helper for Java
@@ -2566,6 +2563,10 @@ if g:isneovim
     " Plug 'j-hui/fidget.nvim'                                    " LSP -> Progress ... distracting?
     " endif
 else
+    Plug 'phpactor/phpactor', {
+                \ 'for': 'php',
+                \ 'do': 'composer install --no-dev --optimize-autoloader'
+                \ }                                             " LSP tool for PHP (and refactor)
     Plug 'airblade/vim-gitgutter'                               " Show signs changes if cwd is a git repository (using VimL)
     Plug 'markonm/traces.vim'                                   " See range, substitution and global preview
     Plug 'machakann/vim-highlightedyank'                        " See yank preview
@@ -4893,23 +4894,6 @@ EOF
 lua <<EOF
     local cmp = require'cmp'
 
-    -- :Mason
-    -- require("mason").setup()
-    -- require("mason-lspconfig").setup()
-
-    -- require('fidget').setup({
-    --     progress = {
-    --         suppress_on_insert = true,
-    --         ignore_done_already = true,
-    --         ignore_empty_message = true,
-    --     },
-    --     notification = {
-    --         window = {
-    --             winblend = 100, -- Transparency, using 0 fails after commit https://github.com/j-hui/fidget.nvim/commit/46cb5c1cac5c25ac255a335755551a8b476fa63f
-    --         }
-    --     },
-    -- })
-
     require('lspconfig.ui.windows').default_options.border = 'single'
 
     -- @see https://youtu.be/gK31IVy0Gp0?t=250
@@ -5150,9 +5134,27 @@ lua <<EOF
     --     }
     -- })
 
-    -- @see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-    local lspconfig = require('lspconfig')
-    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+    -- :Mason
+    require('mason').setup()
+    require('mason-lspconfig').setup{
+        ensure_installed = {
+            'bashls',
+            'clangd',
+            'gopls',
+            'jdtls',
+            'jsonls',
+            -- 'laravel_ls',
+            'lua_ls',
+            'phpactor',
+            'rust_analyzer',
+            'solargraph',
+            -- 'sqlls',
+            -- 'tailwindcss',
+            'ts_ls',
+            'vimls',
+            'yamlls',
+        },
+    }
 
     -- @see https://github.com/eclipse-jdtls/eclipse.jdt.ls
     -- @run lua=os.getenv('HOME')
@@ -5161,29 +5163,7 @@ lua <<EOF
 
     -- @see https://www.youtube.com/watch?v=LaS32vctfOY
     local lspservers = {
-        vimls = {},
         bashls = {},
-        lua_ls = {},
-        jsonls = {},
-        ts_ls = {},
-        yamlls = {},
-        -- Slower! HIGH RAM and CPU usage
-        -- tailwindcss = {},
-        -- Doesn't work?
-        -- sqlls = {},
-        -- https://haskell-language-server.readthedocs.io/en/latest/installation.html
-        -- https://github.com/elixir-lsp/elixir-ls
-        solargraph = {},
-        gopls = {},
-        laravel_ls = {},
-        rust_analyzer = {},
-        jdtls = {
-            cmd = {
-                -- @thanks https://eruizc.dev/blog/en/java-with-neovim/
-                vim.fn.expand('$HOME/.local/share/nvim/mason/bin/jdtls'),
-                ('--jvm-arg=-javaagent:%s'):format(vim.fn.expand'$HOME/.local/share/nvim/mason/share/jdtls/lombok.jar'),
-            },
-        },
         clangd = {
             -- cmd = {
             --     'clangd',
@@ -5194,13 +5174,24 @@ lua <<EOF
             --     '--header-insertion-decorators',
             -- },
         },
+        gopls = {},
+        jdtls = {
+            cmd = {
+                -- @thanks https://eruizc.dev/blog/en/java-with-neovim/
+                vim.fn.expand('$HOME/.local/share/nvim/mason/bin/jdtls'),
+                ('--jvm-arg=-javaagent:%s'):format(vim.fn.expand'$HOME/.local/share/nvim/mason/share/jdtls/lombok.jar'),
+            },
+        },
+        jsonls = {},
+        -- 2026-01-15: It's not working...
+        -- laravel_ls = {},
+        lua_ls = {},
         -- @see https://phpactor.readthedocs.io/en/master/reference/configuration.html
         phpactor = {
             init_options = {
                 ['logging.enabled'] = false,
                 ['language_server_code_transform.import_globals'] = true,
                 ['language_server_completion.trim_leading_dollar'] = true,
-
                 -- Turn off a lot diagnostics 'invalid' messages: Function array_map not found
                 -- @see https://phpactor.readthedocs.io/en/master/tips/performance.html#large-files
                 -- @see https://github.com/phpactor/phpactor/issues/2754
@@ -5208,7 +5199,6 @@ lua <<EOF
                 ['language_server.diagnostics_on_update'] = false,
                 ['language_server.diagnostics_on_open'] = false,
                 ['language_server.diagnostics_on_save'] = false,
-
                 ['language_server_php_cs_fixer.enabled'] = false,
                 ['language_server_phpstan.enabled'] = false,
                 ['language_server_psalm.enabled'] = false,
@@ -5221,7 +5211,6 @@ lua <<EOF
                 ['prophecy.enabled'] = false,
                 ['symfony.enabled'] = false,
                 ['file_path_resolver.enable_logging'] = false,
-
                 ['indexer.exclude_patterns'] = {
                     '.git/**/*',
                     '/node_modules/**/*',
@@ -5233,13 +5222,33 @@ lua <<EOF
                     '/vendor/composer/**/*',
                 }
             },
-        }
+        },
+        rust_analyzer = {},
+        -- https://haskell-language-server.readthedocs.io/en/latest/installation.html
+        -- https://github.com/elixir-lsp/elixir-ls
+        solargraph = {},
+        -- Doesn't work?
+        -- sqlls = {},
+        -- Slower! HIGH RAM and CPU usage
+        -- tailwindcss = {},
+        ts_ls = {},
+        vimls = {},
+        yamlls = {},
     }
 
+    -- @see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+    vim.lsp.config("*", {
+        capabilities = capabilities,
+    })
+
     for lspserver, config in pairs(lspservers) do
-        lspconfig[lspserver].setup(vim.tbl_deep_extend('force', {}, {
+        vim.lsp.config(lspserver, vim.tbl_deep_extend('force', {}, {
             capabilities = capabilities,
         }, config))
+
+        vim.lsp.enable(lspserver)
     end
 
     vim.diagnostic.config {
@@ -5247,11 +5256,24 @@ lua <<EOF
         severity_sort = true,
     }
 
+    -- require('fidget').setup({
+    --     progress = {
+    --         suppress_on_insert = true,
+    --         ignore_done_already = true,
+    --         ignore_empty_message = true,
+    --     },
+    --     notification = {
+    --         window = {
+    --             winblend = 100, -- Transparency, using 0 fails after commit https://github.com/j-hui/fidget.nvim/commit/46cb5c1cac5c25ac255a335755551a8b476fa63f
+    --         }
+    --     },
+    -- })
+
     vim.cmd([[doautocmd <nomodeline> User UpdateStatusline]])
 EOF
         endfunction
 
-        " IAA
+        " AIA
         " @see https://github.com/zbirenbaum/copilot.lua
         autocmd BufReadPost * ++once silent call <SID>niaassistence()
 
@@ -6446,9 +6468,6 @@ EOF
 
             call Message(l:message)
         endif
-
-        " First start dont load LSP, then... FORCE! for each window
-        silent execute 'silent! windo LspStart'
 
         doautocmd <nomodeline> User UpdateStatusline
     endfunction
