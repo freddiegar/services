@@ -1348,6 +1348,18 @@ max-cache-ttl-ssh 864000' > ~/.gnupg/gpg-agent.conf
 grep "default-cache-ttl\|max-cache-ttl\|default-cache-ttl-ssh\|max-cache-ttl-ssh" ~/.gnupg/gpg-agent.conf
 ```
 
+## Direnv
+
+[See](https://github.com/direnv/direnv?tab=readme-ov-file)
+
+```bash
+grep -F "direnv" ~/.zshrc
+
+echo '
+# Direnv hook
+eval "$(direnv hook zsh)"' >> ~/.zshrc
+```
+
 # Postman
 
 ```bash

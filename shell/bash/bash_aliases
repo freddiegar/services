@@ -388,23 +388,28 @@ pcs() {
 #   - cnv
 alias nv="node --version"
 cnv() {
-    VERSION=$(command ls -L1 ~/.nvm/versions/node | fzf)
+    if [ "$#" -eq 0 ]; then
+        VERSION=$(command ls -L1 ~/.nvm/versions/node | fzf)
+    else
+        VERSION=$1
+    fi
 
     if [ "$VERSION" = "" ]; then
         # Nothing selected, canceled!
         return 0
     fi
 
+    if [ ! -d "$HOME/.nvm/versions/node/$VERSION/bin" ]; then
+        echo "\e[31mNot supported node $VERSION, aborted!\e[0m"
+
+        return 1
+    fi
+
     CVERSION=`command cat $HOME/.nvm/alias/default`
 
     echo "Using node \e[32m$VERSION\e[0m \e[90mover $CVERSION\e[0m"
 
-    NVMPATH="$(echo ":$HOME/.nvm/versions/node/.*/bin" | sed 's#/#\\/#g')"
-    CLNPATH=$(echo $PATH | sed "s/${NVMPATH}//g")
-
-    echo $VERSION > ~/.nvm/alias/default
-
-    export PATH=$CLNPATH:"$HOME/.nvm/versions/node/`command cat $HOME/.nvm/alias/default`/bin"
+    . ~/working/nodeversion.sh $VERSION --ignore
 
     return $?
 }
@@ -758,6 +763,7 @@ alias vl="$EDITOR -c \"set background=light\""
 alias rz="source ~/.profile && exec zsh"
 alias ra="source ~/.bash_aliases"
 alias r3="i3-msg 'restart'"
+alias re="direnv allow ."
 
 alias sas="sudo apt-cache search"
 alias sad="sudo apt-cache show"
