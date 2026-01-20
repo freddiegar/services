@@ -16,6 +16,7 @@
 " @see https://whyisitsogood.wiki/Vim
 " @see https://fernandocejas.com/blog/engineering/2021-08-04-cooking-effective-code-reviews/
 " @see https://endler.dev/2025/best-programmers/
+" @see https://www.morling.dev/blog/the-code-review-pyramid/
 
 " HUMOR?
 " @see https://www.monkeyuser.com/2016/bugfixing-for-developers/
@@ -1010,13 +1011,12 @@ function! s:statusline(lastmode) abort
     endif
 
     setlocal statusline=\                                       " Extra space
+    " setlocal statusline+=%3n\                                   " Buffer [n]umber
 
     " This expressions redraw statusline after save file always (slower)
     setlocal statusline+=%{GetNameCurrentPath()}                " Relative folder
     setlocal statusline+=%{GetNameCurrentFile()}                " Relative filename
     setlocal statusline+=%{GetTypeCurrentFile()}                " Type file
-    " setlocal statusline+=\                                      " Extra space
-    " setlocal statusline+=\#%n                                   " Buffer number
 
     setlocal statusline+=%=                                     " New group (align right)
     setlocal statusline+=\%m                                    " Modified flag
@@ -1068,6 +1068,9 @@ function! s:statusline(lastmode) abort
 
     " setlocal statusline+=\                                      " Extra space
     " setlocal statusline+=c:%3c                                  " Cursor [c]olumn
+
+    setlocal statusline+=\                                      " Extra space
+    setlocal statusline+=%p%%                                   " [p]ercentage
 
     setlocal statusline+=\                                      " Extra space
 endfunction
@@ -1558,6 +1561,8 @@ nnoremap <silent> <expr> <Leader>z
             \ ? ":close<CR>"
             \ : index(['', 'diff', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
             \ ? ":bdelete!<CR>"
+            \ : !filereadable(expand('%'))
+            \ ? ':silent bwipeout<CR>'
             \ : ":update
             \ <Bar> if get(winlayout(), 'col', '') !=# 'leaf'
             \ <Bar>  silent close
@@ -2852,6 +2857,7 @@ let g:copilot_filetypes = {
             \ 'yaml': v:true,
             \ 'sql': v:true,
             \ 'mdx': v:true,
+            \ 'json': v:true,
             \ }
 
 if g:hasaia && !<SID>mustbeignore()
@@ -3899,6 +3905,10 @@ lua << EOF
                 cloak_pattern = {
                     { '(Pass:).+', replace = '%1' },
                     { '(:db = ).+', replace = '%1' },
+                    -- Landlord
+                    { '("password":).+', replace = '%1' },
+                    { '("key":).+', replace = '%1' },
+                    { '("dsn":).+', replace = '%1' },
                 },
             },
             {
@@ -5135,6 +5145,7 @@ lua <<EOF
     -- })
 
     -- :Mason
+    -- @see ls -la ~/.local/share/nvim/mason/packages
     require('mason').setup()
     require('mason-lspconfig').setup{
         ensure_installed = {
@@ -5325,11 +5336,12 @@ lua <<EOF
                 filename = vim.fs.basename(vim.api.nvim_buf_get_name(0):lower())
 
                 -- @see https://www.luadocs.com/docs/functions/string/match
-                if string.match(filename, 'changelog.md') or string.match(filename, 'notes_%d*.md') then
-                    return true
-                end
+                return string.match(filename, 'changelog.md') or string.match(filename, 'notes_%d*.md')
+            end,
+            json = function ()
+                filepath = vim.api.nvim_buf_get_name(0):lower()
 
-                return false
+                return string.match(filepath, '/lang')
             end,
         },
         copilot_node_command = vim.fn.expand("$HOME") .. '/.nvm/versions/node/v24.0.1/bin/node',
