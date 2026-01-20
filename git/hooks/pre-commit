@@ -179,6 +179,8 @@ elif [ "$COMMAND" = "" ]; then
     COMMAND="phpx vendor/bin/phpunit"
 fi
 
+PHPUNITVERSION=`phpx vendor/bin/phpunit --version | tr -d "\n" | awk '{print $2}' | awk -F. '{print $1}'`
+
 if [ $THREADS -eq 0 ]; then
 if [ "`echo "$COMMAND" | grepx -F "memory_limit"`" != "" ]; then
     # Break your limits!
@@ -205,7 +207,12 @@ if [ "$QUICKFAIL" = "" ] && [ "`echo "$COMMAND" | grepx -F -- "--stop-on-risky"`
     COMMAND="$COMMAND --stop-on-risky"
 fi
 
-if [ "`echo "$COMMAND" | grepx -F -- "--no-coverage"`" = "" ]; then
+if [ $PHPUNITVERSION -ge 11 ] && [ "`echo "$COMMAND" | grepx -F -- "--display-phpunit-deprecations"`" = "" ]; then
+    # In PHPUnit 11+ show details about deprecations
+    COMMAND="$COMMAND --display-phpunit-deprecations"
+fi
+
+if [ $PHPUNITVERSION -ge 10 ] && [ "`echo "$COMMAND" | grepx -F -- "--no-coverage"`" = "" ]; then
     # In PHPUnit 10+ avoid WARNING (finish with status code: 1)
     #   No code coverage driver is available
     COMMAND="$COMMAND --no-coverage"
