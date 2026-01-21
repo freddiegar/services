@@ -410,6 +410,7 @@ default_floating_border pixel 3
 bindsym $mod+Shift+a exec --no-startup-id /opt/awsvpnclient/AWS\ VPN\ Client
 bindsym $mod+Shift+b exec --no-startup-id brave-browser
 # bindsym $mod+Shift+d exec --no-startup-id freecad
+bindsym $mod+Shift+d exec --no-startup-id [ "`pgrep gromit-mpx`" = "" ] && gromit-mpx --active || pkill -f gromit-mpx
 # bindsym $mod+Shift+e exec --no-startup-id nautilus --no-desktop
 bindsym $mod+Shift+f exec --no-startup-id firefox
 bindsym $mod+Shift+g exec --no-startup-id google-chrome

@@ -1832,7 +1832,30 @@ sudo apt-get install --no-install-recommends -y screenkey
 
 ```bash
 sudo apt-get install --no-install-recommends -y flameshot
+
+rm ~/.config/flameshot/flameshot.ini
+ln -s `pwd`/flameshot/flameshot.ini ~/.config/flameshot/flameshot.ini
 ```
+
+## Dashboard++
+
+[See](https://github.com/bk138/gromit-mpx?tab=readme-ov-file)
+
+```bash
+sudo apt-get install --no-install-recommends -y gromit-mpx
+
+rm ~/.config/gromit-mpx.ini
+ln -s `pwd`/gromit/gromit-mpx.ini ~/.config/gromit-mpx.ini
+
+rm ~/.config/gromit-mpx.cfg
+ln -s `pwd`/gromit/gromit-mpx.cfg ~/.config/gromit-mpx.cfg
+```
+> F9:           toggle painting
+> SHIFT-F9:     clear screen
+> CTRL-F9:      toggle visibility
+> ALT-F9:       quit Gromit-MPX
+> F8:           undo last stroke
+> SHIFT-F8:     redo last undone stroke
 
 ## Google Chrome
 

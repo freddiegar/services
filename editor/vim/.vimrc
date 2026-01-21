@@ -6977,7 +6977,7 @@ EOF
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c,*Xresources,vifmrc :call <SID>cleanup('te')
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c,*Xresources,vifmrc,*.cfg :call <SID>cleanup('te')
     autocmd BufWritePre * if expand('%:e') ==# '' && index(['sh'], &filetype) >= 0 | call <SID>cleanup('te') | endif
 
     " One <C-x><C-f> to auto-complete files
