@@ -119,7 +119,8 @@ services:
           memory: $CACHE_MEMORY
 
   awstack:
-    image: localstack/localstack:4
+    # image: localstack/localstack:4 # NOT persistence in CE
+    image: gresau/localstack-persist:4 # Persistence
     container_name: awstack
     environment:
       - SERVICES=s3
@@ -127,16 +128,19 @@ services:
       - DEBUG=$STACK_DEBUG
       # @see https://www.w3tutorials.net/blog/how-to-keep-data-of-localstack-s3-after-docker-compose-down-and-later-up/
       # @see https://github.com/localstack/localstack/issues/1175
-      - PERSISTENCE=$STACK_PERSISTENCE
+      # - PERSISTENCE=$STACK_PERSISTENCE
+      # @see https://hub.docker.com/r/gresau/localstack-persist
+      - PERSIST_S3=$STACK_PERSISTENCE
     ports:
       - $STACK_PORT:4566
       - $STACK_PORT_RANGE:4510-4559
     # command: ['bash', '-c', 'awslocal s3api create-bucket --bucket development-bucket']
     volumes:
       # @see https://docs.localstack.cloud/aws/capabilities/config/filesystem/
-      - $STACK_DOCROOT:/var/lib/localstack
-      - $STACK_DOCROOT/data:/tmp
-      - /var/run/docker.sock:/var/run/docker.sock
+      # - $STACK_DOCROOT:/var/lib/localstack
+      # - $STACK_DOCROOT/data:/tmp
+      # - /var/run/docker.sock:/var/run/docker.sock
+      - $STACK_DOCROOT/data:/persisted-data
     networks:
       development:
         ipv4_address: $STACK_IP_ADDRESS
