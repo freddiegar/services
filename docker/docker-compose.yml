@@ -118,6 +118,36 @@ services:
           cpus: $CACHE_CORE
           memory: $CACHE_MEMORY
 
+  awstack:
+    image: localstack/localstack:4
+    container_name: awstack
+    environment:
+      - SERVICES=s3
+      # @see https://docs.localstack.cloud/references/configuration/
+      - DEBUG=$STACK_DEBUG
+      # @see https://www.w3tutorials.net/blog/how-to-keep-data-of-localstack-s3-after-docker-compose-down-and-later-up/
+      # @see https://github.com/localstack/localstack/issues/1175
+      - PERSISTENCE=$STACK_PERSISTENCE
+    ports:
+      - $STACK_PORT:4566
+      - $STACK_PORT_RANGE:4510-4559
+    # command: ['bash', '-c', 'awslocal s3api create-bucket --bucket development-bucket']
+    volumes:
+      # @see https://docs.localstack.cloud/aws/capabilities/config/filesystem/
+      - $STACK_DOCROOT:/var/lib/localstack
+      - $STACK_DOCROOT/data:/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      development:
+        ipv4_address: $STACK_IP_ADDRESS
+    extra_hosts:
+      - "host.docker.internal:${HOST_DOCKER}"
+    deploy:
+      resources:
+        limits:
+          cpus: $STACK_CORE
+          memory: $STACK_MEMORY
+
   apache85:
     container_name: apache85
     build:

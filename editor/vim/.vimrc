@@ -1069,8 +1069,8 @@ function! s:statusline(lastmode) abort
     " setlocal statusline+=\                                      " Extra space
     " setlocal statusline+=c:%3c                                  " Cursor [c]olumn
 
-    setlocal statusline+=\                                      " Extra space
-    setlocal statusline+=%p%%                                   " [p]ercentage
+    " setlocal statusline+=\                                      " Extra space
+    " setlocal statusline+=%p%%                                   " [p]ercentage
 
     setlocal statusline+=\                                      " Extra space
 endfunction
