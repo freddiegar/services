@@ -1,5 +1,6 @@
 ! see https://smarttech101.com/urxvt-installation-color-scheme-fonts-resize-etc/
 
+! Better fonts in High Resolutions
 Xft.dpi: 96
 Xft.antialias: true
 Xft.autohint: true
@@ -19,6 +20,11 @@ URxvt*imLocale: en_US.UTF-8
 URxvt*termName: rxvt-256color
 URxvt*skipBuiltinGlyphs: true
 
+! Do not scroll while...
+URxvt*scrollTtyOutput: false
+URxvt*scrollWithBuffer: true
+URxvt*scrollTtyKeypress: true
+
 ! Paste using Shift-Insert
 URxvt.iso14755: false
 URxvt.iso14755_52: false
@@ -33,18 +39,18 @@ URxvt.saveLines: 10000
 URxvt.scrollBar: false
 URxvt.transparent: false
 
-! resize-font
+! Resize-font
 URxvt.keysym.Control-minus:  resize-font:smaller
 URxvt.keysym.Control-plus:   resize-font:bigger
 URxvt.keysym.Control-equal:  resize-font:equal
 
-! move between words
+! Move between history command and words
 URxvt.keysym.Control-Up:     \033[1;5A
 URxvt.keysym.Control-Down:   \033[1;5B
 URxvt.keysym.Control-Left:   \033[1;5D
 URxvt.keysym.Control-Right:  \033[1;5C
 
-! Colors
+! Colors (no opacity)
 URxvt.background:   #F9F5D7
 URxvt.foreground:   #3C3836
 
@@ -69,7 +75,7 @@ URxvt.color13:      #8F3F71
 ! cyan
 URxvt.color6:       #689D6A
 URxvt.color14:      #427B58
-! white
+! gray
 URxvt.color7:       #A89984
 URxvt.color15:      #3C3836
 
