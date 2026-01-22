@@ -325,12 +325,20 @@ dtest() {
 
 # SubResource Integrity Hash
 #   - sri path
-#   - sri path [sha256] default
-#   - sri path sha384
+#   - sri path [256] default
+#   - sri path 384
 sri() {
     # openssl dgst -${2:-sha256} -binary $1 | openssl base64 -A
     # EQUEALS but Kiss
-    shasum -b -a ${2:-256} $1 | awk '{ print $1 }' | xxd -r -p | base64
+    shasum --binary --algorithm ${2:-256} $1 | awk '{ print $1 }' | xxd -revert -plain | base64
+}
+
+# Directory Integrity Hash
+#   - shadir
+#   - shadir [256] default
+#   - shadir 384
+shadir() {
+    shasum --algorithm ${1:-256} <(find . -type f -not -path "./vendor/*" -exec shasum --algorithm ${1:-256} {} \; | sort) | awk '{print $1}'
 }
 
 # OpenSSL PEM:
@@ -1070,6 +1078,9 @@ alias fx="SELECTION=\$(find ~/Music -type f -print | dmenu -b -i -p 'Play: ' || 
 
 # Themed
 alias dmenu="dmenu -fn 'fira code retina:size:12' -nb '#000000' -nf '#F3F4F5' -sb '#000000' -sf '#D65D0E'"
+
+# Ignore some dirs by default
+alias tree="tree -I 'node_modules' -I 'vendor' -I 'storage'"
 
 # Last command BUT as sudo, need simple quotes!
 # @see https://unix.stackexchange.com/a/158480
