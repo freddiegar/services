@@ -4162,6 +4162,9 @@ function! s:run(range, interactive, ...) abort
         let l:runner = ''
     endif
 
+    " Remove inline comments...
+    let l:command = trim(l:command, &commentstring !=# '' ? trim(split(&commentstring)[0]) : ' ', 1)
+
     " Guessing...
     let l:suffix = l:command !=# '' ? trim(split(l:command, ' ')[0]) : ''
 
@@ -4328,10 +4331,11 @@ command! -nargs=* -range -bang RR call <SID>runterm(<range>, <bang>0, <f-args>)
 " range (0,1,2), interactive (0/1): void
 function! s:preview(range, interactive) abort
     let l:content = <SID>get_selection(a:range, a:interactive, [])
+    let l:preview = '/tmp/preview-' . strftime('%Y%m%d%H%M%S') . '.html'
 
-    call writefile([l:content], '/tmp/preview.html')
+    call writefile([l:content], l:preview)
 
-    silent call <SID>go_url('/tmp/preview.html')
+    silent call <SID>go_url(l:preview)
 endfunction
 
 command! -nargs=0 -range -bang P call <SID>preview(<range>, <bang>0)
@@ -6682,8 +6686,9 @@ EOF
 
         if index(l:options, 'q') >= 0 && getline(1) !=# '' " Ignores clean-up files
             silent! keeppatterns retab
+            " Clue multilines in oneline
             silent! keeppatterns g!/^\d\{4}-/normal! kJ
-            silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|set session \| Connect\|mysqld\|version_comment\|general_log\|IN_PROCCES/v/ WHEN /d_
+            silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|SET NAMES \|set session \| SET SESSION\| Connect\|mysqld\|version_comment\|select connection_id\|general_log\|IN_PROCCES/v/ WHEN /d_
             " Don't order only by column required
             " silent! keeppatterns %!sort -f -k2 -n
             silent! keeppatterns %s/\(^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\) \(\d\{4,6}\)/\2 \1/
@@ -6692,8 +6697,9 @@ EOF
             silent! keeppatterns %s/\s\+/ /g
             " Avoid append doble semicolon (;)
             silent! keeppatterns g/^\d\{4}-.*[^;]$/normal! A;
+            " Allows to jump between "use" commands
             silent! keeppatterns g/Query use /normal! O
-            silent! keeppatterns g/Query SET NAMES u/normal! O
+            " silent! keeppatterns g/Query SET NAMES u/normal! O
 
             silent call add(l:cleanup, 'queries')
         endif
