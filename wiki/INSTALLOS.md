@@ -2098,6 +2098,42 @@ sudo apt-get remove -y --purge libreoffice\* && sudo apt-get clean -y && sudo ap
 sudo apt-get remove -y --purge rhythmbox\* && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
 
+# SetUp new PROMPT
+
+In ~/.zshrc at ends add:
+
+```bash
+command cat <<"EOF" >> ~/.zshrc
+
+# Custom from this:
+#   ➜  services git:(master) ✗
+# to this (refresh time each second):
+#   ➜ services master ✗                           00:00
+# @see /home/freddie/.oh-my-zsh/themes/robbyrussell.zsh-theme:1
+# %D     The date in yy-mm-dd format.
+# %T     Current time of day, in 24-hour format.
+# %t %@  Current time of day, in 12-hour, am/pm format.
+# %*     Current time of day in 24-hour format, with seconds.
+# %w     The date in day-dd format.
+# %W     The date in mm/dd/yy format.
+# %D{strftime-format}: https://man7.org/linux/man-pages/man3/strftime.3.html
+PROMPT="%(?:%{$fg_bold[green]%}%1{➜%} :%{$fg_bold[red]%}%1{➜%} )%{$fg[cyan]%}%c%{$reset_color%}"
+PROMPT+=' $(git_prompt_info)'
+
+ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg_bold[blue]%}%{$fg[red]%}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%} "
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%} %{$fg[yellow]%}%1{✗%}"
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}"
+
+# @see https://superuser.com/a/1742815
+TMOUT=10
+RPROMPT="%{$fg_bold[blue]%}%D{%H:%M}% %{$reset_color%}"
+TRAPALRM() {
+    zle reset-prompt
+}
+EOF
+```
+
 # Clean installation
 
 ```bash

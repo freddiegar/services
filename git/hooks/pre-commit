@@ -85,7 +85,7 @@ if [ "$PHPCS" != "" ]; then
     $PHPCS || exit $?
 fi
 
-if [ "$REPO" != "microsites" ] && [ "$REPO" != "threedsecure-merchant-plugin" ] && [ "$REPO" != "activity-client" ] && [ "$REPO" != "pinpad" ]; then
+if [ "$REPO" != "microsites" ] && [ "$REPO" != "threedsecure-merchant-plugin" ] && [ "$REPO" != "activity-client" ]; then
 PHPSTAN=""
 
 if [ $FPHP = 0 ]; then

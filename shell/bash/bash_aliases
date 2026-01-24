@@ -1039,6 +1039,7 @@ alias osx="openssl x509 -noout -dates -in"
 # osv duckduck.com.443.pem
 alias osv="openssl x509 -noout -checkend 2592000 -in"
 
+alias cdw="cd /var/www"
 alias cdh="cd /var/www/html"
 alias cdt="cd /var/www/html/ataringenieria"
 alias cde="cd /var/www/html/evertec"
