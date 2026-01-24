@@ -4567,7 +4567,7 @@ augroup AutoCommands
     autocmd BufWritePost *.Xresources call system('xrdb -I$HOME ~/.Xresources')
 
     " Customization
-    autocmd BufReadPost,BufNewFile .env.* setfiletype sh
+    autocmd BufReadPost,BufNewFile .env.*,.envrc.global setfiletype sh
     autocmd BufReadPost,BufNewFile phplint,phpx,grepx,datex,bash_aliases setfiletype sh
     autocmd BufReadPost,BufNewFile *.tphp setfiletype php
     autocmd BufReadPost,BufNewFile .php_cs* setfiletype php

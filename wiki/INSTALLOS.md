@@ -458,14 +458,13 @@ ln -s `pwd`/shell/bash/bash_aliases ~/.bash_aliases
 echo '
 [ -f ~/.bash_aliases ] && \. ~/.bash_aliases' >> ~/.zshrc
 
-echo $(command cat <<EOF
-\n
-# @thanks https://unix.stackexchange.com/a/595281\n
-bindkey -s '\\ew' "^u\`alias W | sed "s/'//g" | awk -F= '{print \$2}'\`^M"\n
-bindkey -s '\\ee' "^uvde^M"\n
-bindkey -s '\\ef' "^uvdf^M"
+command cat <<"EOF" >> ~/.zshrc
+
+# @thanks https://unix.stackexchange.com/a/595281
+bindkey -s '^w' "^u`alias W | sed "s/'//g" | awk -F= '{print $2}'`^M"
+bindkey -s '^e' "^uvde^M"
+bindkey -s '^f' "^uvdf^M"
 EOF
-) >> ~/.zshrc
 ```
 
 ## Enable alias in Vim
@@ -1351,6 +1350,8 @@ grep "default-cache-ttl\|max-cache-ttl\|default-cache-ttl-ssh\|max-cache-ttl-ssh
 ## Direnv
 
 [See](https://github.com/direnv/direnv?tab=readme-ov-file)
+[Lib](https://direnv.net/man/direnv-stdlib.1.html)
+[Advanced](https://deepwiki.com/direnv/direnv/4-advanced-usage)
 
 ```bash
 grep -F "direnv" ~/.zshrc
@@ -1358,6 +1359,29 @@ grep -F "direnv" ~/.zshrc
 echo '
 # Direnv hook
 eval "$(direnv hook zsh)"' >> ~/.zshrc
+```
+
+## Global setup
+
+```bash
+rm -f ~/.envrc.global
+ln -s `pwd`/direnv/.envrc.global ~/.envrc.global
+```
+
+## Enable specific setup
+
+```bash
+HTMLDIRS=(wordpress prestashop magento)
+
+for DIR in $HTMLDIRS; do
+    if [ ! -d /var/www/html/$DIR ]; then
+        continue
+    fi
+
+    echo '# Load centralize settings
+
+. ~/.envrc.global' > /var/www/html/$DIR/.envrc
+done
 ```
 
 # Postman
@@ -1469,14 +1493,13 @@ sudo journalctl --vacuum-size=50M
 [See](https://unix.stackexchange.com/a/149054)
 
 ```bash
-grep "\s?export PATH" ~/.profile
+grep "^export PATH" ~/.profile
 
-echo $(command cat <<EOF
-\n
-# Avoid duplicates in PATH env\n
-export PATH=\$(perl -e 'print join(":", grep { not \$seen{\$_}++ } split(/:/, \$ENV{PATH}))')
+command cat <<"EOF" >> ~/.profile
+
+# Avoid duplicates in PATH env
+export PATH=$(perl -e 'print join(":", grep { not $seen{$_}++ } split(/:/, $ENV{PATH}))')
 EOF
-) >> ~/.profile
 
 ```
 
@@ -2267,6 +2290,10 @@ screenkey --version
 # 1.5
 flameshot --version | head -1 | awk '{print $2}'
 # v12.1.0
+gromit-mpx --version 2> /dev/null | tail -1 | awk '{print $2}'
+# 1.7.0
+direnv --version
+# 2.32.1
 # Unstable CLI: apt-get list --installed | wc --lines
 # apt show gnome
 # dpkg --list | wc --lines

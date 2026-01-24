@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -e
+
+strict_env
+
+if [ "`echo "$PWD" | grepx -F -- "/var/www/html/wordpress"`" != "" ]; then
+    EDITOR=vim
+fi
+
+if [ "`echo "$PWD" | grepx -F -- "/var/www/html/prestashop"`" != "" ]; then
+    EDITOR=vim
+fi
+
+if [ "`echo "$PWD" | grepx -F -- "/var/www/html/magento"`" != "" ]; then
+    EDITOR=vim
+fi
