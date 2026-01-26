@@ -2133,7 +2133,9 @@ function! s:go_line() abort
             throw 'Nothing to do.'
         endif
 
+        echohl MoreMsg
         echo 'Jump to ' . split(l:word, '/')[-1] . ' using [' . l:separator . '] as separator.'
+        echohl None
 
         let l:lbuffer = bufnr('%')
         let l:parts = split(trim(l:word, '"'), l:separator)
@@ -2583,7 +2585,7 @@ endif
 if g:hasts && !<SID>mustbeignore()
     Plug 'nvim-treesitter/nvim-treesitter', {
                 \ 'do': ':TSUpdate',
-                \ 'branch': 'master'
+                \ 'branch': 'main'
                 \ }                                             " Highligth ++ @see https://github.com/nvim-treesitter/nvim-treesitter/pull/8344
     " Plug 'nvim-treesitter/nvim-treesitter-context'              " Highligth +++ (slower!?)
 endif
@@ -3932,9 +3934,10 @@ lua << EOF
                     '*.md', -- notes
                 },
                 cloak_pattern = {
-                    { '(User:).+', replace = '%1' },
-                    { '(Pass:).+', replace = '%1' },
-                    { '(Hook:).+', replace = '%1' },
+                    { '(User: ).+', replace = '%1' },
+                    { '(Pass: ).+', replace = '%1' },
+                    { '(Hook: ).+', replace = '%1' },
+                    { '(Token: ).+', replace = '%1' },
                 },
             },
             {
@@ -4744,49 +4747,42 @@ augroup AutoCommands
 
 " Don't indent!
 lua << EOF
-require 'nvim-treesitter.configs'.setup({
-    auto_install = true,
-    ensure_installed = {
-        'vim'
-    },
-    highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = false,
-        disable = function(lang, buf)
-            if lang == 'markdown' or lang == 'diff' or lang == 'html' then
-                -- print('Disabled HL: ' .. lang .. ' in buffer: ' .. buf)
+    -- @see https://github.com/nvim-treesitter/nvim-treesitter
+    vim.api.nvim_create_autocmd('FileType', {
+        pattern = { "*" },
+        callback = function(args)
+            -- @see https://tree-sitter.github.io/tree-sitter/creating-parsers/1-getting-started.html#installation
+            --  cargo install tree-sitter-cli --locked
+            local treesitter = require('nvim-treesitter')
+            local lang = vim.treesitter.language.get_lang(args.match)
 
-                return true
+            if lang == '' or lang == 'fzf' or lang == 'markdown' or lang == 'html' then
+                -- print('Disabled HL: ' .. lang .. ' in buffer: ' .. args.buf)
+
+                return
             end
 
-            local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+            if vim.list_contains(treesitter.get_available(), lang) then
+                if not vim.list_contains(treesitter.get_installed(), lang) then
+                    treesitter.install(lang):wait()
+                end
 
-            return ok and stats and stats.size > (1024 * 1024 * 2)
+                vim.treesitter.start(args.buf, lang)
+            end
         end,
-    },
-    indent = {
-        enable = true, -- must be on ... or indent fails!
-        disable = {'diff', 'markdown'},
-    },
-    incremental_selection = {
-        enable = false,
-    },
-    textobjects = {
-        enable = false,
-    },
-})
+    })
 
 -- vim.keymap.set('n', '[c', function()
 --     require('treesitter-context').go_to_context(vim.v.count1)
 -- end, { silent = true })
 EOF
 
-            TSEnable highlight
+            " TSEnable highlight
 
-            autocmd FileType diff TSBufDisable highlight
-            autocmd BufEnter,BufReadPost *.md TSBufDisable highlight
-            autocmd BufEnter,BufReadPost */dist/*.{js,css} TSBufDisable highlight
-            autocmd BufEnter,BufReadPost public/*/*.{js,css} TSBufDisable highlight
+            " autocmd FileType diff TSBufDisable highlight
+            " autocmd BufEnter,BufReadPost *.md TSBufDisable highlight
+            " autocmd BufEnter,BufReadPost */dist/*.{js,css} TSBufDisable highlight
+            " autocmd BufEnter,BufReadPost public/*/*.{js,css} TSBufDisable highlight
         endfunction
 
         " Treesitter disables undofile... then turn on again after loaded
