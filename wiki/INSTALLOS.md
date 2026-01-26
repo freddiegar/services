@@ -402,6 +402,8 @@ echo '
 [See 5](https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Zle-Builtins)
 
 ```bash
+grep -F "# Vi mode" ~/.zshrc
+
 echo "
 # Vi mode
 bindkey -v
@@ -442,6 +444,8 @@ function precmd() {
 
 # Ignore aliasses
 
+grep -F "# Ignores in History" ~/.zshrc
+
 echo "
 # Ignores in History
 # @see https://unix.stackexchange.com/a/6104
@@ -461,9 +465,9 @@ echo '
 command cat <<"EOF" >> ~/.zshrc
 
 # @thanks https://unix.stackexchange.com/a/595281
-bindkey -s '^w' "^u`alias W | sed "s/'//g" | awk -F= '{print $2}'`^M"
-bindkey -s '^e' "^uvde^M"
-bindkey -s '^f' "^uvdf^M"
+bindkey -s '^o' "^u`alias W | sed "s/'//g" | awk -F= '{print $2}'`^M"
+# bindkey -s '^e' "^uvde^M" conflicts with zsh shorcut
+# bindkey -s '^f' "^uvdf^M" conflicts with zsh shorcut
 EOF
 ```
 
@@ -619,39 +623,19 @@ sudo apt-get install --no-install-recommends -y libxml2-utils
 
 ```bash
 sudo apt-get install --no-install-recommends -y miller
+# sudo apt remove miller && sudo apt-get autoremove
 ```
 
-### LSP
+## Node (require in Vim LSP but in development work too!)
 
-#### C
-
-[See](https://llvm.org/docs/GettingStarted.html#overview)
-[See 2](https://www.jianshu.com/p/3c7eae5c0c68)
-[See 3](https://github.com/llvm/llvm-project/releases)
-[See 4](https://apt.llvm.org/)
-
-```bash
-cd ~
-# sudo apt-get install --no-install-recommends -y libncurses5
-sudo apt-get install --no-install-recommends -y clang-20 clangd-20 lldb-20 lld-20
-sudo rm /usr/bin/clang /usr/bin/clang++ /usr/bin/clang-cpp /usr/bin/clangd
-sudo ln -s /usr/bin/clang-20 /usr/bin/clang
-sudo ln -s /usr/bin/clang++-20 /usr/bin/clang++
-sudo ln -s /usr/bin/clang-cpp-20 /usr/bin/clang-cpp
-sudo ln -s /usr/bin/clangd-20 /usr/bin/clangd
-clangd --version
-```
-
-#### Node (require in Vim LSP)
-
-[Versions](https://nodejs.org/en/about/previous-releases)
+[NVM Versions](https://github.com/nvm-sh/nvm/releases)
+[Node Versions](https://nodejs.org/en/about/previous-releases)
 
 ```bash
 cd ~
 # Slower!
 # @see https://blog.mattclemente.com/2020/06/26/oh-my-zsh-slow-to-load/
 # sudo apt-get install --no-install-recommends -y build-essential libssl-dev # Only oldest Ubuntu
-# # @see https://github.com/nvm-sh/nvm/releases
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
 echo '
@@ -690,7 +674,28 @@ npm install -g npm@latest
 ## npm uninstall -g npm@latest
 ```
 
-#### Vim
+### LSP (Skip if use :Mason)
+
+#### C (Skip if use :Mason)
+
+[See](https://llvm.org/docs/GettingStarted.html#overview)
+[See 2](https://www.jianshu.com/p/3c7eae5c0c68)
+[See 3](https://github.com/llvm/llvm-project/releases)
+[See 4](https://apt.llvm.org/)
+
+```bash
+cd ~
+# sudo apt-get install --no-install-recommends -y libncurses5
+sudo apt-get install --no-install-recommends -y clang-20 clangd-20 lldb-20 lld-20
+sudo rm /usr/bin/clang /usr/bin/clang++ /usr/bin/clang-cpp /usr/bin/clangd
+sudo ln -s /usr/bin/clang-20 /usr/bin/clang
+sudo ln -s /usr/bin/clang++-20 /usr/bin/clang++
+sudo ln -s /usr/bin/clang-cpp-20 /usr/bin/clang-cpp
+sudo ln -s /usr/bin/clangd-20 /usr/bin/clangd
+clangd --version
+```
+
+#### Vim (Skip if use :Mason)
 
 [See](https://github.com/iamcco/vim-language-server)
 
@@ -698,7 +703,7 @@ npm install -g npm@latest
 npm install -g vim-language-server
 ```
 
-#### Sh
+#### Sh (Skip if use :Mason)
 
 [See](https://github.com/iamcco/vim-language-server)
 
@@ -706,7 +711,7 @@ npm install -g vim-language-server
 npm install -g bash-language-server
 ```
 
-#### Javascript|Typescript (js, jsx, ts)
+#### Javascript|Typescript (js, jsx, ts) (Skip if use :Mason)
 
 [See](https://github.com/typescript-language-server/typescript-language-server)
 
@@ -714,7 +719,7 @@ npm install -g bash-language-server
 npm install -g typescript-language-server typescript
 ```
 
-#### Tailwindcss
+#### Tailwindcss (Skip if use :Mason)
 
 [See](https://github.com/tailwindlabs/tailwindcss-intellisense)
 
@@ -722,7 +727,7 @@ npm install -g typescript-language-server typescript
 npm install -g @tailwindcss/language-server
 ```
 
-#### JSON
+#### JSON (Skip if use :Mason)
 
 [See](https://github.com/hrsh7th/vscode-langservers-extracted)
 
@@ -730,7 +735,7 @@ npm install -g @tailwindcss/language-server
 npm install -g vscode-langservers-extracted
 ```
 
-#### YAML
+#### YAML (Skip if use :Mason)
 
 [See](https://github.com/redhat-developer/yaml-language-server)
 
@@ -738,7 +743,7 @@ npm install -g vscode-langservers-extracted
 npm install -g yaml-language-server
 ```
 
-#### SQL
+#### SQL (Skip if use :Mason)
 
 [See](https://github.com/joe-re/sql-language-server)
 
@@ -774,7 +779,7 @@ npm install -g yaml-language-server
 # }' > ~/.config/sql-language-server/.sqllsrc.json
 ```
 
-#### Lua
+#### Lua (Skip if use :Mason)
 
 [See](https://luals.github.io/wiki/build/)
 
@@ -794,7 +799,7 @@ cd /var/www/html/LuaLS/lua-language-server && git pull origin master && ./make.s
 sudo ln -s /var/www/html/LuaLS/lua-language-server/bin/lua-language-server /usr/local/bin/lua-language-server
 ```
 
-#### Rust
+#### Rust (Skip if use :Mason)
 
 [Versions](https://releases.rs/)
 
@@ -818,7 +823,7 @@ echo '
 grep -F "Enable rust" ~/.profile
 ```
 
-#### Go
+#### Go (Skip if use :Mason)
 
 [See](https://go.dev/doc/install)
 [See 2](https://go.dev/doc/install/source)
@@ -829,7 +834,7 @@ grep -F "Enable rust" ~/.profile
 # Check version
 go version
 
-curl -L https://go.dev/dl/go1.25.5.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
+curl -L https://go.dev/dl/go1.25.6.linux-amd64.tar.gz -o go-linux-amd64.tar.gz
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go-linux-amd64.tar.gz && rm go-linux-amd64.tar.gz
 
 grep -F "Enable go" ~/.profile
@@ -846,7 +851,7 @@ sudo apt-get install --no-install-recommends -y gopls
 ```
 > sudo apt-get remove gopls
 
-##### Laravel LSP
+##### Laravel LSP (Skip if use :Mason)
 
 [See](https://github.com/laravel-ls/laravel-ls)
 
@@ -855,7 +860,16 @@ go install github.com/laravel-ls/laravel-ls/cmd/laravel-ls@latest
 sudo ln -s /home/$USER/go/bin/laravel-ls /usr/bin/laravel-ls
 ```
 
-##### Vim Slides (require go)
+#### Ruby (Skip if use :Mason)
+
+[See](https://solargraph.org/guides/getting-started)
+
+```bash
+sudo apt-get install --no-install-recommends -y make build-essential ruby-dev
+sudo gem install solargraph
+```
+
+#### Vim Slides (require go) not used at 2026-01-24
 
 [See](https://github.com/maaslalani/slides)
 [Manual](http://bloodgate.com/perl/graph/manual/syntax.html)
@@ -874,15 +888,6 @@ perl -MCPAN -e shell
 install Graph::Easy
 # Check graph-easy path, check in PATH
 ls -la $HOME/perl5/bin
-```
-
-#### Ruby
-
-[See](https://solargraph.org/guides/getting-started)
-
-```bash
-sudo apt-get install --no-install-recommends -y make build-essential ruby-dev
-sudo gem install solargraph
 ```
 
 ### C Tags
@@ -987,7 +992,14 @@ sudo apt-get install --no-install-recommends -y git-quick-stats
 # Install
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
 sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
+echo "Types: deb
+URIs: https://cli.github.com/packages
+Suites: stable
+Components: main
+Architectures: $(dpkg --print-architecture)
+Signed-By: /usr/share/keyrings/githubcli-archive-keyring.gpg" | sudo tee /etc/apt/sources.list.d/github-cli.sources > /dev/null
+
 sudo apt-get update
 sudo apt-get install --no-install-recommends -y gh
 
@@ -997,10 +1009,10 @@ gh config set -h github.com git_protocol ssh
 gh auth login
 ```
 > Disable to use saU alias
->   sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*github-cli*.list
+>   sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*github-cli*.sources
 > Update or Install new versions
->   sudo sed -i 's/^###Disabled deb /   deb /g' /etc/apt/sources.list.d/*github-cli*.list
->   sudo sed -i 's/^   deb /###Disabled deb /g' /etc/apt/sources.list.d/*github-cli*.list
+>   sudo sed -i 's/^Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*github-cli*.sources
+>   sudo sed -i 's/^Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*github-cli*.sources
 
 ## Wallpapers in i3
 
@@ -1037,6 +1049,10 @@ sudo apt-get install --no-install-recommends -y php8.5-bcmath
 sudo apt-get install --no-install-recommends -y php8.5-gmp
 sudo apt-get install --no-install-recommends -y php8.5-xml
 
+## PHP Xdebug (I'm not god)
+sudo apt-get install --no-install-recommends -y php8.5-xdebug
+
+## PHP Coverage (I'm desesperate)
 sudo apt-get install --no-install-recommends -y php8.5-ast
 sudo apt-get install --no-install-recommends -y php8.5-pcov
 
@@ -1048,25 +1064,6 @@ sudo apt-get install --no-install-recommends -y php8.5-pcov
 > Update or Install new versions
 >   sudo sed -i 's/^Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*ondrej*.sources
 >   sudo sed -i 's/^Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*ondrej*.sources
-
-## PHP Xdebug (I'm not god)
-
-```bash
-sudo apt-get install --no-install-recommends -y php7.4-xdebug
-sudo apt-get install --no-install-recommends -y php8.1-xdebug
-sudo apt-get install --no-install-recommends -y php8.2-xdebug
-sudo apt-get install --no-install-recommends -y php8.3-xdebug
-sudo apt-get install --no-install-recommends -y php8.4-xdebug
-```
-
-## PHP Coverage (I'm desesperate)
-
-```bash
-sudo apt-get install --no-install-recommends -y php8.1-pcov
-sudo apt-get install --no-install-recommends -y php8.2-pcov
-sudo apt-get install --no-install-recommends -y php8.3-pcov
-sudo apt-get install --no-install-recommends -y php8.4-pcov
-```
 
 ## Composer for PHP
 
@@ -1167,7 +1164,6 @@ sudo ln -s `pwd`/php/phplint /usr/local/bin/phplint
 # Docker (Container)
 
 [See 1](https://docs.docker.com/install/linux/docker-ce/ubuntu)
-
 [See 2](https://docs.docker.com/install/linux/linux-postinstall/)
 
 ## [L|X]Ubuntu 18.*, 19.*, 20.* Debian 10
@@ -1175,7 +1171,14 @@ sudo ln -s `pwd`/php/phplint /usr/local/bin/phplint
 ```bash
 sudo apt-get install --no-install-recommends -y apt-transport-https ca-certificates curl gnupg software-properties-common
 curl -L https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/docker.gpg > /dev/null
-echo "\n" | sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/`lsb_release -is | awk '{print tolower($0)}'` `lsb_release -cs` stable"
+
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Signed-By: /etc/apt/trusted.gpg.d/docker.gpg
+EOF
 
 sudo apt-get install --no-install-recommends -y docker-ce
 sudo usermod -aG docker $(whoami)
@@ -1189,10 +1192,10 @@ lxqt-leave
 ## sudo apt-get remove docker-ce && sudo apt-get autoremove
 ```
 > Disable to use saU alias
->   sudo sed -i 's/^deb /###Disable deb /g' /etc/apt/sources.list.d/*docker*.list
+>   sudo sed -i '/^Types: deb/a Enabled: no' /etc/apt/sources.list.d/*docker*.sources
 > Update or Install new versions
->   sudo sed -i 's/^###Disabled deb /   deb /g' /etc/apt/sources.list.d/*docker*.list
->   sudo sed -i 's/^   deb /###Disabled deb /g' /etc/apt/sources.list.d/*docker*.list
+>   sudo sed -i 's/^Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*docker*.sources
+>   sudo sed -i 's/^Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*docker*.sources
 
 ## Docker Compose
 
@@ -1200,7 +1203,9 @@ lxqt-leave
 
 ```bash
 cd ~
-sudo curl -L https://github.com/docker/compose/releases/download/v2.40.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/v5.0.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+# sudo curl -L https://github.com/docker/compose/releases/download/v2.40.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+# sudo mv /usr/local/bin/docker-compose /usr/local/bin/docker-compose-v2.40.3
 sudo chmod +x /usr/local/bin/docker-compose
 ## sudo rm /usr/local/bin/docker-compose
 ```
@@ -1448,8 +1453,7 @@ flags=(unconfined) {
 
 sudo systemctl restart apparmor.service
 ```
-> about:config
-> setting                                   -> default  -> custom
+> about:config setting                         default     custom
 > gfx.webrender.all                         -> false    -> true
 > gfx.x11-egl.force-enabled                 -> false    -> true
 > layers.acceleration.force-enabled         -> false    -> true
@@ -1459,8 +1463,11 @@ sudo systemctl restart apparmor.service
 
 # Opera
 
+[Versions](https://download3.operacdn.com/ftp/pub/opera/desktop/)
+
 ```bash
-curl -L https://download3.operacdn.com/ftp/pub/opera/desktop/125.0.5729.49/linux/opera-stable_125.0.5729.49_amd64.deb -o opera.deb
+LATESTOPERA=`curl -s https://download3.operacdn.com/ftp/pub/opera/desktop/ | grepx -o ">.*<" | sed -e 's/[></]//g' | sort -n | tail -n1`
+curl -L https://download3.operacdn.com/ftp/pub/opera/desktop/`printf "%s" $LATESTOPERA`/linux/opera-stable_`printf "%s" $LATESTOPERA`_amd64.deb -o opera.deb
 sudo dpkg -i opera.deb && rm -f opera.deb
 ```
 > Disable to use saU alias
@@ -1475,6 +1482,8 @@ sudo dpkg -i opera.deb && rm -f opera.deb
 [See 2](https://github.com/JetBrains/JetBrainsMono)
 
 ```bash
+ls -la /home/$USER/.local/share/fonts/fonts/ttf | grep Mono
+
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
 ```
 
@@ -1577,11 +1586,11 @@ sudo apt-get install --no-install-recommends -y ripgrep
 [See](https://github.com/sharkdp/bat)
 
 ```bash
-# [L|X]Ubuntu 18.10+ | Rg v0.22.1
+# [L|X]Ubuntu 18.10+ | bat v0.22.1
 sudo apt-get install --no-install-recommends -y bat
 sudo ln -s `which batcat` /usr/bin/bat
 
-# [L|X]Ubuntu < 18.10 | Rg v0.9.0-3
+# [L|X]Ubuntu < 18.10 | bat v0.9.0-3
 cd ~
 # @see https://github.com/sharkdp/bat/releases
 sudo curl -L https://github.com/sharkdp/bat/releases/download/v0.24.0/bat_0.24.0_amd64.deb -o bat.deb
@@ -1705,7 +1714,7 @@ composer global require chrisdicarlo/phpunit-failed-runner --dev
 [See](https://github.com/infection/infection/releases)
 
 ```bash
-sudo curl -L https://github.com/infection/infection/releases/download/0.32.0/infection.phar -o /usr/local/bin/infection
+sudo curl -L https://github.com/infection/infection/releases/download/0.32.3/infection.phar -o /usr/local/bin/infection
 sudo chmod +x /usr/local/bin/infection
 ## Command:
 ## infection -j$(nproc)
@@ -2173,19 +2182,19 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 
 ```bash
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
-# Ubuntu 25.04
+# Ubuntu 25.10
 uname -r
-# 6.14.0-37-generic
+# 6.17.0-8-generic
 command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
 nproc --all
 # 14
 command cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31825720 kB
+# 31824616 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
-# 2.41
+# 2.42
 gcc --version | grep -e "^gcc" | awk '{print $4}'
-# 14.2.0
+# 15.2.0
 openssl version | awk '{print $2}'
 # 1.1.1w
 # 3.3.1
@@ -2211,33 +2220,35 @@ echo `nvim --version | grep -e "^NVIM " | awk '{print $2}'`-`nvim --version | gr
 neovide --version | awk '{print $2}'
 # 0.15.2
 vifm --version | grep -e "^Version" | awk '{print $2}'
-# 0.12
+# 0.14
 $VIEWER -v | head -n 1 | awk '{print $2}'
 # 32
 curl --version | grep -e "^curl " | awk '{print $2}'
-# 8.12.1
+# 8.14.1
 git --version | awk '{print $3}'
-# 2.48.1
+# 2.51.0
 git lfs version
 # git-lfs/3.6.1 (GitHub; linux amd64; go 1.23.5)
+gh --version | head -n 1 | awk '{print $3}'
+# 2.86.0
 docker --version | awk '{print $3}' | sed 's/,//g'
 # 28.2.1
 docker-compose --version | awk '{print $4}'
-# v2.40.3
+# v5.0.2
 feh --version | grep version | awk '{print $3}'
 # 3.10.3
 maim --version | awk '{print $1}'
-# v5.7.4
+# v5.8.0
 unzip -v | grep "^UnZip.*\.$" | awk '{print $2}'
 # 6.00
 jq --version | sed 's/jq-//g'
-# 1.7
+# 1.8.1
 tree --version | awk '{print $2}'
-# v2.1.1
+# v2.2.1
 nmap --version | grep "^Nmap" | awk '{print $3}'
 # 7.95
 htop --version | grep "^htop" | awk '{print $2}'
-# 3.4.0
+# 3.4.1
 man xcompmgr | grep "^X Version" | awk '{print $5}'
 # 1.1.8
 batcat --version | awk '{print $2}'
@@ -2245,27 +2256,29 @@ batcat --version | awk '{print $2}'
 rg --version | grep -e "^ripgrep" | awk '{print $2}'
 # 14.1.1
 php --version | grep -e "^PHP" | awk '{print $2}'
-# 8.4.16
-# nvm --version
-# # 0.39.3
+# 8.4.17
+composer --version 2> /dev/null | head -1 | awk '{print $3}'
+# 2.9.4
+git -C ~/.nvm describe --tag
+# v0.40.3
 npm --version
 # 11.4.1
 node --version
 # v24.0.1
 mysql --version | awk '{print $3}'
-# 8.4.7-0ubuntu0.25.04.2
+# 8.4.7-0ubuntu0.25.10.3
 # stoken --version | head -1 | awk '{print $2}'
 # 0.92
 python3 --version | awk '{print $2}'
-# 3.13.3
+# 3.13.7
 ruby --version | awk '{print $2}'
-# 3.3.7
+# 3.3.8
 rustc --version | awk '{print $2}'
-# 1.92.0
+# 1.93.0
 go version | awk '{print $3}' | sed 's/go//g'
-# 1.25.5
+# 1.25.6
 ctags --version | head -1 | awk '{print $3}' | sed 's/,//g'
-# 6.2.0(b11e39a)
+# 6.2.0(2046889)
 gpg1 --version | head -1 | awk '{print $3}'
 # 1.4.23
 ftp about:version | head -1 | awk '{print $3}'
@@ -2273,19 +2286,19 @@ ftp about:version | head -1 | awk '{print $3}'
 # ncftpput --version | head -1 | awk '{print $2}'
 # 3.2.6
 pipewire --version | head -2 | awk '{print $4}'
-# 1.2.7
+# 1.4.7
 NetworkManager --version
 # 1.52.0
 bluemoon --version
-# 5.79
+# 5.83
 # firefox --version | awk '{print $3}'
 # 144.0b7
 zen --version | awk '{print $3}'
-# 1.18t
+# 1.19t
 filezilla --version | tail -1 | awk '{print $2}' | sed 's/,//g'
-# 3.68.1
+# 3.69.3
 obs --version |  awk '{print $4}'
-# 30.2.3.1-2build2
+# 30.2.3.1-3
 screenkey --version
 # 1.5
 flameshot --version | head -1 | awk '{print $2}'
@@ -2299,9 +2312,9 @@ direnv --version
 # dpkg --list | wc --lines
 # dpkg --get-selections | grep -v deinstall > ~/packages.log
 dpkg --get-selections | grep -v deinstall | wc --lines
-# 2070
+# 2121
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 51
+# 52
 apt-mark showmanual | wc --lines
-# 405
+# 408
 ```
