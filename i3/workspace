@@ -14,11 +14,20 @@ PROJECT=$1
 USEHDMI=`xrandr --listmonitors | grep Monitors | awk '{print $2}' || echo 0`
 FONTSIZ=12
 
-# editor
+# +---------+
+# |         |
+# | editor  |
+# |         |
+# +---------+
 i3-msg "workspace 1, exec --no-startup-id urxvt -name ___editor -chdir $PROJECT -e nvim"
 sleep 0.5
 
 if [ $USEHDMI -gt 1 ]; then
+    # +---------+
+    # |         |
+    # | editor  |  +------+
+    # |         |  |      |
+    # +---------+  +------+
     i3-msg "workspace 1, move workspace to output HDMI-1"
     sleep 0.5
 fi
@@ -31,7 +40,12 @@ if [ $USEHDMI -gt 1 ]; then
     FONTSIZ=8
 fi
 
-# command
+# +----+-----+
+# |    |     |
+# | ed | cmd |
+# |    |     |
+# +----+-----+
+FONTSIZ=8
 i3-msg "workspace 1, exec --no-startup-id urxvt -name ___command -fn 'xft:FiraCode-Retina:size=$FONTSIZ:antialias=true' -fb 'xft:FiraCode-Bold:size=$FONTSIZ:antialias=true' -chdir $PROJECT"
 sleep 0.5
 
@@ -43,25 +57,38 @@ sleep 0.5
 i3-msg "workspace 1, move down, split h"
 
 # logs
-if [ -d $PROJECT/storage/logs ]; then
+if [ -d $PROJECT/storage/tenants/*/logs ]; then
+    DIRLOGS=$PROJECT/storage/tenants/*/logs
+elif [ -d $PROJECT/storage/logs ]; then
     DIRLOGS=$PROJECT/storage/logs/
 elif [ -d $PROJECT/var/log ]; then
     DIRLOGS=$PROJECT/var/log/
 else
+    # +---------+
+    # |   up    |
+    # +---------+
+    # | resize  |
+    # +---------+
     i3-msg "workspace 1, resize set height 100, focus up"
 
     exit 0
 fi
 
-i3-msg "workspace 1, resize set height 100, focus up"
+# +---------+
+# | editor  |
+# +---------+
+# | resize  |
+# +---------+
+i3-msg "workspace 1, resize set height 100"
 
-# i3-msg "workspace 1, exec --no-startup-id urxvt -name ___logs -fn 'xft:FiraCode-Retina:size=$FONTSIZ:antialias=true' -fb 'xft:FiraCode-Bold:size=$FONTSIZ:antialias=true' -e tail -f $DIRLOGS/*.log"
-# sleep 0.5
+i3-msg "workspace 1, exec --no-startup-id urxvt -name ___logs -fn 'xft:FiraCode-Retina:size=$FONTSIZ:antialias=true' -fb 'xft:FiraCode-Bold:size=$FONTSIZ:antialias=true' -e tail -f $DIRLOGS/*.log"
+sleep 0.5
 
 # +---------+
-# |  down   |
+# | editor  |
 # +---------+
-# |    |    |
+# |cmd |log |
 # +---------+
-#                                w   h
+# i3-msg "workspace 1, resize set 700 100, focus left, focus up"
+i3-msg "workspace 1, resize set 700 100, focus left, focus up, fullscreen"
 # i3-msg "workspace 1, resize set 700 100, focus left, layout tabbed, focus up"
