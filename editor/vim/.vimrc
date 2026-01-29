@@ -1575,6 +1575,7 @@ nnoremap <silent> <expr> <Leader>z
 
 " Close all except current buffer (saving changes)
 nnoremap <silent> <Leader>Z :wall <Bar> execute "normal! mZ" <Bar> %bdelete <Bar> execute "normal! `Z" <Bar> bdelete # <Bar> delmarks Z<CR>
+nnoremap <silent> <Leader>B :bd #<CR>
 
 nnoremap <silent> <Plug>AppendSemicolonRepeatable <Cmd>call <SID>append_char('a')<CR>
 nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
@@ -3862,6 +3863,8 @@ lua << EOF
                     { '(LOGIN=).+', replace = '%1' },
                     { '(PASS=).+', replace = '%1' },
                     { '(PASSWORD=).+', replace = '%1' },
+                    { '(USER_SERVICE=).+', replace = '%1' },
+                    { '(PASSWORD_SERVICE=).+', replace = '%1' },
                     { '(PASSPHRASE=).+', replace = '%1' },
                     { '(SECRET=).+', replace = '%1' },
                     { '(TOKEN=).+', replace = '%1' },
@@ -4748,6 +4751,32 @@ augroup AutoCommands
 " Don't indent!
 lua << EOF
     -- @see https://github.com/nvim-treesitter/nvim-treesitter
+    require('nvim-treesitter').setup()
+
+    vim.defer_fn(function()
+        require('nvim-treesitter').install({
+            'bash',
+            'blade',
+            'diff',
+            'dockerfile',
+            'dtd',
+            'gitignore',
+            'ini',
+            'javascript',
+            'json',
+            'make',
+            'php',
+            'php_only',
+            'sql',
+            'typescript',
+            'vim',
+            'vimdoc',
+            'xml',
+            'yaml',
+            'zsh',
+        }):wait()
+    end, 0)
+
     vim.api.nvim_create_autocmd('FileType', {
         pattern = { "*" },
         callback = function(args)
@@ -4768,6 +4797,9 @@ lua << EOF
                 end
 
                 vim.treesitter.start(args.buf, lang)
+
+                -- @thanks https://github.com/MeanderingProgrammer/treesitter-modules.nvim/commit/025878fd53912671e42959337364dfd46d3d4e73
+                vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
             end
         end,
     })
