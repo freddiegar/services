@@ -1011,7 +1011,7 @@ function! s:statusline(lastmode) abort
     endif
 
     setlocal statusline=\                                       " Extra space
-    " setlocal statusline+=%3n\                                   " Buffer [n]umber
+    setlocal statusline+=%n:\                                   " Buffer [n]umber
 
     " This expressions redraw statusline after save file always (slower)
     setlocal statusline+=%{GetNameCurrentPath()}                " Relative folder
@@ -4772,9 +4772,14 @@ lua << EOF
         end,
     })
 
--- vim.keymap.set('n', '[c', function()
---     require('treesitter-context').go_to_context(vim.v.count1)
--- end, { silent = true })
+    -- @see https://github.com/nvim-treesitter/nvim-treesitter-context
+    -- require('treesitter-context').setup({
+    --     max_lines = 1,
+    -- })
+
+    -- vim.keymap.set('n', '[p', function()
+    --     require('treesitter-context').go_to_context(vim.v.count1)
+    -- end, { silent = true })
 EOF
 
             " TSEnable highlight
@@ -6687,9 +6692,13 @@ EOF
             silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|SET NAMES \|set session \| SET SESSION\| Connect\|mysqld\|version_comment\|select connection_id\|general_log\|IN_PROCCES/v/ WHEN /d_
             " Don't order only by column required
             " silent! keeppatterns %!sort -f -k2 -n
-            silent! keeppatterns %s/\(^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\) \(\d\{4,6}\)/\2 \1/
-            silent! keeppatterns %sort
-            silent! keeppatterns %s/\(^\d\{4,6}\) \(\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\)/\2 \1/
+            " Swap date with connection ID
+            " silent! keeppatterns %s/\(^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\) \(\d\{4,6}\)/\2 \1/
+            " Sort by connection ID
+            " silent! keeppatterns %!sort -f -k1 -n
+            " Revert swap
+            " silent! keeppatterns %s/\(^\d\{4,6}\) \(\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\)/\2 \1/
+            " Only one space between words please
             silent! keeppatterns %s/\s\+/ /g
             " Avoid append doble semicolon (;)
             silent! keeppatterns g/^\d\{4}-.*[^;]$/normal! A;
