@@ -162,6 +162,17 @@ sAU() {
         checkcode $?
     fi
 
+    LATESTOPERA=`curl -s https://download3.operacdn.com/ftp/pub/opera/desktop/ | grepx -o ">.*<" | sed -e 's/[></]//g' | sort -n | tail -n1`
+    URL="$(echo https://download3.operacdn.com/ftp/pub/opera/desktop/`printf "%s" $LATESTOPERA`/linux/opera-stable_`printf "%s" $LATESTOPERA`_amd64.deb)"
+    TMP=~/.config/opera/.lastsize
+
+    if [ "`downloadble $URL $TMP`" = "1" ]; then
+        echo "\e[34mUpdating opera...\e[0m"
+        curl -L $URL -o opera.deb && sudo dpkg -i opera.deb && rm -f opera.deb
+
+        checkcode $?
+    fi
+
     if [ "$#" -eq 0 ]; then
         nn "Update (fully) completed!"
     fi
@@ -946,7 +957,7 @@ alias gbc="git branch --merged | grepx -i -v '(^\*|master|main|develop)' | xargs
 # List branch [r]emote
 alias gbr="git branch -r --merged | grepx -i -v '(^\*|master|main|develop|release)' | cut -d/ -f2- | xargs -r -n 1 echo"
 # Branch [c]leanup [r]emote
-alias gbcr="git branch -r --merged | grepx -v '(^\*|master|main|develop|release)' | cut -d/ -f2- | xargs -r -n 1 git push --delete origin"
+alias gbcr="git branch -r --merged | grepx -v '(^\*|master|main|develop|release)' | cut -d/ -f2- | xargs -r -n 1 git push --delete origin 2> /dev/null"
 # Branch [n]ew
 alias gbn="git checkout master && git branch -M master && git push -u origin master"
 # Branch copy name
