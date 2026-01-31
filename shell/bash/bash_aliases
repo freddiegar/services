@@ -724,12 +724,12 @@ D() {
     echo "DPMS after $(($SECONDS / 60))m or $((($SECONDS / 60) / 60))h without interaction."
 }
 
-alias I="$VIEWER -f -b -t -r ."
-alias II="$VIEWER -f -b -r -S 2 ."
+alias I="\$VIEWER -f -b -t -r ."
+alias II="\$VIEWER -f -b -r -S 2 ."
 # @thanks https://joaocarlos.dev/posts/gnome-control-center-on-i3wm/
 # alias C='XDG_CURRENT_DESKTOP=GNOME gnome-control-center'
 alias O="xargs -r -I {}"
-alias P="[ \$0 = 'zsh' ] && export PS1=\"%1~> \" || export PS1=\"\\W> \""
+alias P="[[ \$0 == *'zsh'* ]] && export PS1=\"%1~> \" || export PS1=\"\\W> \""
 alias S="startx"
 alias T="gtypist --quiet --personal-best --show-errors"
 # @thanks https://stackoverflow.com/a/4509648
@@ -949,6 +949,8 @@ alias glw="git reset --keep HEAD@{1}"
 # Whoops git push revert rescue!
 # Undo last (HEAD^) commit keeping (--soft) changes
 alias gpw="git reset --soft HEAD^"
+# Whoops git merge revert rescue!
+alias gmw="git reset --merge HEAD~1"
 # alias gpa="git push --all"
 # List branch local
 alias gb="git branch"
