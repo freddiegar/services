@@ -540,6 +540,7 @@ set cursorline                                                  " Highligth curr
 set cmdheight=2                                                 " More spaces, less 'Enter to continue...' messages (default: 1)
 set report=5                                                    " Less verbose (default: 2)
 " set virtualedit=block                                           " Allow in Visual block mode (default: empty), use: yov
+set title                                                       " Set title in emulator using settitle
 
 if has('mouse')
     set mouse=                                                  " Mouse disable always, allows copying from cmdline (default: empty)
@@ -3448,7 +3449,9 @@ function! s:get_url(url) abort
     endif
 
     if l:uri ==# ''
-        echo 'Nothing to do with: ' . l:uri
+        echohl WarningMsg
+        echo 'Nothing to do with: <empty>'
+        echohl None
 
         return ''
     endif
@@ -6880,11 +6883,14 @@ EOF
 
     " title (string)
     function! s:settitle(title) abort
-        if expand('%')[-3 :] ==? '!sh' || (g:isneovim && getbufvar(bufnr('%'), 'term_title')[-3 :] ==? 'fzf') || has('gui_running')
+        "  Vim                            nvim                           Neovide
+        if expand('%')[-3 :] ==? '!sh' || expand('%')[-3 :] ==? 'fzf' || has('gui_running')
             return
         endif
 
-        silent! execute '!echo -ne "\033]30;' . a:title . '\007"'
+        let &titlestring = a:title
+
+        " silent! execute '!echo -ne "\033]0;' . a:title . '\007"'
     endfunction
 
     function! s:postcolorscheme() abort
@@ -7123,7 +7129,7 @@ endif
 " @thanks https://vi.stackexchange.com/questions/17225/some-function-keys-switch-cases-of-letters-under-and-after-the-cursor
 " @see https://neovim.io/doc/user/tui.html#%24TERM
 " @see emulator/urxvt/Dark.Xresources -> URxvt*termName
-if g:isneovim && $TERM =~# 'rxvt-256color'
+if g:isneovim && $TERM =~# 'rxvt-unicode-256color'
     " Same to ... (:|)
     imap <silent> <F16> <S-F6>
     nmap <silent> <F16> <S-F6>
@@ -7132,15 +7138,15 @@ if g:isneovim && $TERM =~# 'rxvt-256color'
     imap <silent> <F17> <S-F7>
     nmap <silent> <F17> <S-F7>
     cmap <F17> <S-F7>
-" elseif $TERM =~# 'rxvt-256color'
-    " Breaks Esc key
-"     imap <silent> [29~ <S-F6>
-"     nmap <silent> [29~ <S-F6>
-"     cmap [29~ <S-F6>
+elseif $TERM =~# 'rxvt-unicode-256color' " Vim
+    " @see :h map-special-keys
+    imap <silent> <t_F6> <S-F6>
+    nmap <silent> <t_F6> <S-F6>
+    cmap <t_F6> <S-F6>
 
-"     imap <silent> [31~ <S-F7>
-"     nmap <silent> [31~ <S-F7>
-"     cmap [31~ <S-F7>
+    imap <silent> <t_F7> <S-F7>
+    nmap <silent> <t_F7> <S-F7>
+    cmap <t_F7> <S-F7>
 endif
 
 try

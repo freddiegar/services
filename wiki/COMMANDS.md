@@ -1591,7 +1591,7 @@ ln -s `pwd`/editor/vim/coc-settings.json ~/.config/nvim/coc-settings.json
 >   cargo install --git https://github.com/neovide/neovide
 >   cargo uninstall neovide
 > Allow call from i3:
->       sudo ln -s /home/$USER/.cargo/bin/neovide /usr/bin/neovide
+>   sudo ln -s /home/$USER/.cargo/bin/neovide /usr/bin/neovide
 
 Rename files using xargs
 

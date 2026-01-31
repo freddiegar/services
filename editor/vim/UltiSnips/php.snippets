@@ -215,23 +215,23 @@ file_put_contents('/var/log/mysql/mysql.log', (new \DateTime())->format('Y-m-d\T
 endsnippet
 
 snippet dd "Debug Die"
-dd($$1, __FILE__ . ':' . __LINE__);
+dd($$1);
 endsnippet
 
 snippet dk "Debug Kill"
-dd(__FILE__ . ':' . __LINE__);
+dd();
 endsnippet
 
 snippet dm "Debug Message"
-dd('$1', __FILE__ . ':' . __LINE__);
+dd('$1');
 endsnippet
 
 snippet du "Debug Dump"
-dump($$1, __FILE__ . ':' . __LINE__);
+dump($$1);
 endsnippet
 
 snippet dt "Debug Trace"
-dump(__FILE__ . ':' . __LINE__);
+dump();
 endsnippet
 
 snippet dG "Debug Memory"

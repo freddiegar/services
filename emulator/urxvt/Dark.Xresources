@@ -1,6 +1,6 @@
 ! see https://smarttech101.com/urxvt-installation-color-scheme-fonts-resize-etc/
 
-! Better fonts in High Resolutions
+! Better fonts in High Resolutions (X FreeType)
 Xft.dpi: 96
 Xft.antialias: true
 Xft.autohint: true
@@ -15,9 +15,11 @@ URxvt.perl-ext-common: default,resize-font,selection-to-clipboard,config-reload,
 URxvt*buffered: false
 URxvt*depth: 32
 URxvt*imLocale: en_US.UTF-8
-! Must be has 256 to works correctly in nvim
+! Must be has 256 to works with keymap correctly in nvim
 ! @see https://neovim.io/doc/user/tui.html#%24TERM
-URxvt*termName: rxvt-256color
+! Must be has unicode to works with title settings in nvim
+! @see https://www.reddit.com/r/linuxquestions/comments/yuuv1o/urxvt_how_to_put_open_file_with_nvim_in_title_bar/
+URxvt*termName: rxvt-unicode-256color
 URxvt*skipBuiltinGlyphs: true
 
 ! Do not scroll while...
