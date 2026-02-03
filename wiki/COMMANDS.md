@@ -453,9 +453,11 @@ composer test
 git flow feature finish core-743
 ```
 
-Test in Docker PHP in 7.1
+Test in Docker PHP
 ```bash
 docker run -it --rm --volume=/var/www:/var/www --workdir="/var/www" --name pipelines -entrypoint="/bin/sh" php:7.1-alpine sh
+docker run -it --rm --volume=/var/www:/var/www --workdir="/var/www" --name pipelines-php84 placetopay/php-vapor:php84 sh
+docker run -it --rm --volume=/var/www:/var/www --workdir="/var/www" --name pipelines-php84 placetopay/php-vapor:php84-pipeline sh
 ```
 
 Boot from USB in VirtualBox

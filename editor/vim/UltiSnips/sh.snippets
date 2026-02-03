@@ -6,6 +6,10 @@ snippet bash "Bash" b
 #!/usr/bin/env bash
 endsnippet
 
+snippet scd "Shell Check Disable" b
+# shellcheck disable=SC${0:2034}
+endsnippet
+
 snippet if "If"
 if [ $1 ]; then
     ${0:${VISUAL}}

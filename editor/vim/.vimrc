@@ -560,7 +560,7 @@ set number                                                      " Number in curs
 set numberwidth=5                                               " Number size, aka: 9999␣ (default: 4=999␣)
 set relativenumber                                              " Relative number (slower) (default: off)
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
-set synmaxcol=512                                               " Only highlight the first N columns (default: 3000)
+set synmaxcol=2000                                              " Only highlight the first N columns (default: 3000)
 "              └ weight in bytes
 set updatetime=200                                              " Time (in ms) await for any: git-gutter, events. RIP :redir
 
@@ -4654,6 +4654,7 @@ augroup AutoCommands
         silent execute '%!xmllint --format --recover -'
     endfunction
 
+    " autocmd FileType sh setlocal iskeyword+=$ " fails on search * | #
     autocmd FileType apache setlocal commentstring=#\ %s
     autocmd FileType crontab setlocal commentstring=#\ %s
     autocmd FileType debsources setlocal commentstring=#\ %s
