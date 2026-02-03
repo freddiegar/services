@@ -156,8 +156,9 @@ sudo apt-get -y upgrade
 # Performance, not use swap while RAM < 95% used
 
 [Tips 1](https://www.linuxbabe.com/ubuntu/4-tips-speed-up-ubuntu-16-04)
-
 [Tips 2](https://github.com/akalongman/ubuntu-configuration)
+[Tips 3](https://blog.arrietty.ca/unlocking-advanced-linux-performance-through-kernel-parameter-tuning/)
+[Tips 4](https://support.tools/linux-performance-monitoring-optimization-guide/)
 
 ```bash
 grep -F "vm.swappiness=" /etc/sysctl.d/99-sysctl.conf
@@ -312,6 +313,13 @@ sudo service plymouth-log stop && sudo systemctl disable plymouth-log
 sudo apt-get remove -y --purge plymouth-* plymouth && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
 
+# Disabled LPD (Printers) Service
+
+```bash
+sudo service lpd stop && sudo systemctl disable lpd
+sudo apt-get remove -y --purge lpr && sudo apt-get clean -y && sudo apt-get autoremove -y
+```
+
 # ZSH
 
 [See](https://towardsdatascience.com/comparing-sh-bash-ksh-and-zsh-speed-82a72bbc20ed)
@@ -449,9 +457,12 @@ grep -F "# Ignores in History" ~/.zshrc
 echo "
 # Ignores in History
 # @see https://unix.stackexchange.com/a/6104
+# @see https://zsh.sourceforge.io/Doc/Release/Options.html
 # @thanks https://github.com/ohmyzsh/ohmyzsh/blob/6a65ac90259d87f7549c581372403405ef01b7d2/lib/history.zsh#L35
+setopt HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS
-HISTORY_IGNORE='..|__|___|a|b|c|d|e|g|h|i|l|m|n|o|p|q|r|s|t|w|y|z|a *|alias|alias *|v|v[vlnd]|x|reset|htop|[rv][azh3]|f|f[adfjmnotu]|ls|ls *|cd|cd ..|cd *|cd[eatx]|g[sfvVMN]|gst|ga .|gd|gdc|glo[gpf]|rm *|cd[etxf]|vd[etxf]|k[dl]|pkill *|startx|reboot|sa[irsy]|s[uc] *|h[ht]|fo *'" >> ~/.zshrc
+setopt HIST_IGNORE_ALL_DUPS
+HISTORY_IGNORE='..|__|___|a|b|c|d|e|g|h|i|l|m|n|o|p|q|r|s|t|w|y|z|a *|alias|alias *|v|v[vlnd]|x|exit|reset|clear|htop|[rv][azh3]|f|f[adfjmnotu]|ls|ls *|cd|cd ..|cd *|cd[eatx]|g[sfvVMN]|gst|ga .|gd|gdc|glo[gpf]|rm *|cd[etxf]|vd[etxf]|k[dl]|pkill *|startx|reboot|sa[irsy]|s[uc] *|h[ht]|fo *|[bf]g'" >> ~/.zshrc
 
 # Aliases
 
@@ -2130,6 +2141,35 @@ sudo apt-get remove -y --purge libreoffice\* && sudo apt-get clean -y && sudo ap
 sudo apt-get remove -y --purge rhythmbox\* && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
 
+# Check Apps and Services
+
+## StartUp Aplications
+
+```bash
+ls -la /etc/init.d
+```
+
+## Systemd Services
+
+[See](https://www.tecmint.com/list-all-running-services-under-systemd-in-linux/)
+
+```bash
+# Blame
+systemd-analyze blame
+
+# Active (booted on boot)
+systemctl list-units --type=service --state=active
+
+# Running (memory consume)
+systemctl list-units --type=service --state=running
+```
+
+## Mitigations
+
+```bash
+grepx . /sys/devices/system/cpu/vulnerabilities/*
+```
+
 # SetUp new PROMPT
 
 In ~/.zshrc at ends add:
@@ -2158,7 +2198,7 @@ ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%} %{$fg[yellow]%}%1{✗%}"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}"
 
 # @see https://superuser.com/a/1742815
-TMOUT=10
+TMOUT=60
 RPROMPT="%{$fg_bold[blue]%}%D{%H:%M}% %{$reset_color%}"
 TRAPALRM() {
     zle reset-prompt

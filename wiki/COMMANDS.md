@@ -2063,6 +2063,10 @@ Find files to operate
 find . -type f -name ".hasts" -exec rm {} \;
 find . -type f -name ".hasts" -print
 find . -type f -name ".hasts" -maxdepth 1 -print
+# Not show parent folder
+find . -type f -name ".hasts" -mindepth 1 -maxdepth 1 -print
+# Not show path, only name
+find . -type f -name ".hasts" -mindepth 1 -maxdepth 1 -printf "%f\n"
 ```
 > -print: to dry-run
 > -maxdepth: current and 1 subdir

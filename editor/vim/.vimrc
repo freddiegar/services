@@ -7112,20 +7112,6 @@ function! s:vpm() abort
     endif
 endfunction
 
-if g:isneovim && !has('gui_running')
-    " Same to ... (why nvim why!)
-    imap <silent> <F18> <S-F6>
-    nmap <silent> <F18> <S-F6>
-    cmap <F18> <S-F6>
-
-    imap <silent> <F19> <S-F7>
-    nmap <silent> <F19> <S-F7>
-    cmap <F19> <S-F7>
-
-    imap <silent> <S-Tab> <Esc>[Z
-    smap <silent> <S-Tab> <Esc>[Z
-endif
-
 " @thanks https://vi.stackexchange.com/questions/17225/some-function-keys-switch-cases-of-letters-under-and-after-the-cursor
 " @see https://neovim.io/doc/user/tui.html#%24TERM
 " @see emulator/urxvt/Dark.Xresources -> URxvt*termName
@@ -7138,6 +7124,18 @@ if g:isneovim && $TERM =~# 'rxvt-unicode-256color'
     imap <silent> <F17> <S-F7>
     nmap <silent> <F17> <S-F7>
     cmap <F17> <S-F7>
+elseif g:isneovim && g:istty
+    " Same to ... (why nvim why!)
+    imap <silent> <F18> <S-F6>
+    nmap <silent> <F18> <S-F6>
+    cmap <F18> <S-F6>
+
+    imap <silent> <F19> <S-F7>
+    nmap <silent> <F19> <S-F7>
+    cmap <F19> <S-F7>
+
+    imap <silent> <S-Tab> <Esc>[Z
+    smap <silent> <S-Tab> <Esc>[Z
 elseif $TERM =~# 'rxvt-unicode-256color' " Vim
     " @see :h map-special-keys
     imap <silent> <t_F6> <S-F6>
@@ -7147,6 +7145,14 @@ elseif $TERM =~# 'rxvt-unicode-256color' " Vim
     imap <silent> <t_F7> <S-F7>
     nmap <silent> <t_F7> <S-F7>
     cmap <t_F7> <S-F7>
+elseif g:istty " tty
+    imap <silent> [32~ <S-F6>
+    nmap <silent> [32~ <S-F6>
+    cmap [32~ <S-F6>
+
+    imap <silent> [33~ <S-F7>
+    nmap <silent> [33~ <S-F7>
+    cmap [33~ <S-F7>
 endif
 
 try
