@@ -136,9 +136,14 @@ if (isset($vendor['phpunit/phpunit'])) {
 
             break;
         case $phpunitVersion < 12:
-        default:
             $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_110;
 
+            break;
+        case $phpunitVersion < 13:
+            $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_120;
+
+            break;
+        default:
             break;
     }
 
