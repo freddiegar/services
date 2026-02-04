@@ -249,6 +249,11 @@ grep "GRUB_CMDLINE_LINUX_DEFAULT=\|GRUB_CMDLINE_LINUX=\|GRUB_TERMINAL=" /etc/def
 # Not comment to avoid showing each step in GRUB: quiet splash
 # sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT/#GRUB_CMDLINE_LINUX_DEFAULT/g' /etc/default/grub
 
+# WARNING: Security advice
+# [See](https://linuxblog.io/why-small-vps-slow/)
+# [Attack](https://meltdownattack.com/)
+# sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=".*"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash spec_store_bypass_disable=off mitigations=off"/g' /etc/default/grub
+
 # @see https://www.baeldung.com/linux/solid-state-drive-optimization#optimize-io-scheduler (slower: 3.15 vs 2.45m)
 # @see https://yarondar.wordpress.com/2018/07/29/have-you-tried-blk-mq/
 # command cat /sys/block/loop*/queue/scheduler

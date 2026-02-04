@@ -1,24 +1,49 @@
+# Make dir copy as "read-only"
+# mkcopy dirname
+mkcopy() {
+    ORIGIN=$1
+    READONLY="ro-$1"
+
+    if [ ! -d "$ORIGIN" ]; then
+        printf "\e[31mOrigin folder not found!\e[0m\n"
+
+        return 1
+    fi
+
+    if [ -d "$READONLY" ]; then
+        printf "\e[31mReadonly folder already exists!\e[0m\n"
+
+        return 1
+    fi
+
+    cp -pr "$ORIGIN" "$READONLY"
+
+    sh -c "cd $READONLY; rm -f .env .envrc testx.sh buildx.sh"
+}
+
 # lll ../repository
 lll() {
+    REPOTOLINK=$1
+
     if [ ! -f composer.json ]; then
-        echo "\e[31mFile composer.json not found!\e[0m"
+        printf "\e[31mFile composer.json not found!\e[0m\n"
 
         return 1
     fi
 
     if [ "$#" -eq 0 ]; then
-        echo "\e[31mRepository folder is required!\e[0m"
+        printf "\e[31mRepository folder is required!\e[0m\n"
 
         return 1
     fi
 
-    if [ ! -d $1 ]; then
-        echo "\e[31mRepository folder not found!\e[0m"
+    if [ ! -d "$REPOTOLINK" ]; then
+        printf "\e[31mRepository folder not found!\e[0m\n"
 
         return 1
     fi
 
-    c config repositories.local '{"type": "path", "url": "'$1'"}' --file composer.json
+    c config repositories.local '{"type": "path", "url": "'"$REPOTOLINK"'"}' --file composer.json
     c config minimum-stability dev
 }
 
@@ -28,11 +53,11 @@ fo() {
     NAME="$*"
 
     if [ "$NAME" = "" ]; then
-        NAME=`f | tr -d '\n'`
+        NAME=$(f | tr -d '\n')
     fi
 
     if [ "$NAME" = "" ]; then
-        echo "\e[31mURL or Path is required!\e[0m"
+        printf "\e[31mURL or Path is required!\e[0m\n"
 
         return 1
     fi
@@ -87,12 +112,12 @@ fo() {
 # dd 2024-11-02 2024-11-20
 dd() {
     if [ "$1" = "" ]; then
-        echo "\e[31mDate from is required!\e[0m"
+        printf "\e[31mDate from is required!\e[0m\n"
 
         return 1
     fi
 
-    phpx --run "echo (date_diff(date_create('$1 America/Bogota'), date_create('${2-`date -u +%Y%m%d%H%M%S`} America/Bogota')))->format('%a day %H:%I:%S') . \"\n\";"
+    phpx --run "echo (date_diff(date_create('$1 America/Bogota'), date_create('${2-$(date -u +%Y%m%d%H%M%S)} America/Bogota')))->format('%a day %H:%I:%S') . \"\n\";"
 }
 
 # @see https://bohner.me/posts/fixingsshlogintimes/
@@ -100,7 +125,7 @@ dd() {
 # trace $(pgrep -f ssh)
 trace() {
     if [ "$1" = "" ]; then
-        echo "\e[31mPID is required!\e[0m"
+        printf "\e[31mPID is required!\e[0m\n"
 
         return 1
     fi
@@ -111,24 +136,27 @@ trace() {
     fi
 
     # strace use stderr for outputs by default
-    sudo strace -rTfp $1 2>&1 | tee /tmp/straces/$1.log
+    sudo strace -rTfp "$1" 2>&1 | tee "/tmp/straces/$1.log"
 
-    echo Trace: /tmp/straces/$1.log
+    printf "Trace: /tmp/straces/%s.log\n" "$1"
 }
 
 saU() {
-    echo "\e[34mEnabling packages...\e[0m"
+    printf "\e[34mEnabling packages...\e[0m\n"
+
     sudo sed -i 's/^Enabled: no/Enabled: yes/g' /etc/apt/sources.list.d/*
     sudo sed -i 's/^###Disabled deb /   deb /g' /etc/apt/sources.list.d/*
 
     checkcode $?
 
-    echo "\e[34mUpdating packages...\e[0m"
+    printf "\e[34mUpdating packages...\e[0m\n"
+
     sau
 
     checkcode $?
 
-    echo "\e[34mDisabling packages...\e[0m"
+    printf "\e[34mDisabling packages...\e[0m\n"
+
     sudo sed -i 's/^Enabled: yes/Enabled: no/g' /etc/apt/sources.list.d/*
     sudo sed -i 's/^   deb /###Disabled deb /g' /etc/apt/sources.list.d/*
 
@@ -155,20 +183,23 @@ sAU() {
     URL="https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz"
     TMP=~/.zen/.lastsize
 
-    if [ "`downloadble $URL $TMP`" = "1" ]; then
-        echo "\e[34mUpdating zen...\e[0m"
-        curl -L $URL -o zen.tar.xz && sudo tar xvf zen.tar.xz -C /opt && rm -Rf zen.tar.xz
+    if [ "$(downloadble "$URL" "$TMP")" = "1" ]; then
+        printf "\e[34mUpdating zen...\e[0m\n"
+
+        curl -L "$URL" -o zen.tar.xz && sudo tar xvf zen.tar.xz -C /opt && rm -Rf zen.tar.xz
 
         checkcode $?
     fi
 
-    LATESTOPERA=`curl -s https://download3.operacdn.com/ftp/pub/opera/desktop/ | grepx -o ">.*<" | sed -e 's/[></]//g' | sort -n | tail -n1`
-    URL="$(echo https://download3.operacdn.com/ftp/pub/opera/desktop/`printf "%s" $LATESTOPERA`/linux/opera-stable_`printf "%s" $LATESTOPERA`_amd64.deb)"
+    LATESTOPERA=$(curl -s https://download3.operacdn.com/ftp/pub/opera/desktop/ | grepx -o ">.*<" | sed -e 's/[></]//g' | sort -n | tail -n1)
+    # shellcheck disable=SC2116
+    URL="$(echo "https://download3.operacdn.com/ftp/pub/opera/desktop/$(printf "%s" "$LATESTOPERA")/linux/opera-stable_$(printf "%s" "$LATESTOPERA")_amd64.deb")"
     TMP=~/.config/opera/.lastsize
 
-    if [ "`downloadble $URL $TMP`" = "1" ]; then
-        echo "\e[34mUpdating opera...\e[0m"
-        curl -L $URL -o opera.deb && sudo dpkg -i opera.deb && rm -f opera.deb
+    if [ "$(downloadble "$URL" "$TMP")" = "1" ]; then
+        printf "\e[34mUpdating opera...\e[0m\n"
+
+        curl -L "$URL" -o opera.deb && sudo dpkg -i opera.deb && rm -f opera.deb
 
         checkcode $?
     fi
@@ -181,21 +212,23 @@ sAU() {
 SAU() {
     sAU --ignore
 
-    # echo "\e[34mPulling docker images...\e[0m"
+    # printf "\e[34mPulling docker images...\e[0m\n"
     # sh ~/working/dockerpull.sh
 
     # checkcode $?
 
-    # echo "\e[34mBuiding containers...\e[0m"
+    # printf "\e[34mBuiding containers...\e[0m\n"
     # sh ~/working/dockerbuild.sh
 
     # checkcode $?
 
-    echo "\e[34mDocker cleanup...\e[0m"
+    printf "\e[34mDocker cleanup...\e[0m\n"
+
     dclean
 
-    echo "\e[34mUpdating composer global...\e[0m"
-    php8.4 `which composer` global update
+    printf "\e[34mUpdating composer global...\e[0m\n"
+
+    php8.4 "$(which composer)" global update
 
     if [ "$#" -eq 0 ]; then
         nn "Update (FULLY) completed!"
@@ -204,19 +237,19 @@ SAU() {
 
 checkcode() {
     if [ "$1" -ne 0 ]; then
-        echo "\e[31mCommand return code: $1.\e[0m"
+        printf "\e[31mCommand return code: %s.\e[0m\n" "$1"
 
-        return $1
+        return "$1"
     fi
 
-    return $1
+    return "$1"
 }
 
 # cj test.csv
 # cj test.csv > test.json
 cj() {
     if [ "$1" = "" ]; then
-        echo "\e[31mCSV file is required!\e[0m"
+        printf "\e[31mCSV file is required!\e[0m\n"
 
         return 1
     fi
@@ -227,14 +260,15 @@ cj() {
 timeshell() {
     shell=${1-$SHELL}
 
+    # shellcheck disable=SC2034
     for i in $(seq 1 10);
     do
-        /usr/bin/time $shell -i -c exit;
+        /usr/bin/time "$shell" -i -c exit;
     done
 }
 
 nn() {
-    message="$@"
+    message="$*"
 
     if [ "$message" = "" ]; then
         message="Ran"
@@ -242,12 +276,12 @@ nn() {
 
     if [ "$DISPLAY" = "" ]; then
         # We are in a TTY, then: nothing fancy please
-        echo $message
+        echo "$message"
 
         return 0
     fi
 
-    if [ -z $I3SOCK ]; then
+    if [ -z "$I3SOCK" ]; then
         notify-send "$message"
 
         return 0
@@ -255,8 +289,8 @@ nn() {
 
     # @see https://i3wm.org/docs/userguide.html#exec_quoting
     # Escape comma (,) and semicolon (;)
-    message=`echo "$message" | sed -r 's/,/┌/g'`
-    message=`echo "$message" | sed -r 's/;/¦/g'`
+    message=$(echo "$message" | sed -r 's/,/┌/g')
+    message=$(echo "$message" | sed -r 's/;/¦/g')
 
     i3-msg --quiet "exec i3-nagbar --type warning --font 'pango:fira code retina' --message '$message'"
 }
@@ -272,7 +306,7 @@ vv() {
 }
 
 cat() {
-    if [ "`command -v bat`" != "" ]; then
+    if [ "$(command -v bat)" != "" ]; then
         command bat --paging=never --style=changes "$@"
 
         return $?
@@ -284,7 +318,7 @@ cat() {
 # Dynamic Docker Run (based in current path):
 #   - drun db bash
 drun() {
-    docker exec -w `pwd` -it "$@"
+    docker exec -w "$(pwd)" -it "$@"
 
     return $?
 }
@@ -294,23 +328,34 @@ drun() {
 #   - dphp --version
 #   - dphp vendor/bin/phpunit
 dphp() {
-    CONTAINER=`cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "apache"$1$2}'`
+    CONTAINER=$(command cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "apache"$1$2}')
 
     if [ "$CONTAINER" = "apache" ]; then
-        echo "\e[90mEmpty PHP version, abort!.\e[0m"
+        printf "\e[90mEmpty PHP version, aborted!.\e[0m\n"
 
         return 1
     fi
 
-    if [ "`docker inspect $CONTAINER | grep -F '"Running":' | awk '{print $2}'`" != "true," ]; then
-        docker-compose -f /var/www/html/freddiegar/services/docker/docker-compose.yml -f /var/www/html/freddiegar/services/docker/docker-compose.override.yml up -d --build $CONTAINER 2>&1 > /dev/null
+    if ! docker inspect --format "{{.State.Status }}" "$CONTAINER" > /dev/null 2>&1; then
+        printf "\e[90mContainer [%s] is not active, aborted!.\e[0m\n" "$CONTAINER"
 
-        echo "Initializing container $CONTAINER"
-
-        sleep 5
+        return 1
     fi
 
-    docker exec -w `pwd` -it $CONTAINER php -d memory_limit=-1 "$@"
+    if [ "$(docker inspect --format "{{.State.Status }}" "$CONTAINER")" != "running" ]; then
+        # shellcheck source=/home/freddie/working/utils/pingpong.sh
+        . ~/working/utils/pingpong.sh
+
+        printf " \e[32m✔\e[0m Initializing %s" "$CONTAINER"
+
+        docker-compose -f /var/www/html/freddiegar/services/docker/docker-compose.yml -f /var/www/html/freddiegar/services/docker/docker-compose.override.yml up -d --build "$CONTAINER" > /dev/null 2>&1
+
+        pingpong "docker exec $CONTAINER php --version"
+
+        printf "\n"
+    fi
+
+    docker exec -w "$(pwd)" -it "$CONTAINER" php -d memory_limit=-1 "$@"
 
     return $?
 }
@@ -341,7 +386,7 @@ dtest() {
 sri() {
     # openssl dgst -${2:-sha256} -binary $1 | openssl base64 -A
     # EQUEALS but Kiss
-    shasum --binary --algorithm ${2:-256} $1 | awk '{ print $1 }' | xxd -revert -plain | base64
+    shasum --binary --algorithm "${2:-256}" "$1" | awk '{ print $1 }' | xxd -revert -plain | base64
 }
 
 # Directory Integrity Hash
@@ -349,30 +394,31 @@ sri() {
 #   - shadir [256] default
 #   - shadir 384
 shadir() {
-    shasum --algorithm ${1:-256} <(find . -type f -not -path "./vendor/*" -exec shasum --algorithm ${1:-256} {} \; | sort) | awk '{print $1}'
+    shasum --algorithm "${1:-256}" <(find . -type f -not -path "./vendor/*" -exec shasum --algorithm "${1:-256}" {} \; | sort) | awk '{print $1}'
 }
 
 # OpenSSL PEM:
-#   - osp duckduck.com:443
+#   - osp duckduckgo.com:443
 osp() {
-    openssl s_client -connect "$@" -showcerts </dev/null | openssl x509 -outform pem > "$@".pem
+    openssl s_client -connect "$*" -showcerts < /dev/null > /dev/null 2>&1 | openssl x509 -outform pem 2> /dev/null > "$*".pem
 
     return $?
 }
 
 # OpenSSL Body:
-#   - osb duckduck.com:443.pem
+#   - osb duckduckgo.com:443.pem
 osb() {
-    sed '1d;/^\s.*/d' "$@" > body.txt
+    sed '1d;/^\s.*/d' "$@" > /tmp/body.txt
+
     STATUS="$?"
 
     if [ $STATUS -ne 0 ]; then
-        rm -f body.txt
+        rm -f /tmp/body.txt
 
         return $STATUS
     fi
 
-    cat body.txt | YY | rm body.txt
+    cat /tmp/body.txt | YY ; rm /tmp/body.txt
 
     return $?
 }
@@ -380,16 +426,17 @@ osb() {
 # OpenSSL Private Key:
 #   - osi duckduck.com:443.pem
 osi() {
-    openssl pkey -in "$@" -out pkey.txt
+    openssl pkey -in "$@" -out /tmp/pkey.txt
+
     STATUS="$?"
 
     if [ $STATUS -ne 0 ]; then
-        rm -f pkey.txt
+        rm -f /tmp/pkey.txt
 
         return $STATUS
     fi
 
-    cat pkey.txt | YY | rm pkey.txt
+    cat /tmp/pkey.txt | YY ; rm /tmp/pkey.txt
 
     return $?
 }
@@ -398,7 +445,8 @@ osi() {
 #   - pcs
 #   - pcs 7.4
 pcs() {
-    phplint $(command ls -1 -d */ | grepx -v 'vendor|node_modules|.git' | xargs -I {} echo -n ' {}') "$@"
+    # shellcheck disable=SC2046
+    phplint $(command ls -1 -d -- */ | grepx -v 'vendor|node_modules|.git' | xargs -I {} echo -n ' {}') "$*"
 
     return $?
 }
@@ -408,27 +456,28 @@ pcs() {
 alias nv="node --version"
 cnv() {
     if [ "$#" -eq 0 ]; then
-        VERSION=$(command ls -L1 ~/.nvm/versions/node | fzf)
+        _VERSION=$(command ls -L1 ~/.nvm/versions/node | fzf)
     else
-        VERSION=$1
+        _VERSION=$1
     fi
 
-    if [ "$VERSION" = "" ]; then
+    if [ "$_VERSION" = "" ]; then
         # Nothing selected, canceled!
         return 0
     fi
 
-    if [ ! -d "$HOME/.nvm/versions/node/$VERSION/bin" ]; then
-        echo "\e[31mNot supported node $VERSION, aborted!\e[0m"
+    if [ ! -d "$HOME/.nvm/versions/node/$_VERSION/bin" ]; then
+        printf "\e[31mNot supported node %s, aborted!\e[0m\n" "$_VERSION"
 
         return 1
     fi
 
-    CVERSION=`command cat $HOME/.nvm/alias/default`
+    _CVERSION=$(command cat "$HOME/.nvm/alias/default")
 
-    echo "Using node \e[32m$VERSION\e[0m \e[90mover $CVERSION\e[0m"
+    printf "Using node \e[32m%s\e[0m \e[90mover %s\e[0m\n" "$_VERSION" "$_CVERSION"
 
-    . ~/working/nodeversion.sh $VERSION --ignore
+    # shellcheck disable=SC1090
+    . ~/working/nodeversion.sh "$_VERSION" --ignore
 
     return $?
 }
@@ -436,9 +485,9 @@ cnv() {
 # Change Dir Project
 #   - cdp /var/www/html/flexphp
 cdp() {
-    cd "$@"/$(cd "$@" && command ls -L1 | fzf)
+    cd "$*"/"$(cd "$*" && command ls -L1 | fzf)" || exit 1
 
-    if [ "$PWD" = "$@" ]; then
+    if [ "$PWD" = "$*" ]; then
         # Nothing selected, canceled!
         return 0
     fi
@@ -459,19 +508,19 @@ ctt() {
         sed -i 's/BAT_THEME="gruvbox-dark"/BAT_THEME="gruvbox-light"/g' ~/.profile
     fi
 
-    if [ "`command -v konsoleprofile`" != "" ]; then
+    if [ "$(command -v konsoleprofile)" != "" ]; then
         # Konsole
         sed -i "s/ColorScheme=.*/ColorScheme=${1}/g" /var/www/html/freddiegar/services/emulator/konsole/konsole.profile
 
-        konsoleprofile colors=$1
+        konsoleprofile colors="$1"
     fi
 
     # URxvt
     if [ -f ~/.Xresources ]; then
         rm -f ~/.Xresources ~/.Xdefaults
 
-        ln -s /var/www/html/freddiegar/services/emulator/urxvt/$1.Xresources ~/.Xresources
-        ln -s /var/www/html/freddiegar/services/emulator/urxvt/$1.Xresources ~/.Xdefaults
+        ln -s "/var/www/html/freddiegar/services/emulator/urxvt/$1.Xresources" ~/.Xresources
+        ln -s "/var/www/html/freddiegar/services/emulator/urxvt/$1.Xresources" ~/.Xdefaults
 
         xrdb ~/.Xresources
 
@@ -481,7 +530,7 @@ ctt() {
     # Alacritty
     if [ -f ~/.config/alacritty/alacritty.toml ]; then
         rm -f ~/.config/alacritty/alacritty.toml
-        ln -s /var/www/html/freddiegar/services/emulator/alacritty/$1.alacritty.toml ~/.config/alacritty/alacritty.toml
+        ln -s "/var/www/html/freddiegar/services/emulator/alacritty/$1.alacritty.toml" ~/.config/alacritty/alacritty.toml
     fi
 }
 
@@ -491,29 +540,29 @@ ctt() {
 # @thanks https://morgan.cugerone.com/blog/how-to-use-git-worktree-and-in-a-clean-way/
 # @thanks https://morgan.cugerone.com/blog/workarounds-to-git-worktree-using-bare-repository-and-cannot-fetch-remote-branches/
 gwi() {
-    PWD=`pwd`
+    _PWD=$(pwd)
     BASENAME=${1##*/}
     NAME=${2:-${BASENAME%.*}}
 
-    if [ -d $PWD/$NAME ]; then
-        echo "\e[31mRepository [$NAME] exists!\e[0m"
+    if [ -d "$_PWD/$NAME" ]; then
+        printf "\e[31mRepository [%s] exists!\e[0m\n" "$NAME"
 
         return 1
     fi
 
-    mkdir $PWD/$NAME
+    mkdir "$_PWD/$NAME"
 
-    cd $PWD/$NAME
+    cd "$_PWD/$NAME" || exit 1
 
-    git clone --bare "$1" $PWD/$NAME/.bare
+    git clone --bare "$1" "$_PWD/$NAME/.bare"
 
-    echo "gitdir: $PWD/$NAME/.bare" $PWD/$NAME/.git
+    echo "gitdir: $_PWD/$NAME/.bare $_PWD/$NAME/.git"
 
-    cd $PWD/$NAME/.bare
+    cd "$_PWD/$NAME/.bare" || exit 1
 
     git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 
-    cd $PWD/$NAME
+    cd "$_PWD/$NAME" || exit 1
 }
 
 # Git worktree branch
@@ -521,65 +570,74 @@ gwi() {
 gwb() {
     ORIGIN=${2:-${1}}
 
-    gwa $1 $ORIGIN
+    gwa "$1" "$ORIGIN"
 }
 
 # Git worktree add
 #   - gwa master
 gwa() {
     ORIGIN=${2:-${1}}
+    _PWD=$(pwd)
 
-    git worktree add .bare/branches/$1 $ORIGIN
-
-    if [ "$?" -ne 0 ]; then
+    if ! git worktree add ".bare/branches/$1" "$ORIGIN"; then
         return 1
     fi
 
-    if [ -f `pwd`/.env ]; then
-        ln `pwd`/.env `pwd`/.bare/branches/$1/.env
+    if [ -f "$_PWD/.env" ]; then
+        ln "$_PWD/.env" "$_PWD/.bare/branches/$1/.env"
     fi
 
-    if [ -f `pwd`/.env.testing ]; then
-        ln `pwd`/.env.testing `pwd`/.bare/branches/$1/.env.testing
+    if [ -f "$_PWD/.env.testing" ]; then
+        ln "$_PWD/.env.testing" "$_PWD/.bare/branches/$1/.env.testing"
     fi
 
-    if [ ! -d `pwd`/current ]; then
-        gwc $1
+    if [ ! -d "$_PWD/current" ]; then
+        gwc "$1"
     fi
 }
 
 # Git worktree remove
-#   - gwa master
+#   - gwr master
 gwr() {
-    if [ ! -d "`pwd`/.bare" ]; then
-        echo "\e[31mMove to root directory!\e[0m"
+    _PWD=$(pwd)
+
+    if [ ! -d "$_PWD/.bare" ]; then
+        printf "\e[31mMove to root directory!\e[0m\n"
 
         return 1
     fi
 
-    git worktree remove `pwd`/.bare/branches/$1
+    if [ ! -d "$_PWD/.bare/branches/$1" ]; then
+        printf "\e[31mWorktree [%s] branch not found!\e[0m\n" "$1"
+
+        return 1
+    fi
+
+    git worktree remove "$_PWD/.bare/branches/$1"
 }
 
 # Git worktree change|current to
 #   - gwc master
 gwc() {
-    if [ ! -d "`pwd`/.bare" ]; then
-        echo "\e[31mMove to root directory!\e[0m"
+    _PWD=$(pwd)
+
+    if [ ! -d "$_PWD/.bare" ]; then
+        printf "\e[31mMove to root directory!\e[0m\n"
 
         return 1
     fi
 
-    if [ ! -d "`pwd`/.bare/branches/$1" ]; then
-        echo "\e[31mBranch $1 doesn't exists!\e[0m"
+    if [ ! -d "$_PWD/.bare/branches/$1" ]; then
+        printf "\e[31mBranch [%s] doesn't exists!\e[0m\n" "$1"
 
         return 1
     fi
 
-    rm -f `pwd`/current
+    rm -f "$_PWD/current"
 
-    ln -s `pwd`/.bare/branches/$1 `pwd`/current
+    ln -s "$_PWD/.bare/branches/$1" "$_PWD/current"
 
-    chown $USER:www-data `pwd`/current -Rf
+    chown "$USER:www-data" "$_PWD/current" -Rf
 }
 
 vapor() {
@@ -589,7 +647,7 @@ vapor() {
         return $?
     fi
 
-    echo "\e[90mEmpty Vapor local, using global as fallback.\e[0m"
+    printf "\e[90mEmpty Vapor local, using global as fallback.\e[0m\n"
 
     sleep 1
 
@@ -599,73 +657,76 @@ vapor() {
 extended() {
     COMMAND=$1
     # @thanks https://stackoverflow.com/a/9057392
-    EXTRAS=${@:2}
+    EXTRAS=${*:2}
 
     if [ "$EXTRAS" = "" ]; then
-        COMMAND="`echo $COMMAND | sed -r 's/ @@==@@//g'`"
+        COMMAND="$(echo "$COMMAND" | sed -r 's/ @@==@@//g')"
     else
-        COMMAND="`echo $COMMAND | sed -r "s/@@==@@/$EXTRAS/g"`"
+        COMMAND="$(echo "$COMMAND" | sed -r "s/@@==@@/$EXTRAS/g")"
     fi
 
     # Use SHELL to enable usage alias in COMMAND
     $SHELL -c "$COMMAND"
 }
 
+# downloadble <url> <savefile>
 downloadble() {
-    curl -s -L -I $1 | tail -n15 | grep -i -e "^content-length: " | awk '{print $2}' > /tmp/currentsize
+    curl -s -L -I "$1" | tail -n15 | grep -i -e "^content-length: " | awk '{print $2}' > /tmp/currentsize
 
-    if [ "`downloadsize $1 $2`" = "`command cat /tmp/currentsize | tr -d '\n' || echo 1`" ]; then
+    if [ "$(downloadsize "$1" "$2")" = "$(command cat /tmp/currentsize | tr -d '\n' || echo 1)" ]; then
         echo 0
 
         return 0
     fi
 
-    cp -p /tmp/currentsize $2
+    cp -p /tmp/currentsize "$2"
 
     echo 1
 }
 
+# downloadsize <url> <savefile>
 downloadsize() {
-    if [ -f $2 ]; then
-        command cat $2 | tr -d '\n'
+    if [ -f "$2" ]; then
+        command cat "$2" | tr -d '\n'
 
         return 0
     fi
 
-    curl -s -L -I $1 > $2 && tail -n15 $2 | grep -i -e "^content-length: " | awk '{print $2}' > $2 | command cat $2 | tr -d '\n' || echo 0
+    # shellcheck disable=SC2260
+    # shellcheck disable=SC2094
+    curl -s -L -I "$1" -o "$2" && tail -n15 "$2" | grep -i -e "^content-length: " | awk '{print $2}' > "$2" | command cat "$2" | tr -d '\n' || echo 0
 
     return 0
 }
 
 cl() {
-    cd $1 && ls -la
+    cd "$1" && ls -la
 }
 
 ignorematches() {
     if [ "$2" = "" ]; then
-        echo "\e[31mPattern is required!\e[0m"
+        printf "\e[31mPattern is required!\e[0m\n"
 
         return 1
     fi
 
-    # TMPFILE="`mktemp`" && git diff --ignore-space-change --ignore-all-space $1 --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*' | g -v "[-|+].*$2.*" | g -v "[-|+]\s*$" > $TMPFILE && v -c "CH" -c"wq" $TMPFILE && bat --language diff --plain $TMPFILE && rm -f $TMPFILE
-    TMPFILE="`mktemp`" && git diff --ignore-space-change --ignore-all-space $1 --ignore-blank-lines --ignore-matching-lines '^(\s*)?(\[-)?(\{+)?(\s+)?[\/\*].*' | g -v "([-|+]|[\[-|{+]).*$2.*"  | g -v "^(̣[-|+]|(\s*)?[\[-|{+])\s*$" > $TMPFILE && v -c "CH" -c"wq" $TMPFILE && bat --language diff --plain $TMPFILE && rm -f $TMPFILE
+    TMPFILE="$(mktemp)" && git diff --ignore-space-change --ignore-all-space "$1" --ignore-blank-lines --ignore-matching-lines '^(\s*)?(\[-)?(\{+)?(\s+)?[\/\*].*' | g -v "([-|+]|[\[-|{+]).*$2.*"  | g -v "^(̣[-|+]|(\s*)?[\[-|{+])\s*$" > "$TMPFILE" && v -c "CH" -c"wq" "$TMPFILE" && bat --language diff --plain "$TMPFILE" && rm -f "$TMPFILE"
 }
 
 gdI() {
-    ignorematches '' $1
+    ignorematches '' "$1"
 }
 
 gdcI() {
-    ignorematches '--cached' $1
+    ignorematches '--staged' "$1"
 }
 
 gddI() {
-    ignorematches '--word-diff' $1
+    ignorematches '--word-diff' "$1"
 }
 
 gddcI() {
-    ignorematches '--cached --word-diff' $1
+    ignorematches '--staged --word-diff' "$1"
 }
 
 alias \?="apropos"
@@ -673,7 +734,7 @@ alias a="alias"
 alias b="sh ~/working/mysqlramdisk.sh"
 # alias [c]omposer
 alias d="diff -u"
-alias e=$EDITOR
+alias e=\$EDITOR
 alias f="fzf"
 alias g="grepx"
 alias h="sh ~/working/mysqlschema.sh"
@@ -689,7 +750,7 @@ alias r="sh ~/working/mysqlget.sh"
 alias s="bash ~/working/mysqlog.sh"
 alias t="bash testx.sh"
 alias u="cd /var/www/html/universal-ctags/ctags && git clean -f -d && git pull origin master && ./autogen.sh && ./configure && make && sudo make install && cd -1"
-alias v=$EDITOR
+alias v=\$EDITOR
 alias w="watch -n0.5 -t --color"
 alias x="exit"
 alias y="sh ~/working/syntaxer.sh"
@@ -701,7 +762,7 @@ alias z="sh ~/working/sprinter.sh"
 D() {
     SECONDS=600
 
-    if [ "`xset q | grep "Standby: $SECONDS"`" != "" ] || [ "$#" -ge 1 ]; then
+    if [ "$(xset q | grep "Standby: $SECONDS")" != "" ] || [ "$#" -ge 1 ]; then
         SECONDS=${1-3600}
     fi
 
@@ -709,19 +770,19 @@ D() {
     #    │     ╭─ lenght idle time
     #    │     │        ╭─ period to change pattern
     #    │     │        │
-    xset s    $SECONDS $SECONDS
+    xset s    "$SECONDS" "$SECONDS"
 
     #    ╭─ display power management signal
     #    │     ╭─ standby
     #    │     │        ╭─ suspend
     #    │     │        │        ╭─ off
     #    │     │        │        │
-    xset dpms $SECONDS $SECONDS $SECONDS
+    xset dpms "$SECONDS" "$SECONDS" "$SECONDS"
 
     # i3 status
-    echo "$((`xset q | grep "Standby:" | cut -d ':' -f 2 | cut -d ' ' -f 2` / 60))m" > /tmp/i3_dpms
+    echo "$(($(xset q | grep "Standby:" | cut -d ':' -f 2 | cut -d ' ' -f 2) / 60))m" > /tmp/i3_dpms
 
-    echo "DPMS after $(($SECONDS / 60))m or $((($SECONDS / 60) / 60))h without interaction."
+    echo "DPMS after $((SECONDS / 60))m or $(((SECONDS / 60) / 60))h without interaction."
 }
 
 alias I="\$VIEWER -f -b -t -r ."
@@ -729,6 +790,7 @@ alias II="\$VIEWER -f -b -r -S 2 ."
 # @thanks https://joaocarlos.dev/posts/gnome-control-center-on-i3wm/
 # alias C='XDG_CURRENT_DESKTOP=GNOME gnome-control-center'
 alias O="xargs -r -I {}"
+# shellcheck disable=SC2142
 alias P="[[ \$0 == *'zsh'* ]] && export PS1=\"%1~> \" || export PS1=\"\\W> \""
 alias S="startx"
 alias T="gtypist --quiet --personal-best --show-errors"
@@ -737,10 +799,13 @@ alias W="find /var/www/html/{evertec,freddiegar} -mindepth 1 -maxdepth 1 -type d
 
 # SPA
 alias ww="[ \"\`pgrep --full 'npm run dev --host'\`\" = \"\" ] && sh -c 'cd /var/www/html/evertec/webcheckout-spa && npm run dev -- --host > /dev/null 2>&1 &' && echo '\e[32mStarted\e[0m SPA'"
+# shellcheck disable=SC2142
 alias wk="pkill --newest --signal 9 --full 'npm run dev --host' && echo '\e[31mStopped\e[0m SPA' &&  PIDTOKILL=\`sudo lsof -i :3030 | grepx 3030 | awk '{print \$2}'\` && if [ \"\$PIDTOKILL\" != \"\" ]; then kill -9 \$PIDTOKILL; echo \"\e[31mKilled \$PIDTOKILL\e[0m\"; fi"
 
 # @thanks https://rafaelc.org/posts/copying-previous-commands-with-fzf-and-zsh/
+# shellcheck disable=SC2142
 alias hh="fc -ln 0 | awk '!a[\$0]++' | fzf --tac | yy"
+# shellcheck disable=SC2142
 alias ht="history | grepx -v '  (_|sudo|echo|php|ls) ' | awk '{print \$4}' | sort | uniq -c | sort -nr | head -10"
 # di dir1 dir2 > dirs.diff
 alias di="diff -rq --suppress-common-lines"
@@ -749,6 +814,7 @@ alias di="diff -rq --suppress-common-lines"
 alias le="find . -size 0 | grepx -v 'ignore|node_modules|vendor|storage|coverage|.git/'"
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git fetch --all --prune; fi"
 # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git gc --prune=now; fi"
+# # lsd | awk '{print $9}' | o sh -c "cd {} && if [ -d .git ] ; then git gc --aggressive --prune=now; fi"
 # lsd | awk '{print $9}' | g -v '^ro-' | o sh -c "cd {} && if [ -d .git ] ; then git checkout master || git checkout main; fi"
 # lsd | awk '{print $9}' | g -v '^ro-' | o sh -c "cd {} && if [ -d .git ] ; then git pull origin master || git pull origin main; fi"
 # lsd | awk '{print $9}' | g -v '^ro-' | o sh -c "cd {} && if [ -f composer.json ] && [ -f composer.lock ] ; then phpx `which composer` install -vvv; fi"
@@ -761,7 +827,7 @@ alias lsn="command ls -L1"
 alias __="ssh-add"
 # @thanks https://unix.stackexchange.com/a/90869
 # ssh-add -l: List identities register
-alias ___="trap '(test -z "\$SSH_AUTH_SOCK" -o ! -e "\$SSH_AUTH_SOCK") && eval \`/usr/bin/ssh-agent -k\`' 0"
+alias ___="trap '(test -z \"\$SSH_AUTH_SOCK\" -o ! -e \"\$SSH_AUTH_SOCK\") && eval \`/usr/bin/ssh-agent -k\`' 0"
 alias rga="rg --no-ignore --hidden --glob '!{.git,*.log,*-lock.json,*.lock,var/*,storage/*,node_modules/*,*/node_modules/*,*/var/*,*/storage/*}'"
 alias npkg="dpkg --list | wc --lines"
 
@@ -769,15 +835,15 @@ alias kd="ctt Dark"
 alias kl="ctt Light"
 
 alias vf="vifm"
-alias vd="$EDITOR -d"
-alias vn="$EDITOR -u NONE -c 'set nowrap lazyredraw noswapfile noruler noshowmode noshowcmd wildmenu pumheight=10 autoread autowrite shortmess=aWFAIcsTt undolevels=0'"
-alias vc="$EDITOR ~/.vimrc"
-alias vz="$EDITOR ~/.zshrc"
-alias vs="$EDITOR slide*.vpm"
-alias va="$EDITOR ~/.bash_aliases"
-alias vh="$EDITOR ~/.zsh_history"
-alias v3="$EDITOR ~/.config/i3/config"
-alias vl="$EDITOR -c \"set background=light\""
+alias vd="\$EDITOR -d"
+alias vn="\$EDITOR -u NONE -c 'set nowrap lazyredraw noswapfile noruler noshowmode noshowcmd wildmenu pumheight=10 autoread autowrite shortmess=aWFAIcsTt undolevels=0'"
+alias vc="\$EDITOR ~/.vimrc"
+alias vz="\$EDITOR ~/.zshrc"
+alias vs="\$EDITOR slide*.vpm"
+alias va="\$EDITOR ~/.bash_aliases"
+alias vh="\$EDITOR ~/.zsh_history"
+alias v3="\$EDITOR ~/.config/i3/config"
+alias vl="\$EDITOR -c \"set background=light\""
 
 alias rz="source ~/.profile && exec zsh"
 alias ra="source ~/.bash_aliases"
@@ -790,37 +856,38 @@ alias sai="sudo apt-get install --no-install-recommends -y"
 alias sar="sudo apt-get remove -y"
 alias sau="sudo apt-get update && sudo apt-get upgrade -y --with-new-pkgs && sac"
 alias sac="sudo apt-get autoremove --purge -y && sudo apt-get clean -y && sudo apt-get autoclean -y"
+# shellcheck disable=SC2142
 alias sap="dpkg -l | grepx ^rc | grepx -v grub | awk '{print \$2}' | xargs -t sudo apt-get -y purge"
 alias say="sudo apt policy"
 
 alias xpa='echo "\n" | sudo add-apt-repository'
 alias xpr='echo "\n" | sudo add-apt-repository --remove'
 
-alias c="phpx `which composer`"
-alias c1="phpx `which composer_v1`"
-alias ci="phpx `which composer` -vvv install"
-alias cu="phpx `which composer` -vvv update"
-alias cda="phpx `which composer` -vvv dump-autoload --optimize"
-alias cii="phpx `which composer` -vvv install --ignore-platform-reqs"
-alias cui="phpx `which composer` -vvv update --ignore-platform-reqs"
-alias cip="phpx `which composer` -vvv install --no-dev"
-alias cin="phpx `which composer` -vvv install --no-cache"
-alias cipn="phpx `which composer` -vvv install --no-dev --no-cache"
+alias c="phpx \$(which composer)"
+alias c1="phpx \$(which composer_v1)"
+alias ci="phpx \$(which composer) -vvv install"
+alias cu="phpx \$(which composer) -vvv update"
+alias cda="phpx \$(which composer) -vvv dump-autoload --optimize"
+alias cii="phpx \$(which composer) -vvv install --ignore-platform-reqs"
+alias cui="phpx \$(which composer) -vvv update --ignore-platform-reqs"
+alias cip="phpx \$(which composer) -vvv install --no-dev"
+alias cin="phpx \$(which composer) -vvv install --no-cache"
+alias cipn="phpx \$(which composer) -vvv install --no-dev --no-cache"
 
 alias pps="phpx bin/console"
-alias ccs="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                      && pps cache:clear"
-alias ccm="sudo chmod 770 -Rf var                       && sudo chown $USER:www-data -Rf var                                                && gco var"
+alias ccs="sudo chmod 770 -Rf var                       && sudo chown \$USER:www-data -Rf var                      && pps cache:clear"
+alias ccm="sudo chmod 770 -Rf var                       && sudo chown \$USER:www-data -Rf var                                                && gco var"
 
 alias ppa="phpx artisan"
 alias ppw="sudo -u www-data phpx artisan"
-alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown $USER:www-data -Rf storage bootstrap/cache  && ppa optimize:clear     && gco storage bootstrap"
+alias ccl="sudo chmod 770 -Rf storage bootstrap/cache   && sudo chown \$USER:www-data -Rf storage bootstrap/cache  && ppa optimize:clear     && gco storage bootstrap"
 # Simulate Vapor shortcuts for convenience
 alias artisan="ppa"
 alias tinker="ppa tinker"
 
 alias ppv='ppa app-version:create --sha="$(git rev-parse HEAD)" --time="$(date -u +%Y%m%d%H%M%S)" --branch="$(git rev-parse --abbrev-ref HEAD)"'
 alias ppy="export APPLICATION_ENV=dev && phpx yii"
-alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown $USER:www-data -Rf runtime web/assets       && ppy cache/flush-all"
+alias ccy="sudo chmod 770 -Rf runtime web/assets        && sudo chown \$USER:www-data -Rf runtime web/assets       && ppy cache/flush-all"
 
 alias pex="sudo phpenmod xdebug"
 alias pdx="sudo phpdismod xdebug"
@@ -831,7 +898,7 @@ alias psw="sudo update-alternatives --config php"
 alias jsw="sudo update-alternatives --config java"
 
 # @see https://make.wordpress.org/cli/handbook/guides/installing/
-alias wpx="phpx `which wp`"
+alias wpx="phpx \$(which wp)"
 
 # @see https://xdebug.org/docs/all_settings#mode
 alias vt="extended \"export XDEBUG_MODE=off && phpx vendor/bin/phpunit --stop-on-failure --stop-on-error --no-coverage @@==@@ && nn 'Ran tests successfully!'\""
@@ -864,7 +931,9 @@ alias dstatus="docker ps --format \"{{.Names}}\" | sort"
 alias dprune="docker system prune -a"
 alias dstats="docker stats"
 alias dclean="dcclean && diclean"
-alias diclean="docker images | grepx ' <none> ' | awk '{print \$3}' | xargs -r -I {} docker rmi -f {} && echo 'Images cleaned'"
+# shellcheck disable=SC2142
+alias diclean="docker images -f dangling=true --quiet | xargs -r -I {} docker rmi -f {} && echo 'Images cleaned'"
+# shellcheck disable=SC2142
 alias dcclean="docker ps -a | grepx ' Exited (1) ' | awk '{print \$1}' | xargs -r -I {} docker rm  -f {} && echo 'Containers cleaned'"
 
 alias gs="git summary -q 2> /dev/null"
@@ -895,10 +964,12 @@ alias glsu="git ls-files --others --exclude-standard"
 # List [f]ull path (usable in directory diferent to root directory)
 alias glsf="git ls-files --full-name"
 # List [s]taged files
-alias glss="git diff --name-only --cached | xargs -r -l echo"
+alias glss="git diff --name-only --staged | xargs -r -l echo"
 # List [a]ssumed unchanged files
+# shellcheck disable=SC2142
 alias glsa="git ls-files -v | rg '^h ' | awk '{print \$2}'"
 # List [c]hanges (new/modified/deleted) files
+# shellcheck disable=SC2142
 alias glsc="git status --porcelain | awk '{print \$2}'"
 
 alias gd="git diff --ignore-space-change --ignore-all-space"
@@ -909,14 +980,15 @@ alias gda="git diff"
 # version [-"0.8.39"-]{+"0.8.57"+}
 alias gdd="git diff --ignore-space-change --ignore-all-space --word-diff"
 alias gdda="git diff --word-diff"
-alias gdc="git diff --ignore-space-change --ignore-all-space --cached"
-alias gddc="git diff --ignore-space-change --ignore-all-space --cached --word-diff"
-alias gdca="git diff --cached"
-alias gddca="git diff --cached --word-diff"
+alias gdc="git diff --ignore-space-change --ignore-all-space --staged"
+alias gddc="git diff --ignore-space-change --ignore-all-space --staged --word-diff"
+alias gdca="git diff --staged"
+alias gddca="git diff --staged --word-diff"
 # Ignores comments
 alias gdi="git diff --ignore-space-change --ignore-all-space --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*'"
-alias gdci="git diff --ignore-space-change --ignore-all-space --cached --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*'"
+alias gdci="git diff --ignore-space-change --ignore-all-space --staged --ignore-blank-lines --ignore-matching-lines '^(\s+)?[\/\*].*'"
 alias ga="git add"
+# shellcheck disable=SC2142
 alias gcc="glog | head -1 | awk '{print \$2}' | yy"
 alias gcm="git commit -S"
 alias gcmn="git commit --no-verify -S"
@@ -1034,11 +1106,13 @@ alias gloq="git-quick-stats"
 alias glod="git log --graph --abbrev-commit --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%as: %ar) %C(bold blue)<%aN>%C(reset)' --no-merges --since=\"\$_GIT_SINCE\" --until=\"\$_GIT_UNTIL\""
 alias gloa="glod --author=\"\$_GIT_AUTHOR\""
 alias gloh="git shortlog -n --no-merges --since=\"\$_GIT_SINCE\" --until=\"\$_GIT_UNTIL\" --author=\"\$_GIT_AUTHOR\""
-alias gloo="git --no-pager log --pretty=format:'%aN <%ae>' --since=`date -d \"$(date +%Y-%m-01) -3 month\" +%Y-%m-%d` --until=`date -d \"$(date +%Y-%m-01) +1 month -1 day\" +%Y-%m-%d` | sort | uniq"
+alias gloo="git --no-pager log --pretty=format:'%aN <%ae>' --since=\$(date -d \"\$(date +%Y-%m-01) -3 month\" +%Y-%m-%d) --until=\$(date -d \"\$(date +%Y-%m-01) +1 month -1 day\" +%Y-%m-%d) | sort | uniq"
 alias glol="git show --name-only"
 alias glof="git log --decorate=full --pretty=full --graph -b --stat"
 alias glos="git log --show-signature"
+
 # NOTE: reflog is cleared with: git gc
+# shellcheck disable=SC2142
 alias gflo="git reflog | fzf | tr -d '\n' | awk '{print \$1}' | yy"
 
 alias gconf="git config --list"
@@ -1065,10 +1139,11 @@ alias vde="cdp /var/www/html/evertec"
 alias vdx="cdp /var/www/html/flexphp"
 alias vdf="cdp /var/www/html/freddiegar"
 
-alias cdd="cd /home/$USER/Downloads"
+alias cdd="cd /home/\$USER/Downloads"
 
-# wr source dest
-alias wr="convert -resize `xdpyinfo | awk '/dimensions/ {print $2}'`"
+# wr <source> <dest>
+# shellcheck disable=SC2142
+alias wr="convert -resize \$(xdpyinfo | awk '/dimensions/ {print \$2}')"
 alias wh="convert -resize 1920x1080"
 alias yy="tr -d '\n' | xclip -selection clipboard"
 alias YY="xclip -selection clipboard"
@@ -1077,13 +1152,14 @@ alias pp="xclip -selection clipboard -o"
 alias nw="nmcli device wifi show-password"
 
 alias ft="ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner --"
+# shellcheck disable=SC2154
 alias ff="command ls -L1 | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
 alias fa="find . -type f -print | shuf | while read file; do ffplay -autoexit -nostats -nodisp -vn -sn -hide_banner -- \$file; done"
 alias fj="(pkill ffplay &)"
 alias fk="(pkill ffplay &)"
 alias fn="ps -fea | g ffplay | g -F hide_banner | sed 's#^.*-- ##g'"
 # fd <url>
-alias fd="cd /home/$USER/Music && python3 /usr/local/bin/youtube-dl --ignore-errors --yes-playlist --format 'bestaudio[ext=m4a]/best' --extract-audio --output '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s'"
+alias fd="cd /home/\$USER/Music && python3 /usr/local/bin/youtube-dl --ignore-errors --yes-playlist --format 'bestaudio[ext=m4a]/best' --extract-audio --output '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s'"
 alias fD="python3 /usr/local/bin/youtube-dl --ignore-errors --no-playlist  --format 'bestaudio[ext=m4a]/best' --extract-audio --output '%(title)s.%(ext)s'"
 # fm 09 <url>
 alias fm="fd --playlist-items"
