@@ -921,7 +921,16 @@ alias sts="phpx bin/phpunit --stop-on-failure --stop-on-error --no-coverage --te
 alias stS="phpx bin/phpunit --testdox --testsuite"
 alias stf="phpx bin/phpunit --stop-on-failure --stop-on-error --no-coverage --filter"
 
-alias ducks="du -cks * | sort -rn | head"
+# Directory summarize size total
+alias ducks="du -cksx * 2> /dev/null | sort -rn | head -n50 | less"
+# Human size group by directory
+alias hucks="du -ah * 2> /dev/null | sort -rh | head -n50 | less"
+# Files number group by directory
+alias fucks="find . -xdev -printf '%h\\n' 2> /dev/null | sort | uniq -c | sort -k 1 -rn | head -n50 | less"
+# Large files in current directory
+alias lucks="find . -xdev -type f -size +100M -print0 2> /dev/null | xargs -0 du -h | sort -rh | head -n50 | less"
+# Pictures files are ignored
+alias pucks="find . -name 'ExternalHD' -prune -o -xdev -type f -size +100M -print0 2> /dev/null | xargs -0 du -h | sort -rh | head -n50 | less"
 
 alias dexec="docker exec -it"
 alias dlogs="docker logs --tail 50 -f"
