@@ -39,7 +39,6 @@ URxvt.intensityStyles: false
 URxvt.letterSpace: -1
 URxvt.saveLines: 10000
 URxvt.scrollBar: false
-URxvt.transparent: false
 
 ! Resize-font
 URxvt.keysym.Control-minus:  resize-font:smaller
@@ -52,8 +51,11 @@ URxvt.keysym.Control-Down:   \033[1;5B
 URxvt.keysym.Control-Left:   \033[1;5D
 URxvt.keysym.Control-Right:  \033[1;5C
 
+! Use xcompmgr to apply inside $EDITOR
+URxvt.transparent: false
+
 ! Colors
-URxvt.background:   [95]#1D2021
+URxvt.background:   [96]#1D2021
 URxvt.foreground:   #FBF1C7
 
 ! black

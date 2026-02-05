@@ -6165,7 +6165,7 @@ EOF
     autocmd FileType php call setreg('c', "\"zyiw}ologger()->debug(__FILE__ . ':' . __LINE__, compact(''));\e4h\"zp")
 
     " [t]ag release
-    autocmd FileType zsh call setreg('t', "gg_ da\"pI\"\eggJf[lyE_/-a\rWviWPGA\"\e")
+    autocmd FileType zsh call setreg('t', "gg_\"_da\"pI\"\eggJf[lyi]_/-a\rWviWPGA\"\e")
 
     " Cleanup queries log
     autocmd BufReadPost \/tmp\/\d*.log if !exists('b:cleanup') | let b:cleanup = 1 | call <SID>cleanup('vfq') | setlocal filetype=sql | endif
@@ -6800,7 +6800,7 @@ EOF
         if index(l:options, 'g') >= 0
             silent execute 'normal! mz'
             call setreg('z', '')
-            silent! execute "keeppatterns keepjumps g/^Checking: /yank Z"
+            silent! execute "keeppatterns keepjumps .,$g/^Checking: /yank Z"
             silent execute "normal! 'z\"zp"
             silent execute 'delmarks z'
             call setreg('z', '0f>ll"_d0')
@@ -6809,7 +6809,7 @@ EOF
             silent execute "normal @z"
             silent execute "normal! vip:!sort\r"
             silent execute "normal! vip:!uniq\r"
-            silent execute "normal! \eO2024\ej>}"
+            silent execute "normal! \eO2025\ej>}"
 
             silent call add(l:cleanup, 'projects')
         endif
