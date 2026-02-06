@@ -1,25 +1,25 @@
 #!/bin/sh
 
 if [ -f composer.json ] && [ "$(grep '"type": "path"' composer.json)" != "" ]; then
-    echo "\e[31mABORT\e[0m: Local path repository detected in composer.json"
+    printf "\e[31mABORT\e[0m: Local path repository detected in composer.json\n"
 
     exit 1
 fi
 
 # Run checker user before continue
 # @thanks https://victoria.dev/blog/an-automatic-interactive-pre-commit-checklist-in-the-style-of-infomercials/
-echo -n "Do you want commit on [\e[90m${PWD##*/}\e[0m] as \e[1;32m`git config --get user.name`\e[0m? (s/y/N): "
+printf "Do you want commit on [\e[90m%s\e[0m] as \e[1;32m%s\e[0m? (s/y/N): " "${PWD##*/}" "$(git config --get user.name)"
 
 exec < /dev/tty
 
-read RESPONSE
+read -r RESPONSE
 
 if [ "$RESPONSE" = "s" ]; then
-    echo "\e[34mVerify skipped\e[0m"
+    printf "\e[34mVerify skipped\e[0m\n"
 
     exit 0
 elif [ "$RESPONSE" != "y" ]; then
-    echo "\e[31mCommit aborted!\e[0m"
+    printf "\e[31mCommit aborted!\e[0m\n"
 
     exit 1
 fi
@@ -33,10 +33,10 @@ fi
 exec <&-
 
 REPO=${PWD##*/}
-FSTAGING=`git ls-files --modified | grepx ".php$" | wc -l`
-FMODIFING=`git diff --name-only --cached | xargs -r -l echo | grepx ".php$" | wc -l`
-FCOMPOSER=`git diff --name-only --cached | xargs -r -l echo | grepx "composer.[json|lock]" | wc -l`
-FPHP=$(($FSTAGING + $FMODIFING + $FCOMPOSER))
+FSTAGING=$(git ls-files --modified | grepx ".php$" | wc -l)
+FMODIFING=$(git diff --name-only --staged | xargs -r -l echo | grepx ".php$" | wc -l)
+FCOMPOSER=$(git diff --name-only --staged | xargs -r -l echo | grepx "composer.[json|lock]" | wc -l)
+FPHP=$((FSTAGING + FMODIFING + FCOMPOSER))
 
 phpx /usr/local/bin/composer validate --no-check-all --strict || exit $?
 
@@ -48,12 +48,12 @@ fi
 PHPCS=""
 
 if [ $FPHP = 0 ]; then
-    echo -n ""
-elif [ "`phpx /usr/local/bin/composer list | grepx -F '  format  '`" != "" ] && [ "`jq '.scripts."format"' composer.json`" != "" ]; then
+    printf ""
+elif [ "$(phpx /usr/local/bin/composer list | grepx -F '  format  ')" != "" ] && [ "$(jq '.scripts."format"' composer.json)" != "" ]; then
     PHPCS="$(jq '.scripts."format"' composer.json | sed 's/\"//g')"
-elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpcs  '`" != "" ] && [ "`jq '.scripts."phpcs"' composer.json`" != "" ]; then
+elif [ "$(phpx /usr/local/bin/composer list | grepx -F '  phpcs  ')" != "" ] && [ "$(jq '.scripts."phpcs"' composer.json)" != "" ]; then
     PHPCS="$(jq '.scripts."phpcs"' composer.json | sed 's/\"//g')"
-elif [ "`phpx /usr/local/bin/composer list | grepx -F '  php-cs  '`" != "" ] && [ "`jq '.scripts."php-cs"' composer.json`" != "" ]; then
+elif [ "$(phpx /usr/local/bin/composer list | grepx -F '  php-cs  ')" != "" ] && [ "$(jq '.scripts."php-cs"' composer.json)" != "" ]; then
     PHPCS="$(jq '.scripts."php-cs"' composer.json | sed 's/\"//g')"
 elif [ -f .php_cs ]; then
     phpx vendor/bin/php-cs-fixer fix --config=.php_cs -v || exit $?
@@ -62,17 +62,17 @@ elif [ -f .php-cs-fixer.php ]; then
 elif [ -f .phpcs.xml ]; then
     phpx vendor/bin/phpcbf --colors -s --standard=.phpcs.xml || exit $?
 else
-    echo "\e[31mFixer not found.\e[0m"
+    printf "\e[31mFixer not found.\e[0m\n"
 fi
 
 if [ "$PHPCS" != "" ]; then
     if [ "$PHPCS" = "null" ]; then
         PHPCS=""
-    elif [ "`echo "$PHPCS" | grepx "^php-cs-fixer "`" != "" ]; then
+    elif [ "$(echo "$PHPCS" | grepx "^php-cs-fixer ")" != "" ]; then
         PHPCS="phpx vendor/bin/$PHPCS"
-    elif [ "`echo "$PHPCS" | grepx "^phpcs "`" != "" ]; then
+    elif [ "$(echo "$PHPCS" | grepx "^phpcs ")" != "" ]; then
         PHPCS="phpx vendor/bin/$PHPCS"
-    elif [ "`echo "$PHPCS" | grepx "^@php "`" != "" ]; then
+    elif [ "$(echo "$PHPCS" | grepx "^@php ")" != "" ]; then
         PHPCS="phpx $PHPCS"
     else
         PHPCS="phpx $PHPCS"
@@ -80,7 +80,7 @@ if [ "$PHPCS" != "" ]; then
 fi
 
 if [ "$PHPCS" != "" ]; then
-    echo $PHPCS
+    echo "$PHPCS"
 
     $PHPCS || exit $?
 fi
@@ -89,10 +89,10 @@ if [ "$REPO" != "microsites" ] && [ "$REPO" != "threedsecure-merchant-plugin" ] 
 PHPSTAN=""
 
 if [ $FPHP = 0 ]; then
-    echo -n ""
-elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpstan  '`" != "" ] && [ "`jq '.scripts."phpstan"' composer.json`" != "" ]; then
+    printf ""
+elif [ "$(phpx /usr/local/bin/composer list | grepx -F '  phpstan  ')" != "" ] && [ "$(jq '.scripts."phpstan"' composer.json)" != "" ]; then
     PHPSTAN="$(jq '.scripts."phpstan"' composer.json | sed 's/\"//g')"
-elif [ "`phpx /usr/local/bin/composer list | grepx -F '  analyse  '`" != "" ] && [ "`jq '.scripts."analyse"' composer.json`" != "" ]; then
+elif [ "$(phpx /usr/local/bin/composer list | grepx -F '  analyse  ')" != "" ] && [ "$(jq '.scripts."analyse"' composer.json)" != "" ]; then
     PHPSTAN="$(jq '.scripts."analyse"' composer.json | sed 's/\"//g')"
 elif [ -f phpstan.neon.dist ] && [ -f vendor/bin/phpstan ]; then
     PHPSTAN="phpx vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --level=1"
@@ -105,21 +105,21 @@ fi
 if [ "$PHPSTAN" != "" ]; then
     if [ "$PHPSTAN" = "null" ]; then
         PHPSTAN=""
-    elif [ "`echo "$PHPSTAN" | grepx "^phpstan "`" != "" ]; then
+    elif [ "$(echo "$PHPSTAN" | grepx "^phpstan ")" != "" ]; then
         PHPSTAN="phpx vendor/bin/$PHPSTAN"
-    elif [ "`echo "$PHPSTAN" | grepx "^@php "`" != "" ]; then
+    elif [ "$(echo "$PHPSTAN" | grepx "^@php ")" != "" ]; then
         PHPSTAN="phpx $PHPSTAN"
-    # elif [ "`echo "$PHPSTAN" | grepx "^XDEBUG_"`" != "" ]; then
+    # elif [ "$(echo "$PHPSTAN" | grepx "^XDEBUG_")" != "" ]; then
     #     # XDEBUG_MODE=coverage vendor/bin/phpunit
     #     # XDEBUG_MODE=coverage phpx vendor/bin/phpunit
-    #     PHPSTAN=`echo "$PHPSTAN" | sed -E 's/(\w*)\s+(.*)/\1 phpx \2/g'`
-    elif [ "`echo "$PHPSTAN" | grepx "^phpx"`" = "" ]; then
+    #     PHPSTAN=$(echo "$PHPSTAN" | sed -E 's/(\w*)\s+(.*)/\1 phpx \2/g')
+    elif [ "$(echo "$PHPSTAN" | grepx "^phpx")" = "" ]; then
         PHPSTAN="phpx $PHPSTAN"
     fi
 fi
 
 if [ "$PHPSTAN" != "" ]; then
-    echo $PHPSTAN
+    echo "$PHPSTAN"
 
     $PHPSTAN || exit $?
 fi
@@ -135,41 +135,41 @@ fi
 COMMAND=""
 
 # Run test before add message to commit
-if [ "`phpx /usr/local/bin/composer list | grepx -F '  test-ci  '`" != "" ] && [ "`jq '.scripts."test-ci"' composer.json | grepx -v 'pcov'`" != "" ]; then
+if [ "$(phpx /usr/local/bin/composer list | grepx -F '  test-ci  ')" != "" ] && [ "$(jq '.scripts."test-ci"' composer.json | grepx -v 'pcov')" != "" ]; then
     COMMAND="$(jq '.scripts."test-ci"' composer.json | sed 's/\"//g')"
-elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpunit-ci  '`" != "" ]; then
+elif [ "$(phpx /usr/local/bin/composer list | grepx -F '  phpunit-ci  ')" != "" ]; then
     COMMAND="$(jq '.scripts."phpunit-ci"' composer.json | sed 's/\"//g')"
-elif [ "`phpx /usr/local/bin/composer list | grepx -F '  phpunit  '`" != "" ]; then
+elif [ "$(phpx /usr/local/bin/composer list | grepx -F '  phpunit  ')" != "" ]; then
     COMMAND="$(jq '.scripts."phpunit"' composer.json | sed 's/\"//g')"
-elif [ "`phpx /usr/local/bin/composer list | grepx -F '  test  '`" != "" ]; then
+elif [ "$(phpx /usr/local/bin/composer list | grepx -F '  test  ')" != "" ]; then
     COMMAND="$(jq '.scripts."test"' composer.json | sed 's/\"//g')"
 fi
 
 if [ "$COMMAND" != "" ]; then
     if [ "$COMMAND" = "null" ]; then
         COMMAND=""
-    elif [ "`echo "$COMMAND" | grepx -F "["`" != "" ]; then
+    elif [ "$(echo "$COMMAND" | grepx -F "[")" != "" ]; then
         # [
         #     "@phpcs",
         #     "@phpstan",
         #     "@phpunit"
         # ]
         COMMAND=""
-    elif [ "`echo "$COMMAND" | grepx "^phpunit "`" != "" ]; then
+    elif [ "$(echo "$COMMAND" | grepx "^phpunit ")" != "" ]; then
         COMMAND="phpx vendor/bin/$COMMAND"
-    elif [ "`echo "$COMMAND" | grepx "^@php "`" != "" ]; then
+    elif [ "$(echo "$COMMAND" | grepx "^@php ")" != "" ]; then
         COMMAND="phpx $COMMAND"
-    elif [ "`echo "$COMMAND" | grepx "^XDEBUG_"`" != "" ]; then
+    elif [ "$(echo "$COMMAND" | grepx "^XDEBUG_")" != "" ]; then
         # XDEBUG_MODE=coverage vendor/bin/phpunit
         # XDEBUG_MODE=coverage phpx vendor/bin/phpunit
-        COMMAND=`echo "$COMMAND" | sed -E 's/(\w*)\s+(.*)/\1 phpx \2/g'`
+        COMMAND=$(echo "$COMMAND" | sed -E 's/(\w*)\s+(.*)/\1 phpx \2/g')
     else
         COMMAND="phpx $COMMAND"
     fi
 fi
 
 THREADS=0
-if [ -f "testx.sh" ] && ( [ "$REPO" = "microsites" ] || [ "$REPO" = "threedsecure-acs" ] || [ "$REPO" = "threedsecure-merchant-plugin" ] || [ "$REPO" = "vtex-placetopay-latam" ] ); then
+if [ -f "testx.sh" ] && { [ "$REPO" = "microsites" ] || [ "$REPO" = "threedsecure-acs" ] || [ "$REPO" = "threedsecure-merchant-plugin" ] || [ "$REPO" = "vtex-placetopay-latam" ]; }; then
     THREADS=1
     COMMAND="sh testx.sh"
 elif [ "$COMMAND" = "" ] && [ -f "testx.sh" ]; then
@@ -179,40 +179,40 @@ elif [ "$COMMAND" = "" ]; then
     COMMAND="phpx vendor/bin/phpunit"
 fi
 
-PHPUNITVERSION=`phpx vendor/bin/phpunit --version | tr -d "\n" | awk '{print $2}' | awk -F. '{print $1}'`
+PHPUNITVERSION=$(phpx vendor/bin/phpunit --version | tr -d "\n" | awk '{print $2}' | awk -F. '{print $1}')
 
 if [ $THREADS -eq 0 ]; then
-if [ "`echo "$COMMAND" | grepx -F "memory_limit"`" != "" ]; then
+if [ "$(echo "$COMMAND" | grepx -F "memory_limit")" != "" ]; then
     # Break your limits!
     COMMAND=$(echo "$COMMAND" | sed 's/-d memory_limit=[0-9]*[M|G][[:space:]]\?//')
 fi
 
 # Quickly Stop on Failures | Errors | Warning | Risky
 # NOT in Deprecation | Notices
-QUICKFAIL="`echo "$COMMAND" | grepx -F -- "--stop-on-defect"`"
+QUICKFAIL="$(echo "$COMMAND" | grepx -F -- "--stop-on-defect")"
 
-if [ "$QUICKFAIL" = "" ] && [ "`echo "$COMMAND" | grepx -F -- "--stop-on-failure"`" = "" ]; then
+if [ "$QUICKFAIL" = "" ] && [ "$(echo "$COMMAND" | grepx -F -- "--stop-on-failure")" = "" ]; then
     COMMAND="$COMMAND --stop-on-failure"
 fi
 
-if [ "$QUICKFAIL" = "" ] && [ "`echo "$COMMAND" | grepx -F -- "--stop-on-error"`" = "" ]; then
+if [ "$QUICKFAIL" = "" ] && [ "$(echo "$COMMAND" | grepx -F -- "--stop-on-error")" = "" ]; then
     COMMAND="$COMMAND --stop-on-error"
 fi
 
-if [ "$QUICKFAIL" = "" ] && [ "`echo "$COMMAND" | grepx -F -- "--stop-on-warning"`" = "" ]; then
+if [ "$QUICKFAIL" = "" ] && [ "$(echo "$COMMAND" | grepx -F -- "--stop-on-warning")" = "" ]; then
     COMMAND="$COMMAND --stop-on-warning"
 fi
 
-if [ "$QUICKFAIL" = "" ] && [ "`echo "$COMMAND" | grepx -F -- "--stop-on-risky"`" = "" ]; then
+if [ "$QUICKFAIL" = "" ] && [ "$(echo "$COMMAND" | grepx -F -- "--stop-on-risky")" = "" ]; then
     COMMAND="$COMMAND --stop-on-risky"
 fi
 
-if [ $PHPUNITVERSION -ge 11 ] && [ "`echo "$COMMAND" | grepx -F -- "--display-phpunit-deprecations"`" = "" ]; then
+if [ "$PHPUNITVERSION" -ge 11 ] && [ "$(echo "$COMMAND" | grepx -F -- "--display-phpunit-deprecations")" = "" ]; then
     # In PHPUnit 11+ show details about deprecations
     COMMAND="$COMMAND --display-phpunit-deprecations"
 fi
 
-if [ $PHPUNITVERSION -ge 10 ] && [ "`echo "$COMMAND" | grepx -F -- "--no-coverage"`" = "" ]; then
+if [ "$PHPUNITVERSION" -ge 10 ] && [ "$(echo "$COMMAND" | grepx -F -- "--no-coverage")" = "" ]; then
     # In PHPUnit 10+ avoid WARNING (finish with status code: 1)
     #   No code coverage driver is available
     COMMAND="$COMMAND --no-coverage"
@@ -220,7 +220,7 @@ fi
 fi
 
 # Debugging command
-echo $COMMAND
+echo "$COMMAND"
 # exit 1
 
 # XDEBUG_MODE=off vendor/bin/pest

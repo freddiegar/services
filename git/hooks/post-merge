@@ -2,20 +2,21 @@
 
 # $1 - Flag for squash merge
 
-STATUS=0
 HOOK=""
-LOCAL=`pwd`/.git/hooks/post-checkout
-GLOBAL=`git config core.hooksPath | tr -d "\n"`
+LOCAL=$(pwd)/.git/hooks/post-checkout
+GLOBAL=$(git config core.hooksPath | tr -d "\n")
 
 # Get the current branch name
-BRANCH=$(git branch | grep "*" | sed "s/\* //")
-REF=$(echo `git reflog -2 | tail -n 1` | cut -d" " -f 1)
+BRANCH=$(git branch | awk '/^*/ {print $2}')
+# shellcheck disable=SC2005
+REF=$(echo "$(git reflog -2 | tail -n 1)" | cut -d" " -f 1)
 
 # Get the name of the branch that was just merged
-MERGED_BRANCH=$(echo `git reflog -1` | cut -d" " -f 4 | sed "s/://")
+# shellcheck disable=SC2005
+MERGED_BRANCH=$(echo "$(git reflog -1)" | cut -d" " -f 4 | sed "s/://")
 MERGED_REF=$(git rev-parse --verify --short HEAD)
 
-if [ $REF != $MERGED_REF ]; then
+if [ "$REF" != "$MERGED_REF" ]; then
     echo "post-merge: $BRANCH ($REF) $MERGED_BRANCH ($MERGED_REF) $1"
 fi
 
@@ -26,5 +27,5 @@ elif [ -f "$LOCAL" ]; then
 fi
 
 if [ "$HOOK" != "" ]; then
-    "$HOOK" $REF $MERGED_REF 1
+    "$HOOK" "$REF" "$MERGED_REF" 1
 fi
