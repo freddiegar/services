@@ -562,7 +562,7 @@ set relativenumber                                              " Relative numbe
 set textwidth=120                                               " Breakline in Insert Mode (default: depends filetype)
 set synmaxcol=2000                                              " Only highlight the first N columns (default: 3000)
 "              └ weight in bytes
-set updatetime=200                                              " Time (in ms) await for any: git-gutter, events. RIP :redir
+set updatetime=200                                              " Time (in ms) await for any: git-gutter, events. RIP :redir (default: 4000)
 
 " @see https://utf8-icons.com/
 set fillchars+=vert:│                                           " Better vertical split char
@@ -573,7 +573,7 @@ if !g:istty
 else
     set listchars=space:\ ,eol:$                                " tty!
     set listchars+=tab:>\ ,trail:+,extends:<,precedes:>
-    set ttyfast                                                 " Always set fast (default: depends gui:off,tty:on)
+    set ttyfast                                                 " Always set fast (default: depends gui:off, tty:on)
 endif
 
 set winaltkeys=no                                               " Never use alt-keys for GUI menus (default: menu)
@@ -667,7 +667,7 @@ set shiftround                                                  " Indentation to
 set expandtab                                                   " Don't use tabs please (default: off)
 set fileformat=unix                                             " End of line as Unix format. Always! (default: depends)
 
-" Avoid (unused) built-in plugins and: less code, fewer bugs
+" Avoid (unused) built-in plugins. Less code, fewer bugs
 let g:loaded_2html_plugin = 1
 let g:loaded_getscriptPlugin = 1
 let g:loaded_gzip = 1
@@ -1335,18 +1335,18 @@ endfunction
 " Backup
 command! -nargs=? -complete=file B call <SID>backup(<f-args>)
 
-" Explorer (why nvim why!)
-command! -nargs=1 -complete=dir E execute "normal! :!vifm <f-args><CR>"
+" " Explorer (why nvim why!)
+" command! -nargs=1 -complete=dir E execute "normal! :!vifm <f-args><CR>"
 
 " Tailing
 command! -nargs=0 L !tail -f %
 
-" Universal Tags
-command! -nargs=0 -bang U GutentagsUpdate<bang>
+" " Universal Tags
+" command! -nargs=0 -bang U GutentagsUpdate<bang>
 
 " Diff
 command! -nargs=0 -bang D  call <SID>file_diff(expand('%'), <bang>0, '--ignore-space-change --ignore-all-space')
-command! -nargs=0 -bang DD call <SID>file_diff(expand('%'), <bang>0, '--ignore-space-change --ignore-all-space --cached')
+command! -nargs=0 -bang DD call <SID>file_diff(expand('%'), <bang>0, '--ignore-space-change --ignore-all-space --staged')
 
 " file (string), split (bool), options (string): void
 function! s:file_diff(file, split, options) abort
@@ -1576,7 +1576,7 @@ nnoremap <silent> <expr> <Leader>z
 
 " Close all except current buffer (saving changes)
 nnoremap <silent> <Leader>Z :wall <Bar> execute "normal! mZ" <Bar> %bdelete <Bar> execute "normal! `Z" <Bar> bdelete # <Bar> delmarks Z<CR>
-nnoremap <silent> <Leader>B :bd #<CR>
+nnoremap <silent> <Leader>B :bdelete # <Bar> echo 'Buffer # was closed.'<CR>
 
 nnoremap <silent> <Plug>AppendSemicolonRepeatable <Cmd>call <SID>append_char('a')<CR>
 nmap <silent> <Leader>as <Plug>AppendSemicolonRepeatable
@@ -1597,6 +1597,23 @@ nnoremap <silent> ]q :<C-u>silent! call <SID>cnavigation('cnext')<CR>zzzv
 nnoremap <silent> [Q :<C-u>silent! cfirst<CR>zzzv
 nnoremap <silent> ]Q :<C-u>silent! clast<CR>zzzv
 
+" nnoremap <silent> <A-1> :<C-u>silent! lfirst<CR>
+" nnoremap <silent> <A-k> :<C-u>silent! lopen<CR>
+" nnoremap <silent> <A-j> :<C-u>silent! lclose<CR>
+" nnoremap <silent> <A-h> :<C-u>silent! lolder<CR>
+" nnoremap <silent> <A-l> :<C-u>silent! lnewer<CR>
+" nnoremap <silent> <A-9> :<C-u>silent! llast<CR>
+
+" nnoremap <silent> [l :<C-u>silent! lprevious<CR>zzzv
+" nnoremap <silent> ]l :<C-u>silent! lnext<CR>zzzv
+" nnoremap <silent> [L :<C-u>silent! lfirst<CR>zzzv
+" nnoremap <silent> ]L :<C-u>silent! llast<CR>zzzv
+
+" nnoremap <silent> [b :<C-u>silent! bprevious<CR>
+" nnoremap <silent> ]b :<C-u>silent! bnext<CR>
+" nnoremap <silent> [B :<C-u>silent! bfirst<CR>
+" nnoremap <silent> ]B :<C-u>silent! blast<CR>
+
 function! s:cnavigation(action) abort
     let l:isnext = a:action ==# 'cnext'
     let [l:fwinnr, l:fbufnr] = <SID>datafugitive()
@@ -1615,23 +1632,6 @@ function! s:cnavigation(action) abort
 
     silent execute a:action
 endfunction
-
-" nnoremap <silent> <A-1> :<C-u>silent! lfirst<CR>
-" nnoremap <silent> <A-k> :<C-u>silent! lopen<CR>
-" nnoremap <silent> <A-j> :<C-u>silent! lclose<CR>
-" nnoremap <silent> <A-h> :<C-u>silent! lolder<CR>
-" nnoremap <silent> <A-l> :<C-u>silent! lnewer<CR>
-" nnoremap <silent> <A-9> :<C-u>silent! llast<CR>
-
-" nnoremap <silent> [l :<C-u>silent! lprevious<CR>zzzv
-" nnoremap <silent> ]l :<C-u>silent! lnext<CR>zzzv
-" nnoremap <silent> [L :<C-u>silent! lfirst<CR>zzzv
-" nnoremap <silent> ]L :<C-u>silent! llast<CR>zzzv
-
-" nnoremap <silent> [b :<C-u>silent! bprevious<CR>
-" nnoremap <silent> ]b :<C-u>silent! bnext<CR>
-" nnoremap <silent> [B :<C-u>silent! bfirst<CR>
-" nnoremap <silent> ]B :<C-u>silent! blast<CR>
 
 nnoremap <silent> yol :<C-u>set list!<CR>
 nnoremap <silent> yoc :<C-u>set cursorline!<CR>
@@ -2279,6 +2279,7 @@ inoremap <silent> <expr> <C-e>
             \ "\<C-o>$"
 inoremap <silent> <C-b> <C-o>B
 inoremap <silent> <C-f> <C-o>W
+
 " IAA Conflict and unused anywhere
 " inoremap <silent> <C-k> <C-g>u<Up>
 " inoremap <silent> <C-j> <C-g>u<Down>
@@ -2338,7 +2339,7 @@ cnoremap <C-b> <C-Left>
 cnoremap <C-f> <C-Right>
 " cnoremap %% =fnameescape(expand('%'))<CR>
 " Replace because annoyoning wait after typing % in [s]ubstitution command
-cnoreabbrev <expr> %% (getcmdtype() ==# ':' && getcmdline() !~# '^%%' && getcmdline() =~# '%%') ? fnameescape(expand('%')) : '%%'
+" cnoreabbrev <expr> %% (getcmdtype() ==# ':' && getcmdline() !~# '^%%' && getcmdline() =~# '%%') ? fnameescape(expand('%')) : '%%'
 
 " Available: <C-x><C-cjp>
 " Auto-complete files in command line using RegEx (aka: bd *.json<C-x><C-x>)
@@ -2455,7 +2456,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-commentary'                                     " gcc, {motion}gc, 9.1 has built-in (:packadd comment) same for nvim but... tpope respect empty lines
 Plug 'tpope/vim-surround'                                       " cs"' ([c]hange), ds" ([d]elete)
-Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and other more
+Plug 'tpope/vim-repeat'                                         " Repeat: surround, git-gutter and others more
 Plug 'tpope/vim-abolish'                                        " [c]oe[r]cion: s snake_case, m MixedCase, c camelCase, p PascalCase, u UPPER_CASE, - dash-case, . dot.case
                                                                 " :%S/square/rectangle/g -> replace Square -> Rectangle | square -> rectangle | SQUARE -> RECTANGLE
 Plug 'wellle/targets.vim'                                       " {operator}ia, {operator}aa -> [a]rgument
@@ -4761,21 +4762,28 @@ lua << EOF
         require('nvim-treesitter').install({
             'bash',
             'blade',
+            'css',
+            'csv',
             'diff',
             'dockerfile',
             'dtd',
+            'ecma',
             'gitignore',
+            'gitconfig',
             'ini',
             'javascript',
             'json',
+            'jsx',
             'make',
             'php',
             'php_only',
             'sql',
+            'tsv',
             'typescript',
             'vim',
             'vimdoc',
             'xml',
+            'xresources',
             'yaml',
             'zsh',
         }):wait()
@@ -5211,7 +5219,7 @@ lua <<EOF
     -- @see https://github.com/eclipse-jdtls/eclipse.jdt.ls
     -- @run lua=os.getenv('HOME')
     -- local home = os.getenv('HOME')
-    vim.fn.setenv('JAVA_HOME', '/usr/lib/jvm/java-21-openjdk-amd64')
+    -- vim.fn.setenv('JAVA_HOME', '/usr/lib/jvm/java-21-openjdk-amd64')
 
     -- @see https://www.youtube.com/watch?v=LaS32vctfOY
     local lspservers = {
@@ -6497,13 +6505,13 @@ EOF
             let l:message = l:message ==# '' ? 'Support AI Assistant.' : substitute(l:message, '##IAA##', ' using IA', '')
         endif
 
-        if g:hasts
-            let l:message = l:message ==# '' ? '' : substitute(l:message, '##HTS##', ' and TS', '')
-        endif
+        " if g:hasts
+        "     let l:message = l:message ==# '' ? '' : substitute(l:message, '##HTS##', ' and TS', '')
+        " endif
 
-        if $TERM !=# ''
-            let l:message = l:message ==# '' ? '' : substitute(l:message, '##TTY##', ' on ' . $TERM, '')
-        endif
+        " if $TERM !=# ''
+        "     let l:message = l:message ==# '' ? '' : substitute(l:message, '##TTY##', ' on ' . $TERM, '')
+        " endif
 
         set undofile                                            " Enable undo world (default: off)
         let &undodir = g:undodir
