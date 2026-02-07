@@ -11,7 +11,7 @@ set -o nounset
 #   phplint app tests 8.3   -> Use PHP 8.3 version as linter in folders (or files spaced separated)
 
 if [ $# -lt 1 ] ; then
-    printf 'Usage: %s <directory-or-file> [<more-directory-or-file>] [<php-version>]...\n' "$(basename $0)"
+    printf 'Usage: %s <directory-or-file> [<more-directory-or-file>] [<php-version>]...\n' "$(basename "$0")"
 
     exit 1
 fi
@@ -19,8 +19,8 @@ fi
 PHPX=phpx
 PHPV=['5.6','7.0','7.1','7.2','7.3','7.4','8.0','8.1','8.2','8.3','8.4','8.5']
 
-if [ $# -gt 1 ] && [[ ${PHPV[*]} =~ ${@: -1} ]] ; then
-    PHPX=php${@: -1}
+if [ $# -gt 1 ] && [[ ${PHPV[*]} =~ ${*: -1} ]] ; then
+    PHPX=php${*: -1}
 fi
 
 ERROR=false
@@ -30,11 +30,11 @@ while test $# -gt 0; do
     CURRENT=${1%/}
     shift
 
-    if [ "php$CURRENT" == $PHPX ] ; then
+    if [ "php$CURRENT" == "$PHPX" ] ; then
         continue
     fi
 
-    if [ ! -f $CURRENT ] && [ ! -d $CURRENT ] ; then
+    if [ ! -f "$CURRENT" ] && [ ! -d "$CURRENT" ] ; then
         echo -e "\e[31m$CURRENT cannot be found.\e[0m"
 
         ERROR=true
@@ -42,12 +42,12 @@ while test $# -gt 0; do
         continue
     fi
 
-    for FILE in $(find $CURRENT -type f -name "*.php" | grep -v -E '.git|node_modules|vendor') ; do
+    for FILE in $(find "$CURRENT" -type f -name "*.php" | grep -v -E '.git|node_modules|vendor') ; do
         OUTPUT=$($PHPX -l "$FILE" 2> /dev/null)
         STATUS="$?"
 
         if [ $STATUS -ne 0 ]; then
-            echo -e $OUTPUT
+            echo -e "$OUTPUT"
 
             exit $STATUS
         fi

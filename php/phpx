@@ -7,24 +7,24 @@ set -o nounset
 PHPBIN=
 
 if [ -f vendor/composer/platform_check.php ]; then
-    PHPBIN=`command cat vendor/composer/platform_check.php | grepx -F 'PHP_VERSION_ID' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{split($0,v,""); print v[2],v[4]}' | sed -r "s/ /./g" | awk '{print "/usr/bin/php"$1""}'`
+    PHPBIN=$(command cat vendor/composer/platform_check.php | grepx -F 'PHP_VERSION_ID' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{split($0,v,""); print v[2],v[4]}' | sed -r "s/ /./g" | awk '{print "/usr/bin/php"$1""}')
 fi
 
-if [ -z $PHPBIN ] && [ -f composer.json ]; then
-    PHPBIN=`command cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}'`
+if [ -z "$PHPBIN" ] && [ -f composer.json ]; then
+    PHPBIN=$(command cat composer.json | grepx -F '"php":' | head -1 | sed -r "s#([^0-9]+)# #g" | awk '{print "/usr/bin/php"$1"."$2}')
 fi
 
-if [ -z $PHPBIN ] && [ -f composer.json ]; then
-    PHPBIN=`which php`
+if [ -z "$PHPBIN" ] && [ -f composer.json ]; then
+    PHPBIN=$(which php)
 
     echo -e "\e[90mEmpty PHP version, using $PHPBIN as fallback.\e[0m"
 
     sleep 1
-elif [ -z $PHPBIN ]; then
-    PHPBIN=`which php`
+elif [ -z "$PHPBIN" ]; then
+    PHPBIN=$(which php)
 fi
 
-if [ ! -f $PHPBIN ]; then
+if [ ! -f "$PHPBIN" ]; then
     echo -e "\e[31mUnavailable PHP ${PHPBIN:12:3} version.\e[0m"
 
     exit 1
