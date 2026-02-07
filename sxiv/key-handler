@@ -16,29 +16,35 @@ rotate() {
     esac
 }
 
-while read file
+while read -r file
 do
-    file=$(realpath $file)
+    file=$(realpath "$file")
+
+    # Main combo: Ctrl+x
 
     case "$1" in
         "c")
             echo -n "$file" | xclip -selection clipboard &&
                 notify-send "$file copied." &&
+
                 exit 0
         ;;
         "d")
             [ "$(printf "No\\nYes" | dmenu -i -p "Really delete $file?" -fn "fira code retina:size:12" -nb "#000000" -nf "#F3F4F5" -sb "#000000" -sf "#D65D0E")" = "Yes" ] &&
                 rm "$file" &&
                 notify-send "$file deleted." &&
+
                 exit 0
         ;;
         "i")
                 notify-send "$file" &&
+
                 exit 0
         ;;
         "w")
             feh --bg-scale "$file" &&
                 notify-send "$file wallpaper." &&
+
                 exit 0
         ;;
         "7")
@@ -50,5 +56,9 @@ do
         "9")
             rotate 90 "$file"
         ;;
+        "h")
+            notify-send "$(echo -e "[c]opy\n[i]nfo\n[d]elete\n[w]allpaper\nrotate 2[7]0, 1[8]0, [9]0")" &&
+
+                exit 0
         esac
 done

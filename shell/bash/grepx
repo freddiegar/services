@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -x "`which rg`" ]; then
+if [ -x "$(which rg)" ]; then
     rg "$@"
 
     exit $?

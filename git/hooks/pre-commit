@@ -171,10 +171,10 @@ fi
 THREADS=0
 if [ -f "testx.sh" ] && { [ "$REPO" = "microsites" ] || [ "$REPO" = "threedsecure-acs" ] || [ "$REPO" = "threedsecure-merchant-plugin" ] || [ "$REPO" = "vtex-placetopay-latam" ]; }; then
     THREADS=1
-    COMMAND="sh testx.sh"
+    COMMAND="bash testx.sh"
 elif [ "$COMMAND" = "" ] && [ -f "testx.sh" ]; then
     THREADS=1
-    COMMAND="sh testx.sh"
+    COMMAND="bash testx.sh"
 elif [ "$COMMAND" = "" ]; then
     COMMAND="phpx vendor/bin/phpunit"
 fi
