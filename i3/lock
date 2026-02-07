@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # @thanks https://andreafortuna.org/2020/04/09/i3-how-to-make-a-pretty-lock-screen-with-a-four-lines-of-bash-script/
 
@@ -8,9 +8,9 @@ IMAGE=$(mktemp /tmp/XXXXXXXXXX.png)
 # OPTION 1
 # Use pixelate/blur screenshot
 # Take a screenshot of current desktop
-import -window root $IMAGE
+import -window root "$IMAGE"
 # Pixelate the screenshot
-convert $IMAGE -scale 10% -scale 1000% $IMAGE 2>&1 > /dev/null
+convert "$IMAGE" -scale 10% -scale 1000% "$IMAGE" > /dev/null 2>&1
 # Alternatively, blur the screenshot (slow! and weird!)
 # convert $IMAGE -blur 2,5 $IMAGE
 # Add the lock image
@@ -22,7 +22,7 @@ convert $IMAGE -scale 10% -scale 1000% $IMAGE 2>&1 > /dev/null
 # convert "$HOME/BG/background-$(shuf -i 0-`ls ~/BG/*.jpeg | wc --lines` -n1).jpeg" $IMAGE 2>&1 > /dev/null
 
 # Run i3lock with custom background or black color as fallback
-i3lock --color 000000 --show-failed-attempts --tiling --image $IMAGE
+i3lock --color 000000 --show-failed-attempts --tiling --image "$IMAGE"
 
 # Remove the tmp file
-rm -Rf $IMAGE
+rm -Rf "$IMAGE"

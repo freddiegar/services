@@ -36,7 +36,7 @@ error () {
     exit "$2"
 }
 
-while getopts 'L:l:m:t:F:ND' opt; do
+while getopts 'L:l:m:t:F:D' opt; do
     case $opt in
         L)
             [[ $OPTARG =~ ^[0-9]+$ ]] || error "${opt}: ${OPTARG} is not a number" 2
@@ -133,7 +133,7 @@ main (){
     POPUP_CLICKED=""
 
     while true; do
-        debug $(date +"%Y-%m-%d_%H:%M:%S" -u)
+        debug "$(date +"%Y-%m-%d_%H:%M:%S" -u)"
         debug "Checking.. "
 
         PERC=$(get_battery_perc)
