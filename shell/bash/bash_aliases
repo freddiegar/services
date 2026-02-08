@@ -170,16 +170,6 @@ saU() {
 sAU() {
     saU --ignore
 
-    # URL="https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US"
-    # TMP=~/.mozilla/.lastsize
-
-    # if [ "`downloadble $URL $TMP`" = "1" ]; then
-    #     echo "\e[34mUpdating firefox...\e[0m"
-    #     curl -L $URL -o firefox.tar.xz && sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
-
-    #     checkcode $?
-    # fi
-
     URL="https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz"
     TMP=~/.zen/.lastsize
 

@@ -1428,10 +1428,6 @@ sudo ln -s /opt/zen/zen /usr/bin/zen
 
 ```bash
 sudo apt-get remove firefox && sudo apt-get autoremove
-curl -L "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US" -o firefox.tar.xz
-sudo tar xvf firefox.tar.xz -C /opt && rm -Rf firefox.tar.xz
-sudo ln -s /opt/firefox/firefox /usr/bin/firefox
-## sudo rm -Rf /usr/bin/firefox && sudo rm -Rf /opt/firefox
 ```
 
 ## Enchance Security
@@ -1453,27 +1449,14 @@ flags=(unconfined) {
 	include if exists <local/zen>
 }" | sudo tee /etc/apparmor.d/zen-local
 
-# Firefox
-
-echo "# This profile allows everything and only exists to give the
-# application a name instead of having the label \"unconfined\"
-abi <abi/4.0>,
-include <tunables/global>
-profile firefox-local
-/opt/firefox/{firefox,firefox-bin,updater}
-flags=(unconfined) {
-	userns,
-	# Site-specific additions and overrides. See local/README for details.
-	include if exists <local/firefox>
-}" | sudo tee /etc/apparmor.d/firefox-local
-
-sudo systemctl restart apparmor.service
 ```
 > about:config setting                         default     custom
 > gfx.webrender.all                         -> false    -> true
 > gfx.x11-egl.force-enabled                 -> false    -> true
 > layers.acceleration.force-enabled         -> false    -> true
 > security.dialog_enable_delay              -> 1000     -> 0
+
+Better not change (UI)
 > zen.downloads.download-animation          -> true     -> false
 > zen.downloads.download-animation-duration -> 1000     -> 0
 
@@ -1547,21 +1530,20 @@ sudo mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d
 [See](https://unix.stackexchange.com/questions/584478/how-to-add-browser-to-update-alternatives#584506)
 
 ```bash
-sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/firefox 210
-sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/zen 210
+sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/zen 100
+sudo update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/zen 100
 
 sudo update-alternatives --set x-www-browser /usr/bin/zen
-
-sudo update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/firefox 210
-sudo update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/zen 210
-
 sudo update-alternatives --set gnome-www-browser /usr/bin/zen
 
-# sudo update-alternatives --config x-www-browser
+sudo update-alternatives --config x-www-browser
+sudo update-alternatives --config gnome-www-browser
+
 ## sudo update-alternatives --remove x-www-browser /usr/bin/zen
-## sudo update-alternatives --remove x-www-browser /usr/bin/firefox
+## sudo update-alternatives --remove gnome-www-browser /usr/bin/zen
 ```
 > update-alternatives --display x-www-browser
+> update-alternatives --display gnome-www-browser
 > update-alternatives --get-selections
 > update-alternatives --get-selections | grep browser
 
@@ -2336,8 +2318,6 @@ NetworkManager --version
 # 1.52.0
 bluemoon --version
 # 5.83
-# firefox --version | awk '{print $3}'
-# 144.0b7
 zen --version | awk '{print $3}'
 # 1.19t
 filezilla --version | tail -1 | awk '{print $2}' | sed 's/,//g'

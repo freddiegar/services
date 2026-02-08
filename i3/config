@@ -16,8 +16,8 @@ set $mod Mod4
 set $meta Mod1
 
 # Browser
-# set $browser firefox --new-tab
-# set $browser-private firefox --new-tab --private-window
+set $browser zen --new-tab
+set $browser-private zen --private-window
 
 # set $browser opera
 # set $browser opera --incognito
@@ -30,9 +30,6 @@ set $meta Mod1
 
 # set $browser microsoft-edge
 # set $browser-private microsoft-edge --inprivate
-
-set $browser zen --new-tab
-set $browser-private zen --private-window
 
 # Fonts
 set $font_family fira code retina
@@ -248,9 +245,7 @@ for_window [instance="VirtualBox Machine" class="VirtualBox Machine"]       floa
 for_window [instance="^virt-manager$" title="[^Virtual Machine Manager]"]   floating enable, move position center
 for_window [instance="^virt-manager$" title="KVM$"]                         floating enable, resize set 1026 795, move position center
 
-# Open new tab is focus in current Firefox workspace
-# for_window [urgent="latest" class="(?i)firefox"]                            focus
-# PiP in Firefox
+# PiP in Browser
 for_window [instance="Toolkit" class="(?i)firefox"]                         floating enable, resize set 640 360, move position 1250 695, sticky enable
 for_window [instance="Toolkit" class="(?i)zen"]                             floating enable, resize set 640 360, move position 1250 695, sticky enable
 # Downloads
@@ -412,7 +407,7 @@ bindsym $mod+Shift+b exec --no-startup-id brave-browser
 # bindsym $mod+Shift+d exec --no-startup-id freecad
 bindsym $mod+Shift+d exec --no-startup-id [ "`pgrep gromit-mpx`" = "" ] && gromit-mpx --active || pkill -f gromit-mpx
 # bindsym $mod+Shift+e exec --no-startup-id nautilus --no-desktop
-bindsym $mod+Shift+f exec --no-startup-id firefox
+bindsym $mod+Shift+f exec --no-startup-id filezilla
 bindsym $mod+Shift+g exec --no-startup-id google-chrome
 # bindsym $mod+Shift+m exec --no-startup-id mysql-workbench
 # bindsym $mod+Shift+m exec --no-startup-id dbeaver
@@ -421,7 +416,6 @@ bindsym $mod+Shift+o exec --no-startup-id opera
 bindsym $mod+Shift+p exec --no-startup-id postman
 bindsym $mod+Shift+t exec --no-startup-id microsoft-edge
 # bindsym $mod+Shift+v exec --no-startup-id virt-manager
-bindsym $mod+Shift+u exec --no-startup-id filezilla
 bindsym $mod+Shift+y exec --no-startup-id flameshot gui
 bindsym $mod+Shift+z exec --no-startup-id zen
 
