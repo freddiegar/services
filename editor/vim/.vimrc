@@ -3473,6 +3473,7 @@ function! s:go_url(url, ...) abort
 
     let l:uri = <SID>get_url(a:url)
     let l:repeatable = a:0 > 0 ? a:1 : 'GoUrlRepeatable'
+    let l:quietly = a:0 > 1 ? v:true : v:false
 
     if l:uri ==# ''
         return
@@ -3483,6 +3484,10 @@ function! s:go_url(url, ...) abort
     silent redraw!
 
     silent! call repeat#set("\<Plug>" . l:repeatable)
+
+    if l:quietly ==# v:true
+        return
+    endif
 
     echo 'Opened:   ' . l:uri[0 : winwidth(0) - 15]
 endfunction
@@ -3667,6 +3672,10 @@ let g:gutentags_ctags_extra_args = [
 " Fugitive
 " @see https://github.com/tpope/vim-fugitive
 let g:fugitive_no_maps = 1
+
+" Use custom :Browser with vim-fugitive
+" @see https://github.com/tpope/vim-fugitive/blob/61b51c09b7c9ce04e821f6cf76ea4f6f903e3cf4/autoload/fugitive.vim#L7442
+command! -nargs=1 -range -bang Browse call <SID>go_url(<f-args>, 'GoUrlRepeatable', 'quietly')
 
 nmap <silent> <C-w>e :if filereadable('.env') <Bar> edit .env <Bar> else <Bar> echo 'Nothing to do.' <Bar> endif <CR>
 nmap <silent> <C-w>E :if filereadable('.env.testing') <Bar> edit .env.testing <Bar> else <Bar> echo 'Nothing to do.' <Bar> endif <CR>
@@ -4768,12 +4777,13 @@ lua << EOF
             'dockerfile',
             'dtd',
             'ecma',
+            'git_config',
             'gitignore',
-            'gitconfig',
             'ini',
             'javascript',
             'json',
             'jsx',
+            'lua',
             'make',
             'php',
             'php_only',
