@@ -945,8 +945,9 @@ set shortmess+=c                                                " Don't give ins
                                                                 "   - 'Pattern not found'
                                                                 "   - 'Back at original'
 set shortmess+=s                                                " Don't give '[s]earch hit BOTTOM, continuing at TOP'
+set shortmess+=S                                                " Don't give [S]earching message
+set shortmess+=t                                                " [t]runcate file message [<] when is required
 set shortmess+=T                                                " Truncate o[T]hers message [...]
-set shortmess+=t                                                " [t]runcate file message [<]
 
 if !g:isneovim
     set shortmess+=C                                            " Don't give the s[C]anning message (Vim: >= 9.0.0738)
@@ -6786,6 +6787,7 @@ EOF
         endif
 
         if index(l:options, 'i') >= 0
+            " NOTE: Check out all task (line starts with -/+) are defined before search an error here!
             let l:regq = getreg('q')
 
             silent execute "keeppatterns keepjumps g!/^[+=-]/d_"
@@ -6812,6 +6814,7 @@ EOF
         endif
 
         if index(l:options, 'I') >= 0
+            " NOTE: Check out all days are defined before search an error here!
             silent normal G?>> Monday,nvvvv:enewh:enewh:enewh:enewhk0y/>>jpknjy//plpknjy//plpknjy//plpknjyGplpkc:windo CT
         endif
 

@@ -5,13 +5,13 @@
 #   workspace /var/www/html/freddiegar/services -> Use full location
 
 if [ $# -eq 0 ]; then
-    echo "\e[31mWorkspace requires a repository location!\e[0m"
+    printf "\e[31mWorkspace requires a repository location!\e[0m\n"
 
     exit 1
 fi
 
 PROJECT=$1
-USEHDMI=`xrandr --listmonitors | grep Monitors | awk '{print $2}' || echo 0`
+USEHDMI=$(xrandr --listmonitors | grep Monitors | awk '{print $2}' || echo 0)
 FONTSIZ=12
 
 # +---------+
@@ -22,7 +22,7 @@ FONTSIZ=12
 i3-msg "workspace 1, exec --no-startup-id urxvt -name ___editor -chdir $PROJECT -e nvim"
 sleep 0.5
 
-if [ $USEHDMI -gt 1 ]; then
+if [ "$USEHDMI" -gt 1 ]; then
     # +---------+
     # |         |
     # | editor  |  +------+
@@ -32,11 +32,11 @@ if [ $USEHDMI -gt 1 ]; then
     sleep 0.5
 fi
 
-if [ ! -d $PROJECT/app ] && [ ! -d $PROJECT/src ]; then
+if [ ! -d "$PROJECT/app" ] && [ ! -d "$PROJECT/src" ]; then
     exit 0
 fi
 
-if [ $USEHDMI -gt 1 ]; then
+if [ "$USEHDMI" -gt 1 ]; then
     FONTSIZ=8
 fi
 
@@ -57,11 +57,11 @@ sleep 0.5
 i3-msg "workspace 1, move down, split h"
 
 # logs
-if [ -d $PROJECT/storage/tenants/*/logs ]; then
-    DIRLOGS=$PROJECT/storage/tenants/*/logs
-elif [ -d $PROJECT/storage/logs ]; then
+if [ -d "$PROJECT/storage/tenants/*/logs" ]; then
+    DIRLOGS="$PROJECT/storage/tenants/*/logs"
+elif [ -d "$PROJECT/storage/logs" ]; then
     DIRLOGS=$PROJECT/storage/logs/
-elif [ -d $PROJECT/var/log ]; then
+elif [ -d "$PROJECT/var/log" ]; then
     DIRLOGS=$PROJECT/var/log/
 else
     # +---------+

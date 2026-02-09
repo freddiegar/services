@@ -69,7 +69,7 @@ floating_modifier $mod
 
 # start a terminal
 # bindsym $mod+Return exec --no-startup-id "konsole -p font='$font_family,$font_size_scratch'"
-bindsym $mod+Return exec --no-startup-id "urxvt"
+bindsym $mod+Return exec --no-startup-id urxvt
 
 # kill focused window
 bindsym $mod+Shift+q kill
