@@ -567,6 +567,8 @@ sudo apt-get install --no-install-recommends -y imagemagick
 
 ## Terminal Emulator
 
+[See](https://smarttech101.com/urxvt-installation-color-scheme-fonts-resize-etc)
+
 ```bash
 sudo apt-get install --no-install-recommends -y rxvt-unicode
 
@@ -2128,6 +2130,17 @@ sudo apt-get remove -y --purge libreoffice\* && sudo apt-get clean -y && sudo ap
 sudo apt-get remove -y --purge rhythmbox\* && sudo apt-get clean -y && sudo apt-get autoremove -y
 ```
 
+## Remove Unattended Upgrades
+
+```bash
+sudo systemctl stop unattended-upgrades
+sudo systemctl disable unattended-upgrades
+sudo systemctl daemon-reload
+sudo systemctl reset-failed
+
+sudo apt-get remove -y unattended-upgrades
+```
+
 # Check Apps and Services
 
 ## StartUp Aplications
@@ -2211,13 +2224,13 @@ sudo apt-get autoremove -y && sudo apt-get autoclean -y
 lsb_release -d | grep -e "Description:" | awk '{print $2" "$3" "$4}'
 # Ubuntu 25.10
 uname -r
-# 6.17.0-8-generic
+# 6.17.0-12-generic
 command cat /proc/cpuinfo | grep 'name'| uniq | cut -d ':' -f 2
 # Intel(R) Core(TM) Ultra 7 155U
 nproc --all
 # 14
 command cat /proc/meminfo | grep 'MemTotal'| cut -d ':' -f 2
-# 31824616 kB
+# 31824624 kB
 ldd --version | grep -e "^ldd" | awk '{print $5}'
 # 2.42
 gcc --version | grep -e "^gcc" | awk '{print $4}'
@@ -2337,9 +2350,9 @@ direnv --version
 # dpkg --list | wc --lines
 # dpkg --get-selections | grep -v deinstall > ~/packages.log
 dpkg --get-selections | grep -v deinstall | wc --lines
-# 2121
+# 2113
 for app in /usr/share/applications/*.desktop ~/.local/share/applications/*.desktop; do app="${app##/*/}"; echo "${app::-8}"; done | wc --lines
-# 52
+# 51
 apt-mark showmanual | wc --lines
-# 408
+# 405
 ```

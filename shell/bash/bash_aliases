@@ -850,6 +850,11 @@ alias sac="sudo apt-get autoremove --purge -y && sudo apt-get clean -y && sudo a
 alias sap="dpkg -l | grepx ^rc | grepx -v grub | awk '{print \$2}' | xargs -t sudo apt-get -y purge"
 alias say="sudo apt policy"
 
+alias sse="sudo systemctl enable"
+alias ssd="sudo systemctl disable"
+alias ssl="systemctl list-units --type=service --state=active | fzf"
+alias ssr="sudo sh -c 'systemctl daemon-reload; systemctl reset-failed'"
+
 alias xpa='echo "\n" | sudo add-apt-repository'
 alias xpr='echo "\n" | sudo add-apt-repository --remove'
 
@@ -929,6 +934,8 @@ alias dstop="docker stop"
 alias dstatus="docker ps --format \"{{.Names}}\" | sort"
 alias dprune="docker system prune -a"
 alias dstats="docker stats"
+alias doff="sudo sh -c 'systemctl stop docker.socket; systemctl stop docker.service; systemctl stop containerd.service'"
+alias don="sudo sh -c 'systemctl start docker.socket; systemctl start docker.service; systemctl start containerd.service'"
 alias dclean="dcclean && diclean"
 # shellcheck disable=SC2142
 alias diclean="docker images -f dangling=true --quiet | xargs -r -I {} docker rmi -f {} && echo 'Images cleaned'"

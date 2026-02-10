@@ -2596,7 +2596,7 @@ endif
 
 if g:hasaia && g:hasgit && !<SID>mustbeignore()
     if g:isneovim
-        Plug 'zbirenbaum/copilot.lua'                           " Zen mode +++++: Copilot auth | status
+        Plug 'zbirenbaum/copilot.lua'                           " Zen mode +++++: Copilot auth [signout] | status
         " Plug 'zbirenbaum/copilot-cmp'                           " Zen mode ++++++
 
         Plug 'nvim-lua/plenary.nvim'                            " cURL wrapper required by CopilotChat
@@ -5346,6 +5346,7 @@ EOF
 
         " AIA
         " @see https://github.com/zbirenbaum/copilot.lua
+        " @see ~/.config/github-copilot/
         autocmd BufReadPost * ++once silent call <SID>niaassistence()
 
         function! s:niaassistence() abort
