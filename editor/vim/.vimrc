@@ -181,6 +181,7 @@
 "     \{    {        {        {          literal curly brace
 
 " REGEX
+" @see https://vimregex.com/
 " Quantifiers::
 "   *       ->  0 or more
 "   +       ->  1 or more
@@ -2266,9 +2267,10 @@ xnoremap <silent> <Leader>gm :<C-u>call <SID>get_masked(visualmode())<CR>
 
 " Buffers navigation
 nnoremap <silent> <Leader><Leader> :Buffers<CR>
-nnoremap <silent> <Tab> <Cmd>call <SID>cycling_buffers(1)<CR>
-
 xnoremap <silent> <Leader><Leader> :<C-u>Buffers<CR>
+
+nnoremap <silent> <Tab> <Cmd>call <SID>cycling_buffers(1)<CR>
+nnoremap <silent> <C-^> <Cmd>call <SID>cycling_buffers(1)<CR>
 " Snippets using $VISUAL with :vnoremap fails!. First SELECT after expand snippet using <Tab>
 " xnoremap <silent> <Tab> :<C-u>call <SID>cycling_buffers(1)<CR>
 
@@ -3407,8 +3409,8 @@ function! s:get_url(url) abort
         let l:uri = 'https://' . a:url
     endif
 
-    if match(l:uri, 'http') < 0
-        " Search URI
+    if match(l:uri, 'http') < 0 && !filereadable(a:url)
+        " Search URI in current line
         " @inspired https://www.reddit.com/r/vim/comments/1d7971t/open_the_url_nearest_to_the_cursor_in_a_web/
         let l:temp = getline(".")->split(' ')->map({_, v -> matchstr(v, '\chttp\(s\)\?:\/\/[a-z.@:?=_&/\-0-9]\+')})->filter('!empty(v:val)')->sort()->uniq()
         let l:uri = len(l:temp) > 0 ? l:temp[0] : l:uri
@@ -3873,6 +3875,8 @@ lua << EOF
                 cloak_pattern = {
                     { '(DSN=).+', replace = '%1' },
                     { '(KEY=).+', replace = '%1' },
+                    { '(KEY_ID=).+', replace = '%1' },
+                    { '(ARN=).+', replace = '%1' },
                     { '(IV=).+', replace = '%1' },
                     { '(LOGIN=).+', replace = '%1' },
                     { '(PASS=).+', replace = '%1' },
@@ -4350,22 +4354,24 @@ command! -nargs=* -range -bang RR call <SID>runterm(<range>, <bang>0, <f-args>)
 
 " range (0,1,2), interactive (0/1): void
 function! s:preview(range, interactive) abort
-    let l:content = <SID>get_selection(a:range, a:interactive, [])
+    let l:content = <SID>get_selection(a:range, a:interactive, [], v:false, v:true)
     let l:preview = '/tmp/preview-' . strftime('%Y%m%d%H%M%S') . '.html'
 
     call writefile([l:content], l:preview)
 
-    silent call <SID>go_url(l:preview)
+    " Not use silent, best to debug
+    call <SID>go_url(l:preview)
 endfunction
 
 command! -nargs=0 -range -bang P call <SID>preview(<range>, <bang>0)
 
-" range (0,1,2), interactive (0/1), [args (string), trim (bool), join (bool), joinchar (string)]: string|List
+" range (0,1,2), interactive (0/1), [args (string), trim (bool), join (bool), joinchar (string), skipchar (regexp)]: string|List
 function! s:get_selection(range, interactive, args, ...) abort
     let l:selection = ''
     let l:trim = a:0 >= 1 ? a:1 : v:true
     let l:join = a:0 >= 2 ? a:2 : v:true
     let l:joinchar = a:0 >= 3 ? a:3 : ' '
+    let l:skipchar = a:0 >= 4 ? a:4 : ''
 
     if len(a:args) > 0
         let l:selection = l:join ? join(a:args, l:joinchar) : a:args
@@ -4386,6 +4392,11 @@ function! s:get_selection(range, interactive, args, ...) abort
 
             for l:line in l:lines
                 let l:line = l:trim ? trim(l:line) : l:line
+
+                " Skipping
+                if len(l:skipchar) > 0 && l:line =~# l:skipchar
+                    continue
+                endif
 
                 " Starting
                 if l:comment !=# '' && l:line =~# '^' . l:comment
