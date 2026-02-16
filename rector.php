@@ -53,6 +53,7 @@ $data = json_decode(file_get_contents($path), true);
 $vendor = $data['require'] ?? [];
 $vendor += $data['require-dev'] ?? [];
 
+$extraRules = [];
 $extraSkips = [];
 $phpVersion = \PHP_VERSION;
 
@@ -187,6 +188,10 @@ if (isset($vendor['laravel/framework'])) {
         // @see https://github.com/driftingly/rector-laravel/
         $laravelSetList,
     ]);
+}
+
+if (!empty($extraRules)) {
+    $config->withRules($extraRules);
 }
 
 if (!empty($extraSkips)) {

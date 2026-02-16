@@ -407,24 +407,42 @@ hcitool dev
 # 	hci0	78:AF:08:2A:EF:71
 # Enable pairing in device
 hcitool -i hci0 scan
-# Enable connection
-bluetoothctl trust AC:80:0A:14:76:5C
-bluetoothctl connect AC:80:0A:14:76:5C
+
 # Show
 bluetoothctl devices
+
+# Show Paired / Bonded / Trusted /Connected
+bluetoothctl devices Paired
+bluetoothctl devices Bonded
+bluetoothctl devices Trusted
+bluetoothctl devices Connected
+
+# Enable connection
+bluetoothctl pair AC:80:0A:14:76:5C
+bluetoothctl trust AC:80:0A:14:76:5C
+bluetoothctl connect AC:80:0A:14:76:5C
+
+# Info device
+bluetoothctl info AC:80:0A:14:76:5C
+
+# Remove device
+bluetoothctl remove AC:80:0A:14:76:5C
 ```
+> PC    SBC     (Profile: Speakers)
+> RB6   SBC     (Profile: Headphones)
+> XM4   SBC-XQ  (Profile: Headphones)
+> XM4   SBC     (Profile: Headphones) to use Mic
 > Sudio
 > bluetoothctl
-> power on
-> scan on
-> agent on
-> devices
-> pair 41:42:2F:7A:4C:D4
-> # cancel-pairing 41:42:2F:7A:4C:D4
-> trust 41:42:2F:7A:4C:D4
-> # untrust 41:42:2F:7A:4C:D4
-> connect 41:42:2F:7A:4C:D4
-> # disconnect 41:42:2F:7A:4C:D4
+>   power on    # Start bluetooth
+>   scan on     # Search available to pairing
+>   devices     # Show devices
+>   pair 41:42:2F:7A:4C:D4
+>   # cancel-pairing 41:42:2F:7A:4C:D4
+>   trust 41:42:2F:7A:4C:D4
+>   # untrust 41:42:2F:7A:4C:D4
+>   connect 41:42:2F:7A:4C:D4
+>   # disconnect 41:42:2F:7A:4C:D4
 > exit
 
 Remove snap

@@ -62,6 +62,7 @@
 [tag]
     ; @see https://git-scm.com/docs/git-config#Documentation/git-config.txt-tagsort
     sort = -taggerdate
+	gpgsign = true
 [interactive]
     ; Any Enter please
     ; @see https://git-scm.com/docs/git-config#Documentation/git-config.txt-interactivesingleKey
