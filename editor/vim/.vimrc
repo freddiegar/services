@@ -2138,7 +2138,7 @@ function! s:go_line() abort
         endif
 
         echohl MoreMsg
-        echo 'Jump to ' . split(l:word, '/')[-1] . ' using [' . l:separator . '] as separator.'
+        echo 'Jumping to ' . split(l:word, '/')[-1] . ' using [' . l:separator . '] as separator.'
         echohl None
 
         let l:lbuffer = bufnr('%')
@@ -6756,15 +6756,15 @@ EOF
             silent! keeppatterns retab
             " Clue multilines in oneline
             silent! keeppatterns g!/^\d\{4}-/normal! kJ
-            silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|SET NAMES \|set session \| SET SESSION\| Connect\|mysqld\|version_comment\|select connection_id\|general_log\|IN_PROCCES/v/ WHEN /d_
+            silent! keeppatterns g/ table \| TABLE \| TABLES \|migrations\|Prepare\|Close stmt\|^       \|\C_NAME\|information_schema\|DATABASE(\|Quit\|FOREIGN_KEY_CHECKS\|set names \|SET NAMES \|set session \| SET SESSION\| Connect\|mysqld\|version_comment\|select connection_id\|select $$\|general_log\|character_set_client\|IN_PROCCES/v/ WHEN /d_
             " Don't order only by column required
             " silent! keeppatterns %!sort -f -k2 -n
             " Swap date with connection ID
-            " silent! keeppatterns %s/\(^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\) \(\d\{4,6}\)/\2 \1/
+            " silent! keeppatterns %s/\(^\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\) \(\d\{2,7}\)/\2 \1/
             " Sort by connection ID
             " silent! keeppatterns %!sort -f -k1 -n
             " Revert swap
-            " silent! keeppatterns %s/\(^\d\{4,6}\) \(\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\)/\2 \1/
+            " silent! keeppatterns %s/\(^\d\{2,/}\) \(\d\{4}-\d\{2}-\d\{2}T\d\{2}:\d\{2}:\d\{2}.\d\{6}Z\)/\2 \1/
             " Only one space between words please
             silent! keeppatterns %s/\s\+/ /g
             " Avoid append doble semicolon (;)
