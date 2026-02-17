@@ -23,6 +23,8 @@ if [ $# -gt 1 ] && [[ ${PHPV[*]} =~ ${*: -1} ]] ; then
     PHPX=php${*: -1}
 fi
 
+printf "\e[90m%s\e[0m\n" "$($PHPX --version | grep '^PHP ')"
+
 ERROR=false
 SAVEIFS=$IFS
 IFS=$'\n'
@@ -65,8 +67,6 @@ while test $# -gt 0; do
 done
 
 IFS=$SAVEIFS
-
-$PHPX --version | grep "^PHP "
 
 if [ "$ERROR" = true ] ; then
     exit 1

@@ -102,7 +102,7 @@ if (version_compare($phpVersion, '8.1.0', '>=')) {
         \Rector\Php81\Rector\ClassMethod\NewInInitializerRector::class, // MPI fails
         \Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector::class, // Routes in Laravel are weirds to read, avoid (['method', 'params']) -> method(params)
         \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class, // Routes in Laravel are weirds to read, avoid (string) casting convert
-        \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class,
+        \Rector\Php81\Rector\Class_\MyCLabsClassToEnumRector::class, // Migration must be manual in usage and testing files
         \Rector\Php81\Rector\MethodCall\MyCLabsMethodCallToEnumConstRector::class, // MPI fails
     ]);
 }
@@ -203,6 +203,7 @@ $fileSkips = [
     '/app/Filters/Joins/Joins.php', // MPI
     '/app/Domain/Transaction/DTO/Vtex/TransactionData.php', // PL
     '/app/WebService/InvoiceRest.php', // MS
+    '/src/Parsers/ParameterParser.php', // LR
 ];
 
 foreach ($fileSkips as $file) {
