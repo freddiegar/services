@@ -422,6 +422,7 @@ echo "
 bindkey -v
 
 autoload -U history-search-end
+
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
@@ -447,10 +448,22 @@ bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 
-function precmd() {
+# @thanks https://srstevenson.com/posts/zsh-terminal-title/
+autoload -Uz add-zsh-hook
+
+_precmd_title() {
+    if [[ -n "$SSH_CONNECTION" ]]; then
+        print -Pn "\e]0;%n@%m: %~\a"
+    else
+        # @thanks https://www.baeldung.com/linux/shorten-directory-path-command-line
+        print -Pn "\e]0;%(3~|.../%2~|%~)\a"
+    fi
+
     # Keep block cursor shape after close nvim (after v0.12 fails)
     echo -e -n "\e[2 q"
-}" >> ~/.zshrc
+}
+
+add-zsh-hook precmd _precmd_title" >> ~/.zshrc
 ```
 > @see ~/.oh-my-zsh/plugins/
 > man zshzle

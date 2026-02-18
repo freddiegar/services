@@ -7078,7 +7078,7 @@ EOF
 
     autocmd VimLeavePre * call <SID>sessionsave()
     " Not flushed X clipboard when Vim exits
-    autocmd VimLeave * call <SID>settitle('$USER@$HOST') | if !g:istty | call system("echo -n $'" - escape(getreg(), "'") . " ' | xsel --input --clipboard") | endif
+    autocmd VimLeave * silent call <SID>settitle('$USER@$HOST') | if !g:istty | call system("echo -n $'" - escape(getreg(), "'") . " ' | xsel --input --clipboard") | endif
     " Auto-source syntax in *.vpm
     autocmd BufReadPost,BufNewFile *.vpm
         \ if filereadable(expand('syntax.vim')) |
