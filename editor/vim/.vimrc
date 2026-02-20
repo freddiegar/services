@@ -739,7 +739,7 @@ function! GetNameCurrentPath() abort
     let l:cwd = split(g:cwd, '/')
     let l:dir = len(l:cwd) > 0 ? l:cwd[-1] : ''
 
-    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish', 'copilot-chat'], &filetype) < 0
+    return index(['quickfix', 'terminal', 'help'], &buftype) < 0 && index(['netrw', 'oil', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'dirvish', 'copilot-chat'], &filetype) < 0
                 \ ? l:dir . (expand('%:t') !=# '' ? ' ' : '')
                 \ : ''
 endfunction
@@ -755,7 +755,7 @@ function! GetNameCurrentFile() abort
     "   /var/www/html/repo/services/docker/php83/.gitignore > 50    -> d/p83/.gitignore
     "   /home/user/.vimrc                                           -> ~/.vimrc
     "   /etc/hosts                                                  -> /e/hosts
-    if &buftype ==# 'terminal' || index(['netrw', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'checkhealth'], &filetype) >= 0 || expand('%') ==# ''
+    if &buftype ==# 'terminal' || index(['netrw', 'oil', 'vim-plug', 'fugitive', 'tagbar', 'undotree', 'checkhealth'], &filetype) >= 0 || expand('%') ==# ''
         return ''
     elseif get(b:, 'isversus', v:false)
         return expand('%:t')
@@ -771,7 +771,7 @@ function! GetNameCurrentFile() abort
 endfunction
 
 function! GetNameBranch() abort
-    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+    if !g:hasgit || !exists('g:loaded_fugitive') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'oil', 'help', 'vim-plug', 'fugitive', 'GV', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
         return ''
     endif
 
@@ -783,7 +783,7 @@ endfunction
 
 " executable (string)
 function! GetVersion(executable) abort
-    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+    if !filereadable('composer.json') || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'oil', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
         return ''
     endif
 
@@ -809,7 +809,7 @@ endfunction
 function! GetTypeCurrentFile() abort
     let l:path = expand('%:p')
 
-    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+    if l:path ==# '' || &buftype ==# 'terminal' || index(['', 'qf', 'netrw', 'oil', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'snippets', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
         return ''
     endif
 
@@ -888,7 +888,7 @@ endfunction
 
 function! AsyncStatuslineFlag() abort
     if &buftype ==# 'terminal'
-                \ || index(['', 'qf', 'netrw', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+                \ || index(['', 'qf', 'netrw', 'oil', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
                 \ || get(g:, 'asyncrun_hide', 0) ==# 1
         return g:test_strategy ==# 'background' ? '[A]' : ''
     endif
@@ -967,7 +967,7 @@ function! s:statusline(lastmode) abort
         return
     endif
 
-    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'checkhealth'], &filetype) >= 0
+    if index(['quickfix', 'terminal'], &buftype) >= 0 || index(['qf', 'netrw', 'oil', 'vim-plug', 'fugitive', 'GV', 'tagbar', 'undotree', 'checkhealth'], &filetype) >= 0
         setlocal statusline=\                                   " Extra space
 
         return
@@ -1467,6 +1467,7 @@ command! -nargs=+ -bang F call <SID>file_filter(<bang>0, expand('%'), <q-args>)
 " Sorry but :help is better
 nmap <silent> <F1> mzgg=G`z
 
+if !g:isneovim
 " Open explore in current work directory (toggle)
 nmap <silent> <C-w>. <Cmd>call <SID>toggle_netrw(getcwd(), v:false)<CR>
 
@@ -1501,6 +1502,7 @@ function! s:toggle_netrw(dir, force) abort
 
     doautocmd <nomodeline> User UpdateStatusline
 endfunction
+endif
 
 " Fast Vim configuration (and plugins)
 nmap <silent> <F10> <Cmd>call <SID>openvimrc('edit')<CR>
@@ -1562,7 +1564,7 @@ nnoremap <silent> <expr> <Leader>z
             \ ? ":let g:netrwopen = 0 <Bar> bwipeout<CR>"
             \ : index(['copilot-chat'], &filetype) >= 0
             \ ? ":close<CR>"
-            \ : index(['', 'diff', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
+            \ : index(['', 'oil', 'diff', 'qf', 'help', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth'], &filetype) >= 0
             \ ? ":bdelete!<CR>"
             \ : !filereadable(expand('%'))
             \ ? ':silent bwipeout<CR>'
@@ -2552,6 +2554,7 @@ if g:isneovim
     Plug 'laytan/cloak.nvim'                                    " Secrets always are secret!
     Plug 'lewis6991/gitsigns.nvim'                              " Show signs changes if cwd is a git repository (using Lua)
     Plug 'lambdalisue/suda.vim', {'on': 'SudaWrite'}            " Sudo (why nvim why!)
+    Plug 'stevearc/oil.nvim'                                    " Dired is your friend
 
     " if has('gui_running')
     Plug 'mason-org/mason.nvim'                                 " Install LSP from Editor
@@ -2800,7 +2803,7 @@ let g:user_emmet_install_global = 0
 
 " " file (string): void
 " function! s:show_context(file) abort
-"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
+"     if !exists(':ContextActivate') || index(['quickfix', 'terminal', 'help'], &buftype) >= 0 || index(['netrw', 'oil', 'vim-plug', 'fugitive', 'GV', 'git', 'tagbar', 'undotree', 'dirvish', 'checkhealth', 'copilot-chat'], &filetype) >= 0
 "         if exists(':ContextActivate')
 "             silent execute 'ContextDisable'
 "         endif
@@ -3859,6 +3862,47 @@ for [s:shortcut, s:command] in <SID>git_alias() + [['gh', 'Git blame'], ['gst', 
 endfor
 
 if g:isneovim
+" Don't indent!
+" @see  https://github.com/stevearc/oil.nvim
+lua << EOF
+    require('oil').setup({
+        columns = {
+            'permissions',
+            'size',
+            'mtime',
+        },
+        skip_confirm_for_simple_edits = true,
+        prompt_save_on_select_new_entry = false,
+        constrain_cursor = 'name',
+        watch_for_changes = true,
+        keymaps = {
+            -- @see :help oil-actions
+            ['<CR>'] = 'actions.select',
+            ['.'] = 'actions.open_cmdline',
+            ['gp'] = 'actions.parent',
+            ['yf'] = 'actions.yank_entry',
+            ['yd'] = function ()
+                vim.fn.setreg('+', vim.fn.substitute(vim.fn.expand('%:p:h'), 'oil://', '', ''))
+            end,
+        },
+        use_default_keymaps = false,
+        view_options = {
+            show_hidden = true,
+        },
+        confirmation = {
+            border = 'single',
+        },
+        lsp_file_methods = {
+            enabled = false,
+        },
+    })
+
+    local options = { silent = true }
+
+    vim.keymap.set('n', '<C-w>.', '<Cmd>e .<CR>', options)
+    vim.keymap.set('n', '<C-w>:', '<Cmd>Oil<CR>', options)
+EOF
+
 " Don't indent!
 " @see  https://github.com/laytan/cloak.nvim
 lua << EOF
@@ -6558,7 +6602,7 @@ EOF
 
     function! s:sessionremoveitem(item) abort
         return index(['.git/COMMIT_EDITMSG', '.git/MERGE_MSG'], a:item) >= 0
-                    \ || index(['netrw', 'diff', 'undotree', 'tags', 'fugitive', 'GV', 'git', 'dirvish', 'checkhealth', 'copilot-chat'], getbufvar(a:item, '&filetype')) >= 0
+                    \ || index(['netrw', 'oil', 'diff', 'undotree', 'tags', 'fugitive', 'GV', 'git', 'dirvish', 'checkhealth', 'copilot-chat'], getbufvar(a:item, '&filetype')) >= 0
                     \ || index(['quickfix', 'terminal', 'help', 'man', 'copilot-chat'], getbufvar(a:item, '&buftype')) >= 0
                     \ || buflisted(a:item) == 0
                     \ || (match(a:item, '.') >= 0 && split(a:item, '\.')[-1] ==# 'dbout')

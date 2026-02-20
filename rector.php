@@ -144,13 +144,19 @@ if (isset($vendor['phpunit/phpunit'])) {
             $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_120;
 
             break;
+        // case $phpunitVersion < 14:
+        //     $phpunitSetList = \Rector\PHPUnit\Set\PHPUnitSetList::PHPUNIT_130;
+
+        //     break;
         default:
             break;
     }
 
-    $config->withSets([
-        $phpunitSetList,
-    ]);
+    if (isset($phpunitSetList)) {
+        $config->withSets([
+            $phpunitSetList,
+        ]);
+    }
 }
 
 // @see https://laravelversions.com/en

@@ -1009,6 +1009,7 @@ alias gcmsgan="git commit --no-verify --amend -S -m"
 #   git grep "table('table_name'" -- '*.php' $(git rev-list --all)
 # # Redo last commit after changes, using same message
 # alias gcmsgo="git commit --no-edit -C ORIG_HEAD"
+
 alias gl="git pull --verbose"
 alias glo="git pull --verbose origin"
 # On conflicts with rebase is hard mode!
@@ -1025,7 +1026,7 @@ alias gpo="git push --verbose origin"
 # Whoops git pull revert rescue!
 alias glw="git reset --keep HEAD@{1}"
 # Whoops git push revert rescue!
-# Undo last (HEAD^) commit keeping (--soft) changes
+# Undo last (HEAD^) commit keeping staging (--soft) changes
 alias gpw="git reset --soft HEAD^"
 # Whoops git merge revert rescue!
 alias gmw="git reset --merge HEAD~1"
@@ -1073,6 +1074,7 @@ alias grh="git reset HEAD"
 alias gw="git worktree"
 alias gwl="git worktree list"
 
+# @see https://youtu.be/Ala6PHlYjmw?t=388
 # WARNING!: Overwrite local history with remote history
 #   > Use ONLY when remote branch diverge of local branch
 # @thanks https://stackoverflow.com/a/9589927/15601185
