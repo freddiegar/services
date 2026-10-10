@@ -508,6 +508,7 @@ bindsym --release $mod+Print    exec maim -st 9999999 -p 10 | xclip -selection c
 # Display selector
 # Show current configuration: xrandr
 set $external_auto HDMI-1 --auto
+set $external_high HDMI-1 --mode 1920x1080
 set $internal_auto eDP-1 --auto
 set $internal_high eDP-1 --mode 1920x1080
 
@@ -516,7 +517,7 @@ set $internal_high eDP-1 --mode 1920x1080
 # (T14 Gen3)
 set $internal_mode eDP-1 --mode 1440x900_60.00
 
-set $mode_display Display e(x)ternal, (i|I)nternal, (r|R)ight, (l|L)eft , (c|C)lone
+set $mode_display Display e(x)ternal, (i|I)nternal, (r|R)ight, (l|L)eft , (c|C)lone, (d|D)uplicate
 
 mode "$mode_display" {
     #    primary
@@ -572,6 +573,15 @@ mode "$mode_display" {
     # |           | = | eDP-1 |
     # +-----------+   +-------+
     bindsym Shift+c exec --no-startup-id xrandr --output $internal_auto --primary    --output $external_auto  --same-as  $internal_auto,  mode "default"
+
+    # #  nonprimary
+    # # +-----------+
+    # # |           |    primary
+    # # |  HDMI-1   |   +-------+
+    # # |           | = | eDP-1 | 1920x1080
+    # # +-----------+   +-------+
+    bindsym d       exec --no-startup-id xrandr --output $external_high --primary    --output $internal_auto  --same-as  $external_high,  mode "default"
+    bindsym Shift+d exec --no-startup-id xrandr --output $internal_auto --primary    --output $external_high  --same-as  $internal_auto,  mode "default"
 
     # back to normal
     bindsym Return          mode "default"
