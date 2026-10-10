@@ -43,3 +43,5 @@ dev.Dockerfile
 # NPM magic
 buildx.sh
 public/build-v2/
+# OpenCode
+AGENTS.md
