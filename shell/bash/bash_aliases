@@ -16,7 +16,11 @@ mkcopy() {
         return 1
     fi
 
-    cp -pr "$ORIGIN" "$READONLY"
+    if [ "$EUID" -ne 0 ]; then
+        printf "\e[31mCommand requires root privileges to preserve all\e[0m.\n" >&2
+    fi
+
+    sudo cp -dR --preserve=all "$ORIGIN" "$READONLY"
 
     sh -c "cd $READONLY; rm -f .env .envrc testx.sh buildx.sh"
 }
@@ -170,7 +174,8 @@ saU() {
 sAU() {
     saU --ignore
 
-    URL="https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz"
+    # URL="https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz"
+    URL="https://github.com/zen-browser/desktop/releases/latest/download/zen.linux-x86_64.tar.xz"
     TMP=~/.zen/.lastsize
 
     if [ "$(downloadble "$URL" "$TMP")" = "1" ]; then
@@ -1025,8 +1030,8 @@ alias gpo="git push --verbose origin"
 # alias gptd="git push --delete origin"
 # Whoops git pull revert rescue!
 alias glw="git reset --keep HEAD@{1}"
-# Whoops git push revert rescue!
-# Undo last (HEAD^) commit keeping staging (--soft) changes
+# Whoops git push (commit too) revert rescue!
+# Undo last (HEAD^) commit keeping staging (--soft) changes. Applies to: merge (HEAD~1 is equivalent)
 alias gpw="git reset --soft HEAD^"
 # Whoops git merge revert rescue!
 alias gmw="git reset --merge HEAD~1"
