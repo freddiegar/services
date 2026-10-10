@@ -1443,6 +1443,7 @@ endfunction
 
 " Don't write in update <- Sugar
 cnoreabbrev <expr> w (getcmdtype() ==# ':' && getcmdline() =~# '^w') ? 'update' : 'w'
+" cnoreabbrev <expr> w (&filetype !=# 'oil' && getcmdtype() ==# ':' && getcmdline() =~# '^w') ? 'update' : 'w'
 
 " isregex (1/0), file (string), [filter (string)]: void
 function! s:file_filter(isregex, file, filter) abort
@@ -2732,6 +2733,7 @@ nnoremap <silent> <Leader>gW <Cmd>call <SID>go_url('https://www.wordreference.co
 " @options https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L662
 let g:UltiSnipsEditSplit = 'vertical'
 let g:UltiSnipsListSnippets = ''
+" let g:UltiSnipsExpandTrigger = '<Tab>'
 let g:UltiSnipsExpandOrJumpTrigger = '<Tab>'
 let g:UltiSnipsRemoveSelectModeMappings = 0
 " After update to 9.0.1-1000 (from 9.0.1-749) this fix snippets :|
@@ -2869,6 +2871,7 @@ let g:copilot_filetypes = {
             \ 'sql': v:true,
             \ 'mdx': v:true,
             \ 'json': v:true,
+            \ 'sh': v:true,
             \ }
 
 if g:hasaia && !<SID>mustbeignore()
@@ -3442,6 +3445,7 @@ function! s:get_url(url) abort
 
     let l:uri = trim(l:uri, '.')
     let l:uri = trim(l:uri, ',')
+    let l:uri = trim(l:uri, ':')
     let l:uri = trim(l:uri, ';')
 
     if match(l:uri, 'http') < 0 && filereadable(g:cwd . '/' . l:uri)
@@ -4016,6 +4020,7 @@ lua << EOF
                     { '(xauth_identity=).+', replace = '%1' },
                     { '(PSK ).+', replace = '%1' },
                     { '(XAUTH ).+', replace = '%1' },
+                    { '(EAP ).+', replace = '%1' },
                 },
             },
         },
@@ -4223,7 +4228,7 @@ function! s:run(range, interactive, ...) abort
     let l:execute = ''
     let l:ignorechars = []
     let l:runner = &filetype
-    let l:runners = ['&bash', '&php', '&sql', '&d2', '&vim']
+    let l:runners = ['&bash', '&php', '&sql', '&d2', '&tjp', '&vim']
     let l:guessed = v:false
 
     if index(l:runners, '&' . l:runner) < 0 && index(['markdown', 'sh'], l:runner) < 0
@@ -4326,7 +4331,21 @@ function! s:run(range, interactive, ...) abort
         endif
 
         return
-    elseif (l:runner ==# 5 || index(['vim'], l:runner) >= 0)
+    elseif (l:runner ==# 5 || index(['tjp'], l:runner) >= 0)
+        if !<SID>isrunning('/bin/sh -c ' . g:browser)
+            echohl WarningMsg
+            echo 'Not running (' . g:browser . ') browser.'
+            echohl None
+
+            return 1
+        endif
+
+        if !<SID>isrunning(' tj3 ')
+            execute ':make ' . expand('%:p')
+        endif
+
+        return
+    elseif (l:runner ==# 6 || index(['vim'], l:runner) >= 0)
         execute l:command
         echo l:command
 
@@ -4668,6 +4687,7 @@ augroup AutoCommands
     autocmd BufReadPost,BufNewFile *.sqlite setfiletype sql
     autocmd BufReadPost,BufNewFile vifmrc setfiletype vim
     autocmd BufReadPost,BufNewFile,BufWritePre /tmp/* setlocal noundofile
+    autocmd BufNewFile,BufRead     *.tjp,*.tji setfiletype tjp | setlocal commentstring=//\ %s
 
     autocmd FileType markdown setlocal syntax=OFF
     " autocmd FileType sql setlocal commentstring=--\ %s
@@ -4794,6 +4814,7 @@ augroup AutoCommands
     autocmd BufReadPre package-lock.json setlocal nomodifiable
     autocmd BufReadPre public/*/*.{js,css} setlocal nomodifiable
     autocmd BufReadPre */public/*/*.{js,css} setlocal nomodifiable
+    autocmd BufReadPre AGENTS.md setlocal nomodifiable
     " autocmd BufReadPre * if &readonly | setlocal nomodifiable | endif -- A lot keys in vendor files...
 
     " Some files are untouchable
@@ -5448,11 +5469,12 @@ lua <<EOF
             yaml = true,
             sql = true,
             mdx = true,
+            sh = true,
             markdown = function ()
                 filename = vim.fs.basename(vim.api.nvim_buf_get_name(0):lower())
 
                 -- @see https://www.luadocs.com/docs/functions/string/match
-                return string.match(filename, 'changelog.md') or string.match(filename, 'notes_%d*.md')
+                return string.match(filename, 'changelog.md') or string.match(filename, 'objetives.md') or string.match(filename, 'notes_%d*.md')
             end,
             json = function ()
                 filepath = vim.api.nvim_buf_get_name(0):lower()
@@ -5683,6 +5705,12 @@ EOF
     " @see https://d2lang.com/tour/cheat-sheet -> https://terrastruct-site-assets.s3.us-west-1.amazonaws.com/documents/d2_cheat_sheet.pdf
     autocmd BufWritePost *.d2 :R
     autocmd BufDelete * if fnamemodify(expand('<afile>'), ':e') ==# 'd2' && <SID>isrunning(' d2 ')
+                \ |     execute ':AsyncStop!'
+                \ | endif
+
+    " Taskjuggler from CLI
+    autocmd BufWritePost *.tjp :R
+    autocmd BufDelete * if fnamemodify(expand('<afile>'), ':e') ==# 'tjp' && <SID>isrunning(' tj3 ')
                 \ |     execute ':AsyncStop!'
                 \ | endif
 
@@ -7104,7 +7132,7 @@ EOF
     " autocmd WinEnter,InsertLeave * setlocal norelativenumber
 
     autocmd ColorScheme * call <SID>postcolorscheme()
-    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c,*Xresources,vifmrc,*.cfg :call <SID>cleanup('te')
+    autocmd BufWritePre *.vim,*.md,*.js,*.sh,*.php,*.twig,.vimrc,.vimrc.local,.bash_aliases,bash_aliases,.zsh*,*.vue,config,*.xml,*.yml,*.yaml,*.snippets,*.vpm,*.conf,sshd_config,Dockerfile,*.sql,*.d2,*.c,*Xresources,vifmrc,*.cfg,*.tjp,*.tji :call <SID>cleanup('te')
     autocmd BufWritePre * if expand('%:e') ==# '' && index(['sh'], &filetype) >= 0 | call <SID>cleanup('te') | endif
 
     " One <C-x><C-f> to auto-complete files
@@ -7116,7 +7144,7 @@ EOF
 
     " Create non-existent directories when saving (some) files
     autocmd BufWritePre *
-                \ if index(['quickfix', 'terminal'], &buftype) < 0 && index(['fugitive', 'fugitiveblame'], &filetype) < 0 && !isdirectory(expand('<afile>:p:h')) |
+                \ if index(['quickfix', 'terminal'], &buftype) < 0 && index(['fugitive', 'fugitiveblame', 'oil'], &filetype) < 0 && !isdirectory(expand('<afile>:p:h')) |
                 \   call mkdir(expand('<afile>:p:h'), 'p') |
                 \ endif
 
@@ -7127,6 +7155,11 @@ EOF
     autocmd BufReadPost,BufNewFile *.vpm
         \ if filereadable(expand('syntax.vim')) |
         \   silent execute 'source ' . expand('syntax.vim') |
+        \ endif
+    " Auto-source syntax in *.tjp
+    autocmd BufReadPost,BufNewFile *.tjp,*.tji
+        \ if filereadable(expand('~/.vim/syntax/tjp.vim')) |
+        \   silent execute 'source ' . expand('~/.vim/syntax/tjp.vim') |
         \ endif
     " " No resize in i3
     " autocmd VimResized * wincmd =

@@ -4,3 +4,7 @@ priority 10
 snippet see "See Link"
 [$1](${0:`!v match(getreg('+'), '\chttp') == 0 ? getreg('+') : ''`})
 endsnippet
+
+snippet tsk "Create Task"
+- [ ] ${1:0}. ${2:description} | @${3:assignee} | ${4:start} to ${5:end} | depends: ${0}
+endsnippet
