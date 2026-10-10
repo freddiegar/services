@@ -580,16 +580,79 @@ du -ch .
 du -cksh .
 ```
 
-Add ACL (u=user , g=group)
+Showing ACL in folder
 ```bash
-sudo setfacl -dR -m [u]:[username]:rwX [/path/file]
-sudo setfacl -R -m [u]:[username]:rwX [/path/file]
+# Initial
+sudo getfacl $PWD                                                                                                                            14:21
+# file: var/www/html/wordpress
+# owner: freddie
+# group: www-data
+user::rwx
+group::r-x
+other::r-x
+
+# After change defaults
+# file: var/www/html/wordpress
+# owner: freddie
+# group: www-data
+user::rwx
+group::r-x
+other::r-x
+default:user::rwx
+default:user:www-data:rwx
+default:user:freddie:rwx
+default:group::r-x
+default:mask::rwx
+default:other::r-x
+
+# After changes currently
+# file: var/www/html/wordpress
+# owner: freddie
+# group: www-data
+user::rwx
+user:www-data:rwx
+user:freddie:rwx
+group::r-x
+mask::rwx
+other::r-x
+default:user::rwx
+default:user:www-data:rwx
+default:user:freddie:rwx
+default:group::r-x
+default:mask::rwx
+default:other::r-x
 ```
 
-Remove ACL (u=user , g=group)
+Add (-m: modify) ACL (u=user , g=group)
+```bash
+# Default (-d) ACLs in new files and dirs (-R: recursively) to current user (whoami) and www-data user in current file ($PWD)
+# sudo:     Runs the command with superuser privileges, allowing modifications to file ACLs that may not be allowed for regular users.
+# setfacl:  The command used to set access control lists (ACLs) on files and directories.
+# -d:       Sets the default ACLs for the directory. This means that any new files or directories created within the specified directory will inherit these permissions.
+# -R:       Recursively applies the command to all files and subdirectories within the specified directory.
+# -m:       Stands for modify; it allows you to add or change ACL entries.
+# u:www-data:rwX:   Sets read and write permissions (rw) for the user www-data. The X (uppercase) means that execute permissions are given only if the target is a directory or if it already has execute permission for some user.
+# -m u:whoami:rwX:  Similar to the previous entry, this grants read and write permissions to the user returned by the whoami command (the current user running the command).
+# $PWD:     The command substitution for pwd outputs the current working directory path, which is the target directory where the ACLs are being set.
+
+sudo setfacl -dR -m [u]:[username]:rwX [/path/file]
+sudo setfacl  -R -m [u]:[username]:rwX [/path/file]
+
+# aka:
+
+sudo setfacl -dR -m u:www-data:rwX -m "u:$(whoami):rwX" "$PWD"
+sudo setfacl  -R -m u:www-data:rwX -m "u:$(whoami):rwX" "$PWD"
+```
+
+Remove (-x: remove) ACL (u=user , g=group)
 ```bash
 sudo setfacl -dR -x [u]:[username] [/path/file]
-sudo setfacl -R -x [u]:[username] [/path/file]
+sudo setfacl  -R -x [u]:[username] [/path/file]
+```
+
+Remove ALL extended ACL
+```bash
+sudo setfacl -b [/path/file]
 ```
 
 Remove default ACL
@@ -731,6 +794,21 @@ sudo mount -t ntfs /dev/sda2 ~/external
 # sudo mount -t ntfs /dev/sdb2 ~/external
 # sudo mount -t ntfs /dev/sdc2 ~/external
 # sudo mount -t ntfs /dev/sdd2 ~/external
+
+udisksctl unmount -b /dev/sda
+udisksctl power-off -b /dev/sda
+```
+
+Mount USB
+
+```bash
+lsblk
+
+ls /mnt/
+sudo mkdir /mnt/usb
+sudo mount /dev/sda /mnt/usb
+
+sudo cp -r ~/Music/* /mnt/usb
 
 udisksctl unmount -b /dev/sda
 udisksctl power-off -b /dev/sda

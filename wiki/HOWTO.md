@@ -308,7 +308,7 @@ lspci -nn | grep -E 'VGA|Display'
 
 ```bash
 gpg --list-keys
-gpg --edit-key O6QN77Q432NQRQ0S
+gpg --edit-key <TAB>
 gpg> expire // encryption key: sec
     1y
 gpg> key 1  // encryption subkey: ssb*
@@ -429,10 +429,11 @@ bluetoothctl info AC:80:0A:14:76:5C
 bluetoothctl remove AC:80:0A:14:76:5C
 ```
 > PC    SBC     (Profile: Speakers)
-> RB6   SBC     (Profile: Headphones)
+> RB6   SBC     (Profile: Speakers)
 > XM4   SBC-XQ  (Profile: Headphones)
 > XM4   SBC     (Profile: Headphones) to use Mic
-> Sudio
+> JBL   SBC-XQ  (Profile: Speakers)
+> S2    SBC     (Profile: Speakers)
 > bluetoothctl
 >   power on    # Start bluetooth
 >   scan on     # Search available to pairing
@@ -720,4 +721,28 @@ Use current path to create Git Hooks
 ln -s /var/www/html/freddiegar/services/git/hooks/pre-commit $PWD/.git/hooks/pre-commit
 ln -s /var/www/html/freddiegar/services/git/hooks/post-checkout $PWD/.git/hooks/post-checkout
 ln -s /var/www/html/freddiegar/services/git/hooks/post-merge $PWD/.git/hooks/post-merge
+```
+
+[Kanban](https://github.com/fulsomenko/kanban?tab=readme-ov-file)
+
+```bash
+cargo install kanban-cli
+```
+
+[Ganttdown](https://github.com/sev101/ganttdown)
+
+```bash
+curl -sSL https://raw.githubusercontent.com/sev101/ganttdown/main/scripts/install.sh | bash
+
+ganttdown tasks.md > chart.svg
+```
+
+[Taskjuggler](https://taskjuggler.org/tj3/manual/Installation.html#Installation)
+
+```bash
+sudo gem install taskjuggler
+
+mkdir .vim/syntax
+
+cp `gem contents taskjuggler | fgrep tjp.vim` .vim/syntax
 ```

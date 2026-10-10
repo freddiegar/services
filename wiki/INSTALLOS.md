@@ -1104,7 +1104,7 @@ curl -L https://getcomposer.org/installer -o composer-setup.php
 sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 rm -Rf composer-setup.php
 ## Update
-## sudo composer self-update
+## sudo composer self-update --stable
 ## Rollback
 ## sudo composer self-update --rollback
 ## rm -Rf /usr/local/bin/composer
