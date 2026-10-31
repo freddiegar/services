@@ -1666,6 +1666,9 @@ nmap <silent> <Leader>gC <Plug>GetColorRepeatable
 nnoremap <silent> <Plug>GetClickUpRepeatable <Cmd>call <SID>go_url('https://app.clickup.com/t/31051369/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetClickUpRepeatable')<CR>
 nmap <silent> <Leader>gK <Plug>GetClickUpRepeatable
 
+nnoremap <silent> <Plug>GetAzureRepeatable <Cmd>call <SID>go_url('https://dev.azure.com/EvertecBogota/Administraci%C3%B3n%20Backlog%20Transversal%20Delivery/_workitems/edit/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetAzureRepeatable')<CR>
+nmap <silent> <Leader>gA <Plug>GetAzureRepeatable
+
 nnoremap <silent> <Plug>GetVulnerabilityRepeatable <Cmd>call <SID>go_url('https://nvd.nist.gov/vuln/detail/' . substitute(expand('<cWORD>'), '[:\|\.]', '', 'g'), 'GetCVERepeatable')<CR>
 nmap <silent> <Leader>gV <Plug>GetVulnerabilityRepeatable
 
